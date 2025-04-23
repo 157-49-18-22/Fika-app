@@ -1,0 +1,97 @@
+import React from "react";
+import "./Hero.css";
+
+function Hero() {
+  return (
+    <section className="hero">
+      <div className="hero-heading">
+        <div className="hero-heading-content">
+          <h1 className="hero-main-title">
+            Dive into a w
+            <span className="icon-wrapper">
+              <img src="/Frame10001.png" alt="o" />
+            </span>
+            rld of endless
+          </h1>
+          <h1 className="hero-main-title">fashion possibilities</h1>
+
+          <div className="hero-heading-description">
+            <p>Elevate Your Style With Our Fashion Finds.</p>
+            <p>Discover Your Signature Style At Fika.</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="hero-content">
+        <div className="hero-content-left">
+          <img src="./hero_image1.png" alt="Shopping bag with products" />
+        </div>
+
+        <div className="hero-content-middle">
+          <div className="button-container">
+            <button className="hero-button primary-btn">
+              SHOP NOW <span className="arrow">→</span>
+            </button>
+            <button className="hero-button secondary-btn">
+              EXPLORE MORE PRODUCTS
+            </button>
+          </div>
+
+          <div className="brand-section">
+            <div className="trending-text">TRENDING</div>
+            <div className="collection-text">Awesome Collection</div>
+            <div className="brand-logo">Fika</div>
+            <div className="brand-tagline">
+              <span>A MOMENT TO SLOW DOWN</span>
+              <span>AND APPRECIATE GOOD</span>
+              <span>THINGS IN LIFE.</span>
+            </div>
+            <div className="view-all">
+              View All <span className="dot">●</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="hero-content-right">
+          <div className="main-product-image">
+            <img src="./hero_image2.png" alt="Featured product" />
+          </div>
+
+          {/* <div className="product-info">
+            <div className="product-price">
+              <span>$48</span>
+            </div>
+            <div className="product-title">
+              <span>Blue Dreams Collection</span>
+            </div>
+          </div> */}
+
+          <div className="product-grid">
+            <div className="product-grid-item item1 width-40">
+              <div className="price-overlay">$48</div>
+              <img src="./hero_image2_1.png" alt="Product thumbnail" />
+            </div>
+            <div className="product-grid-item item2 width-60">
+              <img src="./hero_image2_2.png" alt="Product thumbnail" />
+            </div>
+            <div className="product-grid-item item3 width-60">
+              <div className="collection-overlay">Blue Dreams Collection</div>
+              <img src="./hero_image2_5.png" alt="Product thumbnail" />
+            </div>
+            <div className="product-grid-item item4 width-40">
+              <img src="./hero_image2_6.png" alt="Product thumbnail" />
+            </div>
+            <div className="product-grid-item item5 width-40">
+              <img src="./hero_image2_3.png" alt="Product thumbnail" />
+            </div>
+            <div className="product-grid-item item6 width-60">
+              <img src="./hero_image2_4.png" alt="Product thumbnail" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default Hero;

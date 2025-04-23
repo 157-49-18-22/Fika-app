@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
+
+@font-face {
+    font-family: 'Carmine';
+    src: url('/public/fonts/Carmine.ttf') format('truetype'),
+        url('/public/fonts/Carmine.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+.style-empower-container {
+    width: 100%;
+    background-color: #F7F7F7;
+    border-radius: 20px;
+    padding: 60px 20px;
+    margin: 40px 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.style-empower-content {
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.style-text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    width: 100%;
+    position: relative;
+}
+
+.text-row {
+    display: flex;
+    width: 100%;
+}
+
+.text-row.second-row {
+    justify-content: flex-end;
+}
+
+.style-text {
+    font-size: 48px;
+    margin: 0;
+    letter-spacing: 2px;
+    font-weight: 400;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-family: 'Carmine', serif;
+}
+
+.style-image-marker {
+    display: inline-block;
+    width: 120px;
+    height: 40px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 20px;
+}
+
+.style-image-marker.right {
+    background: linear-gradient(45deg, #142f3a, #001C2D);
+    position: relative;
+    overflow: hidden;
+}
+
+.style-image-marker.right::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 70% 30%, rgba(255, 215, 0, 0.5), transparent 50%);
+}
+
+.style-image-marker.left {
+    background: linear-gradient(45deg, #001C2D, #142f3a);
+    position: relative;
+    overflow: hidden;
+}
+
+.style-image-marker.left::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 30% 70%, rgba(255, 215, 0, 0.5), transparent 50%);
+}
+
+.empower-text {
+    font-size: 48px;
+    font-weight: 400;
+    margin: 15px 0 40px;
+    letter-spacing: 2px;
+    font-family: 'Carmine', serif;
+}
+
+.button-container {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.shop-now-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #1D1D1D;
+    color: white;
+    padding: 15px 40px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    border: none;
+    text-transform: uppercase;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.shop-now-button:hover {
+    background-color: #333;
+}
+
+.arrow-line {
+    display: inline-block;
+    width: 40px;
+    height: 1px;
+    background-color: white;
+    position: relative;
+}
+
+.arrow-line::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 6px;
+    height: 6px;
+    border-top: 1px solid white;
+    border-right: 1px solid white;
+}
