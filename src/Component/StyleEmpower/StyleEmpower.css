@@ -151,3 +151,11 @@
     border-top: 1px solid white;
     border-right: 1px solid white;
 }
+
+.textured-image {
+    width: 120px;
+    height: 40px;
+    border-radius: 20px;
+    object-fit: cover;
+    display: inline-block;
+}
