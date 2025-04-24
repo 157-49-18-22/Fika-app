@@ -47,7 +47,7 @@ function Hero() {
               <span>THINGS IN LIFE.</span>
             </div>
             <div className="view-all">
-              View All <span className="dot">●</span>
+              View All <span className="arrow-circle">&#8599;</span>
             </div>
           </div>
         </div>
@@ -56,15 +56,6 @@ function Hero() {
           <div className="main-product-image">
             <img src="./hero_image2.png" alt="Featured product" />
           </div>
-
-          {/* <div className="product-info">
-            <div className="product-price">
-              <span>$48</span>
-            </div>
-            <div className="product-title">
-              <span>Blue Dreams Collection</span>
-            </div>
-          </div> */}
 
           <div className="product-grid">
             <div className="product-grid-item item1 width-40">

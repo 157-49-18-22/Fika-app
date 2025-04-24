@@ -87,12 +87,13 @@
     overflow: hidden;
     background-color: #f8f8f8;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    height: fit-content;
 }
 
 .hero-content-left img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    /* height: 100%; */
+    /* object-fit: cover; */
     display: block;
 }
 
@@ -101,8 +102,9 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     padding: 0 10px;
+    height: fit-content;
 }
 
 .button-container {
@@ -177,7 +179,7 @@
 
 .brand-logo {
     font-size: 70px;
-    font-family: 'Carmine', serif;
+    font-family: 'Montez', cursive;
     margin-bottom: 15px;
     color: #222;
     font-style: italic;
@@ -216,9 +218,17 @@
     color: #000;
 }
 
-.dot {
-    color: #222;
-    font-size: 18px;
+.arrow-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background-color: #1D1D1D;
+    color: white;
+    border-radius: 50%;
+    font-size: 14px;
+    margin-left: 5px;
 }
 
 /* Right Section */
@@ -231,14 +241,14 @@
 
 .main-product-image {
     width: 100%;
-    height: 200px;
+    /* height: 200px; */
     border-radius: 10px;
     overflow: hidden;
 }
 
 .main-product-image img {
     width: 100%;
-    height: 100%;
+    /* height: 100%; */
     object-fit: cover;
     display: block;
 }
@@ -268,13 +278,14 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    height: 300px;
+    height: fit-content;
 }
 
 .product-grid-item {
     border-radius: 10px;
     overflow: hidden;
     position: relative;
+    height: fit-content;
     flex-basis: 100%;
 }
 
@@ -314,7 +325,7 @@
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
-        height: 300px;
+        /* height: 300px; */
     }
     
     /* Row 1: 40/60 */
@@ -328,11 +339,11 @@
     
     /* Row 2: 60/40 */
     .product-grid-item.item3 {
-        flex: 0 0 calc(60% - 5px);
+        flex: 0 0 calc(70% - 5px);
     }
     
     .product-grid-item.item4 {
-        flex: 0 0 calc(40% - 5px);
+        flex: 0 0 calc(30% - 5px);
     }
     
     /* Row 3: 40/60 */
