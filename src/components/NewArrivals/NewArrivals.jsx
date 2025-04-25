@@ -1,960 +1,510 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaShoppingCart, FaHeart, FaEye } from "react-icons/fa";
-import { toast } from "react-toastify";
+import { FaShoppingCart, FaHeart, FaEye, FaChevronLeft, FaChevronRight, FaClock, FaTag, FaGift } from "react-icons/fa";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
-import {
-  FaTimes,
-  FaFilter,
-  FaChevronDown,
-  FaChevronUp,
-  FaChevronLeft,
-  FaChevronRight,
-  FaArrowRight,
-} from "react-icons/fa";
-import "./NewArrivals.css";
-
-const categoryProducts = {
-  "Floral Summer Dress": [
-    {
-      id: "fd1",
-      name: "Yellow Floral Maxi Dress",
-      price: "₹499",
-      image:
-        "https://images.pexels.com/photos/1055691/pexels-photo-1055691.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Summer Collection",
-    },
-    {
-      id: "fd2",
-      name: "Blue Floral Wrap Dress",
-      price: "₹599",
-      image:
-        "https://images.pexels.com/photos/1021693/pexels-photo-1021693.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Trending",
-    },
-    {
-      id: "fd3",
-      name: "White Floral Sundress",
-      price: "₹449",
-      image:
-        "https://images.pexels.com/photos/994234/pexels-photo-994234.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Best Seller",
-    },
-    {
-      id: "fd4",
-      name: "Pink Floral Mini Dress",
-      price: "₹399",
-      image:
-        "https://images.pexels.com/photos/1375736/pexels-photo-1375736.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "New Arrival",
-    },
-    {
-      id: "fd5",
-      name: "Red Floral Summer Dress",
-      price: "₹549",
-      image:
-        "https://images.pexels.com/photos/1848471/pexels-photo-1848471.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Limited Edition",
-    },
-    {
-      id: "fd6",
-      name: "Green Floral Midi Dress",
-      price: "₹649",
-      image:
-        "https://images.pexels.com/photos/1100790/pexels-photo-1100790.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Editor's Choice",
-    },
-  ],
-  "Women's Fashion": [
-    {
-      id: "w1",
-      name: "Floral Summer Dress",
-      price: "From ₹499",
-      image:
-        "https://images.pexels.com/photos/1055691/pexels-photo-1055691.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Top Trending",
-    },
-    {
-      id: "w2",
-      name: "Party Dresses",
-      price: "From ₹999",
-      image:
-        "https://images.pexels.com/photos/1755428/pexels-photo-1755428.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Shop Now",
-    },
-    {
-      id: "w3",
-      name: "Casual Wear",
-      price: "From ₹399",
-      image:
-        "https://images.pexels.com/photos/972995/pexels-photo-972995.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Best Deals",
-    },
-    {
-      id: "w4",
-      name: "Evening Gowns",
-      price: "From ₹1,499",
-      image:
-        "https://images.pexels.com/photos/1755385/pexels-photo-1755385.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "New Arrival",
-    },
-  ],
-  "Trending Accessories": [
-    {
-      id: "a1",
-      name: "Designer Bags",
-      price: "From ₹799",
-      image:
-        "https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Best Seller",
-    },
-    {
-      id: "a2",
-      name: "Luxury Watches",
-      price: "From ₹2,499",
-      image:
-        "https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Premium Collection",
-    },
-    {
-      id: "a3",
-      name: "Sunglasses",
-      price: "From ₹299",
-      image:
-        "https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "New Season",
-    },
-    {
-      id: "a4",
-      name: "Fashion Jewelry",
-      price: "From ₹199",
-      image:
-        "https://images.pexels.com/photos/1413420/pexels-photo-1413420.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Trending Now",
-    },
-  ],
-  "Footwear Collection": [
-    {
-      id: "f1",
-      name: "Ankle Boots",
-      price: "From ₹999",
-      image:
-        "https://images.pexels.com/photos/1446521/pexels-photo-1446521.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Most Popular",
-    },
-    {
-      id: "f2",
-      name: "Sneakers",
-      price: "From ₹699",
-      image:
-        "https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Latest Styles",
-    },
-    {
-      id: "f3",
-      name: "High Heels",
-      price: "From ₹899",
-      image:
-        "https://images.pexels.com/photos/1537671/pexels-photo-1537671.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Party Wear",
-    },
-    {
-      id: "f4",
-      name: "Casual Shoes",
-      price: "From ₹599",
-      image:
-        "https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Everyday Comfort",
-    },
-  ],
-};
-
-const categoryData = {
-  "Women's Fashion": [
-    {
-      id: "w1",
-      name: "Floral Summer Dress",
-      price: "From ₹499",
-      image:
-        "https://images.pexels.com/photos/1055691/pexels-photo-1055691.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Top Trending",
-    },
-    {
-      id: "w2",
-      name: "Party Dresses",
-      price: "From ₹999",
-      image:
-        "https://images.pexels.com/photos/1755428/pexels-photo-1755428.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Shop Now",
-    },
-    {
-      id: "w3",
-      name: "Casual Wear",
-      price: "From ₹399",
-      image:
-        "https://images.pexels.com/photos/972995/pexels-photo-972995.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Best Deals",
-    },
-    {
-      id: "w4",
-      name: "Evening Gowns",
-      price: "From ₹1,499",
-      image:
-        "https://images.pexels.com/photos/1755385/pexels-photo-1755385.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "New Arrival",
-    },
-  ],
-  "Trending Accessories": [
-    {
-      id: "a1",
-      name: "Designer Bags",
-      price: "From ₹799",
-      image:
-        "https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Best Seller",
-    },
-    {
-      id: "a2",
-      name: "Luxury Watches",
-      price: "From ₹2,499",
-      image:
-        "https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Premium Collection",
-    },
-    {
-      id: "a3",
-      name: "Sunglasses",
-      price: "From ₹299",
-      image:
-        "https://images.pexels.com/photos/701877/pexels-photo-701877.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "New Season",
-    },
-    {
-      id: "a4",
-      name: "Fashion Jewelry",
-      price: "From ₹199",
-      image:
-        "https://images.pexels.com/photos/1413420/pexels-photo-1413420.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Trending Now",
-    },
-  ],
-  "Footwear Collection": [
-    {
-      id: "f1",
-      name: "Ankle Boots",
-      price: "From ₹999",
-      image:
-        "https://images.pexels.com/photos/1446521/pexels-photo-1446521.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Most Popular",
-    },
-    {
-      id: "f2",
-      name: "Sneakers",
-      price: "From ₹699",
-      image:
-        "https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Latest Styles",
-    },
-    {
-      id: "f3",
-      name: "High Heels",
-      price: "From ₹899",
-      image:
-        "https://images.pexels.com/photos/1537671/pexels-photo-1537671.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Party Wear",
-    },
-    {
-      id: "f4",
-      name: "Casual Shoes",
-      price: "From ₹599",
-      image:
-        "https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      description: "Everyday Comfort",
-    },
-  ],
-};
+import { getAllProducts } from "../../data/products.js";
+import "./NewArrivalsSection.css";
 
 const NewArrivals = () => {
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedProducts, setSelectedProducts] = useState([]);
-  const [visibleItems, setVisibleItems] = useState(6);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [toast, setToast] = useState({ show: false, message: "" });
-  const { addToCart } = useCart();
-  const { addToWishlist, isInWishlist } = useWishlist();
-  const [quickViewProduct, setQuickViewProduct] = useState(null);
-  const [priceRange, setPriceRange] = useState([0, 1000]);
-  const [showFilters, setShowFilters] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const navigate = useNavigate();
-  const [currentIndex, setCurrentIndex] = useState({
-    "womens-fashion": 0,
-    "trending-accessories": 0,
-    "footwear-collection": 0,
+  const [newArrivals, setNewArrivals] = useState([]);
+  const [activeTab, setActiveTab] = useState("all");
+  const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const [featuredProduct, setFeaturedProduct] = useState(null);
+  const [timeLeft, setTimeLeft] = useState({ days: 3, hours: 11, minutes: 23, seconds: 45 });
+  const [categoryProducts, setCategoryProducts] = useState({
+    womensJeans: [],
+    mensJeans: [],
+    womensFootwear: [],
+    womensDresses: [],
+    accessories: []
   });
-
-  const topCategories = {
-    All: [
-      { name: "New Arrivals", icon: "🆕" },
-      { name: "Best Sellers", icon: "⭐" },
-      { name: "Top Rated", icon: "🏆" },
-      { name: "Featured", icon: "✨" },
-    ],
-    Women: [
-      { name: "Floral Summer Dress", icon: "🌸" },
-      { name: "Party Dresses", icon: "👗" },
-      { name: "Casual Wear", icon: "👚" },
-      { name: "Evening Gowns", icon: "👘" },
-      { name: "Designer Collection", icon: "💎" },
-    ],
-    Accessories: [
-      { name: "Designer Bags", icon: "👜" },
-      { name: "Luxury Watches", icon: "⌚" },
-      { name: "Fashion Jewelry", icon: "💍" },
-      { name: "Designer Sunglasses", icon: "🕶️" },
-      { name: "Premium Collection", icon: "💎" },
-    ],
-    Footwear: [
-      { name: "Ankle Boots", icon: "👢" },
-      { name: "Sneakers", icon: "👟" },
-      { name: "High Heels", icon: "👠" },
-      { name: "Casual Shoes", icon: "🥿" },
-      { name: "Party Wear", icon: "👡" },
-    ],
+  
+  const productsRowRef = useRef(null);
+  const categoryRowRefs = {
+    womensJeans: useRef(null),
+    mensJeans: useRef(null),
+    womensFootwear: useRef(null),
+    womensDresses: useRef(null),
+    accessories: useRef(null)
   };
+  
+  const autoScrollTimer = useRef(null);
+  const { addToCart } = useCart();
+  const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
+  const navigate = useNavigate();
 
-  const categories = [
-    { id: "all", name: "All", icon: "🌟" },
-    { id: "women", name: "Women", icon: "👗" },
-    { id: "accessories", name: "Accessories", icon: "👜" },
-    { id: "footwear", name: "Footwear", icon: "👠" },
-  ];
-
-  const colors = [
-    "Black",
-    "White",
-    "Red",
-    "Blue",
-    "Green",
-    "Yellow",
-    "Purple",
-    "Pink",
-  ];
-  const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
-
-  const newArrivalsData = [
-    {
-      id: 1,
-      name: "Elegant Evening Dress",
-      category: "clothing",
-      price: 189.99,
-      image:
-        "https://images.unsplash.com/photo-1566174053879-31528523f8ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      isNew: true,
-      discount: 20,
-      rating: 4.8,
-      reviews: 42,
-    },
-    {
-      id: 2,
-      name: "Designer Leather Tote",
-      category: "accessories",
-      price: 249.99,
-      image:
-        "https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      isNew: true,
-      rating: 4.9,
-      reviews: 56,
-    },
-    {
-      id: 3,
-      name: "Premium Sneakers",
-      category: "footwear",
-      price: 159.99,
-      image:
-        "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      isNew: true,
-      discount: 15,
-      rating: 4.7,
-      reviews: 38,
-    },
-    {
-      id: 4,
-      name: "Silk Summer Blouse",
-      category: "clothing",
-      price: 129.99,
-      image:
-        "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      isNew: true,
-      rating: 4.6,
-      reviews: 29,
-    },
-    {
-      id: 5,
-      name: "Designer Watch",
-      category: "accessories",
-      price: 299.99,
-      image:
-        "https://images.unsplash.com/photo-1524592094714-0f0654e20314?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      isNew: true,
-      discount: 10,
-      rating: 4.9,
-      reviews: 64,
-    },
-    {
-      id: 6,
-      name: "Leather Ankle Boots",
-      category: "footwear",
-      price: 179.99,
-      image:
-        "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      isNew: true,
-      rating: 4.8,
-      reviews: 45,
-    },
-    {
-      id: 7,
-      name: "Designer Sunglasses",
-      category: "accessories",
-      price: 159.99,
-      image:
-        "https://images.unsplash.com/photo-1511499767150-a48a237f0083?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      isNew: true,
-      discount: 25,
-      rating: 4.7,
-      reviews: 33,
-    },
-    {
-      id: 8,
-      name: "Cocktail Dress",
-      category: "clothing",
-      price: 219.99,
-      image:
-        "https://images.unsplash.com/photo-1595777457583-95e059d581b8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      isNew: true,
-      rating: 4.8,
-      reviews: 51,
-    },
-    {
-      id: 9,
-      name: "Luxury Handbag",
-      category: "accessories",
-      price: 329.99,
-      image:
-        "https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      isNew: true,
-      discount: 15,
-      rating: 4.9,
-      reviews: 72,
-    },
-    {
-      id: 10,
-      name: "Designer Heels",
-      category: "footwear",
-      price: 189.99,
-      image:
-        "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-      isNew: true,
-      rating: 4.7,
-      reviews: 48,
-    },
-  ];
-
-  const handleCategoryChange = (categoryId) => {
-    setSelectedCategory(categoryId);
-    setVisibleItems(6);
-  };
-
-  const handleTopCategoryClick = (category) => {
-    // Convert category name to URL-friendly format
-    const urlFriendlyName = category
-      .toLowerCase()
-      .replace(/[']/g, "")
-      .replace(/\s+/g, "-");
-    navigate(`/category/${urlFriendlyName}`);
-    setShowDropdown(false);
-  };
-
-  const handleCategoryClick = (categoryName) => {
-    // Convert category name to URL-friendly format
-    const urlFriendlyName = categoryName
-      .toLowerCase()
-      .replace(/[']/g, "")
-      .replace(/\s+/g, "-");
-    navigate(`/category/${urlFriendlyName}`);
-  };
-
-  const filteredItems = newArrivalsData.filter(
-    (item) =>
-      (selectedCategory === "all" || item.category === selectedCategory) &&
-      item.price >= priceRange[0] &&
-      item.price <= priceRange[1]
-  );
-
-  const handlePriceChange = (e) => {
-    const value = parseInt(e.target.value);
-    if (e.target.name === "min") {
-      setPriceRange([value, priceRange[1]]);
-    } else {
-      setPriceRange([priceRange[0], value]);
+  // Get products with isNew flag and categorize products
+  useEffect(() => {
+    const allProducts = getAllProducts();
+    const newProducts = allProducts.filter(product => product.isNew);
+    setNewArrivals(newProducts);
+    
+    // Set a featured product (first item with discount)
+    const discountedProduct = newProducts.find(product => product.discount);
+    if (discountedProduct) {
+      setFeaturedProduct(discountedProduct);
+    } else if (newProducts.length > 0) {
+      setFeaturedProduct(newProducts[0]);
     }
-  };
 
-  const handleLoadMore = () => {
-    setVisibleItems((prev) => prev + 6);
-  };
-
-  const handleImageClick = (image) => {
-    setSelectedImage(image);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedImage(null);
-  };
-
-  const handleAddToCartClick = (product) => {
-    const defaultSize =
-      product.sizes && product.sizes.length > 0 ? product.sizes[0] : "One Size";
-    addToCart(product, defaultSize, 1);
-
-    // Show toast notification
-    setToast({ show: true, message: `${product.name} added to cart!` });
-
-    // Hide toast after 2 seconds
-    setTimeout(() => {
-      setToast({ show: false, message: "" });
-    }, 2000);
-  };
-
-  const handleAddToWishlistClick = (product) => {
-    addToWishlist(product);
-    setToast({
-      show: true,
-      message: isInWishlist(product.id)
-        ? `${product.name} removed from wishlist`
-        : `${product.name} added to wishlist!`,
+    // Organize products by categories
+    setCategoryProducts({
+      womensJeans: allProducts.filter(p => p.category === "clothing" && p.name.toLowerCase().includes("jeans") && !p.name.toLowerCase().includes("men")),
+      mensJeans: allProducts.filter(p => p.category === "clothing" && p.name.toLowerCase().includes("jeans") && p.name.toLowerCase().includes("men")),
+      womensFootwear: allProducts.filter(p => p.category === "footwear" && !p.name.toLowerCase().includes("men")),
+      womensDresses: allProducts.filter(p => p.category === "clothing" && p.name.toLowerCase().includes("dress")),
+      accessories: allProducts.filter(p => p.category === "accessories")
     });
-    setTimeout(() => setToast({ show: false, message: "" }), 2000);
-  };
-
-  const handleQuickView = (product) => {
-    setQuickViewProduct(product);
-  };
-
-  const closeQuickView = () => {
-    setQuickViewProduct(null);
-  };
-
-  const renderStars = (rating) => {
-    return [...Array(5)].map((_, index) => (
-      <span
-        key={index}
-        className={`star ${index < Math.floor(rating) ? "filled" : ""}`}
-      >
-        ★
-      </span>
-    ));
-  };
-
-  const sliderImages = [
-    {
-      id: 1,
-      image:
-        "https://images.pexels.com/photos/5868722/pexels-photo-5868722.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      title: "New Collection 2024",
-      subtitle: "Up to 70% Off on Latest Fashion",
-    },
-    {
-      id: 2,
-      image:
-        "https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      title: "Summer Special",
-      subtitle: "New Arrivals Starting from ₹499",
-    },
-    {
-      id: 3,
-      image:
-        "https://images.pexels.com/photos/994523/pexels-photo-994523.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      title: "Exclusive Brands",
-      subtitle: "Premium Collection at Best Prices",
-    },
-    {
-      id: 4,
-      image:
-        "https://images.pexels.com/photos/5872361/pexels-photo-5872361.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      title: "Winter Collection",
-      subtitle: "Latest Winter Wear Collection",
-    },
-    {
-      id: 5,
-      image:
-        "https://images.pexels.com/photos/5868275/pexels-photo-5868275.jpeg?auto=compress&cs=tinysrgb&w=1600",
-      title: "Premium Styles",
-      subtitle: "Luxury Fashion Collection",
-    },
-  ];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prevSlide) =>
-        prevSlide === sliderImages.length - 1 ? 0 : prevSlide + 1
-      );
-    }, 3000);
-
-    return () => clearInterval(timer);
   }, []);
 
-  // Auto scroll function
+  // Countdown timer for featured product
   useEffect(() => {
-    const autoScroll = () => {
-      Object.entries(categoryData).forEach(([section]) => {
-        const sectionId = section
-          .toLowerCase()
-          .replace(/[']/g, "")
-          .replace(/\s+/g, "-");
-        const container = document.getElementById(sectionId);
-
-        if (container) {
-          const cardWidth = 280; // Width of each card
-          const gap = 30; // Gap between cards
-          const scrollAmount = cardWidth + gap;
-
-          if (
-            container.scrollLeft >=
-            container.scrollWidth - container.offsetWidth
-          ) {
-            // Reset to start when reached end
-            container.scrollTo({ left: 0, behavior: "smooth" });
-          } else {
-            // Scroll to next card
-            container.scrollBy({ left: scrollAmount, behavior: "smooth" });
-          }
+    const timerInterval = setInterval(() => {
+      setTimeLeft(prevTime => {
+        const { days, hours, minutes, seconds } = prevTime;
+        
+        if (seconds > 0) {
+          return { ...prevTime, seconds: seconds - 1 };
+        } else if (minutes > 0) {
+          return { ...prevTime, minutes: minutes - 1, seconds: 59 };
+        } else if (hours > 0) {
+          return { ...prevTime, hours: hours - 1, minutes: 59, seconds: 59 };
+        } else if (days > 0) {
+          return { ...prevTime, days: days - 1, hours: 23, minutes: 59, seconds: 59 };
         }
+        
+        // Reset when countdown reaches zero
+        return { days: 3, hours: 11, minutes: 23, seconds: 45 };
       });
-    };
-
-    // Set interval for auto scrolling
-    const interval = setInterval(autoScroll, 3000);
-
-    // Cleanup on unmount
-    return () => clearInterval(interval);
+    }, 1000);
+    
+    return () => clearInterval(timerInterval);
   }, []);
 
-  // Manual scroll function
-  const scrollProducts = (direction, containerId) => {
-    const container = document.getElementById(containerId);
-    if (container) {
-      const cardWidth = 280; // Width of each card
-      const gap = 30; // Gap between cards
-      const scrollAmount =
-        direction === "left" ? -(cardWidth + gap) : cardWidth + gap;
+  const categories = ["all", "clothing", "accessories", "footwear"];
 
-      container.scrollBy({
-        left: scrollAmount,
-        behavior: "smooth",
-      });
+  const filteredProducts = activeTab === "all" 
+    ? newArrivals 
+    : newArrivals.filter(product => product.category === activeTab);
+
+  const handleAddToCart = (product, e) => {
+    if (e) e.stopPropagation();
+    addToCart(product);
+  };
+
+  const handleAddToWishlist = (product, e) => {
+    if (e) e.stopPropagation();
+    if (isInWishlist(product.id)) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product);
     }
   };
 
-  return (
-    <section className="new-arrivals section">
-      <div className="container">
-        {/* Toast notification */}
-        {toast.show && (
-          <div className="toast-notification">{toast.message}</div>
-        )}
+  const handleQuickView = (id, e) => {
+    if (e) e.stopPropagation();
+    navigate(`/product/₹{id}`);
+  };
 
-        {/* Top Category Navigation */}
-        <div className="category-nav">
-          <div className="category-list">
-            {Object.keys(topCategories).map((category) => (
-              <div className="category-item" key={category}>
-                <button
-                  className={`category-button ${
-                    showDropdown === category ? "active" : ""
-                  }`}
-                  onClick={() => handleCategoryClick(category)}
-                >
-                  {category === "All" && "🌟"}
-                  {category === "Women" && "👗"}
-                  {category === "Accessories" && "👜"}
-                  {category === "Footwear" && "👠"}
-                  {category}
-                  <FaChevronDown
-                    className={`dropdown-icon ${
-                      showDropdown === category ? "rotate" : ""
-                    }`}
-                  />
-                </button>
-                <div className="subcategory-dropdown">
-                  {topCategories[category].map((subCategory) => (
-                    <button
-                      key={subCategory.name}
-                      className="subcategory-item"
-                      onClick={() => handleTopCategoryClick(subCategory.name)}
-                    >
-                      <span className="subcategory-icon">
-                        {subCategory.icon}
-                      </span>
-                      {subCategory.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
+  const scrollProducts = (direction, ref) => {
+    if (ref && ref.current) {
+      const scrollAmount = direction === 'left' ? -400 : 400;
+      ref.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
+
+  const toggleAutoScroll = () => {
+    setIsAutoPlay(!isAutoPlay);
+  };
+
+  // Auto scroll functionality
+  useEffect(() => {
+    if (isAutoPlay && productsRowRef.current) {
+      autoScrollTimer.current = setInterval(() => {
+        const container = productsRowRef.current;
+        const isAtEnd = container.scrollLeft >= (container.scrollWidth - container.clientWidth - 10);
+        
+        if (isAtEnd) {
+          container.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          container.scrollBy({ left: 400, behavior: 'smooth' });
+        }
+      }, 5000);
+    }
+
+    return () => {
+      if (autoScrollTimer.current) {
+        clearInterval(autoScrollTimer.current);
+      }
+    };
+  }, [isAutoPlay]);
+
+  // Format price with discount
+  const formatPrice = (price, discount) => {
+    if (discount) {
+      const discountedPrice = price * (1 - discount / 100);
+      return discountedPrice.toFixed(2);
+    }
+    return price.toFixed(2);
+  };
+
+  // Calculate original price display
+  const getOriginalPrice = (price) => {
+    return price.toFixed(2);
+  };
+
+  // Render product card - reusable component for all product sections
+  const renderProductCard = (product) => {
+    return (
+      <div 
+        key={product.id} 
+        className="arrivals-product-card"
+        onClick={() => navigate(`/product/₹{product.id}`)}
+      >
+        <div className="arrivals-product-image">
+          <img src={product.image} alt={product.name} />
+          {product.discount && (
+            <span className="arrivals-discount-badge">-{product.discount}%</span>
+          )}
+          <div className="arrivals-product-badges">
+            {product.isNew && <span className="arrivals-new-badge">New</span>}
+            {product.isBestSeller && <span className="arrivals-bestseller-badge">Best Seller</span>}
+          </div>
+          <div className="arrivals-product-actions">
+            <button 
+              className="arrivals-action-btn cart-btn" 
+              onClick={(e) => handleAddToCart(product, e)}
+              title="Add to Cart"
+            >
+              <FaShoppingCart />
+            </button>
+            <button 
+              className={`arrivals-action-btn wishlist-btn ₹{isInWishlist(product.id) ? 'active' : ''}`}
+              onClick={(e) => handleAddToWishlist(product, e)}
+              title="Add to Wishlist"
+            >
+              <FaHeart />
+            </button>
+            <button 
+              className="arrivals-action-btn quickview-btn"
+              onClick={(e) => handleQuickView(product.id, e)}
+              title="Quick View"
+            >
+              <FaEye />
+            </button>
           </div>
         </div>
-
-        {/* Main Content */}
-        <div className="main-content">
-          {/* Image Slider */}
-          <div className="slider-container">
-            <button
-              className="slider-button prev"
-              onClick={() =>
-                setCurrentSlide(
-                  currentSlide === 0
-                    ? sliderImages.length - 1
-                    : currentSlide - 1
-                )
-              }
-            >
-              <FaChevronLeft />
-            </button>
-
-            <div className="slider-wrapper">
-              {sliderImages.map((slide, index) => (
-                <div
-                  key={slide.id}
-                  className="slide"
-                  style={{
-                    transform: `translateX(${(index - currentSlide) * 100}%)`,
-                    opacity: index === currentSlide ? 1 : 0,
-                    transition: "all 0.5s ease",
-                  }}
-                >
-                  <img src={slide.image} alt={slide.title} />
-                  <div className="slide-content">
-                    <h2>{slide.title}</h2>
-                    <p>{slide.subtitle}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <button
-              className="slider-button next"
-              onClick={() =>
-                setCurrentSlide(
-                  currentSlide === sliderImages.length - 1
-                    ? 0
-                    : currentSlide + 1
-                )
-              }
-            >
-              <FaChevronRight />
-            </button>
+        <div className="arrivals-product-info">
+          <h3>{product.name}</h3>
+          <div className="arrivals-product-price">
+            {product.discount ? (
+              <>
+                <span className="arrivals-current-price">₹{formatPrice(product.price, product.discount)}</span>
+                <span className="arrivals-original-price">₹{getOriginalPrice(product.price)}</span>
+              </>
+            ) : (
+              <span className="arrivals-current-price">₹{getOriginalPrice(product.price)}</span>
+            )}
           </div>
-
-          {/* Category Sections */}
-          {Object.entries(categoryData).map(([sectionTitle, categories]) => {
-            const sectionId = sectionTitle
-              .toLowerCase()
-              .replace(/[']/g, "")
-              .replace(/\s+/g, "-");
-
-            return (
-              <div key={sectionTitle} className="category-section">
-                <div className="category-section-header">
-                  <h2 className="category-section-title">{sectionTitle}</h2>
-                  <button
-                    className="view-all-btn"
-                    onClick={() => handleCategoryClick(sectionTitle)}
-                  >
-                    View All <FaArrowRight style={{ marginLeft: "0.5rem" }} />
-                  </button>
-                </div>
-                <div className="category-row-container">
-                  <button
-                    className="scroll-button left"
-                    onClick={() => scrollProducts("left", sectionId)}
-                  >
-                    <FaChevronLeft />
-                  </button>
-                  <div className="products-row" id={sectionId}>
-                    {categories.map((category) => (
-                      <div
-                        key={category.id}
-                        className="category-card"
-                        onClick={() => handleCategoryClick(category.name)}
-                      >
-                        <div className="category-image">
-                          <img
-                            src={category.image}
-                            alt={category.name}
-                            loading="lazy"
-                          />
-                        </div>
-                        <div className="category-info">
-                          <h3>{category.name}</h3>
-                          <div className="category-details">
-                            <span className="price">{category.price}</span>
-                            <span
-                              className={`tag ${category.description
-                                .toLowerCase()
-                                .replace(" ", "-")}`}
-                            >
-                              {category.description}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <button
-                    className="scroll-button right"
-                    onClick={() => scrollProducts("right", sectionId)}
-                  >
-                    <FaChevronRight />
-                  </button>
-                </div>
+          {product.reviewsCount > 0 && (
+            <div className="arrivals-product-rating">
+              <div className="arrivals-stars">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <span key={index} className={`arrivals-star ₹{index < Math.floor(product.rating) ? 'filled' : ''}`}>★</span>
+                ))}
               </div>
-            );
-          })}
-
-          {/* Products Grid */}
-          <div className="products-grid">
-            {filteredItems.slice(0, visibleItems).map((product) => (
-              <div className="product-card" key={product.id}>
-                <div className="product-image">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    onClick={() => handleImageClick(product.image)}
-                  />
-                  <div className="product-overlay">
-                    <button
-                      className="wishlist-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAddToWishlistClick(product);
-                      }}
-                    >
-                      <FaHeart />
-                    </button>
-                  </div>
-                </div>
-                <div className="product-info">
-                  <h3>{product.name}</h3>
-                  <p className="price">{product.price}</p>
-                  <p className="description">{product.description}</p>
-                  <button
-                    className="add-to-cart-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleAddToCartClick(product);
-                    }}
-                  >
-                    Add to Cart
-                  </button>
-                  <Link
-                    to={`/product/${product.id}`}
-                    className="view-details-btn"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    View Details
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {visibleItems < filteredItems.length && (
-            <div className="load-more">
-              <button className="load-more-btn" onClick={handleLoadMore}>
-                <span>Load More Products</span>
-                <i className="arrow-icon">↓</i>
-              </button>
+              <span className="arrivals-reviews-count">({product.reviewsCount})</span>
             </div>
           )}
         </div>
-
-        {/* Image Modal */}
-        {selectedImage && (
-          <div className="image-modal" onClick={handleCloseModal}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-              <button className="close-modal" onClick={handleCloseModal}>
-                ×
-              </button>
-              <img src={selectedImage} alt="Product Preview" />
+        <div className="arrivals-hover-details">
+          <div className="arrivals-product-details">
+            <p className="arrivals-material">{product.material}</p>
+            <div className="arrivals-available-sizes">
+              {product.sizes && product.sizes.map((size, idx) => (
+                <span key={idx} className="arrivals-size-badge">{size}</span>
+              ))}
+            </div>
+            <div className="arrivals-colors-available">
+              {product.colors && product.colors.map((color, idx) => (
+                <span 
+                  key={idx} 
+                  className="arrivals-color-swatch" 
+                  style={{ backgroundColor: color.toLowerCase() }}
+                  title={color}
+                ></span>
+              ))}
             </div>
           </div>
-        )}
-
-        {/* Quick View Modal */}
-        {quickViewProduct && (
-          <div className="quick-view-modal active" onClick={closeQuickView}>
-            <div
-              className="quick-view-content"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button className="quick-view-close" onClick={closeQuickView}>
-                <FaTimes />
-              </button>
-              <div className="quick-view-image">
-                <img src={quickViewProduct.image} alt={quickViewProduct.name} />
-              </div>
-              <div className="quick-view-details">
-                <h2 className="quick-view-name">{quickViewProduct.name}</h2>
-                <p className="quick-view-category">
-                  {quickViewProduct.category}
-                </p>
-                <div className="quick-view-price">
-                  {quickViewProduct.discount ? (
-                    <>
-                      <span className="quick-view-discounted-price">
-                        $
-                        {(
-                          quickViewProduct.price *
-                          (1 - quickViewProduct.discount / 100)
-                        ).toFixed(2)}
-                      </span>
-                      <span className="quick-view-original-price">
-                        ${quickViewProduct.price.toFixed(2)}
-                      </span>
-                      <span className="quick-view-discount">
-                        -{quickViewProduct.discount}%
-                      </span>
-                    </>
-                  ) : (
-                    <span>${quickViewProduct.price.toFixed(2)}</span>
-                  )}
-                </div>
-                <div className="quick-view-actions">
-                  <button
-                    className="quick-view-cart-btn"
-                    onClick={() => {
-                      handleAddToCartClick(quickViewProduct);
-                      closeQuickView();
-                    }}
-                  >
-                    Add to Cart
-                  </button>
-                  <Link
-                    to={`/product/${quickViewProduct.id}`}
-                    className="quick-view-details-btn"
-                  >
-                    View Details
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+          <button className="arrivals-shop-now-btn">
+            Shop Now
+          </button>
+        </div>
       </div>
-    </section>
+    );
+  };
+
+  // Render products container - reusable component for product sections
+  const renderProductsContainer = (title, products, refKey) => {
+    // If no products, don't render the section
+    if (!products || products.length === 0) return null;
+    
+    return (
+      <div className="arrivals-category-section">
+        <div className="arrivals-category-header">
+          <h2 className="arrivals-category-title">{title}</h2>
+          <Link to={`/all-products?category=₹{title.toLowerCase().replace(/\s+/g, '-')}`} className="arrivals-view-category">
+            View All <span className="arrivals-arrow-circle">&#8599;</span>
+          </Link>
+        </div>
+        
+        <div className="arrivals-products-container">
+          <button 
+            className="arrivals-scroll-button left" 
+            onClick={() => scrollProducts('left', categoryRowRefs[refKey])}
+          >
+            <FaChevronLeft />
+          </button>
+          
+          <div className="arrivals-products-row" ref={categoryRowRefs[refKey]}>
+            {products.map(product => renderProductCard(product))}
+          </div>
+          
+          <button 
+            className="arrivals-scroll-button right" 
+            onClick={() => scrollProducts('right', categoryRowRefs[refKey])}
+          >
+            <FaChevronRight />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="arrivals-section">
+      {/* Introduction Section */}
+      <div className="arrivals-intro">
+        <div className="arrivals-intro-content">
+          <h1 className="arrivals-title">Discover Fresh Styles</h1>
+          <p className="arrivals-description">
+            Explore our latest collection of fashion-forward pieces designed to elevate your wardrobe. 
+            Every week, we curate new styles that reflect current trends while maintaining timeless appeal.
+          </p>
+          <div className="arrivals-features">
+            <div className="arrivals-feature-item">
+              <FaTag className="arrivals-feature-icon" />
+              <span>Exclusive Designs</span>
+            </div>
+            <div className="arrivals-feature-item">
+              <FaGift className="arrivals-feature-icon" />
+              <span>Free Shipping on orders over ₹100</span>
+            </div>
+            <div className="arrivals-feature-item">
+              <FaClock className="arrivals-feature-icon" />
+              <span>Limited Time Offers</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Featured Product Highlight */}
+      {featuredProduct && (
+        <div className="arrivals-featured-product">
+          <div className="arrivals-featured-image">
+            <img src={featuredProduct.image} alt={featuredProduct.name} />
+            {featuredProduct.discount && (
+              <div className="arrivals-featured-discount">
+                <span>{featuredProduct.discount}% OFF</span>
+              </div>
+            )}
+          </div>
+          <div className="arrivals-featured-info">
+            <div className="arrivals-limited-offer">
+              <h3>Limited Time Offer</h3>
+              <div className="arrivals-countdown">
+                <div className="arrivals-time-block">
+                  <span className="arrivals-time-value">{timeLeft.days}</span>
+                  <span className="arrivals-time-label">Days</span>
+                </div>
+                <div className="arrivals-time-separator">:</div>
+                <div className="arrivals-time-block">
+                  <span className="arrivals-time-value">{timeLeft.hours}</span>
+                  <span className="arrivals-time-label">Hours</span>
+                </div>
+                <div className="arrivals-time-separator">:</div>
+                <div className="arrivals-time-block">
+                  <span className="arrivals-time-value">{timeLeft.minutes}</span>
+                  <span className="arrivals-time-label">Min</span>
+                </div>
+                <div className="arrivals-time-separator">:</div>
+                <div className="arrivals-time-block">
+                  <span className="arrivals-time-value">{timeLeft.seconds}</span>
+                  <span className="arrivals-time-label">Sec</span>
+                </div>
+              </div>
+            </div>
+            <h2 className="arrivals-featured-title">{featuredProduct.name}</h2>
+            <p className="arrivals-featured-description">
+              {featuredProduct.description || "Experience premium quality and exceptional design with this must-have piece from our latest collection."}
+            </p>
+            <div className="arrivals-featured-pricing">
+              {featuredProduct.discount ? (
+                <>
+                  <span className="arrivals-current-price">₹{formatPrice(featuredProduct.price, featuredProduct.discount)}</span>
+                  <span className="arrivals-original-price">₹{getOriginalPrice(featuredProduct.price)}</span>
+                </>
+              ) : (
+                <span className="arrivals-current-price">₹{getOriginalPrice(featuredProduct.price)}</span>
+              )}
+            </div>
+            <div className="arrivals-featured-actions">
+              <button 
+                className="arrivals-cart-btn"
+                onClick={() => addToCart(featuredProduct)}
+              >
+                Add to Cart
+              </button>
+              <button 
+                className={`arrivals-wishlist-btn ₹{isInWishlist(featuredProduct.id) ? 'active' : ''}`}
+                onClick={() => isInWishlist(featuredProduct.id) ? removeFromWishlist(featuredProduct.id) : addToWishlist(featuredProduct)}
+              >
+                <FaHeart /> {isInWishlist(featuredProduct.id) ? "Added to Wishlist" : "Add to Wishlist"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* New Arrivals Section Header */}
+      <div className="arrivals-header">
+        <h2 className="arrivals-section-title">NEW ARRIVALS</h2>
+        <button className="arrivals-carousel-control" onClick={toggleAutoScroll}>
+          {isAutoPlay ? (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 9V15M14 9V15M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          ) : (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 16.5L16 12L10 7.5V16.5Z" fill="#222"/>
+              <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
+        </button>
+      </div>
+
+      {/* Category Selection */}
+      <div className="arrivals-category-tabs">
+        {categories.map(category => (
+          <button 
+            key={category} 
+            className={`arrivals-category-tab ₹{activeTab === category ? 'active' : ''}`}
+            onClick={() => setActiveTab(category)}
+          >
+            {category.charAt(0).toUpperCase() + category.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {/* Category Description */}
+      <div className="arrivals-category-description">
+        <p>
+          {activeTab === "all" 
+            ? "Browse our complete selection of new arrivals, featuring the latest trends and must-have pieces for the season." 
+            : activeTab === "clothing" 
+            ? "Discover our newest clothing items, from elegant dresses to casual essentials, all crafted with premium fabrics." 
+            : activeTab === "accessories" 
+            ? "Complete your look with our just-arrived accessories, including bags, jewelry, watches, and more." 
+            : "Step into style with our fresh footwear collection, featuring everything from casual comfort to evening elegance."}
+        </p>
+      </div>
+
+      {/* New Arrivals Products Container */}
+      <div className="arrivals-products-container">
+        <button className="arrivals-scroll-button left" onClick={() => scrollProducts('left', productsRowRef)}>
+          <FaChevronLeft />
+        </button>
+        
+        <div className="arrivals-products-row" ref={productsRowRef}>
+          {filteredProducts.map(product => renderProductCard(product))}
+        </div>
+        
+        <button className="arrivals-scroll-button right" onClick={() => scrollProducts('right', productsRowRef)}>
+          <FaChevronRight />
+        </button>
+      </div>
+
+      {/* Category-specific product sections */}
+      <div className="arrivals-sections-container">
+        {/* Women's Dresses */}
+        {renderProductsContainer("Women's Dresses", categoryProducts.womensDresses, "womensDresses")}
+        
+        {/* Women's Jeans */}
+        {renderProductsContainer("Women's Jeans", categoryProducts.womensJeans, "womensJeans")}
+        
+        {/* Men's Jeans */}
+        {renderProductsContainer("Men's Jeans", categoryProducts.mensJeans, "mensJeans")}
+        
+        {/* Women's Footwear */}
+        {renderProductsContainer("Women's Footwear", categoryProducts.womensFootwear, "womensFootwear")}
+        
+        {/* Accessories */}
+        {renderProductsContainer("Accessories", categoryProducts.accessories, "accessories")}
+      </div>
+
+      {/* Shopping Benefits */}
+      <div className="arrivals-benefits">
+        <div className="arrivals-benefit-item">
+          <div className="arrivals-benefit-icon">🚚</div>
+          <div className="arrivals-benefit-content">
+            <h3>Free Shipping</h3>
+            <p>On all orders over ₹100</p>
+          </div>
+        </div>
+        <div className="arrivals-benefit-item">
+          <div className="arrivals-benefit-icon">⭐</div>
+          <div className="arrivals-benefit-content">
+            <h3>Quality Guarantee</h3>
+            <p>Crafted with premium materials</p>
+          </div>
+        </div>
+        <div className="arrivals-benefit-item">
+          <div className="arrivals-benefit-icon">🔄</div>
+          <div className="arrivals-benefit-content">
+            <h3>Easy Returns</h3>
+            <p>30-day return policy</p>
+          </div>
+        </div>
+        <div className="arrivals-benefit-item">
+          <div className="arrivals-benefit-icon">💳</div>
+          <div className="arrivals-benefit-content">
+            <h3>Secure Payment</h3>
+            <p>Multiple payment options</p>
+          </div>
+        </div>
+      </div>
+
+      {/* View All Link */}
+      <div className="arrivals-view-all">
+        <Link to="/all-products" className="arrivals-view-all-btn">
+          View All Collections
+          <span className="arrivals-arrow-circle">&#8599;</span>
+        </Link>
+      </div>
+
+      {/* Newsletter Signup */}
+      <div className="arrivals-newsletter">
+        <div className="arrivals-newsletter-content">
+          <h3>Stay Updated</h3>
+          <p>Subscribe to our newsletter for exclusive offers and early access to new arrivals</p>
+          <div className="arrivals-newsletter-form">
+            <input type="email" placeholder="Your email address" />
+            <button type="submit">Subscribe</button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
