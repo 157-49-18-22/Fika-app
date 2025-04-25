@@ -1,17 +1,28 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import "./App.css";
-import Homepage from "./Component/Homepage";
-import { CartProvider } from "./context/CartContext.jsx";
-import { WishlistProvider } from "./context/WishlistContext.jsx";
-import NewArrivals from "./components/NewArrivals/NewArrivals.jsx";
-import AllProducts from "./components/AllProducts/AllProducts.jsx";
-import Blog from "./components/Blog/Blog.jsx";
-import Contact from "./components/Contact/Contact.jsx";
-import Cart from "./components/Cart/Cart.jsx";
-import Wishlist from "./components/Wishlist/Wishlist.jsx";
-import ProductDetails from "./components/ProductDetails/ProductDetails.jsx";
-import Layout from "./components/Layout/Layout.jsx";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { CartProvider } from './context/CartContext.jsx';
+import { WishlistProvider } from './context/WishlistContext.jsx';
+import Homepage from './Component/Homepage.jsx';
+import NewArrivals from './components/NewArrivals/NewArrivals.jsx';
+import AllProducts from './components/AllProducts/AllProducts.jsx';
+import Blog from './components/Blog/Blog.jsx';
+import Contact from './components/Contact/Contact.jsx';
+import ProductDetails from './components/ProductDetails/ProductDetails.jsx';
+import Cart from './components/Cart/Cart.jsx';
+import Wishlist from './components/Wishlist/Wishlist.jsx';
+import CategoryProducts from './components/CategoryProducts/CategoryProducts.jsx';
+import Navbar from './Component/Navbar/Navbar.jsx';
+import './App.css';
+
+// Non-homepage layout component
+const PageLayout = ({ children }) => {
+  return (
+    <div>
+      <Navbar />
+      {children}
+    </div>
+  );
+};
 
 function App() {
   return (
@@ -20,62 +31,46 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Homepage />} />
-            <Route
-              path="/new-arrivals"
-              element={
-                <Layout>
-                  <NewArrivals />
-                </Layout>
-              }
-            />
-            <Route
-              path="/all-products"
-              element={
-                <Layout>
-                  <AllProducts />
-                </Layout>
-              }
-            />
-            <Route
-              path="/blog"
-              element={
-                <Layout>
-                  <Blog />
-                </Layout>
-              }
-            />
-            <Route
-              path="/contact"
-              element={
-                <Layout>
-                  <Contact />
-                </Layout>
-              }
-            />
-            <Route
-              path="/cart"
-              element={
-                <Layout>
-                  <Cart />
-                </Layout>
-              }
-            />
-            <Route
-              path="/wishlist"
-              element={
-                <Layout>
-                  <Wishlist />
-                </Layout>
-              }
-            />
-            <Route
-              path="/product/:id"
-              element={
-                <Layout>
-                  <ProductDetails />
-                </Layout>
-              }
-            />
+            <Route path="/new-arrivals" element={
+              <PageLayout>
+                <NewArrivals />
+              </PageLayout>
+            } />
+            <Route path="/all-products" element={
+              <PageLayout>
+                <AllProducts />
+              </PageLayout>
+            } />
+            <Route path="/blog" element={
+              <PageLayout>
+                <Blog />
+              </PageLayout>
+            } />
+            <Route path="/contact" element={
+              <PageLayout>
+                <Contact />
+              </PageLayout>
+            } />
+            <Route path="/product/:id" element={
+              <PageLayout>
+                <ProductDetails />
+              </PageLayout>
+            } />
+            <Route path="/cart" element={
+              <PageLayout>
+                <Cart />
+              </PageLayout>
+            } />
+            <Route path="/wishlist" element={
+              <PageLayout>
+                <Wishlist />
+              </PageLayout>
+            } />
+            <Route path="/category/:categoryName" element={
+              <PageLayout>
+                <CategoryProducts />
+              </PageLayout>
+            } />
           </Routes>
         </Router>
       </WishlistProvider>
