@@ -55,7 +55,7 @@
 
 .empty-wishlist-icon {
   font-size: 4rem;
-  color: var(--danger);
+  color: black;
   margin-bottom: 1.5rem;
   animation: pulse 2s ease-in-out infinite;
 }

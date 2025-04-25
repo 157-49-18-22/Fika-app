@@ -18,7 +18,7 @@
   align-items: center; /* Center horizontally */
   min-height: 100vh;
   padding: 3rem 1rem; /* Add padding around the card */
-  background: whitesmoke; /* Purple gradient */
+  background: #F8F8FF ; /* Purple gradient */
   font-family: 'Inter', sans-serif; /* Use a suitable font */
   position: relative; /* Needed for pseudo-element positioning */
   overflow: hidden; /* Prevent pseudo-element overflow */

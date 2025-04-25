@@ -1,14 +1,53 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./Navbar.css";
 import { FaSearch, FaShoppingCart, FaHeart, FaBars } from "react-icons/fa";
 import { FiShoppingBag } from "react-icons/fi";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
+import { getAllProducts } from "../../data/products";
 
 function Navbar() {
   const { getCartCount } = useCart();
   const { wishlist } = useWishlist();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchRef = useRef(null);
+  const navigate = useNavigate();
+
+  // Get all products for search
+  const allProducts = getAllProducts();
+
+  // Filter products based on search query
+  const filteredProducts = allProducts.filter(
+    (product) =>
+      searchQuery &&
+      (product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+       product.category.toLowerCase().includes(searchQuery.toLowerCase()))
+  ).slice(0, 5); // Limit to 5 results
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/all-products?search=${encodeURIComponent(searchQuery)}`);
+      setShowDropdown(false);
+      setSearchQuery("");
+    }
+  };
 
   return (
     <div className="navbar">
@@ -29,9 +68,50 @@ function Navbar() {
         </div>
 
         <div className="navbar-right">
-          <div className="search-bar">
-            <input type="text" placeholder="Search Product..." />
-            <button className="search-btn"><FaSearch /></button>
+          <div className="search-bar" ref={searchRef}>
+            <form onSubmit={handleSearch}>
+              <input 
+                type="text" 
+                placeholder="Search Product..." 
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setShowDropdown(true);
+                }}
+                onFocus={() => {
+                  if (searchQuery) setShowDropdown(true);
+                }}
+              />
+              <button type="submit" className="search-btn">
+                <FaSearch size={14} />
+              </button>
+            </form>
+
+            {/* Search Results Dropdown */}
+            {showDropdown && searchQuery && (
+              <div className="search-results-dropdown">
+                {filteredProducts.map((product) => (
+                  <div 
+                    key={product.id} 
+                    className="search-result-item"
+                    onClick={() => {
+                      navigate(`/product/${product.id}`);
+                      setShowDropdown(false);
+                      setSearchQuery("");
+                    }}
+                  >
+                    <img src={product.image} alt={product.name} className="search-result-image" />
+                    <div className="search-result-info">
+                      <div className="search-result-name">{product.name}</div>
+                      <div className="search-result-price">${product.price.toFixed(2)}</div>
+                    </div>
+                  </div>
+                ))}
+                {filteredProducts.length === 0 && (
+                  <div className="no-results">No products found</div>
+                )}
+              </div>
+            )}
           </div>
           <Link to="/wishlist" className="" aria-label="Wishlist">
             <FaHeart style={{ color: '#333' }} />

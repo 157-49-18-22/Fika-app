@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
 import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight } from "react-icons/fa";
@@ -16,19 +16,35 @@ const AllProducts = () => {
   const [toastMessage, setToastMessage] = useState("");
   const [fadeIn, setFadeIn] = useState(false);
   const [quickView, setQuickView] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchRef = useRef(null);
   
   const { addToCart } = useCart();
   const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
   const navigate = useNavigate();
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const searchQuery = searchParams.get('search') || '';
 
   useEffect(() => {
     setFadeIn(true);
     
     // Scroll to top when component mounts
     window.scrollTo(0, 0);
+
+    // Add click outside listener
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const categories = [
@@ -199,22 +215,8 @@ const AllProducts = () => {
           <div className="products-divider"></div>
         </div>
 
-        {/* Search and Filters */}
-        <div className="products-search-bar">
-          <form onSubmit={handleSearch} className="search-form">
-            <div className="search-input-container">
-              <input 
-                type="text" 
-                placeholder="Search products..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="products-search-input"
-              />
-              <button type="submit" className="search-button">
-                <FaSearch />
-              </button>
-            </div>
-          </form>
+        {/* Filters Bar */}
+        <div className="filters-bar">
           <button 
             className="filter-toggle-btn" 
             onClick={() => setFiltersVisible(!filtersVisible)}
