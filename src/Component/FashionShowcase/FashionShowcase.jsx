@@ -165,6 +165,8 @@ const FashionShowcase = () => {
                       fontWeight: "600",
                       textTransform: "uppercase",
                       marginBottom: "20px",
+                      position: "relative",
+                      top: "-10px",
                     }}
                   >
                     CUSHION COLLECTION

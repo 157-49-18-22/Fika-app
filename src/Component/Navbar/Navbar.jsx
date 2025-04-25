@@ -12,9 +12,9 @@ function Navbar() {
   return (
     <div className="navbar">
       <div className="navbar-container">
-        <button className="mobile-menu-toggle" aria-label="Toggle menu">
+        {/* <button className="mobile-menu-toggle" aria-label="Toggle menu">
           <FaBars />
-        </button>
+        </button> */}
 
         <div className="navbar-left">
           <NavLink to="/new-arrivals" className="nav-link">
