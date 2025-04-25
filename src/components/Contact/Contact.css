@@ -1,592 +1,264 @@
-:root {
-  /* Color System */
-  --color-primary: #ff4d4d;
-  --color-primary-dark: #ff3333;
-  --color-secondary: #f8f9fa;
-  --color-secondary-dark: #e9ecef;
-  --color-text-dark: #2d3436;
-  --color-text-medium: #636e72;
-  --color-text-light: #ffffff;
-  --color-success: #059669;
-  --color-success-light: #d1fae5;
-  --color-border: #e9ecef;
-  --color-border-light: #e0e0e0;
-  
-  /* Gradient System */
-  --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-  --gradient-secondary: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-dark) 100%);
-  
-  /* Shadow System */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.12);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1), 0 5px 10px rgba(0, 0, 0, 0.05);
-  --shadow-primary: 0 4px 20px rgba(255, 77, 77, 0.3);
-  --shadow-inset: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-  
-  /* Spacing System */
-  --space-xxs: 0.25rem;
-  --space-xs: 0.5rem;
-  --space-sm: 0.75rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2rem;
-  --space-xxl: 3rem;
-  --space-xxxl: 4rem;
-  
-  /* Border Radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-full: 9999px;
-  
-  /* Typography */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-serif: 'Playfair Display', serif;
-  --font-mono: 'SF Mono', 'Roboto Mono', monospace;
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: 1.875rem;
-  --text-4xl: 2.25rem;
-  --text-5xl: 3rem;
-  
-  /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Z-index */
-  --z-index-dropdown: 1000;
-  --z-index-sticky: 1020;
-  --z-index-fixed: 1030;
-  --z-index-modal: 1050;
-  --z-index-popover: 1070;
-  --z-index-tooltip: 1080;
-  
-  /* Other */
-  --max-width-container: 1400px;
-  --max-width-text: 65ch;
+/* Resetting base styles might be needed if not done globally */
+/* * { margin: 0; padding: 0; box-sizing: border-box; } */
+
+@keyframes rotateEarth {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* Base Styles */
 .contact-container {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   min-height: 100vh;
-  min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
-  padding: var(--space-xxxl) var(--space-lg);
-  background: var(--gradient-secondary);
-  position: relative;
-  isolation: isolate; /* Creates new stacking context */
-  font-family: var(--font-sans);
-  line-height: 1.6;
-  color: var(--color-text-medium);
+  padding: 3rem 1rem; /* Add padding around the card */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Purple gradient */
+  font-family: 'Inter', sans-serif; /* Use a suitable font */
+  position: relative; /* Needed for pseudo-element positioning */
+  overflow: hidden; /* Prevent pseudo-element overflow */
 }
 
-/* Decorative Elements */
-.contact-container::before {
+/* Add pseudo-element for rotating Earth */
+.contact-container::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5px;
-  background: var(--gradient-primary);
-  z-index: -1;
+  top: 50%;
+  left: 50%;
+  width: 120vmax; /* Large size, adjust as needed */
+  height: 120vmax; /* Large size, adjust as needed */
+  background-image: url('https://static.vecteezy.com/system/resources/previews/010/160/675/original/earth-globe-free-png.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: translate(-50%, -50%);
+  opacity: 0.08; /* Make it very subtle */
+  z-index: 0; /* Behind the card but above the gradient */
+  animation: rotateEarth 180s linear infinite; /* Slow rotation */
+  pointer-events: none; /* Prevent interaction */
 }
 
-/* Header Section */
-.contact-header {
-  text-align: center;
-  margin-bottom: var(--space-xxxl);
-  max-width: var(--max-width-container);
-  margin-inline: auto; /* Logical property for RTL support */
-  padding-inline: var(--space-md);
-  animation: fadeInDown var(--transition-slow) ease-out;
+.contact-card {
+  background-color: #ffffff;
+  border-radius: 60px; /* Try much larger radius for a softer feel */
+  padding: 3rem;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  max-width: 1100px; /* Adjust max width as needed */
+  width: 80%;
+  position: relative; /* Ensure card is above pseudo-element */
+  z-index: 1;
+  overflow: visible; /* Allow shadow to show if needed, but check overflow */
+  
 }
 
-.contact-header h1 {
-  font-size: clamp(var(--text-3xl), 5vw, var(--text-5xl));
-  color: var(--color-text-dark);
-  margin-bottom: var(--space-lg);
-  font-family: var(--font-serif);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-md);
-  line-height: 1.2;
-  letter-spacing: -0.025em;
+.contact-card-content {
+  display: grid;
+  grid-template-columns: 1fr; /* Single column by default */
+  gap: 2.5rem;
+}
+
+/* Two columns on larger screens */
+@media (min-width: 992px) {
+  .contact-card-content {
+    grid-template-columns: 1.1fr 0.9fr; /* Adjust column ratio */
+  }
+}
+
+/* Left Column: Form */
+.contact-form-area {
+ /* Styles for the container of the form if needed */
+}
+
+.contact-form-area h1 {
+  font-size: 2.5rem;
+  color: #333; /* Darker heading */
+  margin-bottom: 0.75rem;
   font-weight: 700;
 }
 
-.heart-icon {
-  color: var(--color-primary);
-  animation: heartbeat 1.5s ease-in-out infinite;
-  filter: drop-shadow(0 4px 8px rgba(255, 77, 77, 0.3));
-  will-change: transform; /* Optimizes animations */
+.contact-form-area p {
+  color: #666;
+  margin-bottom: 2rem;
+  line-height: 1.6;
 }
 
-.subtitle {
-  font-size: var(--text-xl);
-  color: var(--color-text-medium);
-  line-height: 1.7;
-  max-width: var(--max-width-text);
-  margin-inline: auto;
-  animation: fadeInUp var(--transition-slow) ease-out 0.2s both;
+.contact-form .form-group {
+  margin-bottom: 1.5rem;
 }
 
-/* Main Content Layout */
-.contact-content {
-  max-width: var(--max-width-container);
-  margin-inline: auto;
-  padding-inline: var(--space-md);
-  animation: fadeIn var(--transition-slow) ease-out 0.4s both;
-  display: grid;
-  gap: var(--space-xxxl);
-  grid-template-columns: 1fr;
-}
-
-@media (min-width: 1024px) {
-  .contact-content {
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
-  }
-}
-
-/* Form Section */
-.contact-form-section {
-  background: var(--color-text-light);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
-  padding: var(--space-xxl);
-  transition: var(--transition-normal);
-  position: relative;
-  overflow: hidden;
-  backdrop-filter: blur(8px); /* Creates frosted glass effect */
-  border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle border */
-}
-
-.contact-form-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--gradient-primary);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--transition-slow) ease-out;
-}
-
-.contact-form-section:hover::before {
-  transform: scaleX(1);
-}
-
-/* Contact Info Grid */
-.contact-info {
-  display: grid;
-  gap: var(--space-lg);
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  margin-bottom: var(--space-xxl);
-}
-
-.info-card {
-  padding: var(--space-lg);
-  background: var(--color-text-light);
-  border-radius: var(--radius-lg);
-  transition: all var(--transition-normal);
-  border: 1px solid var(--color-border);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.info-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--gradient-primary);
-  transform: scaleX(0);
-  transform-origin: right;
-  transition: transform var(--transition-normal);
-}
-
-.info-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-primary);
-}
-
-.info-card:hover::after {
-  transform: scaleX(1);
-  transform-origin: left;
-}
-
-.info-card h3 {
-  font-size: var(--text-lg);
-  color: var(--color-text-dark);
-  margin-bottom: var(--space-xs);
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-}
-
-.info-card p {
-  color: var(--color-text-medium);
-  margin: 0;
-  font-size: var(--text-base);
-}
-
-/* Form Styles */
-.contact-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-}
-
-.form-group {
-  position: relative;
-}
-
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: var(--space-md);
-  border: 2px solid var(--color-border-light);
-  border-radius: var(--radius-md);
-  font-size: var(--text-base);
-  transition: all var(--transition-normal);
-  background: var(--color-secondary);
-  font-family: var(--font-sans);
-}
-
-.form-group input:hover,
-.form-group textarea:hover {
-  border-color: var(--color-primary);
-  background: var(--color-text-light);
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  background: var(--color-text-light);
-  box-shadow: 0 0 0 4px rgba(255, 77, 77, 0.1);
-}
-
-.form-group textarea {
-  min-height: 150px;
-  resize: vertical;
-}
-
-/* Floating Labels */
-.form-group label {
-  position: absolute;
-  left: var(--space-md);
-  top: var(--space-md);
-  padding: 0 var(--space-xxs);
-  background: var(--color-secondary);
-  transition: all var(--transition-fast);
-  pointer-events: none;
-  color: var(--color-text-medium);
-}
-
-.form-group input:focus + label,
-.form-group textarea:focus + label,
-.form-group input:not(:placeholder-shown) + label,
-.form-group textarea:not(:placeholder-shown) + label {
-  transform: translateY(calc(-1 * var(--space-md) - 50%));
-  font-size: var(--text-xs);
-  background: var(--color-text-light);
-  color: var(--color-primary);
-  z-index: 1;
-}
-
-/* Submit Button */
-.submit-btn {
-  padding: var(--space-md) var(--space-xl);
-  background: var(--gradient-primary);
-  color: var(--color-text-light);
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: var(--text-lg);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  position: relative;
-  overflow: hidden;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.submit-btn::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    to bottom right,
-    rgba(255, 255, 255, 0.2) 0%,
-    rgba(255, 255, 255, 0) 80%
-  );
-  transform: rotate(45deg) translateY(-100%);
-  transition: transform var(--transition-slow) ease-out;
-}
-
-.submit-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-primary);
-}
-
-.submit-btn:hover::before {
-  transform: rotate(45deg) translateY(0);
-}
-
-.submit-btn:active {
-  transform: translateY(0);
-  box-shadow: var(--shadow-inset);
-}
-
-/* Success Message */
-.success-message {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-md) var(--space-lg);
-  background: var(--color-success-light);
-  color: var(--color-success);
-  border-radius: var(--radius-md);
-  margin-top: var(--space-md);
-  animation: slideInUp var(--transition-normal) ease-out;
-  border: 1px solid rgba(5, 150, 105, 0.2);
+.contact-form label {
+  display: block;
+  font-size: 0.875rem;
+  color: #555;
+  margin-bottom: 0.5rem;
   font-weight: 500;
 }
 
-.success-icon {
-  font-size: var(--text-xl);
-  color: var(--color-success);
-  flex-shrink: 0;
-}
-
-/* Testimonials Section */
-.testimonials-section {
+.contact-form input[type="text"],
+.contact-form input[type="email"],
+.contact-form textarea {
   width: 100%;
-  padding-block: var(--space-xl);
-  position: relative;
+  padding: 0.9rem 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 15px; /* Rounded input fields */
+  background-color: #f7f7f7; /* Light grey background */
+  font-size: 1rem;
+  color: #333;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-.testimonials-container {
-  position: relative;
-  padding: 0 !important;
-  box-shadow: none !important;
-  background: transparent !important;
+.contact-form input[type="text"]:focus,
+.contact-form input[type="email"]:focus,
+.contact-form textarea:focus {
+  outline: none;
+  border-color: #764ba2; /* Focus color */
+  box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.15);
 }
 
-.testimonial-grid {
-  display: grid !important;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(350px, 1fr);
-  gap: var(--space-lg) !important;
-  padding-block: var(--space-sm) !important;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--space-md);
-  padding-inline: var(--space-md);
-  -webkit-overflow-scrolling: touch;
+.contact-form textarea {
+  min-height: 120px;
+  resize: vertical;
 }
 
-.testimonial-card {
-  scroll-snap-align: start;
-  background: var(--color-text-light) !important;
-  box-shadow: var(--shadow-md) !important;
-  transition: transform var(--transition-normal) !important;
+.contact-form .submit-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  border: none;
+  padding: 0.9rem 2rem;
+  border-radius: 25px; /* Pill shape */
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+  display: inline-block;
+  text-align: center;
 }
 
-.testimonial-card:hover {
-  transform: translateY(-5px) !important;
+.contact-form .submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(118, 75, 162, 0.3);
 }
 
-/* Scrollbar Styling (where supported) */
-@supports (scrollbar-width: thin) {
-  .testimonial-grid {
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-primary) transparent;
+/* Right Column: Info */
+.contact-info-area {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center content vertically */
+}
+
+.contact-illustration {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.contact-illustration img {
+  max-width: 80%; /* Adjust size */
+  height: auto;
+  /* Replace with actual illustration URL or keep placeholder */
+  /* For placeholder: content: ' '; display: block; width: 80%; height: 200px; background: #eee; border-radius: 10px; margin: 0 auto; */
+}
+
+.contact-details {
+  margin-bottom: 2rem;
+  color: #555;
+}
+
+.contact-details p {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.contact-details svg { /* Style icons */
+  margin-right: 0.8rem;
+  color: #764ba2; /* Icon color */
+  font-size: 1.1rem;
+  flex-shrink: 0; /* Prevent icons from shrinking */
+}
+
+.contact-socials {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start; /* Align to start */
+}
+
+.contact-socials a {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #e9e6f3; /* Light purple background */
+  color: #764ba2; /* Icon color */
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.contact-socials a:hover {
+  background-color: #764ba2;
+  color: #ffffff;
+  transform: scale(1.1);
+}
+
+/* Success Message Styling (optional, adapt if needed) */
+.success-message {
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  background-color: #d1fae5;
+  color: #065f46;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991px) {
+  .contact-card {
+    padding: 2rem;
+  }
+  .contact-info-area {
+     /* Stack illustration above details on medium screens */
+    order: -1; /* Move info area visually above form area */
+  }
+   .contact-illustration img {
+     max-width: 50%; /* Smaller illustration on tablets */
   }
 }
 
-.testimonial-grid::-webkit-scrollbar {
-  height: 6px;
-}
-
-.testimonial-grid::-webkit-scrollbar-track {
-  background: transparent;
-  margin-inline: var(--space-md);
-}
-
-.testimonial-grid::-webkit-scrollbar-thumb {
-  background-color: var(--color-primary);
-  border-radius: var(--radius-full);
-}
-
-/* Animations */
-@keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(calc(-1 * var(--space-md)));
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(var(--space-md));
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes heartbeat {
-  0% { transform: scale(1); }
-  14% { transform: scale(1.1); }
-  28% { transform: scale(1); }
-  42% { transform: scale(1.1); }
-  70% { transform: scale(1); }
-}
-
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(var(--space-sm));
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .contact-container {
-    padding: var(--space-xl) var(--space-sm);
+    padding: 1.5rem 0.5rem;
   }
-
-  .contact-form-section {
-    padding: var(--space-lg);
+  .contact-card {
+    padding: 1.5rem;
+    border-radius: 20px;
   }
-
-  .contact-info {
-    grid-template-columns: 1fr;
+  .contact-form-area h1 {
+    font-size: 2rem;
   }
-
-  .info-card {
-    padding: var(--space-md);
+  .contact-form-area p {
+    margin-bottom: 1.5rem;
   }
-
-  .form-group input,
-  .form-group textarea {
-    padding: var(--space-sm);
+  .contact-card-content {
+    gap: 1.5rem;
   }
-
-  .testimonial-grid {
-    grid-auto-columns: minmax(300px, 1fr);
+  .contact-illustration img {
+    max-width: 60%;
   }
-}
-
-/* Print Styles */
-@media print {
-  .contact-container {
-    background: none !important;
-    padding: 0 !important;
-  }
-  
-  .contact-form-section,
-  .info-card {
-    box-shadow: none !important;
-    break-inside: avoid;
-  }
-  
-  .submit-btn {
-    display: none !important;
-  }
-}
-
-/* Reduced Motion Preferences */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-text-dark: #f8f9fa;
-    --color-text-medium: #adb5bd;
-    --color-secondary: #212529;
-    --color-secondary-dark: #343a40;
-    --color-border: #495057;
-    --color-border-light: #6c757d;
-    --color-text-light: #212529;
-  }
-  
-  .contact-form-section,
-  .info-card {
-    background: #343a40;
-    color: var(--color-text-dark);
-  }
-  
-  .form-group input,
-  .form-group textarea {
-    background: #495057;
-    color: var(--color-text-dark);
-    border-color: var(--color-border);
-  }
-  
-  .form-group input:focus,
-  .form-group textarea:focus,
-  .form-group input:hover,
-  .form-group textarea:hover {
-    background: #495057;
-    color: var(--color-text-dark);
-  }
-  
-  .testimonial-card {
-    background: #495057 !important;
-    color: var(--color-text-dark) !important;
+   .contact-info-area {
+     text-align: center; /* Center text/icons on mobile */
+   }
+   .contact-details p {
+     justify-content: center;
+   }
+   .contact-socials {
+     justify-content: center;
   }
 }

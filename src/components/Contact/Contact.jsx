@@ -1,133 +1,110 @@
 import React, { useState } from "react";
+import { FaFacebookF, FaTwitter, FaInstagram, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 import "./Contact.css";
-import Testimonials from "../Testimonials/Testimonials";
-import { FaHeart } from "react-icons/fa";
+import Testimonials from "../Testimonials/Testimonials.jsx";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
+    name: '',
+    email: '',
+    message: ''
   });
 
   const [showSuccess, setShowSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevState) => ({
+    setFormData(prevState => ({
       ...prevState,
-      [name]: value,
+      [name]: value
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Here you would typically send the form data to your backend
-    console.log("Form submitted:", formData);
+    console.log('Form submitted:', formData);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 3000);
-    setFormData({
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    });
+    setFormData({ name: '', email: '', message: '' });
   };
 
   return (
     <div className="contact-container">
-      <div className="contact-header">
-        <h1 className="typing-animation">
-          <FaHeart className="heart-icon" /> Get in Touch{" "}
-          <FaHeart className="heart-icon" />
-        </h1>
-        <p className="subtitle">
-          We'd love to hear from you! Whether you have a question about our
-          products, need support, or just want to share your experience, we're
-          here to help.
-        </p>
-      </div>
-
-      <div className="contact-content">
-        <div className="contact-main">
-          <div className="contact-form-section">
-            <div className="contact-info">
-              <div className="info-card">
-                <h3>Our Location</h3>
-                <p>123 Fashion Street, New York, NY 10001</p>
-              </div>
-              <div className="info-card">
-                <h3>Email Us</h3>
-                <p>info@fika.com</p>
-              </div>
-              <div className="info-card">
-                <h3>Call Us</h3>
-                <p>+1 (123) 456-7890</p>
-              </div>
-            </div>
-
+      <div className="contact-card">
+        <div className="contact-card-content">
+          
+          <div className="contact-form-area">
+            <h1>Let's talk</h1>
+            <p>To request a quote or want to meet up for coffee, contact us directly or fill out the form and we will get back to you promptly.</p>
+            
             <form className="contact-form" onSubmit={handleSubmit}>
               <div className="form-group">
+                <label htmlFor="name">Your Name</label>
                 <input
                   type="text"
+                  id="name"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Your Name"
                   required
                 />
               </div>
               <div className="form-group">
+                <label htmlFor="email">Your Email</label>
                 <input
                   type="email"
+                  id="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  placeholder="Your Email"
                   required
                 />
               </div>
               <div className="form-group">
-                <input
-                  type="text"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  placeholder="Subject"
-                  required
-                />
-              </div>
-              <div className="form-group">
+                <label htmlFor="message">Your Message</label>
                 <textarea
+                  id="message"
                   name="message"
                   value={formData.message}
                   onChange={handleChange}
-                  placeholder="Your Message"
+                  placeholder="Type something if you want..."
                   required
                 ></textarea>
               </div>
-              <button type="submit" className="submit-btn">
-                Send Message
-              </button>
+              <button type="submit" className="submit-btn">Send Message</button>
               {showSuccess && (
                 <div className="success-message">
-                  <span className="success-icon">✓</span>
-                  <span className="success-text">
-                    Message sent successfully!
-                  </span>
+                  <span>✓ Message sent successfully!</span>
                 </div>
               )}
             </form>
           </div>
 
-          <div className="testimonials-section">
-            <Testimonials />
+          <div className="contact-info-area">
+            <div className="contact-illustration">
+              <img src="https://cdni.iconscout.com/illustration/premium/thumb/contact-us-3483601-2912018.png" alt="Contact illustration" />
+            </div>
+            <div className="contact-details">
+              <p><FaMapMarkerAlt /> 151 New Park Ave, Hartford, CT 06106 United States</p>
+              <p><FaPhoneAlt /> +1 (203) 302-9545</p>
+              <p><FaEnvelope /> contactus@invertasoft.com</p>
+            </div>
+            <div className="contact-socials">
+              <a href="#" aria-label="Facebook"><FaFacebookF /></a>
+              <a href="#" aria-label="Twitter"><FaTwitter /></a>
+              <a href="#" aria-label="Instagram"><FaInstagram /></a>
+            </div>
           </div>
+
         </div>
       </div>
+
+      <div className="testimonials-section-wrapper">
+        <Testimonials />
+      </div>
+
     </div>
   );
 };
 
-export default Contact;
+export default Contact; 

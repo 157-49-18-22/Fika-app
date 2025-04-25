@@ -1,133 +1,84 @@
-import React from "react";
-import styled from "styled-components";
-import { FaQuoteLeft, FaStar } from "react-icons/fa";
-import "./Testimonials.css";
+import React from 'react';
+import styled from 'styled-components';
+import { FaQuoteLeft, FaStar } from 'react-icons/fa';
+import Slider from "react-slick";
+
+// Import slick carousel CSS
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
 
 const TestimonialsContainer = styled.div`
   width: 100%;
-  padding: 0;
+  padding: 3rem 1rem;
+  margin-top: 2rem;
   position: relative;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
 `;
 
 const TestimonialTitle = styled.h2`
-  font-size: 2rem;
-  color: #333;
+  font-size: 1.6rem;
+  color: #ffffff;
   text-align: center;
-  margin-bottom: 2rem;
-  font-family: "Playfair Display", serif;
+  margin-bottom: 1.2rem;
+  font-family: 'Playfair Display', serif;
   position: relative;
+  padding-bottom: 1rem;
 
   &:after {
-    content: "";
+    content: '';
     position: absolute;
-    bottom: -10px;
+    bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 60px;
-    height: 3px;
-    background: #ff4d4d;
+    width: 40px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.5);
     border-radius: 2px;
   }
 `;
 
-const TestimonialGrid = styled.div`
-  display: flex;
-  gap: 2rem;
-  padding: 1rem 0.5rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-
-  &::-webkit-scrollbar {
-    height: 8px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: #ff4d4d;
-    border-radius: 4px;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: #ff3333;
-  }
-`;
-
 const TestimonialCard = styled.div`
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
-  position: relative;
-  border: 1px solid #f0f0f0;
-  min-width: 350px;
-  scroll-snap-align: start;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-  }
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: #ff4d4d;
-    border-radius: 10px 10px 0 0;
-  }
+  padding: 1rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 0 10px;
+  background: rgba(255, 255, 255, 0.02);
 `;
 
 const QuoteIcon = styled(FaQuoteLeft)`
-  font-size: 2rem;
-  color: #ff4d4d;
-  margin-bottom: 1rem;
-  opacity: 0.2;
-  transition: all 0.3s ease;
-
-  ${TestimonialCard}:hover & {
-    opacity: 0.4;
-    transform: scale(1.1);
-  }
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin-bottom: 0.6rem;
+  opacity: 0.15;
 `;
 
 const TestimonialText = styled.p`
-  font-size: 1rem;
-  color: #555;
-  line-height: 1.6;
-  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  color: #d0d0d0;
+  line-height: 1.5;
+  margin-bottom: 0.8rem;
   font-style: italic;
 `;
 
 const CustomerInfo = styled.div`
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #f0f0f0;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 `;
 
 const CustomerImage = styled.img`
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   object-fit: cover;
-  border: 2px solid #fff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-
-  ${TestimonialCard}:hover & {
-    transform: scale(1.1);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  }
+  border: 1px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 `;
 
 const CustomerDetails = styled.div`
@@ -135,27 +86,27 @@ const CustomerDetails = styled.div`
 `;
 
 const CustomerName = styled.h4`
-  font-size: 1.1rem;
-  color: #333;
+  font-size: 0.9rem;
+  color: #ffffff;
   margin: 0;
   font-weight: 600;
 `;
 
 const CustomerRole = styled.p`
-  font-size: 0.9rem;
-  color: #666;
-  margin: 0.2rem 0;
+  font-size: 0.7rem;
+  color: #a0a0a0;
+  margin: 0.1rem 0;
 `;
 
 const RatingContainer = styled.div`
   display: flex;
-  gap: 0.25rem;
-  margin-top: 0.3rem;
+  gap: 0.1rem;
+  margin-top: 0.15rem;
 `;
 
 const StarIcon = styled(FaStar)`
-  color: #ff4d4d;
-  font-size: 0.9rem;
+  color: #ffd700;
+  font-size: 0.7rem;
 `;
 
 const testimonials = [
@@ -165,7 +116,7 @@ const testimonials = [
     name: "Sarah Johnson",
     role: "Regular Customer",
     image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150",
-    rating: 5,
+    rating: 5
   },
   {
     id: 2,
@@ -173,7 +124,7 @@ const testimonials = [
     name: "Michael Chen",
     role: "Fashion Enthusiast",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
-    rating: 5,
+    rating: 5
   },
   {
     id: 3,
@@ -181,7 +132,7 @@ const testimonials = [
     name: "Emma Davis",
     role: "Verified Buyer",
     image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150",
-    rating: 5,
+    rating: 5
   },
   {
     id: 4,
@@ -189,36 +140,52 @@ const testimonials = [
     name: "David Wilson",
     role: "Style Enthusiast",
     image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150",
-    rating: 5,
-  },
+    rating: 5
+  }
 ];
 
 const Testimonials = () => {
+  const settings = {
+    dots: false,
+    arrows: false,
+    infinite: true,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    vertical: true,
+    verticalSwiping: true,
+    autoplay: true,
+    speed: 1000,
+    autoplaySpeed: 3000,
+    cssEase: "linear"
+  };
+
   return (
     <TestimonialsContainer>
       <TestimonialTitle>What Our Customers Say</TestimonialTitle>
-      <TestimonialGrid>
+      <Slider {...settings}>
         {testimonials.map((testimonial) => (
-          <TestimonialCard key={testimonial.id}>
-            <QuoteIcon />
-            <TestimonialText>{testimonial.text}</TestimonialText>
-            <CustomerInfo>
-              <CustomerImage src={testimonial.image} alt={testimonial.name} />
-              <CustomerDetails>
-                <CustomerName>{testimonial.name}</CustomerName>
-                <CustomerRole>{testimonial.role}</CustomerRole>
-                <RatingContainer>
-                  {[...Array(testimonial.rating)].map((_, index) => (
-                    <StarIcon key={index} />
-                  ))}
-                </RatingContainer>
-              </CustomerDetails>
-            </CustomerInfo>
-          </TestimonialCard>
+          <div key={testimonial.id}>
+            <TestimonialCard>
+              <QuoteIcon />
+              <TestimonialText>{testimonial.text}</TestimonialText>
+              <CustomerInfo>
+                <CustomerImage src={testimonial.image} alt={testimonial.name} />
+                <CustomerDetails>
+                  <CustomerName>{testimonial.name}</CustomerName>
+                  <CustomerRole>{testimonial.role}</CustomerRole>
+                  <RatingContainer>
+                    {[...Array(testimonial.rating)].map((_, index) => (
+                      <StarIcon key={index} />
+                    ))}
+                  </RatingContainer>
+                </CustomerDetails>
+              </CustomerInfo>
+            </TestimonialCard>
+          </div>
         ))}
-      </TestimonialGrid>
+      </Slider>
     </TestimonialsContainer>
   );
 };
 
-export default Testimonials;
+export default Testimonials; 
