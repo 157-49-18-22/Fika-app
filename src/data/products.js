@@ -1,0 +1,419 @@
+export const allProductsData = [
+  // --- Products from NewArrivals.jsx ---
+  {
+    id: 1,
+    name: "Elegant Evening Dress",
+    category: "clothing",
+    price: 189.99,
+    image: "https://images.unsplash.com/photo-1566174053879-31528523f8ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    isNew: true,
+    discount: 20,
+    rating: 4.8,
+    reviewsCount: 42, // Renamed from 'reviews' to avoid conflict with actual review array
+    description: "Stunning evening gown perfect for formal events.",
+    details: "This elegant evening dress features intricate detailing and a flattering silhouette. Made from high-quality materials for a luxurious feel.",
+    sizes: ['S', 'M', 'L'],
+    colors: ['Black', 'Navy', 'Burgundy'],
+    material: "Polyester Blend",
+    care: "Dry clean only",
+    reviews: [
+      { id: 1, name: "Olivia Martinez", rating: 5, comment: "Absolutely stunning dress! Felt amazing.", date: "2023-07-01" }
+    ]
+  },
+  {
+    id: 2,
+    name: "Designer Leather Tote",
+    category: "accessories",
+    price: 249.99,
+    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    isNew: true,
+    discount: null,
+    rating: 4.9,
+    reviewsCount: 56,
+    description: "Premium leather tote bag, spacious and stylish.",
+    details: "Crafted from genuine leather, this tote bag offers ample space and multiple compartments. Perfect for everyday use or travel.",
+    sizes: ['One Size'],
+    colors: ['Black', 'Brown', 'Tan'],
+    material: "Genuine Leather",
+    care: "Wipe clean with damp cloth",
+    reviews: [
+      { id: 1, name: "Sophia Williams", rating: 5, comment: "High quality and looks amazing.", date: "2023-07-05" }
+    ]
+  },
+  {
+    id: 3,
+    name: "Premium Sneakers", // Used to be Summer Breeze Blouse in ProductDetails
+    category: "footwear",
+    price: 159.99,
+    image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    isNew: true,
+    discount: 15,
+    rating: 4.7,
+    reviewsCount: 38,
+    description: "Comfortable and stylish premium sneakers.",
+    details: "These sneakers combine comfort and style, featuring premium materials and cushioned soles. Ideal for casual wear.",
+    sizes: ['7', '8', '9', '10', '11'],
+    colors: ['White', 'Black', 'Grey'],
+    material: "Leather & Mesh",
+    care: "Spot clean",
+    reviews: [
+      { id: 1, name: "Ethan Jones", rating: 4, comment: "Great shoes, very comfortable.", date: "2023-06-28" }
+    ]
+  },
+  {
+    id: 4,
+    name: "Silk Summer Blouse", // Used to be Palm Print Shorts in ProductDetails
+    category: "clothing",
+    price: 129.99,
+    image: "https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    isNew: true,
+    discount: null,
+    rating: 4.6,
+    reviewsCount: 29,
+    description: "Lightweight silk blouse, perfect for summer.",
+    details: "Made from pure silk, this blouse is light, airy, and elegant. Features a classic collar and button-down front.",
+    sizes: ['XS', 'S', 'M', 'L'],
+    colors: ['Ivory', 'Blush', 'Sky Blue'],
+    material: "100% Silk",
+    care: "Hand wash or dry clean",
+    reviews: [
+      { id: 1, name: "Ava Brown", rating: 5, comment: "Beautiful quality and feels luxurious.", date: "2023-07-02" }
+    ]
+  },
+  {
+    id: 5,
+    name: "Designer Watch",
+    category: "accessories",
+    price: 299.99,
+    image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    isNew: true,
+    discount: 10,
+    rating: 4.9,
+    reviewsCount: 64,
+    description: "Elegant designer watch with stainless steel strap.",
+    details: "A sophisticated timepiece featuring a reliable quartz movement and a durable stainless steel case and strap. Water-resistant.",
+    sizes: ['One Size'],
+    colors: ['Silver', 'Gold', 'Rose Gold'],
+    material: "Stainless Steel",
+    care: "Wipe clean",
+    reviews: []
+  },
+  {
+    id: 6,
+    name: "Leather Ankle Boots",
+    category: "footwear",
+    price: 179.99,
+    image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    isNew: true,
+    discount: null,
+    rating: 4.8,
+    reviewsCount: 45,
+    description: "Stylish leather ankle boots with a block heel.",
+    details: "Made from genuine leather, these ankle boots feature a comfortable block heel and side zipper closure. Versatile for various outfits.",
+    sizes: ['6', '7', '8', '9', '10'],
+    colors: ['Black', 'Brown'],
+    material: "Genuine Leather",
+    care: "Use leather conditioner",
+    reviews: []
+  },
+  {
+    id: 7,
+    name: "Designer Sunglasses",
+    category: "accessories",
+    price: 159.99,
+    image: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    isNew: true,
+    discount: 25,
+    rating: 4.7,
+    reviewsCount: 33,
+    description: "Chic designer sunglasses with UV protection.",
+    details: "Protect your eyes in style with these designer sunglasses offering 100% UV protection. Lightweight frame for comfortable wear.",
+    sizes: ['One Size'],
+    colors: ['Black', 'Tortoise Shell'],
+    material: "Acetate",
+    care: "Clean with lens cloth",
+    reviews: []
+  },
+  {
+    id: 8,
+    name: "Cocktail Dress",
+    category: "clothing",
+    price: 219.99,
+    image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    isNew: true,
+    discount: null,
+    rating: 4.8,
+    reviewsCount: 51,
+    description: "Elegant cocktail dress for special occasions.",
+    details: "A sophisticated cocktail dress featuring a modern design and comfortable fit. Perfect for parties and evening events.",
+    sizes: ['XS', 'S', 'M', 'L'],
+    colors: ['Red', 'Black', 'Emerald Green'],
+    material: "Polyester/Spandex Blend",
+    care: "Dry clean recommended",
+    reviews: []
+  },
+  {
+    id: 9,
+    name: "Luxury Handbag",
+    category: "accessories",
+    price: 329.99,
+    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", // Same image as ID 2, maybe update?
+    isNew: true,
+    discount: 15,
+    rating: 4.9,
+    reviewsCount: 72,
+    description: "Exquisite luxury handbag with premium details.",
+    details: "Indulge in luxury with this exquisitely crafted handbag. Features premium hardware and a spacious interior.",
+    sizes: ['One Size'],
+    colors: ['Cream', 'Navy'],
+    material: "Premium Leather",
+    care: "Professional leather cleaning",
+    reviews: []
+  },
+  {
+    id: 10,
+    name: "Designer Heels",
+    category: "footwear",
+    price: 189.99,
+    image: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80", // Same image as ID 6, maybe update?
+    isNew: true,
+    discount: null,
+    rating: 4.7,
+    reviewsCount: 48,
+    description: "Elegant designer heels for a sophisticated look.",
+    details: "Step out in style with these designer heels. Feature a sleek design and comfortable height for extended wear.",
+    sizes: ['6', '7', '8', '9'],
+    colors: ['Nude', 'Black', 'Silver'],
+    material: "Leather/Synthetic",
+    care: "Wipe clean",
+    reviews: []
+  },
+  // --- Additional Products from AllProducts.jsx (Ensure IDs are unique) ---
+  {
+    id: 11, // Was ID 1 in AllProducts
+    name: "Elegant Evening Gown",
+    price: 299.99,
+    category: "dresses",
+    image: "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=500&h=500&fit=crop",
+    isNew: true,
+    rating: 4.9,
+    reviewsCount: 68, // Use reviewsCount
+    description: "Stunning evening gown with delicate beading",
+    details: "A breathtaking gown for the most formal events, featuring intricate beading and a flowing skirt.",
+    sizes: ['S', 'M', 'L', 'XL'],
+    colors: ['Champagne', 'Silver'],
+    material: "Silk Blend",
+    care: "Dry clean only",
+    reviews: [],
+    discount: 15
+  },
+  {
+    id: 12, // Was ID 2 in AllProducts
+    name: "Summer Floral Dress",
+    price: 129.99,
+    category: "dresses",
+    image: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=500&h=500&fit=crop",
+    isNew: true,
+    rating: 4.7,
+    reviewsCount: 45,
+    description: "Light and breezy floral print dress",
+    details: "Perfect for sunny days, this dress features a vibrant floral print and a comfortable fit.",
+    sizes: ['XS', 'S', 'M', 'L'],
+    colors: ['Yellow Floral', 'Pink Floral'],
+    material: "Rayon",
+    care: "Machine wash cold",
+    reviews: [],
+    discount: null
+  },
+  {
+    id: 13, // Was ID 3 in AllProducts
+    name: "Bohemian Maxi Dress",
+    price: 159.99,
+    category: "dresses",
+    image: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=500&h=500&fit=crop",
+    isNew: true,
+    rating: 4.8,
+    reviewsCount: 52,
+    description: "Flowing bohemian style maxi dress",
+    details: "Embrace your inner free spirit with this beautiful bohemian maxi dress, featuring intricate patterns and a relaxed silhouette.",
+    sizes: ['S', 'M', 'L'],
+    colors: ['Terracotta', 'Blue Pattern'],
+    material: "Viscose",
+    care: "Hand wash cold",
+    reviews: [],
+    discount: 20
+  },
+  {
+    id: 14, // Was ID 4 in AllProducts
+    name: "Designer Blazer Set",
+    price: 249.99,
+    category: "sets",
+    image: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500&h=500&fit=crop",
+    isNew: true,
+    rating: 4.9,
+    reviewsCount: 36,
+    description: "Professional blazer and pants set",
+    details: "Look sharp and professional in this tailored blazer and matching pants set. Ideal for work or formal occasions.",
+    sizes: ['S', 'M', 'L', 'XL'],
+    colors: ['Navy', 'Grey', 'Black'],
+    material: "Wool Blend",
+    care: "Dry clean only",
+    reviews: [],
+    discount: null
+  },
+  {
+    id: 15, // Was ID 5 in AllProducts
+    name: "Casual Denim Set",
+    price: 189.99,
+    category: "sets",
+    image: "https://images.unsplash.com/photo-1548624149-f9293404c2da?w=500&h=500&fit=crop",
+    isNew: false,
+    rating: 4.6,
+    reviewsCount: 29,
+    description: "Trendy denim jacket and jeans set",
+    details: "A cool and casual set featuring a classic denim jacket and matching jeans. Perfect for a laid-back style.",
+    sizes: ['S', 'M', 'L'],
+    colors: ['Light Wash', 'Dark Wash'],
+    material: "Cotton Denim",
+    care: "Machine wash cold",
+    reviews: [],
+    discount: null
+  },
+  {
+    id: 16, // Was ID 6 in AllProducts
+    name: "Silk Blouse",
+    price: 89.99,
+    category: "tops",
+    image: "https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=500&h=500&fit=crop",
+    isNew: true,
+    rating: 4.7,
+    reviewsCount: 41,
+    description: "Luxurious silk blouse for any occasion",
+    details: "Experience the elegance of pure silk with this versatile blouse. Can be dressed up or down.",
+    sizes: ['XS', 'S', 'M', 'L'],
+    colors: ['Champagne', 'Black', 'Rose'],
+    material: "100% Silk",
+    care: "Hand wash or dry clean",
+    reviews: [],
+    discount: null
+  },
+  {
+    id: 17, // Was ID 7 in AllProducts
+    name: "Knit Sweater",
+    price: 79.99,
+    category: "tops",
+    image: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500&h=500&fit=crop",
+    isNew: false,
+    rating: 4.5,
+    reviewsCount: 33,
+    description: "Cozy knit sweater for cool weather",
+    details: "Stay warm and stylish in this comfortable knit sweater. Features a classic cable-knit pattern.",
+    sizes: ['S', 'M', 'L', 'XL'],
+    colors: ['Cream', 'Grey', 'Forest Green'],
+    material: "Wool/Acrylic Blend",
+    care: "Hand wash or machine wash gentle",
+    reviews: [],
+    discount: 10
+  },
+  {
+    id: 18, // Was ID 8 in AllProducts
+    name: "High-Waist Trousers",
+    price: 119.99,
+    category: "bottoms",
+    image: "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=500&h=500&fit=crop",
+    isNew: true,
+    rating: 4.8,
+    reviewsCount: 47,
+    description: "Elegant high-waisted dress pants",
+    details: "Flattering high-waisted trousers that offer both style and comfort. Perfect for professional or smart-casual looks.",
+    sizes: ['XS', 'S', 'M', 'L'],
+    colors: ['Black', 'Beige', 'Navy'],
+    material: "Polyester/Rayon Blend",
+    care: "Machine wash cold",
+    reviews: [],
+    discount: null
+  },
+  {
+    id: 19, // Was ID 9 in AllProducts
+    name: "Designer Handbag",
+    price: 399.99,
+    category: "accessories",
+    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500&h=500&fit=crop", // Same image as ID 2 & 9
+    isNew: true,
+    rating: 4.9,
+    reviewsCount: 75,
+    description: "Luxury leather designer handbag",
+    details: "A statement piece, this designer handbag is crafted from the finest leather and features elegant hardware.",
+    sizes: ['One Size'],
+    colors: ['Red', 'White'],
+    material: "Genuine Leather",
+    care: "Wipe clean with damp cloth",
+    reviews: [],
+    discount: null
+  },
+  {
+    id: 20, // Was ID 10 in AllProducts
+    name: "Statement Necklace",
+    price: 149.99,
+    category: "accessories",
+    image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&h=500&fit=crop",
+    isNew: false,
+    rating: 4.6,
+    reviewsCount: 28,
+    description: "Eye-catching statement necklace",
+    details: "Add a touch of glamour to any outfit with this bold statement necklace. Features unique design elements.",
+    sizes: ['One Size'],
+    colors: ['Gold', 'Silver'],
+    material: "Metal Alloy/Resin",
+    care: "Avoid contact with liquids",
+    reviews: [],
+    discount: 15
+  },
+  {
+    id: 21, // Was ID 11 in AllProducts
+    name: "Leather Skirt",
+    price: 169.99,
+    category: "bottoms",
+    image: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=500&h=500&fit=crop",
+    isNew: true,
+    rating: 4.7,
+    reviewsCount: 39,
+    description: "Stylish leather midi skirt",
+    details: "A chic and edgy leather skirt with a flattering midi length. Can be styled in numerous ways.",
+    sizes: ['S', 'M', 'L'],
+    colors: ['Black', 'Burgundy'],
+    material: "Faux Leather",
+    care: "Wipe clean",
+    reviews: [],
+    discount: null
+  },
+  {
+    id: 22, // Was ID 12 in AllProducts
+    name: "Summer Jumpsuit",
+    price: 139.99,
+    category: "sets", // Assuming jumpsuit is a 'set' for consistency, could be 'clothing'
+    image: "https://images.unsplash.com/photo-1595081608100-413a00c59b32?w=500&h=500&fit=crop",
+    isNew: true,
+    rating: 4.8,
+    reviewsCount: 44,
+    description: "Chic and comfortable summer jumpsuit",
+    details: "An effortless one-piece outfit, this jumpsuit is perfect for warm weather. Features a comfortable fit and stylish design.",
+    sizes: ['XS', 'S', 'M', 'L'],
+    colors: ['Navy Stripe', 'White'],
+    material: "Linen Blend",
+    care: "Machine wash cold",
+    reviews: [],
+    discount: null
+  }
+];
+
+// Function to get all products (can be expanded later)
+export const getAllProducts = () => {
+  return allProductsData;
+};
+
+// Function to get a single product by ID
+export const getProductById = (id) => {
+  const productId = parseInt(id);
+  return allProductsData.find(product => product.id === productId);
+}; 

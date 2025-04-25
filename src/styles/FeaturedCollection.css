@@ -1,0 +1,49 @@
+.featured-section {
+  padding: 60px 40px;
+  background-color: #FAFAFC;
+  text-align: center;
+  /* No change here, maintaining current padding and background */
+}
+
+.featured-heading {
+  font-size: 32px;
+  margin-bottom: 40px;
+  color: #222;
+  text-transform: uppercase;
+  /* Added for a modern look */
+  letter-spacing: 1px;
+  /* Adds spacing for better legibility */
+  font-weight: 700;
+  /* Make the heading slightly bolder */
+}
+
+.featured-grid {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  padding: 0 15px;
+  /* Added padding for better spacing */
+}
+
+
+
+
+
+
+
+
+.featured-img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  transition: transform 0.3s ease;
+  padding-top: 80px;
+  /* margin-left: 500px; */
+
+}
+
+.featured-img:hover {
+  transform: scale(1.03);
+}
