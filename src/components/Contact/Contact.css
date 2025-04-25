@@ -13,11 +13,12 @@
 .contact-container {
   margin-top: 10px;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column; /* Arrange children vertically */
+  justify-content: center; /* Center vertically if needed, or use 'flex-start' */
+  align-items: center; /* Center horizontally */
   min-height: 100vh;
   padding: 3rem 1rem; /* Add padding around the card */
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); /* Purple gradient */
+  background: whitesmoke; /* Purple gradient */
   font-family: 'Inter', sans-serif; /* Use a suitable font */
   position: relative; /* Needed for pseudo-element positioning */
   overflow: hidden; /* Prevent pseudo-element overflow */
@@ -78,12 +79,15 @@
   color: #333; /* Darker heading */
   margin-bottom: 0.75rem;
   font-weight: 700;
+  font-family: 'Carmine', serif;
+  margin-left: 220px;
 }
 
 .contact-form-area p {
   color: #666;
   margin-bottom: 2rem;
   line-height: 1.6;
+  
 }
 
 .contact-form .form-group {

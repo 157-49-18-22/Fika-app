@@ -32,10 +32,9 @@ const Contact = () => {
     <div className="contact-container">
       <div className="contact-card">
         <div className="contact-card-content">
-          
           <div className="contact-form-area">
-            <h1>Let's talk</h1>
-            <p>To request a quote or want to meet up for coffee, contact us directly or fill out the form and we will get back to you promptly.</p>
+            <h1 style={{ color: 'black' }}>Let's talk</h1>
+            <p style={{ color: 'black' }}>To request a quote or want to meet up for coffee, contact us directly or fill out the form and we will get back to you promptly.</p>
             
             <form className="contact-form" onSubmit={handleSubmit}>
               <div className="form-group">
@@ -95,14 +94,12 @@ const Contact = () => {
               <a href="#" aria-label="Instagram"><FaInstagram /></a>
             </div>
           </div>
-
         </div>
       </div>
 
       <div className="testimonials-section-wrapper">
         <Testimonials />
       </div>
-
     </div>
   );
 };

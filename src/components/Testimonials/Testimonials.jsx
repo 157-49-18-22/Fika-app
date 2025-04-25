@@ -20,10 +20,10 @@ const TestimonialsContainer = styled.div`
 
 const TestimonialTitle = styled.h2`
   font-size: 1.6rem;
-  color: #ffffff;
+  color: #000000;
   text-align: center;
   margin-bottom: 1.2rem;
-  font-family: 'Playfair Display', serif;
+  font-family: 'Carmine', serif;
   position: relative;
   padding-bottom: 1rem;
 
@@ -35,50 +35,51 @@ const TestimonialTitle = styled.h2`
     transform: translateX(-50%);
     width: 40px;
     height: 2px;
-    background: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.5);
     border-radius: 2px;
   }
 `;
 
 const TestimonialCard = styled.div`
-  padding: 1rem;
-  border-radius: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
   margin: 0 10px;
-  background: rgba(255, 255, 255, 0.02);
+  background: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 `;
 
 const QuoteIcon = styled(FaQuoteLeft)`
-  font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.4);
-  margin-bottom: 0.6rem;
-  opacity: 0.15;
+  font-size: 1.5rem;
+  color: #cccccc;
+  margin-bottom: 0.8rem;
+  opacity: 0.8;
 `;
 
 const TestimonialText = styled.p`
-  font-size: 0.95rem;
-  color: #d0d0d0;
-  line-height: 1.5;
-  margin-bottom: 0.8rem;
+  font-size: 1rem;
+  color: #333333;
+  line-height: 1.6;
+  margin-bottom: 1rem;
   font-style: italic;
 `;
 
 const CustomerInfo = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  margin-top: 0.6rem;
-  padding-top: 0.6rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 0.8rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eeeeee;
 `;
 
 const CustomerImage = styled.img`
-  width: 35px;
-  height: 35px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  border: 2px solid #764ba2;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 `;
 
 const CustomerDetails = styled.div`
@@ -86,16 +87,16 @@ const CustomerDetails = styled.div`
 `;
 
 const CustomerName = styled.h4`
-  font-size: 0.9rem;
-  color: #ffffff;
+  font-size: 1rem;
+  color: #111111;
   margin: 0;
   font-weight: 600;
 `;
 
 const CustomerRole = styled.p`
-  font-size: 0.7rem;
-  color: #a0a0a0;
-  margin: 0.1rem 0;
+  font-size: 0.8rem;
+  color: #555555;
+  margin: 0.2rem 0;
 `;
 
 const RatingContainer = styled.div`
