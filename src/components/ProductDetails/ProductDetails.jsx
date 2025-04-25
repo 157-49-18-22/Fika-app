@@ -9,10 +9,10 @@ import {
   FaStarHalf,
   FaEye,
 } from "react-icons/fa";
-import { useCart } from "../context/CartContext.jsx";
-import { useWishlist } from "../context/WishlistContext.jsx";
-import { getAllProducts } from "../data/products";
-import "../styles/ProductDetails.css";
+import { useCart } from "../../context/CartContext.jsx";
+import { useWishlist } from "../../context/WishlistContext.jsx";
+import { getAllProducts } from "../../data/products";
+import "./ProductDetails.css";
 
 const ProductDetails = () => {
   const { id } = useParams();

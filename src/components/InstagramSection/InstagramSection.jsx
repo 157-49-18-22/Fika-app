@@ -1,6 +1,6 @@
-import React from 'react';
-import '../styles/InstagramSection.css';
-import fashion1 from '../assets/69.jpg'; // ✅ fixed name
+import React from "react";
+import "./InstagramSection.css";
+import fashion1 from "../../assets/69.jpg"; // ✅ fixed name
 
 const InstagramSection = () => {
   const images = [fashion1]; // ✅ using the correct variable

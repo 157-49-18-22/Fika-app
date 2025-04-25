@@ -1,30 +1,30 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import '../styles/Payment.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../../context/CartContext";
+import "./Payment.css";
 
 const Payment = ({ onClose }) => {
   const navigate = useNavigate();
   const { cart, getCartTotal } = useCart();
-  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [paymentMethod, setPaymentMethod] = useState("card");
   const [formData, setFormData] = useState({
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
-    name: '',
-    email: '',
-    address: '',
-    city: '',
-    country: '',
-    postalCode: ''
+    cardNumber: "",
+    expiryDate: "",
+    cvv: "",
+    name: "",
+    email: "",
+    address: "",
+    city: "",
+    country: "",
+    postalCode: "",
   });
   const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -42,20 +42,24 @@ const Payment = ({ onClose }) => {
     setTimeout(() => {
       setLoading(false);
       // Navigate to success page
-      navigate('/payment-success');
+      navigate("/payment-success");
     }, 2000);
   };
 
   return (
     <div className="payment-overlay">
       <div className="payment-modal">
-        <button className="close-button" onClick={onClose}>×</button>
+        <button className="close-button" onClick={onClose}>
+          ×
+        </button>
         <h2>Checkout</h2>
-        
+
         <div className="order-overview">
           <h3>Order Summary</h3>
           <div className="summary-details">
-            <p>Total Items: {cart.reduce((sum, item) => sum + item.quantity, 0)}</p>
+            <p>
+              Total Items: {cart.reduce((sum, item) => sum + item.quantity, 0)}
+            </p>
             <p>Total Amount: ${getCartTotal().toFixed(2)}</p>
           </div>
         </div>
@@ -63,15 +67,19 @@ const Payment = ({ onClose }) => {
         <div className="payment-methods">
           <h3>Payment Method</h3>
           <div className="method-options">
-            <button 
-              className={`method-btn ${paymentMethod === 'card' ? 'active' : ''}`}
-              onClick={() => setPaymentMethod('card')}
+            <button
+              className={`method-btn ${
+                paymentMethod === "card" ? "active" : ""
+              }`}
+              onClick={() => setPaymentMethod("card")}
             >
               Credit/Debit Card
             </button>
-            <button 
-              className={`method-btn ${paymentMethod === 'paypal' ? 'active' : ''}`}
-              onClick={() => setPaymentMethod('paypal')}
+            <button
+              className={`method-btn ${
+                paymentMethod === "paypal" ? "active" : ""
+              }`}
+              onClick={() => setPaymentMethod("paypal")}
             >
               PayPal
             </button>
@@ -101,7 +109,7 @@ const Payment = ({ onClose }) => {
             </div>
           </div>
 
-          {paymentMethod === 'card' && (
+          {paymentMethod === "card" && (
             <div className="form-section">
               <h3>Card Details</h3>
               <div className="form-row">
@@ -177,12 +185,12 @@ const Payment = ({ onClose }) => {
             </div>
           </div>
 
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="submit-payment-btn"
             disabled={loading}
           >
-            {loading ? 'Processing...' : `Pay $${getCartTotal().toFixed(2)}`}
+            {loading ? "Processing..." : `Pay $${getCartTotal().toFixed(2)}`}
           </button>
         </form>
       </div>
@@ -190,4 +198,4 @@ const Payment = ({ onClose }) => {
   );
 };
 
-export default Payment; 
+export default Payment;

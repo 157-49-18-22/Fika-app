@@ -1,6 +1,11 @@
-import React from 'react';
-import { FaFacebookF, FaInstagram, FaYoutube, FaLinkedinIn } from 'react-icons/fa';
-import '../styles/FashionFooter.css';
+import React from "react";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaYoutube,
+  FaLinkedinIn,
+} from "react-icons/fa";
+import "/FashionFooter.css";
 
 const FashionFooter = () => {
   return (
@@ -13,9 +18,15 @@ const FashionFooter = () => {
             <div className="footer-section">
               <h2 className="section-title">HELP & INFORMATION</h2>
               <ul className="link-list">
-                <li className="link-item"><a href="#">Help</a></li>
-                <li className="link-item"><a href="#">Track Order</a></li>
-                <li className="link-item"><a href="#">Delivery & Return</a></li>
+                <li className="link-item">
+                  <a href="#">Help</a>
+                </li>
+                <li className="link-item">
+                  <a href="#">Track Order</a>
+                </li>
+                <li className="link-item">
+                  <a href="#">Delivery & Return</a>
+                </li>
               </ul>
               <p className="copyright">Copyright @2025</p>
             </div>
@@ -43,10 +54,18 @@ const FashionFooter = () => {
             <div className="footer-section">
               <h2 className="section-title">MORE DETAILS</h2>
               <ul className="link-list">
-                <li className="link-item"><a href="#">About us</a></li>
-                <li className="link-item"><a href="#">Career</a></li>
-                <li className="link-item"><a href="#">Our Business</a></li>
-                <li className="link-item"><a href="#">Privacy Policy</a></li>
+                <li className="link-item">
+                  <a href="#">About us</a>
+                </li>
+                <li className="link-item">
+                  <a href="#">Career</a>
+                </li>
+                <li className="link-item">
+                  <a href="#">Our Business</a>
+                </li>
+                <li className="link-item">
+                  <a href="#">Privacy Policy</a>
+                </li>
               </ul>
             </div>
           </div>

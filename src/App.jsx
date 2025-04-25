@@ -4,14 +4,14 @@ import "./App.css";
 import Homepage from "./Component/Homepage";
 import { CartProvider } from "./context/CartContext.jsx";
 import { WishlistProvider } from "./context/WishlistContext.jsx";
-import NewArrivals from "./components/NewArrivals.jsx";
-import AllProducts from "./components/AllProducts.jsx";
-import Blog from "./components/Blog.jsx";
-import Contact from "./components/Contact.jsx";
-import Cart from "./components/Cart.jsx";
-import Wishlist from "./components/Wishlist.jsx";
-import ProductDetails from "./components/ProductDetails.jsx";
-import Layout from "./components/Layout.jsx";
+import NewArrivals from "./components/NewArrivals/NewArrivals.jsx";
+import AllProducts from "./components/AllProducts/AllProducts.jsx";
+import Blog from "./components/Blog/Blog.jsx";
+import Contact from "./components/Contact/Contact.jsx";
+import Cart from "./components/Cart/Cart.jsx";
+import Wishlist from "./components/Wishlist/Wishlist.jsx";
+import ProductDetails from "./components/ProductDetails/ProductDetails.jsx";
+import Layout from "./components/Layout/Layout.jsx";
 
 function App() {
   return (

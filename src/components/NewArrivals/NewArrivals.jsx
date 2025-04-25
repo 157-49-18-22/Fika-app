@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaShoppingCart, FaHeart, FaEye } from "react-icons/fa";
 import { toast } from "react-toastify";
-import { useCart } from "../context/CartContext.jsx";
-import { useWishlist } from "../context/WishlistContext.jsx";
+import { useCart } from "../../context/CartContext.jsx";
+import { useWishlist } from "../../context/WishlistContext.jsx";
 import {
   FaTimes,
   FaFilter,
@@ -13,7 +13,7 @@ import {
   FaChevronRight,
   FaArrowRight,
 } from "react-icons/fa";
-import "../styles/NewArrivals.css";
+import "./NewArrivals.css";
 
 const categoryProducts = {
   "Floral Summer Dress": [

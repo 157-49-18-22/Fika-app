@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useCart } from "../context/CartContext.jsx";
+import { useCart } from "../../context/CartContext.jsx";
 import {
   FaPlus,
   FaMinus,
@@ -9,8 +9,8 @@ import {
   FaArrowRight,
   FaShoppingBag,
 } from "react-icons/fa";
-import "../styles/Cart.css";
-import Payment from "./Payment";
+import "./Cart.css";
+import Payment from "../Payment/Payment";
 
 const Cart = () => {
   const { cart, removeFromCart, updateQuantity, getCartTotal } = useCart();

@@ -1,37 +1,37 @@
-import React, { useState } from 'react';
-import '../styles/Contact.css';
-import Testimonials from './Testimonials';
-import { FaHeart } from 'react-icons/fa';
+import React, { useState } from "react";
+import "./Contact.css";
+import Testimonials from "../Testimonials/Testimonials";
+import { FaHeart } from "react-icons/fa";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
   });
 
   const [showSuccess, setShowSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
+    setFormData((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Here you would typically send the form data to your backend
-    console.log('Form submitted:', formData);
+    console.log("Form submitted:", formData);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 3000);
     setFormData({
-      name: '',
-      email: '',
-      subject: '',
-      message: ''
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
     });
   };
 
@@ -39,10 +39,14 @@ const Contact = () => {
     <div className="contact-container">
       <div className="contact-header">
         <h1 className="typing-animation">
-          <FaHeart className="heart-icon" /> Get in Touch <FaHeart className="heart-icon" />
+          <FaHeart className="heart-icon" /> Get in Touch{" "}
+          <FaHeart className="heart-icon" />
         </h1>
-        <p className="subtitle">We'd love to hear from you! Whether you have a question about our products,
-          need support, or just want to share your experience, we're here to help.</p>
+        <p className="subtitle">
+          We'd love to hear from you! Whether you have a question about our
+          products, need support, or just want to share your experience, we're
+          here to help.
+        </p>
       </div>
 
       <div className="contact-content">
@@ -103,16 +107,20 @@ const Contact = () => {
                   required
                 ></textarea>
               </div>
-              <button type="submit" className="submit-btn">Send Message</button>
+              <button type="submit" className="submit-btn">
+                Send Message
+              </button>
               {showSuccess && (
                 <div className="success-message">
                   <span className="success-icon">✓</span>
-                  <span className="success-text">Message sent successfully!</span>
+                  <span className="success-text">
+                    Message sent successfully!
+                  </span>
                 </div>
               )}
             </form>
           </div>
-          
+
           <div className="testimonials-section">
             <Testimonials />
           </div>
@@ -122,4 +130,4 @@ const Contact = () => {
   );
 };
 
-export default Contact; 
+export default Contact;

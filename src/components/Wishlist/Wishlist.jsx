@@ -1,9 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useWishlist } from "../context/WishlistContext.jsx";
-import { useCart } from "../context/CartContext.jsx";
+import { useWishlist } from "../../context/WishlistContext.jsx";
+import { useCart } from "../../context/CartContext.jsx";
 import { FaHeart, FaArrowRight, FaShoppingCart, FaTrash } from "react-icons/fa";
-import "../styles/Wishlist.css";
+import "./Wishlist.css";
 
 const Wishlist = () => {
   const { wishlist, removeFromWishlist } = useWishlist();

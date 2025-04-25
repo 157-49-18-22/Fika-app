@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useCart } from "../context/CartContext.jsx";
-import { useWishlist } from "../context/WishlistContext.jsx";
+import { useCart } from "../../context/CartContext.jsx";
+import { useWishlist } from "../../context/WishlistContext.jsx";
 import { FaHeart, FaShoppingCart, FaEye, FaTimes } from "react-icons/fa";
-import "../styles/AllProducts.css";
-import { getAllProducts } from "../data/products";
+import "./AllProducts.css";
+import { getAllProducts } from "../../data/products";
 
 const AllProducts = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");

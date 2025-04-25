@@ -1,6 +1,7 @@
-import React from 'react';
-import styled from 'styled-components';
-import { FaQuoteLeft, FaStar } from 'react-icons/fa';
+import React from "react";
+import styled from "styled-components";
+import { FaQuoteLeft, FaStar } from "react-icons/fa";
+import "./Testimonials.css";
 
 const TestimonialsContainer = styled.div`
   width: 100%;
@@ -13,11 +14,11 @@ const TestimonialTitle = styled.h2`
   color: #333;
   text-align: center;
   margin-bottom: 2rem;
-  font-family: 'Playfair Display', serif;
+  font-family: "Playfair Display", serif;
   position: relative;
 
   &:after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -10px;
     left: 50%;
@@ -73,7 +74,7 @@ const TestimonialCard = styled.div`
   }
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 0;
     left: 0;
@@ -164,7 +165,7 @@ const testimonials = [
     name: "Sarah Johnson",
     role: "Regular Customer",
     image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150",
-    rating: 5
+    rating: 5,
   },
   {
     id: 2,
@@ -172,7 +173,7 @@ const testimonials = [
     name: "Michael Chen",
     role: "Fashion Enthusiast",
     image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
-    rating: 5
+    rating: 5,
   },
   {
     id: 3,
@@ -180,7 +181,7 @@ const testimonials = [
     name: "Emma Davis",
     role: "Verified Buyer",
     image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150",
-    rating: 5
+    rating: 5,
   },
   {
     id: 4,
@@ -188,8 +189,8 @@ const testimonials = [
     name: "David Wilson",
     role: "Style Enthusiast",
     image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150",
-    rating: 5
-  }
+    rating: 5,
+  },
 ];
 
 const Testimonials = () => {
@@ -220,4 +221,4 @@ const Testimonials = () => {
   );
 };
 
-export default Testimonials; 
+export default Testimonials;

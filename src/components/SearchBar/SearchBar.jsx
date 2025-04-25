@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { allProductsData } from "../data/products";
-import "../styles/SearchBar.css";
+import "/SearchBar.css";
 
 const SearchBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
