@@ -160,6 +160,19 @@ const Blog = () => {
               />
             </div>
           </div>
+          {/* Horizontal Category Bar */}
+          <div className="blog-category-bar">
+            {categories.map((category) => (
+              <button
+                key={category.id}
+                className={`blog-category-btn ${selectedCategory === category.id ? 'active' : ''}`}
+                onClick={() => handleCategoryClick(category.id)}
+              >
+                <span className="category-icon">{category.icon}</span>
+                {category.name}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -199,29 +212,6 @@ const Blog = () => {
                 </button>
               </div>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Blog Categories */}
-      <section className="blog-categories-section">
-        <div className="section-header">
-          <h2 className="section-title">BROWSE BY CATEGORY</h2>
-          <div className="section-divider"></div>
-          <p className="category-description">Discover articles tailored to your specific interests</p>
-        </div>
-        <div className="category-filters">
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              className={`category-btn ${
-                selectedCategory === category.id ? "active" : ""
-              }`}
-              onClick={() => handleCategoryClick(category.id)}
-            >
-              <span className="category-icon">{category.icon}</span>
-              {category.name}
-            </button>
           ))}
         </div>
       </section>
