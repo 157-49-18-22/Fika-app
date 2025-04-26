@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
-import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight } from "react-icons/fa";
+import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight, FaSlidersH, FaDollarSign, FaSortAmountDown } from "react-icons/fa";
 import { GiLargeDress, GiRunningShoe, GiWatch, GiHeartNecklace, GiTrousers } from "react-icons/gi";
 import "./AllProductsStyles.css";
 import { getAllProducts } from "../../data/products";
@@ -20,6 +20,10 @@ const AllProducts = () => {
   const [priceRange, setPriceRange] = useState([0, 1000]);
   const [showDropdown, setShowDropdown] = useState(false);
   const searchRef = useRef(null);
+  const [minRating, setMinRating] = useState(0);
+  const [showDiscounted, setShowDiscounted] = useState(false);
+  const [inStockOnly, setInStockOnly] = useState(false);
+  const [selectedGender, setSelectedGender] = useState('all');
   
   const { addToCart } = useCart();
   const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
@@ -68,14 +72,26 @@ const AllProducts = () => {
     { id: "nameDesc", name: "Name: Z-A" },
   ];
 
-  // Filter products by category and search query
+  // Count products per category
+  const categoryCounts = categories.reduce((acc, cat) => {
+    acc[cat.id] = allProducts.filter(
+      (product) => cat.id === 'all' || product.category === cat.id
+    ).length;
+    return acc;
+  }, {});
+
+  // Filter products by category, search, price, rating, discount, stock, gender
   const filteredProducts = allProducts.filter(
     (product) =>
       (selectedCategory === "all" || product.category === selectedCategory) &&
       (searchQuery === "" || 
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.category.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      (product.price >= priceRange[0] && product.price <= priceRange[1])
+      (product.price >= priceRange[0] && product.price <= priceRange[1]) &&
+      (minRating === 0 || (product.rating && product.rating >= minRating)) &&
+      (!showDiscounted || product.discount) &&
+      (!inStockOnly || product.inStock) &&
+      (selectedGender === 'all' || (product.gender && product.gender.toLowerCase() === selectedGender))
   );
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
@@ -215,77 +231,129 @@ const AllProducts = () => {
           <div className="products-divider"></div>
         </div>
 
+        {/* Horizontal Category Bar */}
+        <div className="category-bar-horizontal">
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              className={`category-btn-horizontal ${selectedCategory === category.id ? "active" : ""}`}
+              onClick={() => {
+                setSelectedCategory(category.id);
+                setVisibleItems(12);
+              }}
+            >
+              <span className="category-icon-horizontal">{category.icon}</span>
+              {category.name} <span style={{color:'#888',fontWeight:400}}>({categoryCounts[category.id]})</span>
+            </button>
+          ))}
+        </div>
+
         {/* Filters Bar */}
-        <div className="filters-bar">
+        {/* <div className="filters-bar">
           <button 
             className="filter-toggle-btn" 
             onClick={() => setFiltersVisible(!filtersVisible)}
           >
-            <FaFilter /> Filters
+            Filters
           </button>
-        </div>
+        </div> */}
 
         <div className="products-main-content">
           {/* Side Filters Panel */}
           <div className={`products-filters ${filtersVisible ? 'visible' : ''}`}>
             <div className="filters-header">
-              <h3>Filters</h3>
+              <h3><FaSlidersH /> Filters</h3>
               <button className="close-filters" onClick={() => setFiltersVisible(false)}>×</button>
             </div>
             
+            {/* Gender Filter */}
             <div className="filter-group">
-              <h4>Categories</h4>
-              <div className="category-filters">
-                {categories.map((category) => (
-                  <button
-                    key={category.id}
-                    className={`category-btn ${selectedCategory === category.id ? "active" : ""}`}
-                    onClick={() => {
-                      setSelectedCategory(category.id);
-                      setVisibleItems(12);
-                    }}
-                  >
-                    <span className="category-icon">{category.icon}</span>
-                    {category.name}
-                  </button>
+              <h4>Gender</h4>
+              <div className="gender-options">
+                {['all', 'men', 'women', 'unisex'].map((gender) => (
+                  <label key={gender} className="gender-radio">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value={gender}
+                      checked={selectedGender === gender}
+                      onChange={() => setSelectedGender(gender)}
+                    />
+                    {gender.charAt(0).toUpperCase() + gender.slice(1)}
+                  </label>
                 ))}
               </div>
             </div>
             
+            {/* Minimum Rating Filter */}
             <div className="filter-group">
-              <h4>Price Range</h4>
-              <div className="price-slider-container">
-                <div className="price-inputs">
-                  <div className="price-field">
-                    <span>Min</span>
+              <h4><FaStar /> Minimum Rating</h4>
+              <div className="rating-options">
+                {[4, 3, 2, 1].map((star) => (
+                  <label key={star} className="rating-checkbox">
                     <input
-                      type="number"
-                      min="0"
-                      max={priceRange[1]}
-                      value={priceRange[0]}
-                      onChange={(e) => handlePriceChange(e, 0)}
+                      type="radio"
+                      name="minRating"
+                      value={star}
+                      checked={minRating === star}
+                      onChange={() => setMinRating(star)}
                     />
-                  </div>
-                  <div className="price-field">
-                    <span>Max</span>
-                    <input
-                      type="number"
-                      min={priceRange[0]}
-                      max="1000"
-                      value={priceRange[1]}
-                      onChange={(e) => handlePriceChange(e, 1)}
-                    />
-                  </div>
-                </div>
-                <div className="price-range-display">
-                  <span>${priceRange[0]}</span>
-                  <span>${priceRange[1]}</span>
-                </div>
+                    {star} stars & up
+                  </label>
+                ))}
+                <label className="rating-checkbox">
+                  <input
+                    type="radio"
+                    name="minRating"
+                    value={0}
+                    checked={minRating === 0}
+                    onChange={() => setMinRating(0)}
+                  />
+                  Any
+                </label>
               </div>
             </div>
             
+            {/* On Sale & In Stock Only */}
             <div className="filter-group">
-              <h4>Sort By</h4>
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={showDiscounted}
+                  onChange={() => setShowDiscounted((v) => !v)}
+                />
+                On Sale
+              </label>
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  checked={inStockOnly}
+                  onChange={() => setInStockOnly((v) => !v)}
+                />
+                In Stock Only
+              </label>
+            </div>
+            
+            {/* Price Range */}
+            <div className="filter-group">
+              <h4><FaDollarSign /> Price Range</h4>
+              <input
+                type="range"
+                min="0"
+                max="1000"
+                value={priceRange[1]}
+                onChange={e => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                className="price-slider"
+              />
+              <div className="price-range-display">
+                <span>${priceRange[0]}</span>
+                <span>${priceRange[1]}</span>
+              </div>
+            </div>
+            
+            {/* Sort By */}
+            <div className="filter-group">
+              <h4><FaSortAmountDown /> Sort By</h4>
               <select
                 className="sort-select"
                 value={sortOption}
@@ -298,6 +366,21 @@ const AllProducts = () => {
                 ))}
               </select>
             </div>
+            
+            {/* Clear All Filters Button */}
+            <button className="reset-filters-btn" style={{marginTop:16, width:'100%'}}
+              onClick={() => {
+                setSelectedCategory('all');
+                setMinRating(0);
+                setShowDiscounted(false);
+                setInStockOnly(false);
+                setPriceRange([0, 1000]);
+                setSortOption('featured');
+                setSelectedGender('all');
+              }}
+            >
+              Clear All Filters
+            </button>
           </div>
 
           {/* Main Products Grid */}

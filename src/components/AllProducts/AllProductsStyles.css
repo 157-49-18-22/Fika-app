@@ -154,23 +154,6 @@
   background-color: #333;
 }
 
-.filter-toggle-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  background-color: white;
-  border: 1px solid var(--border-color);
-  border-radius: 30px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: var(--shadow-sm);
-}
-
-.filter-toggle-btn:hover {
-  background-color: var(--light-gray);
-}
 
 /* Main Content Layout */
 .products-main-content {
@@ -182,13 +165,19 @@
 
 /* Side Filters */
 .products-filters {
-  background-color: white;
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow-md);
-  padding: 25px;
-  height: fit-content;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(60, 60, 120, 0.10);
+  padding: 32px 24px;
+  border-left: 5px solid #6a11cb;
+  transition: box-shadow 0.3s;
   position: sticky;
   top: 30px;
+  height: 800px;
+}
+
+.products-filters:hover {
+  box-shadow: 0 16px 40px rgba(60, 60, 120, 0.18);
 }
 
 .filters-header {
@@ -201,10 +190,11 @@
 }
 
 .filters-header h3 {
-  font-family: var(--heading-font);
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.4rem;
+  color: #6a11cb;
 }
 
 .close-filters {
@@ -226,10 +216,11 @@
 }
 
 .filter-group h4 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 15px;
-  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1.05rem;
+  color: #2575fc;
 }
 
 .category-filters {
@@ -304,17 +295,25 @@
   color: var(--text-color);
 }
 
-.sort-select {
+.price-slider {
   width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0, 0, 16, 16'%3E%3Cpath fill='%23333' d='M8 12L2 6h12z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 12px;
-  cursor: pointer;
+  margin: 10px 0 18px 0;
+  accent-color: #6a11cb;
+  height: 4px;
+}
+
+.sort-select {
+  border-radius: 8px;
+  border: 1.5px solid #e1e1e1;
+  padding: 10px 12px;
+  font-size: 1rem;
+  background: #f8f8ff;
+  transition: border 0.2s;
+}
+
+.sort-select:focus {
+  border: 1.5px solid #6a11cb;
+  outline: none;
 }
 
 /* Product Content Section */
@@ -1121,4 +1120,108 @@
   color: var(--medium-gray);
   font-size: 0.9rem;
   background: white;
+}
+
+/* Horizontal Category Bar */
+.category-bar-horizontal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0 32px 0;
+  flex-wrap: wrap;
+  padding-bottom: 0;
+  font-size: 0.98rem;
+}
+
+.category-bar-horizontal::-webkit-scrollbar {
+  height: 6px;
+}
+.category-bar-horizontal::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+.category-bar-horizontal::-webkit-scrollbar-track {
+  background: #f5f5f5;
+}
+
+.category-btn-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: 24px;
+  border: none;
+  background: #f5f5f5;
+  color: #222;
+  font-weight: 500;
+  font-size: 0.93rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.category-btn-horizontal.active {
+  background: #222;
+  color: #fff;
+}
+
+.category-btn-horizontal:hover {
+  background: #e1e1e1;
+}
+
+.category-icon-horizontal {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+}
+
+.rating-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.rating-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.98rem;
+  cursor: pointer;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 0.98rem;
+  cursor: pointer;
+}
+
+.category-bar-horizontal span {
+  display: flex;
+  align-items: center;
+}
+
+.category-bar-horizontal span:last-child {
+  margin-left: 4px;
+  font-size: 0.95em;
+  color: #888;
+}
+
+.gender-options {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.gender-radio {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.98rem;
+  cursor: pointer;
 } 
