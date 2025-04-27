@@ -32,7 +32,7 @@
 
 .navbar-right {
     justify-content: flex-end;
-    gap: 15px;
+    gap: 40px;
 }
 
 .navbar-center {
@@ -141,6 +141,8 @@
 }
 
 .badge {
+    margin-top: 30px;
+    margin-right: 82px;
     position: absolute;
     top: -8px;
     right: -8px;
@@ -148,8 +150,8 @@
     color: #fff;
     font-size: 10px;
     font-weight: 600;
-    height: 16px;
-    width: 16px;
+    height: 15px;
+    width: 15px;
     border-radius: 50%;
     display: flex;
     align-items: center;
