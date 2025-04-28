@@ -4,7 +4,6 @@
 .fashion-footer {
   background: linear-gradient(135deg, #fafafc 0%, #f5f7fa 100%);
   padding: 5rem 1rem;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   position: relative;
   overflow: hidden;
 }

@@ -19,12 +19,6 @@
   --border-color: #dfe6e9;
 }
 
-.wishlist-container {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 1.5rem;
-}
-
 .wishlist-container h2 {
   font-size: 2rem;
   color: var(--text-dark);

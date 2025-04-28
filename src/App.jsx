@@ -13,13 +13,14 @@ import Wishlist from './components/Wishlist/Wishlist.jsx';
 import CategoryProducts from './components/CategoryProducts/CategoryProducts.jsx';
 import Navbar from './Component/Navbar/Navbar.jsx';
 import './App.css';
-
+import Footer from './Component/Footer/Footer.jsx';
 // Non-homepage layout component
 const PageLayout = ({ children }) => {
   return (
     <div>
       <Navbar />
       {children}
+      <Footer />
     </div>
   );
 };

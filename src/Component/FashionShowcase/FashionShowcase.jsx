@@ -23,7 +23,7 @@ const FashionShowcase = () => {
               Finds. Discover Your Signature Style At Fashion Avenue.
             </p>
           </div>
-          <div className="shop-now-btn">
+          <div className="shop-nowbtn">
             <span>Shop Now</span>
             <div className="arrow-icon">
               <svg
