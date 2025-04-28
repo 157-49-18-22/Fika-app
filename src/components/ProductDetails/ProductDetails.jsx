@@ -349,162 +349,164 @@ const ProductDetails = () => {
               Product added to cart successfully!
             </div>
           )}
+        </div>
+      </div>
 
-          <div className="product-tabs">
-            <div className="tab-buttons">
-              <button
-                className={activeTab === "description" ? "active" : ""}
-                onClick={() => setActiveTab("description")}
-              >
-                Description
-              </button>
-              <button
-                className={activeTab === "details" ? "active" : ""}
-                onClick={() => setActiveTab("details")}
-              >
-                Details
-              </button>
-              <button
-                className={activeTab === "reviews" ? "active" : ""}
-                onClick={() => setActiveTab("reviews")}
-              >
-                Reviews ({product.reviewsCount})
-              </button>
-              <button
-                className={activeTab === "shipping" ? "active" : ""}
-                onClick={() => setActiveTab("shipping")}
-              >
-                Shipping & Returns
-              </button>
-            </div>
+      <div className="product-tabs-section">
+        <div className="product-tabs">
+          <div className="tab-buttons">
+            <button
+              className={activeTab === "description" ? "active" : ""}
+              onClick={() => setActiveTab("description")}
+            >
+              Description
+            </button>
+            <button
+              className={activeTab === "details" ? "active" : ""}
+              onClick={() => setActiveTab("details")}
+            >
+              Details
+            </button>
+            <button
+              className={activeTab === "reviews" ? "active" : ""}
+              onClick={() => setActiveTab("reviews")}
+            >
+              Reviews ({product.reviewsCount})
+            </button>
+            <button
+              className={activeTab === "shipping" ? "active" : ""}
+              onClick={() => setActiveTab("shipping")}
+            >
+              Shipping & Returns
+            </button>
+          </div>
 
-            <div className="tab-content">
-              {activeTab === "description" && (
-                <div className="description">
-                  <p>{product.description}</p>
-                  <div className="description-features">
-                    <h4>Key Features</h4>
-                    <ul>
-                      <li>Premium quality materials</li>
-                      <li>Handcrafted with attention to detail</li>
-                      <li>Eco-friendly production process</li>
-                      <li>Designed for comfort and style</li>
-                    </ul>
+          <div className="tab-content">
+            {activeTab === "description" && (
+              <div className="description">
+                <p>{product.description}</p>
+                <div className="description-features">
+                  <h4>Key Features</h4>
+                  <ul>
+                    <li>Premium quality materials</li>
+                    <li>Handcrafted with attention to detail</li>
+                    <li>Eco-friendly production process</li>
+                    <li>Designed for comfort and style</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+            {activeTab === "details" && (
+              <div className="details">
+                <div className="details-section">
+                  <h4>Material & Care</h4>
+                  <p>
+                    <strong>Material:</strong> {product.material}
+                  </p>
+                  <p>
+                    <strong>Care Instructions:</strong> {product.care}
+                  </p>
+                </div>
+                <div className="details-section">
+                  <h4>Product Specifications</h4>
+                  <ul>
+                    <li>Weight: {product.weight || "0.5 kg"}</li>
+                    <li>Dimensions: {product.dimensions || "30 x 20 x 10 cm"}</li>
+                    <li>Origin: {product.origin || "Made in USA"}</li>
+                  </ul>
+                </div>
+              </div>
+            )}
+            {activeTab === "reviews" && (
+              <div className="reviews">
+                <div className="rating-summary">
+                  <div className="average-rating">
+                    <h3>{product.rating.toFixed(1)}</h3>
+                    <div className="stars">{renderStars(product.rating)}</div>
+                    <p>Based on {product.reviewsCount} reviews</p>
+                  </div>
+                  <div className="rating-distribution">
+                    <div className="rating-bar">
+                      <span>5 Stars</span>
+                      <div className="bar">
+                        <div className="fill" style={{ width: "80%" }}></div>
+                      </div>
+                      <span>80%</span>
+                    </div>
+                    <div className="rating-bar">
+                      <span>4 Stars</span>
+                      <div className="bar">
+                        <div className="fill" style={{ width: "15%" }}></div>
+                      </div>
+                      <span>15%</span>
+                    </div>
+                    <div className="rating-bar">
+                      <span>3 Stars</span>
+                      <div className="bar">
+                        <div className="fill" style={{ width: "3%" }}></div>
+                      </div>
+                      <span>3%</span>
+                    </div>
+                    <div className="rating-bar">
+                      <span>2 Stars</span>
+                      <div className="bar">
+                        <div className="fill" style={{ width: "1%" }}></div>
+                      </div>
+                      <span>1%</span>
+                    </div>
+                    <div className="rating-bar">
+                      <span>1 Star</span>
+                      <div className="bar">
+                        <div className="fill" style={{ width: "1%" }}></div>
+                      </div>
+                      <span>1%</span>
+                    </div>
                   </div>
                 </div>
-              )}
-              {activeTab === "details" && (
-                <div className="details">
-                  <div className="details-section">
-                    <h4>Material & Care</h4>
-                    <p>
-                      <strong>Material:</strong> {product.material}
-                    </p>
-                    <p>
-                      <strong>Care Instructions:</strong> {product.care}
-                    </p>
-                  </div>
-                  <div className="details-section">
-                    <h4>Product Specifications</h4>
-                    <ul>
-                      <li>Weight: {product.weight || "0.5 kg"}</li>
-                      <li>Dimensions: {product.dimensions || "30 x 20 x 10 cm"}</li>
-                      <li>Origin: {product.origin || "Made in USA"}</li>
-                    </ul>
-                  </div>
-                </div>
-              )}
-              {activeTab === "reviews" && (
-                <div className="reviews">
-                  <div className="rating-summary">
-                    <div className="average-rating">
-                      <h3>{product.rating.toFixed(1)}</h3>
-                      <div className="stars">{renderStars(product.rating)}</div>
-                      <p>Based on {product.reviewsCount} reviews</p>
-                    </div>
-                    <div className="rating-distribution">
-                      <div className="rating-bar">
-                        <span>5 Stars</span>
-                        <div className="bar">
-                          <div className="fill" style={{ width: "80%" }}></div>
-                        </div>
-                        <span>80%</span>
-                      </div>
-                      <div className="rating-bar">
-                        <span>4 Stars</span>
-                        <div className="bar">
-                          <div className="fill" style={{ width: "15%" }}></div>
-                        </div>
-                        <span>15%</span>
-                      </div>
-                      <div className="rating-bar">
-                        <span>3 Stars</span>
-                        <div className="bar">
-                          <div className="fill" style={{ width: "3%" }}></div>
-                        </div>
-                        <span>3%</span>
-                      </div>
-                      <div className="rating-bar">
-                        <span>2 Stars</span>
-                        <div className="bar">
-                          <div className="fill" style={{ width: "1%" }}></div>
-                        </div>
-                        <span>1%</span>
-                      </div>
-                      <div className="rating-bar">
-                        <span>1 Star</span>
-                        <div className="bar">
-                          <div className="fill" style={{ width: "1%" }}></div>
-                        </div>
-                        <span>1%</span>
-                      </div>
-                    </div>
-                  </div>
-                  {product.reviews && product.reviews.length > 0 ? (
-                    <div className="reviews-list">
-                      {product.reviews.map((review, index) => (
-                        <div key={review.id || index} className="review-item">
-                          <div className="review-header">
-                            <h4>{review.name}</h4>
-                            <div className="review-rating">
-                              {renderStars(review.rating)}
-                            </div>
-                            <span className="review-date">{review.date}</span>
+                {product.reviews && product.reviews.length > 0 ? (
+                  <div className="reviews-list">
+                    {product.reviews.map((review, index) => (
+                      <div key={review.id || index} className="review-item">
+                        <div className="review-header">
+                          <h4>{review.name}</h4>
+                          <div className="review-rating">
+                            {renderStars(review.rating)}
                           </div>
-                          <p className="review-comment">{review.comment}</p>
+                          <span className="review-date">{review.date}</span>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="no-reviews">
-                      No reviews yet. Be the first to review this product!
-                    </p>
-                  )}
-                </div>
-              )}
-              {activeTab === "shipping" && (
-                <div className="shipping-info">
-                  <div className="shipping-section">
-                    <h4>Shipping Information</h4>
-                    <ul>
-                      <li>Free shipping on orders over $50</li>
-                      <li>Standard delivery: 3-5 business days</li>
-                      <li>Express delivery: 1-2 business days</li>
-                      <li>International shipping available</li>
-                    </ul>
+                        <p className="review-comment">{review.comment}</p>
+                      </div>
+                    ))}
                   </div>
-                  <div className="returns-section">
-                    <h4>Returns Policy</h4>
-                    <ul>
-                      <li>30-day return policy</li>
-                      <li>Free returns for all items</li>
-                      <li>Items must be unused and in original packaging</li>
-                      <li>Refund will be processed within 5-7 business days</li>
-                    </ul>
-                  </div>
+                ) : (
+                  <p className="no-reviews">
+                    No reviews yet. Be the first to review this product!
+                  </p>
+                )}
+              </div>
+            )}
+            {activeTab === "shipping" && (
+              <div className="shipping-info">
+                <div className="shipping-section">
+                  <h4>Shipping Information</h4>
+                  <ul>
+                    <li>Free shipping on orders over $50</li>
+                    <li>Standard delivery: 3-5 business days</li>
+                    <li>Express delivery: 1-2 business days</li>
+                    <li>International shipping available</li>
+                  </ul>
                 </div>
-              )}
-            </div>
+                <div className="returns-section">
+                  <h4>Returns Policy</h4>
+                  <ul>
+                    <li>30-day return policy</li>
+                    <li>Free returns for all items</li>
+                    <li>Items must be unused and in original packaging</li>
+                    <li>Refund will be processed within 5-7 business days</li>
+                  </ul>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
