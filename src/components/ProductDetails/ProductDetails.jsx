@@ -45,11 +45,35 @@ const ProductDetails = () => {
     { name: "Yellow", code: "#FFFF00", available: true },
     { name: "Purple", code: "#800080", available: true }
   ]);
+  const [pincode, setPincode] = useState('');
+  const [deliveryDate, setDeliveryDate] = useState(null);
+  const [pincodeError, setPincodeError] = useState('');
+  const galleryRef = useRef(null);
+  const wrapperRef = useRef(null);
 
   const product = getAllProducts().find((p) => p.id === parseInt(id));
   const relatedProducts = getAllProducts()
     .filter((p) => p.category === product?.category && p.id !== product?.id)
     .slice(0, 4);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (galleryRef.current && wrapperRef.current) {
+        const wrapperRect = wrapperRef.current.getBoundingClientRect();
+        const galleryRect = galleryRef.current.getBoundingClientRect();
+        
+        if (wrapperRect.top <= 0 && wrapperRect.bottom >= galleryRect.height) {
+          const translateY = -wrapperRect.top;
+          galleryRef.current.style.transform = `translateY(${translateY}px)`;
+        } else if (wrapperRect.top > 0) {
+          galleryRef.current.style.transform = 'translateY(0)';
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   if (!product) {
     return (
@@ -104,6 +128,26 @@ const ProductDetails = () => {
   const handleQuickView = (productId, e) => {
     e.stopPropagation();
     navigate(`/product/${productId}`);
+  };
+
+  const handlePincodeCheck = () => {
+    // Basic validation for Indian pincode (6 digits)
+    if (!/^\d{6}$/.test(pincode)) {
+      setPincodeError('Please enter a valid 6-digit pincode');
+      setDeliveryDate(null);
+      return;
+    }
+
+    setPincodeError('');
+    // Simulate delivery date calculation (usually 3-7 days)
+    const today = new Date();
+    const deliveryDays = Math.floor(Math.random() * 5) + 3; // Random between 3-7 days
+    const delivery = new Date(today);
+    delivery.setDate(today.getDate() + deliveryDays);
+    
+    // Format date as "Day, DD Month YYYY"
+    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    setDeliveryDate(delivery.toLocaleDateString('en-IN', options));
   };
 
   const renderStars = (rating) => {
@@ -193,8 +237,10 @@ const ProductDetails = () => {
 
   return (
     <div className="product-details-container">
-      <div className="product-details-wrapper">
-        <ProductGallery images={productImages} />
+      <div className="product-details-wrapper" ref={wrapperRef}>
+        <div className="product-gallery" ref={galleryRef}>
+          <ProductGallery images={productImages} />
+        </div>
 
         <div className="product-info">
           <nav className="breadcrumb">
@@ -260,6 +306,27 @@ const ProductDetails = () => {
             {selectedColor && (
               <div className="selected-color-info">
                 Selected: {availableColors.find(c => c.code === selectedColor)?.name}
+              </div>
+            )}
+          </div>
+
+          <div className="delivery-check">
+            <h3>Check Delivery Date</h3>
+            <div className="pincode-input">
+              <input
+                type="text"
+                placeholder="Enter 6-digit pincode"
+                value={pincode}
+                onChange={(e) => setPincode(e.target.value)}
+                maxLength={6}
+              />
+              <button onClick={handlePincodeCheck}>Check</button>
+            </div>
+            {pincodeError && <div className="error-message">{pincodeError}</div>}
+            {deliveryDate && (
+              <div className="delivery-date">
+                <span className="delivery-icon">🚚</span>
+                <span>Expected delivery by {deliveryDate}</span>
               </div>
             )}
           </div>
