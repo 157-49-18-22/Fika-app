@@ -1,7 +1,8 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext.jsx';
 import { WishlistProvider } from './context/WishlistContext.jsx';
+import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import Homepage from './Component/Homepage.jsx';
 import NewArrivals from './components/NewArrivals/NewArrivals.jsx';
 import AllProducts from './components/AllProducts/AllProducts.jsx';
@@ -12,8 +13,11 @@ import Cart from './components/Cart.jsx';
 import Wishlist from './components/Wishlist/Wishlist.jsx';
 import CategoryProducts from './components/CategoryProducts/CategoryProducts.jsx';
 import Navbar from './Component/Navbar/Navbar.jsx';
+import Login from './components/Login/Login.jsx';
+import Signup from './components/Signup.jsx';
 import './App.css';
 import Footer from './Component/Footer/Footer.jsx';
+
 // Non-homepage layout component
 const PageLayout = ({ children }) => {
   return (
@@ -25,57 +29,92 @@ const PageLayout = ({ children }) => {
   );
 };
 
+// Protected Route component
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
+
 function App() {
   return (
-    <CartProvider>
-      <WishlistProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<Homepage />} />
-            <Route path="/new-arrivals" element={
-              <PageLayout>
-                <NewArrivals />
-              </PageLayout>
-            } />
-            <Route path="/all-products" element={
-              <PageLayout>
-                <AllProducts />
-              </PageLayout>
-            } />
-            <Route path="/blog" element={
-              <PageLayout>
-                <Blog />
-              </PageLayout>
-            } />
-            <Route path="/contact" element={
-              <PageLayout>
-                <Contact />
-              </PageLayout>
-            } />
-            <Route path="/product/:id" element={
-              <PageLayout>
-                <ProductDetails />
-              </PageLayout>
-            } />
-            <Route path="/cart" element={
-              <PageLayout>
-                <Cart />
-              </PageLayout>
-            } />
-            <Route path="/wishlist" element={
-              <PageLayout>
-                <Wishlist />
-              </PageLayout>
-            } />
-            <Route path="/category/:categoryName" element={
-              <PageLayout>
-                <CategoryProducts />
-              </PageLayout>
-            } />
-          </Routes>
-        </Router>
-      </WishlistProvider>
-    </CartProvider>
+    <AuthProvider>
+      <CartProvider>
+        <WishlistProvider>
+          <Router>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/" element={
+                <ProtectedRoute>
+                  <Homepage />
+                </ProtectedRoute>
+              } />
+              <Route path="/new-arrivals" element={
+                <ProtectedRoute>
+                  <PageLayout>
+                    <NewArrivals />
+                  </PageLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/all-products" element={
+                <ProtectedRoute>
+                  <PageLayout>
+                    <AllProducts />
+                  </PageLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/blog" element={
+                <ProtectedRoute>
+                  <PageLayout>
+                    <Blog />
+                  </PageLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/contact" element={
+                <ProtectedRoute>
+                  <PageLayout>
+                    <Contact />
+                  </PageLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/product/:id" element={
+                <ProtectedRoute>
+                  <PageLayout>
+                    <ProductDetails />
+                  </PageLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/cart" element={
+                <ProtectedRoute>
+                  <PageLayout>
+                    <Cart />
+                  </PageLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/wishlist" element={
+                <ProtectedRoute>
+                  <PageLayout>
+                    <Wishlist />
+                  </PageLayout>
+                </ProtectedRoute>
+              } />
+              <Route path="/category/:categoryName" element={
+                <ProtectedRoute>
+                  <PageLayout>
+                    <CategoryProducts />
+                  </PageLayout>
+                </ProtectedRoute>
+              } />
+            </Routes>
+          </Router>
+        </WishlistProvider>
+      </CartProvider>
+    </AuthProvider>
   );
 }
 
