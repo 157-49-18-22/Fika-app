@@ -8,6 +8,14 @@ import {
   FaStar,
   FaStarHalf,
   FaEye,
+  FaTruck,
+  FaUndo,
+  FaShieldAlt,
+  FaTag,
+  FaInstagram,
+  FaPinterest,
+  FaTwitter,
+  FaFacebook,
 } from "react-icons/fa";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
@@ -24,6 +32,7 @@ const ProductDetails = () => {
   const [activeTab, setActiveTab] = useState("description");
   const [selectedImage, setSelectedImage] = useState(0);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showSizeGuide, setShowSizeGuide] = useState(false);
 
   const product = getAllProducts().find((p) => p.id === parseInt(id));
   const relatedProducts = getAllProducts()
@@ -129,6 +138,10 @@ const ProductDetails = () => {
               }}
             />
           </div>
+          {product.isNew && <div className="new-badge">NEW</div>}
+          {product.discount && (
+            <div className="discount-badge">-{product.discount}%</div>
+          )}
         </div>
       </div>
     );
@@ -175,11 +188,47 @@ const ProductDetails = () => {
             </div>
           </div>
 
+          <div className="product-features">
+            <div className="feature-item">
+              <FaTruck />
+              <span>Free Shipping</span>
+            </div>
+            <div className="feature-item">
+              <FaUndo />
+              <span>30 Days Return</span>
+            </div>
+            <div className="feature-item">
+              <FaShieldAlt />
+              <span>Secure Payment</span>
+            </div>
+          </div>
+
+          <div className="product-colors">
+            <h3>Available Colors</h3>
+            <div className="color-options">
+              {product.colors?.map((color) => (
+                <div
+                  key={color}
+                  className="color-option"
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
+          </div>
+
           <div className="main-cart-section">
             <div className="cart-options">
               {product.sizes && (
                 <div className="size-selection">
-                  <h3>Select Size</h3>
+                  <div className="size-header">
+                    <h3>Select Size</h3>
+                    <button
+                      className="size-guide-btn"
+                      onClick={() => setShowSizeGuide(!showSizeGuide)}
+                    >
+                      Size Guide
+                    </button>
+                  </div>
                   <div className="size-options">
                     {product.sizes.map((size) => (
                       <button
@@ -193,6 +242,42 @@ const ProductDetails = () => {
                       </button>
                     ))}
                   </div>
+                  {showSizeGuide && (
+                    <div className="size-guide">
+                      <h4>Size Guide</h4>
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Size</th>
+                            <th>Width (cm)</th>
+                            <th>Length (cm)</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>S</td>
+                            <td>45</td>
+                            <td>65</td>
+                          </tr>
+                          <tr>
+                            <td>M</td>
+                            <td>50</td>
+                            <td>70</td>
+                          </tr>
+                          <tr>
+                            <td>L</td>
+                            <td>55</td>
+                            <td>75</td>
+                          </tr>
+                          <tr>
+                            <td>XL</td>
+                            <td>60</td>
+                            <td>80</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -239,6 +324,24 @@ const ProductDetails = () => {
                 <FaHeart />
               </button>
             </div>
+
+            <div className="social-share">
+              <h3>Share this product</h3>
+              <div className="social-icons">
+                <a href="#" className="social-icon">
+                  <FaFacebook />
+                </a>
+                <a href="#" className="social-icon">
+                  <FaTwitter />
+                </a>
+                <a href="#" className="social-icon">
+                  <FaInstagram />
+                </a>
+                <a href="#" className="social-icon">
+                  <FaPinterest />
+                </a>
+              </div>
+            </div>
           </div>
 
           {showSuccessMessage && (
@@ -267,28 +370,48 @@ const ProductDetails = () => {
               >
                 Reviews ({product.reviewsCount})
               </button>
+              <button
+                className={activeTab === "shipping" ? "active" : ""}
+                onClick={() => setActiveTab("shipping")}
+              >
+                Shipping & Returns
+              </button>
             </div>
 
             <div className="tab-content">
               {activeTab === "description" && (
                 <div className="description">
                   <p>{product.description}</p>
+                  <div className="description-features">
+                    <h4>Key Features</h4>
+                    <ul>
+                      <li>Premium quality materials</li>
+                      <li>Handcrafted with attention to detail</li>
+                      <li>Eco-friendly production process</li>
+                      <li>Designed for comfort and style</li>
+                    </ul>
+                  </div>
                 </div>
               )}
               {activeTab === "details" && (
                 <div className="details">
-                  <p>
-                    <strong>Material:</strong> {product.material}
-                  </p>
-                  <p>
-                    <strong>Care Instructions:</strong> {product.care}
-                  </p>
-                  {product.colors && (
+                  <div className="details-section">
+                    <h4>Material & Care</h4>
                     <p>
-                      <strong>Available Colors:</strong>{" "}
-                      {product.colors.join(", ")}
+                      <strong>Material:</strong> {product.material}
                     </p>
-                  )}
+                    <p>
+                      <strong>Care Instructions:</strong> {product.care}
+                    </p>
+                  </div>
+                  <div className="details-section">
+                    <h4>Product Specifications</h4>
+                    <ul>
+                      <li>Weight: {product.weight || "0.5 kg"}</li>
+                      <li>Dimensions: {product.dimensions || "30 x 20 x 10 cm"}</li>
+                      <li>Origin: {product.origin || "Made in USA"}</li>
+                    </ul>
+                  </div>
                 </div>
               )}
               {activeTab === "reviews" && (
@@ -298,6 +421,43 @@ const ProductDetails = () => {
                       <h3>{product.rating.toFixed(1)}</h3>
                       <div className="stars">{renderStars(product.rating)}</div>
                       <p>Based on {product.reviewsCount} reviews</p>
+                    </div>
+                    <div className="rating-distribution">
+                      <div className="rating-bar">
+                        <span>5 Stars</span>
+                        <div className="bar">
+                          <div className="fill" style={{ width: "80%" }}></div>
+                        </div>
+                        <span>80%</span>
+                      </div>
+                      <div className="rating-bar">
+                        <span>4 Stars</span>
+                        <div className="bar">
+                          <div className="fill" style={{ width: "15%" }}></div>
+                        </div>
+                        <span>15%</span>
+                      </div>
+                      <div className="rating-bar">
+                        <span>3 Stars</span>
+                        <div className="bar">
+                          <div className="fill" style={{ width: "3%" }}></div>
+                        </div>
+                        <span>3%</span>
+                      </div>
+                      <div className="rating-bar">
+                        <span>2 Stars</span>
+                        <div className="bar">
+                          <div className="fill" style={{ width: "1%" }}></div>
+                        </div>
+                        <span>1%</span>
+                      </div>
+                      <div className="rating-bar">
+                        <span>1 Star</span>
+                        <div className="bar">
+                          <div className="fill" style={{ width: "1%" }}></div>
+                        </div>
+                        <span>1%</span>
+                      </div>
                     </div>
                   </div>
                   {product.reviews && product.reviews.length > 0 ? (
@@ -322,13 +482,35 @@ const ProductDetails = () => {
                   )}
                 </div>
               )}
+              {activeTab === "shipping" && (
+                <div className="shipping-info">
+                  <div className="shipping-section">
+                    <h4>Shipping Information</h4>
+                    <ul>
+                      <li>Free shipping on orders over $50</li>
+                      <li>Standard delivery: 3-5 business days</li>
+                      <li>Express delivery: 1-2 business days</li>
+                      <li>International shipping available</li>
+                    </ul>
+                  </div>
+                  <div className="returns-section">
+                    <h4>Returns Policy</h4>
+                    <ul>
+                      <li>30-day return policy</li>
+                      <li>Free returns for all items</li>
+                      <li>Items must be unused and in original packaging</li>
+                      <li>Refund will be processed within 5-7 business days</li>
+                    </ul>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
 
       <div className="related-products">
-        <h2>Related Products</h2>
+        <h2>You May Also Like</h2>
         <div className="related-products-grid">
           {relatedProducts.map((relatedProduct) => (
             <div key={relatedProduct.id} className="related-product-card">
@@ -360,6 +542,14 @@ const ProductDetails = () => {
                     <FaShoppingCart />
                   </button>
                 </div>
+                {relatedProduct.isNew && (
+                  <div className="new-badge">NEW</div>
+                )}
+                {relatedProduct.discount && (
+                  <div className="discount-badge">
+                    -{relatedProduct.discount}%
+                  </div>
+                )}
               </div>
               <div className="related-product-info">
                 <h3>{relatedProduct.name}</h3>
