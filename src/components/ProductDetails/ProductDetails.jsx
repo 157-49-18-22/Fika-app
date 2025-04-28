@@ -33,6 +33,18 @@ const ProductDetails = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [showSizeGuide, setShowSizeGuide] = useState(false);
+  const [selectedColor, setSelectedColor] = useState("");
+  const [colorError, setColorError] = useState("");
+  const [sizeError, setSizeError] = useState("");
+  const [availableColors] = useState([
+    { name: "Black", code: "#000000", available: true },
+    { name: "White", code: "#FFFFFF", available: true },
+    { name: "Red", code: "#FF0000", available: true },
+    { name: "Blue", code: "#0000FF", available: true },
+    { name: "Green", code: "#008000", available: false },
+    { name: "Yellow", code: "#FFFF00", available: true },
+    { name: "Purple", code: "#800080", available: true }
+  ]);
 
   const product = getAllProducts().find((p) => p.id === parseInt(id));
   const relatedProducts = getAllProducts()
@@ -50,8 +62,36 @@ const ProductDetails = () => {
     );
   }
 
+  const handleColorSelect = (color) => {
+    if (!color.available) {
+      setColorError("This color is currently not available. Please select another color.");
+      setSelectedColor("");
+      return;
+    }
+    setSelectedColor(color.code);
+    setColorError("");
+  };
+
+  const handleSizeSelect = (size) => {
+    if (!product.sizes.includes(size)) {
+      setSizeError("This size is currently not available. Please select another size.");
+      setSelectedSize("");
+      return;
+    }
+    setSelectedSize(size);
+    setSizeError("");
+  };
+
   const handleAddToCart = (product) => {
-    addToCart(product);
+    if (!selectedColor) {
+      setColorError("Please select a color");
+      return;
+    }
+    if (!selectedSize) {
+      setSizeError("Please select a size");
+      return;
+    }
+    addToCart({ ...product, selectedColor, selectedSize });
     setShowSuccessMessage(true);
     setTimeout(() => setShowSuccessMessage(false), 3000);
   };
@@ -147,6 +187,10 @@ const ProductDetails = () => {
     );
   };
 
+  const formatPrice = (price) => {
+    return `₹${price.toFixed(2)}`;
+  };
+
   return (
     <div className="product-details-container">
       <div className="product-details-wrapper">
@@ -172,18 +216,14 @@ const ProductDetails = () => {
             <div className="product-price">
               {product.discount ? (
                 <>
-                  <span className="original-price">
-                    ${product.price.toFixed(2)}
-                  </span>
+                  <span className="original-price">{formatPrice(product.price)}</span>
                   <span className="discounted-price">
-                    ${(product.price * (1 - product.discount / 100)).toFixed(2)}
+                    {formatPrice(product.price * (1 - product.discount / 100))}
                   </span>
                   <span className="discount-tag">-{product.discount}%</span>
                 </>
               ) : (
-                <span className="current-price">
-                  ${product.price.toFixed(2)}
-                </span>
+                <span className="current-price">{formatPrice(product.price)}</span>
               )}
             </div>
           </div>
@@ -206,14 +246,22 @@ const ProductDetails = () => {
           <div className="product-colors">
             <h3>Available Colors</h3>
             <div className="color-options">
-              {product.colors?.map((color) => (
+              {availableColors.map((color) => (
                 <div
-                  key={color}
-                  className="color-option"
-                  style={{ backgroundColor: color }}
+                  key={color.code}
+                  className={`color-option ${!color.available ? 'unavailable' : ''} ${selectedColor === color.code ? 'selected' : ''}`}
+                  style={{ backgroundColor: color.code }}
+                  onClick={() => handleColorSelect(color)}
+                  title={color.name}
                 />
               ))}
             </div>
+            {colorError && <div className="error-message">{colorError}</div>}
+            {selectedColor && (
+              <div className="selected-color-info">
+                Selected: {availableColors.find(c => c.code === selectedColor)?.name}
+              </div>
+            )}
           </div>
 
           <div className="main-cart-section">
@@ -230,18 +278,23 @@ const ProductDetails = () => {
                     </button>
                   </div>
                   <div className="size-options">
-                    {product.sizes.map((size) => (
+                    {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => (
                       <button
                         key={size}
-                        className={`size-btn ${
-                          selectedSize === size ? "selected" : ""
-                        }`}
-                        onClick={() => setSelectedSize(size)}
+                        className={`size-btn ${!product.sizes.includes(size) ? 'unavailable' : ''} ${selectedSize === size ? 'selected' : ''}`}
+                        onClick={() => handleSizeSelect(size)}
+                        disabled={!product.sizes.includes(size)}
                       >
                         {size}
                       </button>
                     ))}
                   </div>
+                  {sizeError && <div className="error-message">{sizeError}</div>}
+                  {selectedSize && (
+                    <div className="selected-size-info">
+                      Selected: {selectedSize}
+                    </div>
+                  )}
                   {showSizeGuide && (
                     <div className="size-guide">
                       <h4>Size Guide</h4>
@@ -306,14 +359,7 @@ const ProductDetails = () => {
                 className="main-add-to-cart-btn"
                 onClick={() => handleAddToCart(product)}
               >
-                <FaShoppingCart /> Add to Cart - $
-                {product.discount
-                  ? (
-                      product.price *
-                      (1 - product.discount / 100) *
-                      quantity
-                    ).toFixed(2)
-                  : (product.price * quantity).toFixed(2)}
+                <FaShoppingCart /> Add to Cart - {formatPrice(product.price * quantity)}
               </button>
               <button
                 className={`main-wishlist-btn ${
@@ -558,26 +604,201 @@ const ProductDetails = () => {
                 <div className="product-price">
                   {relatedProduct.discount ? (
                     <>
-                      <span className="original-price">
-                        ${relatedProduct.price.toFixed(2)}
-                      </span>
+                      <span className="original-price">{formatPrice(relatedProduct.price)}</span>
                       <span className="discounted-price">
-                        $
-                        {(
-                          relatedProduct.price *
-                          (1 - relatedProduct.discount / 100)
-                        ).toFixed(2)}
+                        {formatPrice(relatedProduct.price * (1 - relatedProduct.discount / 100))}
                       </span>
                     </>
                   ) : (
-                    <span className="current-price">
-                      ${relatedProduct.price.toFixed(2)}
-                    </span>
+                    <span className="current-price">{formatPrice(relatedProduct.price)}</span>
                   )}
                 </div>
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      <div className="recently-viewed">
+        <h2>Recently Viewed</h2>
+        <div className="recently-viewed-grid">
+          {getAllProducts()
+            .filter((p) => p.id !== product.id)
+            .slice(0, 4)
+            .map((recentProduct) => (
+              <div key={recentProduct.id} className="recent-product-card">
+                <div className="recent-product-image">
+                  <img src={recentProduct.image} alt={recentProduct.name} />
+                  <div className="product-actions">
+                    <button
+                      className={`action-btn wishlist-btn ${
+                        isInWishlist(recentProduct.id) ? "active" : ""
+                      }`}
+                      onClick={(e) => handleAddToWishlist(recentProduct, e)}
+                    >
+                      <FaHeart />
+                    </button>
+                    <button
+                      className="action-btn quick-view-btn"
+                      onClick={(e) => handleQuickView(recentProduct.id, e)}
+                    >
+                      <FaEye />
+                    </button>
+                  </div>
+                </div>
+                <div className="recent-product-info">
+                  <h3>{recentProduct.name}</h3>
+                  <div className="product-price">
+                    {recentProduct.discount ? (
+                      <>
+                        <span className="original-price">{formatPrice(recentProduct.price)}</span>
+                        <span className="discounted-price">
+                          {formatPrice(recentProduct.price * (1 - recentProduct.discount / 100))}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="current-price">{formatPrice(recentProduct.price)}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+        </div>
+      </div>
+
+      <div className="trending-products">
+        <h2>Trending Now</h2>
+        <div className="trending-products-grid">
+          {getAllProducts()
+            .filter((p) => p.id !== product.id)
+            .sort((a, b) => b.rating - a.rating)
+            .slice(0, 4)
+            .map((trendingProduct) => (
+              <div key={trendingProduct.id} className="trending-product-card">
+                <div className="trending-product-image">
+                  <img src={trendingProduct.image} alt={trendingProduct.name} />
+                  <div className="product-actions">
+                    <button
+                      className={`action-btn wishlist-btn ${
+                        isInWishlist(trendingProduct.id) ? "active" : ""
+                      }`}
+                      onClick={(e) => handleAddToWishlist(trendingProduct, e)}
+                    >
+                      <FaHeart />
+                    </button>
+                    <button
+                      className="action-btn quick-view-btn"
+                      onClick={(e) => handleQuickView(trendingProduct.id, e)}
+                    >
+                      <FaEye />
+                    </button>
+                  </div>
+                  {trendingProduct.isNew && (
+                    <div className="new-badge">NEW</div>
+                  )}
+                  {trendingProduct.discount && (
+                    <div className="discount-badge">
+                      -{trendingProduct.discount}%
+                    </div>
+                  )}
+                </div>
+                <div className="trending-product-info">
+                  <h3>{trendingProduct.name}</h3>
+                  <div className="product-price">
+                    {trendingProduct.discount ? (
+                      <>
+                        <span className="original-price">{formatPrice(trendingProduct.price)}</span>
+                        <span className="discounted-price">
+                          {formatPrice(trendingProduct.price * (1 - trendingProduct.discount / 100))}
+                        </span>
+                      </>
+                    ) : (
+                      <span className="current-price">{formatPrice(trendingProduct.price)}</span>
+                    )}
+                  </div>
+                  <div className="trending-rating">
+                    {renderStars(trendingProduct.rating)}
+                    <span>({trendingProduct.reviewsCount})</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+        </div>
+      </div>
+
+      <div className="customer-testimonials">
+        <h2>What Our Customers Say</h2>
+        <div className="testimonials-grid">
+          {[
+            {
+              name: "Sarah Johnson",
+              rating: 5,
+              comment: "Absolutely love this product! The quality is outstanding and it exceeded my expectations.",
+              date: "2 days ago",
+              verified: true
+            },
+            {
+              name: "Michael Brown",
+              rating: 4,
+              comment: "Great product with excellent customer service. Will definitely buy again!",
+              date: "1 week ago",
+              verified: true
+            },
+            {
+              name: "Emily Davis",
+              rating: 5,
+              comment: "The best purchase I've made this year. Highly recommend to everyone!",
+              date: "2 weeks ago",
+              verified: true
+            }
+          ].map((testimonial, index) => (
+            <div key={index} className="testimonial-card">
+              <div className="testimonial-header">
+                <div className="testimonial-rating">
+                  {renderStars(testimonial.rating)}
+                </div>
+                <div className="testimonial-verified">
+                  {testimonial.verified && <span>Verified Purchase</span>}
+                </div>
+              </div>
+              <p className="testimonial-comment">{testimonial.comment}</p>
+              <div className="testimonial-footer">
+                <span className="testimonial-name">{testimonial.name}</span>
+                <span className="testimonial-date">{testimonial.date}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="brand-features">
+        <div className="feature-item">
+          <FaTruck />
+          <div className="feature-content">
+            <h3>Free Shipping</h3>
+            <p>On orders over $50</p>
+          </div>
+        </div>
+        <div className="feature-item">
+          <FaUndo />
+          <div className="feature-content">
+            <h3>Easy Returns</h3>
+            <p>30 days return policy</p>
+          </div>
+        </div>
+        <div className="feature-item">
+          <FaShieldAlt />
+          <div className="feature-content">
+            <h3>Secure Payment</h3>
+            <p>100% secure checkout</p>
+          </div>
+        </div>
+        <div className="feature-item">
+          <FaTag />
+          <div className="feature-content">
+            <h3>Best Price</h3>
+            <p>Guaranteed best prices</p>
+          </div>
         </div>
       </div>
     </div>
