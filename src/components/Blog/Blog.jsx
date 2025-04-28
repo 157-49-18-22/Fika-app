@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaSearch, FaChevronRight, FaCalendarAlt, FaUserAlt, FaClock, FaHeart, FaComment, FaGlobeAmericas, FaTshirt, FaGem, FaLeaf, FaFeatherAlt } from "react-icons/fa";
 import "./Blog.css";
+import axios from "axios";
 
 const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -24,9 +25,15 @@ const Blog = () => {
 
   const handleSubscribe = (e) => {
     e.preventDefault();
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
-    setEmail("");
+    axios.post("http://localhost:5000/api/blog-newsletter", { email })
+      .then(() => {
+        setShowSuccess(true);
+        setEmail("");
+        setTimeout(() => setShowSuccess(false), 3000);
+      })
+      .catch(err => {
+        alert("Error: " + (err.response?.data?.error || err.message));
+      });
   };
 
   const handlePostClick = (postId) => {

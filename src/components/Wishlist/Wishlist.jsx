@@ -1,20 +1,52 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useWishlist } from "../../context/WishlistContext.jsx";
-import { useCart } from "../../context/CartContext.jsx";
+import axios from "axios";
 import { FaHeart, FaArrowRight, FaShoppingCart, FaTrash } from "react-icons/fa";
+import { getAllProducts } from "../../data/products";
 import "./Wishlist.css";
 
 const Wishlist = () => {
-  const { wishlist, removeFromWishlist } = useWishlist();
-  const { addToCart } = useCart();
+  const [wishlist, setWishlist] = useState([]);
 
-  const handleAddToCart = (item) => {
-    addToCart(item);
-    removeFromWishlist(item.id);
+  // Fetch wishlist items from backend
+  const fetchWishlist = () => {
+    axios.get("http://localhost:5000/api/wishlist")
+      .then(res => setWishlist(res.data))
+      .catch(err => console.error(err));
   };
 
-  if (wishlist.length === 0) {
+  useEffect(() => {
+    fetchWishlist();
+  }, []);
+
+  // Add to cart (optional: you can implement backend cart add here)
+  const addToCart = (productId) => {
+    axios.post("http://localhost:5000/api/cart", { product_id: productId, quantity: 1 })
+      .then(() => removeFromWishlistByProductId(productId))
+      .catch(err => alert("Error: " + (err.response?.data?.error || err.message)));
+  };
+
+  // Remove from wishlist by wishlist id
+  const removeFromWishlist = (wishlistId) => {
+    axios.delete(`http://localhost:5000/api/wishlist/${wishlistId}`)
+      .then(() => fetchWishlist())
+      .catch(err => alert("Error: " + (err.response?.data?.error || err.message)));
+  };
+
+  // Remove from wishlist by product id (for addToCart)
+  const removeFromWishlistByProductId = (productId) => {
+    const item = wishlist.find(w => w.product_id === productId);
+    if (item) removeFromWishlist(item.id);
+  };
+
+  // Merge wishlist with product details
+  const products = getAllProducts();
+  const mergedWishlist = wishlist.map(item => {
+    const product = products.find(p => Number(p.id) === Number(item.product_id));
+    return product ? { ...product, ...item } : item;
+  });
+
+  if (mergedWishlist.length === 0) {
     return (
       <div className="wishlist-empty">
         <div className="empty-wishlist-icon">
@@ -33,11 +65,10 @@ const Wishlist = () => {
     <div className="wishlist-container">
       <h2>
         <FaHeart className="wishlist-title-icon" />
-        My Wishlist ({wishlist.length}{" "}
-        {wishlist.length === 1 ? "item" : "items"})
+        My Wishlist ({mergedWishlist.length} {mergedWishlist.length === 1 ? "item" : "items"})
       </h2>
       <div className="wishlist-items">
-        {wishlist.map((item) => (
+        {mergedWishlist.map((item) => (
           <div key={item.id} className="wishlist-item">
             <div className="wishlist-item-image">
               <img src={item.image} alt={item.name} />
@@ -76,7 +107,7 @@ const Wishlist = () => {
               <div className="wishlist-item-actions">
                 <button
                   className="add-to-cart-btn"
-                  onClick={() => handleAddToCart(item)}
+                  onClick={() => addToCart(item.product_id)}
                 >
                   <FaShoppingCart /> Add to Cart
                 </button>

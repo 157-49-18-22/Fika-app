@@ -669,19 +669,18 @@
   transform: translateX(5px);
 }
 
-.subscription-success {
-  margin-top: 20px;
-  padding: 10px;
-  border-radius: 5px;
-  background-color: rgba(46, 204, 113, 0.2);
-  border: 1px solid rgba(46, 204, 113, 0.4);
-  animation: fadeIn 0.5s ease;
-}
+
 
 .success-message {
   color: rgba(255, 255, 255, 0.9);
   font-size: 0.9rem;
+  margin-bottom: 300px;
+  position: relative;
+  left: 390px;
+  width:  410px;
+  height: 47px; /* 200px right shift. Adjust kar sakte ho */
 }
+
 
 /* Trending Topics Section */
 .trending-topics {

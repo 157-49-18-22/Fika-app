@@ -5,6 +5,7 @@ import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
 import { getAllProducts } from "../../data/products.js";
 import "./NewArrivalsSection.css";
+import axios from "axios";
 
 const NewArrivals = () => {
   const [newArrivals, setNewArrivals] = useState([]);
@@ -33,6 +34,8 @@ const NewArrivals = () => {
   const { addToCart } = useCart();
   const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
   const navigate = useNavigate();
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterSuccess, setNewsletterSuccess] = useState(false);
 
   // Get products with isNew flag and categorize products
   useEffect(() => {
@@ -152,6 +155,20 @@ const NewArrivals = () => {
   // Calculate original price display
   const getOriginalPrice = (price) => {
     return price.toFixed(2);
+  };
+
+  // Newsletter submit handler
+  const handleNewsletterSubmit = (e) => {
+    e.preventDefault();
+    axios.post("http://localhost:5000/api/newsletter", { email: newsletterEmail })
+      .then(() => {
+        setNewsletterSuccess(true);
+        setNewsletterEmail("");
+        setTimeout(() => setNewsletterSuccess(false), 3000);
+      })
+      .catch(err => {
+        alert("Error: " + (err.response?.data?.error || err.message));
+      });
   };
 
   // Render product card - reusable component for all product sections
@@ -498,10 +515,17 @@ const NewArrivals = () => {
         <div className="arrivals-newsletter-content">
           <h3>Stay Updated</h3>
           <p>Subscribe to our newsletter for exclusive offers and early access to new arrivals</p>
-          <div className="arrivals-newsletter-form">
-            <input type="email" placeholder="Your email address" />
+          <form className="arrivals-newsletter-form" onSubmit={handleNewsletterSubmit}>
+            <input
+              type="email"
+              placeholder="Your email address"
+              value={newsletterEmail}
+              onChange={e => setNewsletterEmail(e.target.value)}
+              required
+            />
             <button type="submit">Subscribe</button>
-          </div>
+          </form>
+          {newsletterSuccess && <div style={{color: 'green', marginTop: 8}}>Subscribed successfully!</div>}
         </div>
       </div>
     </div>

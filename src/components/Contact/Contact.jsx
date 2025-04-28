@@ -2,30 +2,26 @@ import React, { useState } from "react";
 import { FaFacebookF, FaTwitter, FaInstagram, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 import "./Contact.css";
 import Testimonials from "../Testimonials/Testimonials.jsx";
+import axios from "axios";
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
-
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
-    setFormData({ name: '', email: '', message: '' });
+    axios.post("http://localhost:5000/api/contact", form)
+      .then(() => {
+        setSuccess(true);
+        setForm({ name: "", email: "", message: "" });
+      })
+      .catch(err => {
+        alert("Error: " + (err.response?.data?.error || err.message));
+      });
   };
 
   return (
@@ -43,9 +39,10 @@ const Contact = () => {
                   type="text"
                   id="name"
                   name="name"
-                  value={formData.name}
+                  value={form.name}
                   onChange={handleChange}
                   required
+                  placeholder="Your Name"
                 />
               </div>
               <div className="form-group">
@@ -54,9 +51,10 @@ const Contact = () => {
                   type="email"
                   id="email"
                   name="email"
-                  value={formData.email}
+                  value={form.email}
                   onChange={handleChange}
                   required
+                  placeholder="Your Email"
                 />
               </div>
               <div className="form-group">
@@ -64,14 +62,14 @@ const Contact = () => {
                 <textarea
                   id="message"
                   name="message"
-                  value={formData.message}
+                  value={form.message}
                   onChange={handleChange}
-                  placeholder="Type something if you want..."
+                  placeholder="Your Message"
                   required
                 ></textarea>
               </div>
               <button type="submit" className="submit-btn">Send Message</button>
-              {showSuccess && (
+              {success && (
                 <div className="success-message">
                   <span>✓ Message sent successfully!</span>
                 </div>

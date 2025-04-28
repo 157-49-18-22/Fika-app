@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
 import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight, FaSlidersH, FaDollarSign, FaSortAmountDown } from "react-icons/fa";
 import { GiLargeDress, GiRunningShoe, GiWatch, GiHeartNecklace, GiTrousers } from "react-icons/gi";
 import "./AllProductsStyles.css";
 import { getAllProducts } from "../../data/products";
+import axios from "axios";
 
 const AllProducts = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -24,8 +24,8 @@ const AllProducts = () => {
   const [showDiscounted, setShowDiscounted] = useState(false);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [selectedGender, setSelectedGender] = useState('all');
+  const [wishlistProductIds, setWishlistProductIds] = useState([]);
   
-  const { addToCart } = useCart();
   const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
   const navigate = useNavigate();
   const location = useLocation();
@@ -49,6 +49,17 @@ const AllProducts = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
+  }, []);
+
+  // Fetch wishlist product ids from backend
+  const fetchWishlist = () => {
+    axios.get("http://localhost:5000/api/wishlist")
+      .then(res => setWishlistProductIds(res.data.map(item => item.product_id)))
+      .catch(err => console.error(err));
+  };
+
+  useEffect(() => {
+    fetchWishlist();
   }, []);
 
   const categories = [
@@ -143,10 +154,20 @@ const AllProducts = () => {
       e.preventDefault();
       e.stopPropagation();
     }
-    addToCart(product);
-    setToastMessage(`${product.name} added to cart!`);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+    axios.post("http://localhost:5000/api/cart", {
+      product_id: product.id,
+      quantity: 1
+    })
+      .then(() => {
+        setToastMessage(`${product.name} added to cart!`);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      })
+      .catch((err) => {
+        setToastMessage("Error adding to cart: " + (err.response?.data?.error || err.message));
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+      });
   };
 
   const handleAddToWishlistClick = (product, e) => {
@@ -154,17 +175,21 @@ const AllProducts = () => {
       e.preventDefault();
       e.stopPropagation();
     }
-    
-    if (isInWishlist(product.id)) {
-      removeFromWishlist(product.id);
-      setToastMessage(`${product.name} removed from wishlist`);
+    if (wishlistProductIds.includes(product.id)) {
+      // Remove from wishlist
+      axios.get("http://localhost:5000/api/wishlist")
+        .then(res => {
+          const item = res.data.find(w => w.product_id === product.id);
+          if (item) {
+            axios.delete(`http://localhost:5000/api/wishlist/${item.id}`)
+              .then(() => fetchWishlist());
+          }
+        });
     } else {
-      addToWishlist(product);
-      setToastMessage(`${product.name} added to wishlist!`);
+      // Add to wishlist
+      axios.post("http://localhost:5000/api/wishlist", { product_id: product.id })
+        .then(() => fetchWishlist());
     }
-    
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
   };
 
   const handleQuickView = (product, e) => {
@@ -428,11 +453,11 @@ const AllProducts = () => {
                         <FaShoppingCart />
                       </button>
                       <button 
-                        className={`product-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
+                        className={`product-action-btn wishlist-btn ${wishlistProductIds.includes(product.id) ? 'active' : ''}`}
                         onClick={(e) => handleAddToWishlistClick(product, e)}
-                        title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                        title={wishlistProductIds.includes(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
                       >
-                        {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
+                        {wishlistProductIds.includes(product.id) ? <FaHeart /> : <FaRegHeart />}
                       </button>
                       <button 
                         className="product-action-btn quickview-btn"
@@ -630,11 +655,11 @@ const AllProducts = () => {
                     </button>
                     
                     <button
-                      className={`add-to-wishlist-btn ${isInWishlist(quickView.id) ? 'active' : ''}`}
+                      className={`add-to-wishlist-btn ${wishlistProductIds.includes(quickView.id) ? 'active' : ''}`}
                       onClick={() => handleAddToWishlistClick(quickView)}
                     >
-                      {isInWishlist(quickView.id) ? <FaHeart /> : <FaRegHeart />}
-                      {isInWishlist(quickView.id) ? 'In Wishlist' : 'Add to Wishlist'}
+                      {wishlistProductIds.includes(quickView.id) ? <FaHeart /> : <FaRegHeart />}
+                      {wishlistProductIds.includes(quickView.id) ? 'In Wishlist' : 'Add to Wishlist'}
                     </button>
                   </div>
                   

@@ -13,6 +13,7 @@ import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
 import { getAllProducts } from "../../data/products";
 import "./ProductDetails.css";
+import axios from "axios";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -42,9 +43,17 @@ const ProductDetails = () => {
   }
 
   const handleAddToCart = (product) => {
-    addToCart(product);
-    setShowSuccessMessage(true);
-    setTimeout(() => setShowSuccessMessage(false), 3000);
+    axios.post("http://localhost:5000/api/cart", {
+      product_id: product.id,
+      quantity: quantity
+    })
+      .then(() => {
+        setShowSuccessMessage(true);
+        setTimeout(() => setShowSuccessMessage(false), 3000);
+      })
+      .catch((err) => {
+        alert("Error adding to cart: " + (err.response?.data?.error || err.message));
+      });
   };
 
   const handleAddToWishlist = (product, e) => {
