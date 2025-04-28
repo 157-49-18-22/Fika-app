@@ -699,11 +699,11 @@
 }
 
 .arrivals-scroll-button.left {
-    left: -20px;
+    left: 10px;
 }
 
 .arrivals-scroll-button.right {
-    right: -20px;
+    right: 10px;
 }
 
 /* Category Products Section */

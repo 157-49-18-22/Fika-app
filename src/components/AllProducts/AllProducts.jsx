@@ -481,7 +481,7 @@ const AllProducts = () => {
                     )}
                     
                     <button className="shop-now-btn">
-                      Shop Now <FaArrowRight className="arrow-icon" />
+                      Shop Now <FaArrowRight className="" />
                     </button>
                   </div>
                 </div>

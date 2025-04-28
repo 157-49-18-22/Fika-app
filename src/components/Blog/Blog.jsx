@@ -208,7 +208,7 @@ const Blog = () => {
                   <span className="blog-comments"><FaComment /> {post.comments}</span>
                 </div>
                 <button className="read-more-btn">
-                  Read {expandedPost === post.id ? 'Less' : 'More'} <FaChevronRight className="arrow-icon" />
+                  Read {expandedPost === post.id ? 'Less' : 'More'} 
                 </button>
               </div>
             </div>

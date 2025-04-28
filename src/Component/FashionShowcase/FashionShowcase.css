@@ -8,7 +8,7 @@
     font-weight: 500;
     margin-bottom: 30px;
     letter-spacing: 2px;
-    font-family: serif;
+    font-family: 'Carmine';
 }
 
 .fashion-showcase {
@@ -55,7 +55,7 @@
     color: #1D1D1D;
 }
 
-.shop-now-btn {
+.shop-nowbtn {
     display: flex;
     align-items: center;
     gap: 10px;

@@ -1,21 +1,3 @@
-:root {
-  --search-bg: #ffffff;
-  --search-text: #333333;
-  --search-placeholder: #999999;
-  --search-border: #e0e0e0;
-  --search-hover-border: #666666;
-  --search-focus-border: #000000;
-  --dropdown-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  --result-hover-bg: #f8f8f8;
-  --highlight-color: #000;
-  --highlight-bg: #fff3cd;
-  --badge-bg: #ff4444;
-  --badge-text: #ffffff;
-  --discount-color: #ff4444;
-  --original-price-color: #999;
-  --button-hover-bg: #f5f5f5;
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
     --search-bg: #2e2e2e;
