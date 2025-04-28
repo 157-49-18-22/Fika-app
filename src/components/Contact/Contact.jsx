@@ -173,11 +173,27 @@ const Contact = () => {
                   onChange={handleChange}
                   placeholder="Your Message"
                   required
-                ></textarea>
-              </div>
-              <button type="submit" className="submit-btn">Send Message</button>
-              {showSuccess && (
-                <div className="success-message">
+                  variants={inputVariants}
+                  whileFocus="focus"
+                ></motion.textarea>
+              </motion.div>
+              <motion.button 
+                type="submit" 
+                className="submit-btn"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                Send Message
+              </motion.button>
+              {success && (
+                <motion.div 
+                  className="success-message"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                >
                   <span>✓ Message sent successfully!</span>
                 </motion.div>
               )}
