@@ -1,19 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { FaClock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Login.css';
 
 const sliderImages = [
-  'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1465101053361-3235c3b8b925?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Luxury blue cushions
+  'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Elegant white cushions
+  'https://images.unsplash.com/photo-1578500494198-246f612d3b3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Pattern cushions with flowers
 ];
 
 const Login = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (date) => {
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,6 +60,10 @@ const Login = () => {
   const handleDotClick = (idx) => setSliderIndex(idx);
   const handlePrev = () => setSliderIndex((prev) => (prev - 1 + sliderImages.length) % sliderImages.length);
   const handleNext = () => setSliderIndex((prev) => (prev + 1) % sliderImages.length);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   return (
     <div className="login-bg-dark">
@@ -70,8 +93,14 @@ const Login = () => {
             </div>
           </div>
           <div className="slider-overlay">
-            <div className="slider-logo">AMU</div>
-            <button className="slider-back">Back to website</button>
+            <div className="slider-logo">
+              FIKA
+              <div className="time-display">
+                <FaClock className="logo-watch" />
+                <span className="time-text">{formatTime(currentTime)}</span>
+              </div>
+            </div>
+           
             <div className="slider-caption">
               <div>Capturing Moments,<br/>Creating Memories</div>
             </div>
@@ -92,14 +121,24 @@ const Login = () => {
               onChange={handleChange}
               required
             />
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
+            <div className="password-input-container">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={togglePasswordVisibility}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
             <div className="login-form-check">
               <input type="checkbox" id="terms" required />
               <label htmlFor="terms">I agree to the <a href="#">Terms & Conditions</a></label>

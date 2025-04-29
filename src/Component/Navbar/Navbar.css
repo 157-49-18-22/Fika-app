@@ -48,6 +48,15 @@
     margin: 0;
     letter-spacing: 1px;
     text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.logo-watch {
+    font-size: 14px;
+    color: #666;
+    margin-top: 2px;
 }
 
 .nav-link {

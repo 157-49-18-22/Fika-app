@@ -252,7 +252,7 @@ html, body, #root {
 }
 
 .login-card-dark {
-  width: 900px;
+  width: 1200px;
   height: 900px;
   background: #2d293a;
   border-radius: 22px;
@@ -264,7 +264,7 @@ html, body, #root {
 }
 
 .login-slider {
-  width: 50%;
+  width: 60%;
   height: 900px;
   position: relative;
   background: #22203a;
@@ -289,11 +289,13 @@ html, body, #root {
   border: none;
   border-radius: 0;
   z-index: 1;
+  filter: brightness(0.9) contrast(1.1);
+  background-size: contain;
+  background-repeat: repeat;
 }
 .slider-img.active {
   opacity: 1;
   z-index: 2;
-
 }
 .slider-overlay {
   position: absolute;
@@ -305,14 +307,47 @@ html, body, #root {
   flex-direction: column;
   justify-content: space-between;
   pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.1) 30%,
+    rgba(0, 0, 0, 0.1) 70%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
 }
 .slider-logo {
   margin: 28px 0 0 32px;
-  font-size: 1.3rem;
+  font-size: 2.5rem;
   font-weight: bold;
   color: #fff;
   letter-spacing: 2px;
   pointer-events: auto;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: Carmine, serif;
+}
+.time-display {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 1rem;
+  margin-left: 370px;
+}
+.logo-watch {
+  font-size: 0.9rem;
+  color: #fff;
+  opacity: 0.9;
+}
+.time-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
 }
 .slider-back {
   position: absolute;
@@ -339,6 +374,9 @@ html, body, #root {
   font-weight: 500;
   text-shadow: 0 2px 8px #222;
   pointer-events: auto;
+  font-family: Carmine, serif;
+
+  
 }
 .slider-dots {
   position: absolute;
@@ -383,7 +421,7 @@ html, body, #root {
 .slider-arrow:hover { background: rgba(0,0,0,0.32); }
 
 .login-form-dark {
-  width: 50%;
+ width: 600px;
   height: 900px;
   background: transparent;
   display: flex;
@@ -398,16 +436,19 @@ html, body, #root {
   font-weight: 600;
   margin-bottom: 8px;
   color: #fff;
+  font-family: Carmine, serif;
 }
 .login-form-sub {
   font-size: 1rem;
   color: #bdb8d7;
   margin-bottom: 24px;
+      font-family: Montserrat, sans-serif;
 }
 .login-form-sub a {
   color: #a18aff;
   text-decoration: underline;
   font-weight: 500;
+      font-family: Montserrat, sans-serif;
 }
 .login-form-fields {
   width: 100%;
@@ -583,4 +624,44 @@ html, body, #root {
 }
 .signup-names-row input[type="text"]:focus {
   border: 1.5px solid #a18aff;
+}
+
+.password-input-container {
+  position: relative;
+  width: 100%;
+  color: #a18aff !important;
+
+}
+
+.password-input-container input {
+  width: 100%;
+  padding: 12px 45px 12px 16px !important;
+  color: #a18aff !important;
+
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  color: #a18aff !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.password-toggle-btn:focus {
+  outline: none;
+  color: #a18aff !important;
+}
+
+.password-toggle-btn:hover,
+.password-toggle-btn:active {
+  color: #a18aff !important;
 } 

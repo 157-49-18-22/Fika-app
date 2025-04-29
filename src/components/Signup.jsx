@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { FaClock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Login/Login.css';
 
 const sliderImages = [
-  'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=600&q=80',
-  'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80',
+  'https://images.unsplash.com/photo-1540638349517-3abd5afc5847?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Modern geometric cushions
+  'https://images.unsplash.com/photo-1579656381226-5fc0f0100c3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Cozy textured cushions
+  'https://images.unsplash.com/photo-1567225557594-88d73e55f2cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Designer pattern cushions
 ];
 
 const Signup = () => {
@@ -19,12 +20,40 @@ const Signup = () => {
     terms: false
   });
   const [sliderIndex, setSliderIndex] = useState(0);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    confirmPassword: false
+  });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatTime = (date) => {
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const togglePasswordVisibility = (field) => {
+    setShowPassword(prev => ({
+      ...prev,
+      [field]: !prev[field]
     }));
   };
 
@@ -87,8 +116,13 @@ const Signup = () => {
             </div>
           </div>
           <div className="slider-overlay">
-            <div className="slider-logo">AMU</div>
-            <button className="slider-back">Back to website</button>
+            <div className="slider-logo">
+              FIKA
+              <div className="time-display">
+                <FaClock className="logo-watch" />
+                <span className="time-text">{formatTime(currentTime)}</span>
+              </div>
+            </div>
             <div className="slider-caption">
               <div>Capturing Moments,<br/>Creating Memories</div>
             </div>
@@ -127,22 +161,42 @@ const Signup = () => {
               onChange={handleChange}
               required
             />
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm your password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
+            <div className="password-input-container">
+              <input
+                type={showPassword.password ? "text" : "password"}
+                name="password"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => togglePasswordVisibility('password')}
+                aria-label={showPassword.password ? "Hide password" : "Show password"}
+              >
+                {showPassword.password ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+            <div className="password-input-container">
+              <input
+                type={showPassword.confirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                placeholder="Confirm your password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => togglePasswordVisibility('confirmPassword')}
+                aria-label={showPassword.confirmPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword.confirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
             <div className="login-form-check">
               <input type="checkbox" id="terms" name="terms" checked={formData.terms} onChange={handleChange} required />
               <label htmlFor="terms">I agree to the <a href="#">Terms & Conditions</a></label>
