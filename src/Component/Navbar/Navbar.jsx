@@ -6,6 +6,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
 import { getAllProducts } from "../../data/products";
+import UserDashboard from "../UserDashboard/UserDashboard";
 
 function Navbar() {
   const { getCartCount } = useCart();
@@ -125,6 +126,7 @@ function Navbar() {
               <span className="badge">{getCartCount()}</span>
             )}
           </Link>
+          <UserDashboard />
         </div>
       </div>
     </div>

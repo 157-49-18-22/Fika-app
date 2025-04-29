@@ -1,67 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
-import { FaPlus, FaMinus, FaTrash, FaShoppingCart, FaArrowRight, FaShoppingBag } from "react-icons/fa";
-import { getAllProducts } from "../data/products";
+import { FaPlus, FaMinus, FaTrash, FaShoppingCart, FaArrowRight, FaShoppingBag, FaUser } from "react-icons/fa";
+import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import "./Cart/Cart.css";
 
 const Cart = () => {
-  const [cart, setCart] = useState([]);
+  const { cart, removeFromCart, updateQuantity } = useCart();
+  const { currentUser } = useAuth();
   const [showPayment, setShowPayment] = useState(false);
   const [promoCode, setPromoCode] = useState("");
 
-  // Fetch cart items from backend
-  useEffect(() => {
-    fetchCart();
-  }, []);
-
-  const fetchCart = () => {
-    axios.get("http://localhost:5000/api/cart")
-      .then(res => setCart(res.data))
-      .catch(err => console.error(err));
-  };
-
-  // Remove item from cart
-  const removeFromCart = (cartId) => {
-    axios.delete(`http://localhost:5000/api/cart/${cartId}`)
-      .then(res => {
-        fetchCart();
-      })
-      .catch(err => {
-        console.error(err);
-        alert("Error: " + (err.response?.data?.error || err.message));
-      });
-  };
-
-  // Update quantity in cart
-  const updateQuantity = (cartId, newQuantity) => {
-    if (newQuantity < 1) return;
-    axios.patch(`http://localhost:5000/api/cart/${cartId}`, { quantity: newQuantity })
-      .then(() => fetchCart())
-      .catch(err => {
-        console.error(err);
-        alert("Error: " + (err.response?.data?.error || err.message));
-      });
-  };
-
-  // Merge cart items with product details
-  const products = getAllProducts();
-  const mergedCart = cart.map(item => {
-    const product = products.find(p => p.id === item.product_id);
-    return product
-      ? { ...product, ...item, productId: product.id, cartId: item.id }
-      : item;
-  });
-
   // Calculate subtotal
-  const subtotal = mergedCart.reduce((sum, item) => {
+  const subtotal = cart.reduce((sum, item) => {
     const price = item.discount ? item.price * (1 - item.discount / 100) : item.price;
     return sum + price * item.quantity;
   }, 0);
   const shipping = 0;
   const total = subtotal + shipping;
 
-  if (mergedCart.length === 0) {
+  if (cart.length === 0) {
     return (
       <div className="cart-section">
         <div className="empty-cart">
@@ -80,12 +38,18 @@ const Cart = () => {
 
   return (
     <div className="cart-container">
-      <h2>
-        <FaShoppingCart className="cart-title-icon" /> Shopping Cart
-      </h2>
+      <div className="cart-header">
+        <h2>
+          <FaShoppingCart className="cart-title-icon" /> Shopping Cart
+        </h2>
+        <div className="user-info">
+          <FaUser className="user-icon" />
+          <span className="user-email">{currentUser?.email}</span>
+        </div>
+      </div>
       <div className="cart-content">
         <div className="cart-items">
-          {mergedCart.map((item) => (
+          {cart.map((item) => (
             <div key={item.id} className="cart-item">
               <div className="cart-item-image">
                 <img src={item.image} alt={item.name} />
@@ -112,11 +76,11 @@ const Cart = () => {
                 </div>
               </div>
               <div className="cart-item-quantity">
-                <button className="quantity-btn" onClick={() => updateQuantity(item.cartId, item.quantity - 1)} disabled={item.quantity <= 1}>
+                <button className="quantity-btn" onClick={() => updateQuantity(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>
                   <FaMinus />
                 </button>
                 <span className="quantity-value">{item.quantity}</span>
-                <button className="quantity-btn" onClick={() => updateQuantity(item.cartId, item.quantity + 1)}>
+                <button className="quantity-btn" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
                   <FaPlus />
                 </button>
               </div>
@@ -130,7 +94,7 @@ const Cart = () => {
               </div>
               <button
                 className="remove-btn"
-                onClick={() => removeFromCart(item.cartId)}
+                onClick={() => removeFromCart(item.id)}
                 title="Remove item"
               >
                 <FaTrash />
@@ -152,7 +116,7 @@ const Cart = () => {
           </div>
           <div className="summary-row">
             <span>
-              Subtotal ({mergedCart.length} {mergedCart.length === 1 ? "item" : "items"})
+              Subtotal ({cart.length} {cart.length === 1 ? "item" : "items"})
             </span>
             <span>${subtotal.toFixed(2)}</span>
           </div>

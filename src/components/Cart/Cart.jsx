@@ -18,14 +18,14 @@ const Cart = () => {
   const [promoCode, setPromoCode] = useState("");
 
   const handleQuantityDecrease = (productId) => {
-    const item = cart.find((item) => item.productId === productId);
+    const item = cart.find((item) => item.id === productId);
     if (item && item.quantity > 1) {
       updateQuantity(productId, item.quantity - 1);
     }
   };
 
   const handleQuantityIncrease = (productId) => {
-    const item = cart.find((item) => item.productId === productId);
+    const item = cart.find((item) => item.id === productId);
     if (item) {
       updateQuantity(productId, item.quantity + 1);
     }
@@ -67,14 +67,14 @@ const Cart = () => {
       <div className="cart-content">
         <div className="cart-items">
           {cart.map((item) => (
-            <div key={item.productId} className="cart-item">
+            <div key={item.id} className="cart-item">
               <div className="cart-item-image">
                 <img src={item.image} alt={item.name} />
               </div>
 
               <div className="cart-item-details">
                 <Link
-                  to={`/product/${item.productId}`}
+                  to={`/product/${item.id}`}
                   className="cart-item-name"
                 >
                   {item.name}
@@ -100,7 +100,7 @@ const Cart = () => {
               <div className="cart-item-quantity">
                 <button
                   className="quantity-btn"
-                  onClick={() => handleQuantityDecrease(item.productId)}
+                  onClick={() => handleQuantityDecrease(item.id)}
                   disabled={item.quantity <= 1}
                 >
                   <FaMinus />
@@ -108,7 +108,7 @@ const Cart = () => {
                 <span className="quantity-value">{item.quantity}</span>
                 <button
                   className="quantity-btn"
-                  onClick={() => handleQuantityIncrease(item.productId)}
+                  onClick={() => handleQuantityIncrease(item.id)}
                 >
                   <FaPlus />
                 </button>
@@ -125,7 +125,7 @@ const Cart = () => {
 
               <button
                 className="remove-btn"
-                onClick={() => handleRemoveItem(item.productId)}
+                onClick={() => handleRemoveItem(item.id)}
                 title="Remove item"
               >
                 <FaTrash />

@@ -117,20 +117,9 @@ const ProductDetails = () => {
       return;
     }
     
-    axios.post("http://localhost:5000/api/cart", {
-      product_id: product.id,
-      quantity: quantity,
-      color: selectedColor,
-      size: selectedSize
-    })
-      .then(() => {
-        addToCart({ ...product, selectedColor, selectedSize });
-        setShowSuccessMessage(true);
-        setTimeout(() => setShowSuccessMessage(false), 3000);
-      })
-      .catch((err) => {
-        alert("Error adding to cart: " + (err.response?.data?.error || err.message));
-      });
+    addToCart({ ...product, selectedColor, selectedSize }, selectedSize, quantity);
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
   };
 
   const handleAddToWishlist = (product, e) => {

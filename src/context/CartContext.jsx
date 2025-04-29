@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./AuthContext";
 
 const CartContext = createContext();
 
@@ -7,26 +8,59 @@ export const useCart = () => {
 };
 
 export const CartProvider = ({ children }) => {
+  const { currentUser } = useAuth();
+  
+  // Initialize cart from localStorage or empty array
   const [cart, setCart] = useState([]);
 
+  // Load user's cart when they log in or change
+  useEffect(() => {
+    if (currentUser?.email) {
+      const savedCart = localStorage.getItem(`cart_${currentUser.email}`);
+      try {
+        const parsedCart = savedCart ? JSON.parse(savedCart) : [];
+        setCart(parsedCart);
+      } catch (error) {
+        console.error('Error loading cart:', error);
+        setCart([]);
+      }
+    } else {
+      setCart([]);
+    }
+  }, [currentUser]);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    if (currentUser?.email) {
+      localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify(cart));
+    }
+  }, [cart, currentUser]);
+
   const addToCart = (product, size = "default", quantity = 1) => {
+    if (!currentUser?.email) {
+      console.log('Please login to add items to cart');
+      return;
+    }
+    
+    if (!product || !product.id) {
+      console.error('Invalid product data:', product);
+      return;
+    }
+
     setCart((prevCart) => {
-      // Check if the same product with same size already exists in cart
       const existingItemIndex = prevCart.findIndex(
-        (item) => item.productId === product.id && (!size || item.size === size)
+        (item) => item.id === product.id && (!size || item.size === size)
       );
 
       if (existingItemIndex >= 0) {
-        // Update quantity if item exists
         const updatedCart = [...prevCart];
         updatedCart[existingItemIndex].quantity += quantity;
         return updatedCart;
       } else {
-        // Add new item to cart with correct property names
         return [
           ...prevCart,
           {
-            productId: product.id,
+            id: product.id,
             name: product.name,
             price: product.price,
             discount: product.discount,
@@ -41,17 +75,18 @@ export const CartProvider = ({ children }) => {
   };
 
   const removeFromCart = (productId) => {
+    if (!currentUser?.email) return;
     setCart((prevCart) =>
-      prevCart.filter((item) => item.productId !== productId)
+      prevCart.filter((item) => item.id !== productId)
     );
   };
 
   const updateQuantity = (productId, newQuantity) => {
-    if (newQuantity < 1) return; // Prevent negative quantities
+    if (!currentUser?.email || newQuantity < 1) return;
 
     setCart((prevCart) =>
       prevCart.map((item) =>
-        item.productId === productId ? { ...item, quantity: newQuantity } : item
+        item.id === productId ? { ...item, quantity: newQuantity } : item
       )
     );
   };
@@ -69,6 +104,12 @@ export const CartProvider = ({ children }) => {
     }, 0);
   };
 
+  const clearCart = () => {
+    if (!currentUser?.email) return;
+    setCart([]);
+    localStorage.removeItem(`cart_${currentUser.email}`);
+  };
+
   const value = {
     cart,
     addToCart,
@@ -76,6 +117,7 @@ export const CartProvider = ({ children }) => {
     updateQuantity,
     getCartCount,
     getCartTotal,
+    clearCart
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
