@@ -15,6 +15,7 @@ import CategoryProducts from './components/CategoryProducts/CategoryProducts.jsx
 import Navbar from './Component/Navbar/Navbar.jsx';
 import Login from './components/Login/Login.jsx';
 import Signup from './components/Signup.jsx';
+import About from './pages/About/About.jsx';
 import './App.css';
 import Footer from './Component/Footer/Footer.jsx';
 import Profile from './Component/Profile/Profile.jsx';
@@ -72,6 +73,11 @@ function App() {
               <Route path="/contact" element={
                 <PageLayout>
                   <Contact />
+                </PageLayout>
+              } />
+              <Route path="/about" element={
+                <PageLayout>
+                  <About />
                 </PageLayout>
               } />
               <Route path="/product/:id" element={

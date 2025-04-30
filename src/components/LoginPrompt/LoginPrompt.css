@@ -29,7 +29,7 @@
 
 .login-prompt-icon {
   font-size: 3rem;
-  color: #ff4444;
+  color: #000000;
   margin-bottom: 20px;
 }
 
@@ -67,12 +67,12 @@
 }
 
 .login-prompt-button.primary {
-  background: #ff4444;
+  background: #000000;
   color: white;
 }
 
 .login-prompt-button.primary:hover {
-  background: #ff3333;
+  background: #333333;
   transform: translateY(-2px);
 }
 
@@ -84,7 +84,7 @@
 }
 
 .login-prompt-link:hover {
-  color: #ff4444;
+  color: #000000;
 }
 
 .close-prompt-btn {
@@ -103,7 +103,7 @@
 }
 
 .close-prompt-btn:hover {
-  color: #ff4444;
+  color: #000000;
 }
 
 @keyframes slideIn {

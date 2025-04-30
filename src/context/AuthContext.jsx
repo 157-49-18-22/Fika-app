@@ -48,15 +48,15 @@ export const AuthProvider = ({ children }) => {
     const existingUser = users.find(user => user.email === userData.email);
     if (existingUser) {
       throw new Error('User with this email already exists');
-    }
+      }
 
     // Create new user object
     const newUser = {
-      email: userData.email,
+        email: userData.email,
       password: userData.password, // In a real app, this would be hashed
-      name: userData.name || userData.email.split('@')[0],
-      ...userData
-    };
+        name: userData.name || userData.email.split('@')[0],
+        ...userData
+      };
 
     // Add user to users array
     setUsers(prevUsers => [...prevUsers, newUser]);

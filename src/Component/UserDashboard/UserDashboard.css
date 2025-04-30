@@ -227,7 +227,7 @@ display: inline-block;
 .login-link {
   display: block;
   padding: 10px;
-  background: #2874f0;
+  background: black;
   color: white;
   text-align: center;
   text-decoration: none;
@@ -237,7 +237,7 @@ display: inline-block;
 }
 
 .login-link:hover {
-  background: #1c5ad4;
+  background: black;
 }
 
 .signup-prompt {
@@ -254,7 +254,7 @@ display: inline-block;
 }
 
 .signup-prompt a {
-  color: #2874f0;
+  color: black;
   text-decoration: none;
   font-weight: 500;
   font-size: 14px;

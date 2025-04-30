@@ -61,7 +61,7 @@ const Cart = () => {
           <p>Discover our amazing collection and add your favorite items to the cart!</p>
           <Link to="/all-products" className="start-shopping-btn">
             START SHOPPING →
-          </Link>
+        </Link>
         </div>
       </div>
     );
