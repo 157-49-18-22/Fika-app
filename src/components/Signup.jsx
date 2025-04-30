@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaClock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
 import './Login/Login.css';
 
 const sliderImages = [
@@ -11,6 +12,7 @@ const sliderImages = [
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { signup } = useAuth();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -25,6 +27,8 @@ const Signup = () => {
     password: false,
     confirmPassword: false
   });
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -42,6 +46,63 @@ const Signup = () => {
     });
   };
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.firstName) {
+      newErrors.firstName = 'First name is required';
+    }
+
+    if (!formData.lastName) {
+      newErrors.lastName = 'Last name is required';
+    }
+
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Email is invalid';
+    }
+
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
+    }
+
+    if (!formData.terms) {
+      newErrors.terms = 'You must accept the terms and conditions';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await signup({
+        email: formData.email,
+        password: formData.password,
+        name: `${formData.firstName} ${formData.lastName}`
+      });
+      navigate('/login');
+    } catch (error) {
+      setErrors({ submit: error.message });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -55,25 +116,6 @@ const Signup = () => {
       ...prev,
       [field]: !prev[field]
     }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.terms) {
-      alert('Please agree to the Terms & Conditions');
-      return;
-    }
-    if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match');
-      return;
-    }
-    if (formData.firstName && formData.lastName && formData.email && formData.password && formData.terms) {
-      // Signup logic here
-      alert('Account created!');
-      navigate('/login');
-    } else {
-      alert('Please fill in all fields');
-    }
   };
 
   // Slider auto-play
@@ -134,6 +176,7 @@ const Signup = () => {
           <div className="login-form-sub">
             Already have an account? <Link to="/login">Log in</Link>
           </div>
+          {errors.submit && <div className="error-message">{errors.submit}</div>}
           <form className="login-form-fields" onSubmit={handleSubmit}>
             <div className="signup-names-row">
               <input
@@ -142,7 +185,7 @@ const Signup = () => {
                 placeholder="First name"
                 value={formData.firstName}
                 onChange={handleChange}
-                required
+                className={errors.firstName ? 'error' : ''}
               />
               <input
                 type="text"
@@ -150,17 +193,22 @@ const Signup = () => {
                 placeholder="Last name"
                 value={formData.lastName}
                 onChange={handleChange}
-                required
+                className={errors.lastName ? 'error' : ''}
               />
             </div>
+            {errors.firstName && <span className="error-message">{errors.firstName}</span>}
+            {errors.lastName && <span className="error-message">{errors.lastName}</span>}
+
             <input
               type="email"
               name="email"
               placeholder="Email"
               value={formData.email}
               onChange={handleChange}
-              required
+              className={errors.email ? 'error' : ''}
             />
+            {errors.email && <span className="error-message">{errors.email}</span>}
+
             <div className="password-input-container">
               <input
                 type={showPassword.password ? "text" : "password"}
@@ -168,7 +216,7 @@ const Signup = () => {
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleChange}
-                required
+                className={errors.password ? 'error' : ''}
               />
               <button
                 type="button"
@@ -179,6 +227,8 @@ const Signup = () => {
                 {showPassword.password ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
+            {errors.password && <span className="error-message">{errors.password}</span>}
+
             <div className="password-input-container">
               <input
                 type={showPassword.confirmPassword ? "text" : "password"}
@@ -186,7 +236,7 @@ const Signup = () => {
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                required
+                className={errors.confirmPassword ? 'error' : ''}
               />
               <button
                 type="button"
@@ -197,11 +247,28 @@ const Signup = () => {
                 {showPassword.confirmPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
+            {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
+
             <div className="login-form-check">
-              <input type="checkbox" id="terms" name="terms" checked={formData.terms} onChange={handleChange} required />
+              <input 
+                type="checkbox" 
+                id="terms" 
+                name="terms" 
+                checked={formData.terms} 
+                onChange={handleChange}
+                className={errors.terms ? 'error' : ''}
+              />
               <label htmlFor="terms">I agree to the <a href="#">Terms & Conditions</a></label>
             </div>
-            <button className="login-form-btn" type="submit">Create account</button>
+            {errors.terms && <span className="error-message">{errors.terms}</span>}
+
+            <button 
+              className="login-form-btn" 
+              type="submit"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Creating Account...' : 'Create account'}
+            </button>
           </form>
           <div className="login-form-or">or register with</div>
           <div className="login-form-socials">

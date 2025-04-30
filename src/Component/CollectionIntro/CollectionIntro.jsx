@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './CollectionIntro.css';
 
 const CircleText = () => {
@@ -17,6 +18,12 @@ const CircleText = () => {
 };
 
 const CollectionIntro = () => {
+  const navigate = useNavigate();
+
+  const handleCircleClick = () => {
+    navigate('/all-products');
+  };
+
   return (
     <section className="collection-intro">
       <div className="mint-container">
@@ -42,7 +49,7 @@ const CollectionIntro = () => {
             <img src="/maskgroup.png" alt="New collection with decorative pillows and throw" />
           
             {/* Circular indicator */}
-            <div className="circle-indicator">
+            <div className="circle-indicator" onClick={handleCircleClick}>
               <CircleText />
               <div className="circle-arrow">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

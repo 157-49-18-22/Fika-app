@@ -1,7 +1,22 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "./Hero.css";
 
 function Hero() {
+  const navigate = useNavigate();
+
+  const handleShopNow = () => {
+    navigate('/new-arrivals');
+  };
+
+  const handleExplore = () => {
+    navigate('/all-products');
+  };
+
+  const handleViewAll = () => {
+    navigate('/all-products');
+  };
+
   return (
     <section className="hero">
       <div className="hero-heading">
@@ -29,10 +44,10 @@ function Hero() {
 
         <div className="hero-content-middle">
           <div className="button-container">
-            <button className="hero-button primary-btn">
+            <button className="hero-button primary-btn" onClick={handleShopNow}>
               SHOP NOW <span className="arrow">→</span>
             </button>
-            <button className="hero-button secondary-btn">
+            <button className="hero-button secondary-btn" onClick={handleExplore}>
               EXPLORE MORE PRODUCTS
             </button>
           </div>
@@ -46,7 +61,7 @@ function Hero() {
               <span>AND APPRECIATE GOOD</span>
               <span>THINGS IN LIFE.</span>
             </div>
-            <div className="view-all">
+            <div className="view-all" onClick={handleViewAll} style={{ cursor: 'pointer' }}>
               View All <span className="arrow-circle">&#8599;</span>
             </div>
           </div>

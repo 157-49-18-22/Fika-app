@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './FeaturedCollection.css';
 
 const FeaturedCollection = () => {
+  const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(3);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -168,6 +170,11 @@ const FeaturedCollection = () => {
 
   const visibleIndices = getVisibleRange();
 
+  const handleIndicatorClick = (index) => {
+    handleCardClick(index);
+    navigate('/all-products');
+  };
+
   return (
     <section className="featured-collection">
       <div className="collection-header">
@@ -231,7 +238,8 @@ const FeaturedCollection = () => {
           <span 
             key={index} 
             className={`indicator ${index === activeIndex ? 'active' : ''}`}
-            onClick={() => handleCardClick(index)}
+            onClick={() => handleIndicatorClick(index)}
+            style={{ cursor: 'pointer' }}
           />
         ))}
       </div>
