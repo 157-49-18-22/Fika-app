@@ -3,7 +3,7 @@ import './InstaFeed.css'
 
 const InstaFeed = () => {
   return (
-    <div className="insta-feed-container">
+    <section className="insta-feed-container">
       <h2 className="insta-feed-title">OUR INSTAGRAM FEED</h2>
       
       <div className="insta-feed-gallery">
@@ -23,7 +23,7 @@ const InstaFeed = () => {
           <img src="./tilt_image5.png" alt="Blue cushion with floral design" />
         </div>
       </div>
-    </div>
+    </section>
   )
 }
 

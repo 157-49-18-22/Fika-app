@@ -10,7 +10,7 @@
 }
 
 .insta-feed-container {
-    padding: 60px 20px;
+    padding: 5% 2%;
     margin: 0 auto;
     max-width: 1200px;
     overflow: hidden;
@@ -19,7 +19,7 @@
 .insta-feed-title {
     text-align: center;
     font-family: 'Carmine', serif;
-    font-size: 32px;
+    font-size: 2rem;
     font-weight: 400;
     margin-bottom: 50px;
     letter-spacing: 1.5px;
@@ -29,7 +29,7 @@
 .insta-feed-gallery {
     position: relative;
     height: 350px;
-    width: 1300px;
+    width: 100%;
     margin: 0 auto;
 }
 
@@ -101,72 +101,3 @@
 }
 
 /* Responsive styling */
-@media (max-width: 1200px) {
-    .image1 {
-        left: 0%;
-    }
-
-    .image2 {
-        left: 18%;
-    }
-
-    .image3 {
-        left: 36%;
-    }
-
-    .image4 {
-        left: 54%;
-    }
-
-    .image5 {
-        left: 72%;
-    }
-}
-
-@media (max-width: 992px) {
-    .insta-feed-gallery {
-        height: 320px;
-    }
-
-    .gallery-image {
-        width: 180px;
-        height: 240px;
-    }
-
-    .image1 {
-        left: 5%;
-    }
-
-    .image2 {
-        left: 22%;
-    }
-
-    .image3 {
-        left: 39%;
-    }
-
-    .image4 {
-        left: 56%;
-    }
-
-    .image5 {
-        left: 73%;
-    }
-}
-
-@media (max-width: 768px) {
-    .insta-feed-gallery {
-        height: 600px;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .gallery-image {
-        position: relative;
-        width: 70%;
-        height: 200px;
-        left: auto !important;
-        top: auto !important;
-        margin-bottom: 20px;
-    }
-}
