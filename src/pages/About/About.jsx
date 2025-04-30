@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import './About.css';
 import { sliderImages } from '../../assets/about/slider-images';
@@ -45,10 +46,53 @@ const About = () => {
       hour12: true
     });
   };
+=======
+import React, { useEffect, useState } from 'react';
+import './About.css';
+import { sliderImages } from '../../assets/about/slider-images';
+
+const About = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+
+  useEffect(() => {
+    // Preload images
+    const loadImages = async () => {
+      const imagePromises = sliderImages.map((slide) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = slide.image;
+          img.onload = resolve;
+          img.onerror = reject;
+        });
+      });
+
+      try {
+        await Promise.all(imagePromises);
+        setImagesLoaded(true);
+      } catch (error) {
+        console.error('Error loading images:', error);
+      }
+    };
+
+    loadImages();
+  }, []);
+
+  useEffect(() => {
+    if (!imagesLoaded) return;
+
+    const timer = setInterval(() => {
+      setCurrentSlide((prevSlide) => (prevSlide + 1) % sliderImages.length);
+    }, 5000); // Change slide every 5 seconds
+
+    return () => clearInterval(timer);
+  }, [imagesLoaded]);
+>>>>>>> origin
 
   return (
     <div className="about-container">
       <div className="hero-section">
+<<<<<<< HEAD
         <div className="slider-wrapper">
           {sliderImages.map((slide, idx) => (
             <img
@@ -93,6 +137,31 @@ const About = () => {
               <span className="time-text">{formatTime(currentTime)}</span>
             </div>
           </div>
+=======
+        <div className="slider-container">
+          {sliderImages.map((slide, index) => (
+            <div
+              key={index}
+              className={`slide ${index === currentSlide ? 'active' : ''}`}
+              style={{ backgroundImage: `url(${slide.image})` }}
+              role="img"
+              aria-label={slide.alt}
+            />
+          ))}
+        </div>
+        <div className="hero-content">
+          <h1>ABOUT US</h1>
+          <p>Crafting Timeless Fashion Experiences</p>
+        </div>
+        <div className="slider-dots">
+          {sliderImages.map((_, index) => (
+            <span
+              key={index}
+              className={`dot ${index === currentSlide ? 'active' : ''}`}
+              onClick={() => setCurrentSlide(index)}
+            />
+          ))}
+>>>>>>> origin
         </div>
       </div>
 
