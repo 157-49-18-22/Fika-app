@@ -18,6 +18,12 @@ function Navbar() {
   const searchRef = useRef(null);
   const navigate = useNavigate();
   const { requireAuth, showLoginPrompt, setShowLoginPrompt } = useAuthRedirect();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [typingText, setTypingText] = useState("");
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [typingSpeed, setTypingSpeed] = useState(150);
 
   // Get all products for search
   const allProducts = getAllProducts();
@@ -29,6 +35,38 @@ function Navbar() {
       (product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
        product.category.toLowerCase().includes(searchQuery.toLowerCase()))
   ).slice(0, 5); // Limit to 5 results
+
+  const words = ["Search Products", "Find Your Style", "Discover Fashion", "Explore Collections"];
+
+  useEffect(() => {
+    let timeout;
+    const currentWord = words[currentWordIndex];
+    
+    if (isDeleting) {
+      setTypingText(currentWord.substring(0, typingText.length - 1));
+      setTypingSpeed(50);
+    } else {
+      setTypingText(currentWord.substring(0, typingText.length + 1));
+      setTypingSpeed(150);
+    }
+
+    if (!isDeleting && typingText === currentWord) {
+      timeout = setTimeout(() => setIsDeleting(true), 2000);
+    } else if (isDeleting && typingText === "") {
+      setIsDeleting(false);
+      setCurrentWordIndex((prevIndex) => (prevIndex + 1) % words.length);
+    }
+
+    timeout = setTimeout(() => {
+      if (isDeleting) {
+        setTypingText(currentWord.substring(0, typingText.length - 1));
+      } else {
+        setTypingText(currentWord.substring(0, typingText.length + 1));
+      }
+    }, typingSpeed);
+
+    return () => clearTimeout(timeout);
+  }, [typingText, isDeleting, currentWordIndex]);
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -99,7 +137,7 @@ function Navbar() {
               <form onSubmit={handleSearch}>
                 <input 
                   type="text" 
-                  placeholder="Search Product..." 
+                  placeholder={typingText}
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);

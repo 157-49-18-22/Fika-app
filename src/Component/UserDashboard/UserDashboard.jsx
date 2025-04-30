@@ -8,7 +8,7 @@ const UserDashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  const { currentUser, logout } = useAuth();
+  const { isAuthenticated, currentUser, logout } = useAuth();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -26,6 +26,7 @@ const UserDashboard = () => {
   const handleLogout = () => {
     logout();
     setIsOpen(false);
+    navigate('/');
   };
 
   const getUserName = () => {
@@ -34,7 +35,7 @@ const UserDashboard = () => {
   };
 
   // Show login dropdown if not logged in
-  if (!currentUser) {
+  if (!isAuthenticated) {
     return (
       <div className="user-dashboard" ref={dropdownRef}>
         <button 
@@ -85,22 +86,30 @@ const UserDashboard = () => {
             </div>
             <div className="user-info">
               <h4>Welcome, {getUserName()}</h4>
-              <p>{currentUser.email}</p>
+              <p>{currentUser?.email}</p>
             </div>
           </div>
 
           <div className="dashboard-menu">
-            <Link to="/profile" className="menu-item">
+            <Link to="/profile" className="menu-item" onClick={() => setIsOpen(false)}>
               <FaUser className="menu-icon" />
               <span>My Profile</span>
             </Link>
-            <Link to="/orders" className="menu-item">
+            <Link to="/orders" className="menu-item" onClick={() => setIsOpen(false)}>
               <FaHistory className="menu-icon" />
               <span>My Orders</span>
             </Link>
-            <Link to="/settings" className="menu-item">
+            <Link to="/settings" className="menu-item" onClick={() => setIsOpen(false)}>
               <FaCog className="menu-icon" />
               <span>Settings</span>
+            </Link>
+            <Link to="/wishlist" className="menu-item" onClick={() => setIsOpen(false)}>
+              <img src="/icons/wishlist.png" alt="Wishlist" />
+              <span>Wishlist</span>
+            </Link>
+            <Link to="/notifications" className="menu-item" onClick={() => setIsOpen(false)}>
+              <img src="/icons/notifications.png" alt="Notifications" />
+              <span>Notifications</span>
             </Link>
             <button className="menu-item logout-btn" onClick={handleLogout}>
               <FaSignOutAlt className="menu-icon" />

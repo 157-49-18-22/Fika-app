@@ -12,12 +12,19 @@ const sliderImages = [
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [error, setError] = useState('');
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -38,30 +45,31 @@ const Login = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    setError(''); // Clear any previous error when user types
+    setError('');
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(''); // Clear any previous error
+    setError('');
     
-    if (formData.email && formData.password) {
-      try {
-        login({
-          email: formData.email,
-          password: formData.password // Note: In a real app, you'd want to hash this
-        });
-        navigate('/');
-      } catch (error) {
-        setError(error.message);
-      }
-    } else {
+    if (!formData.email || !formData.password) {
       setError('Please fill in all fields');
+      return;
+    }
+
+    try {
+      await login({
+        email: formData.email,
+        password: formData.password
+      });
+      // No need to navigate here as the useEffect will handle it
+    } catch (error) {
+      setError(error.message || 'Login failed. Please try again.');
     }
   };
 
   // Slider auto-play
-  React.useEffect(() => {
+  useEffect(() => {
     const interval = setInterval(() => {
       setSliderIndex((prev) => (prev + 1) % sliderImages.length);
     }, 3500);

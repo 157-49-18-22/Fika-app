@@ -17,6 +17,7 @@ import Login from './components/Login/Login.jsx';
 import Signup from './components/Signup.jsx';
 import './App.css';
 import Footer from './Component/Footer/Footer.jsx';
+import Profile from './Component/Profile/Profile.jsx';
 
 // Layout component with navbar and footer
 const PageLayout = ({ children }) => {
@@ -37,7 +38,7 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  return children;
+  return <PageLayout>{children}</PageLayout>;
 };
 
 function App() {
@@ -91,16 +92,17 @@ function App() {
               {/* Protected Routes - Require Login */}
               <Route path="/cart" element={
                 <ProtectedRoute>
-                  <PageLayout>
-                    <Cart />
-                  </PageLayout>
+                  <Cart />
                 </ProtectedRoute>
               } />
               <Route path="/wishlist" element={
                 <ProtectedRoute>
-                  <PageLayout>
-                    <Wishlist />
-                  </PageLayout>
+                  <Wishlist />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile" element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               } />
             </Routes>

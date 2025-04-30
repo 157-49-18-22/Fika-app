@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
 const db = require('./config/db');
+const emailRoutes = require('./routes/emailRoutes');
 
 // Import routes
 const userRoutes = require('./routes/userRoutes');
@@ -37,6 +38,7 @@ app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/blog-newsletter', blogNewsletterRoutes);
+app.use('/api/email', emailRoutes);
 
 // Basic route
 app.get('/', (req, res) => {

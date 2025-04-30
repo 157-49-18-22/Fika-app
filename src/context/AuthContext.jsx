@@ -5,6 +5,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [verificationCode, setVerificationCode] = useState(null);
   const [users, setUsers] = useState(() => {
     // Initialize with users from localStorage or empty array
     const savedUsers = localStorage.getItem('users');
@@ -92,13 +93,111 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('currentUser');
   };
 
+  const generateVerificationCode = () => {
+    // Generate a 6-digit verification code
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  };
+
+  const sendVerificationEmail = async (email, code) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/email/send-verification', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, code }),
+      });
+
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.message);
+      }
+
+      return {
+        success: true,
+        message: `We have sent a verification code to ${email}. Please check your email and enter the code below.`
+      };
+    } catch (error) {
+      console.error('Failed to send verification email:', error);
+      throw new Error('Failed to send verification email. Please try again.');
+    }
+  };
+
+  const updateUserEmail = async (newEmail) => {
+    if (!currentUser) {
+      throw new Error('No user is currently logged in');
+    }
+
+    // Check if email is already in use
+    const emailExists = users.some(user => user.email === newEmail);
+    if (emailExists) {
+      throw new Error('Email is already in use');
+    }
+
+    // Generate and store verification code
+    const code = generateVerificationCode();
+    setVerificationCode(code);
+
+    // Return verification response
+    return await sendVerificationEmail(newEmail, code);
+  };
+
+  const verifyEmailUpdate = (code, newEmail) => {
+    if (code !== verificationCode) {
+      throw new Error('Invalid verification code');
+    }
+
+    // Update user's email in users array
+    const updatedUsers = users.map(user => {
+      if (user.email === currentUser.email) {
+        return { ...user, email: newEmail };
+      }
+      return user;
+    });
+
+    // Update current user
+    const updatedUser = { ...currentUser, email: newEmail };
+
+    // Update state and localStorage
+    setUsers(updatedUsers);
+    setCurrentUser(updatedUser);
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
+    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+    setVerificationCode(null);
+
+    return true;
+  };
+
+  const deleteAccount = () => {
+    if (!currentUser) {
+      throw new Error('No user is currently logged in');
+    }
+
+    // Remove user from users array
+    const updatedUsers = users.filter(user => user.email !== currentUser.email);
+    setUsers(updatedUsers);
+
+    // Clear current user and authentication status
+    setCurrentUser(null);
+    setIsAuthenticated(false);
+    localStorage.setItem('users', JSON.stringify(updatedUsers));
+    localStorage.setItem('isAuthenticated', 'false');
+    localStorage.removeItem('currentUser');
+
+    return true;
+  };
+
   return (
     <AuthContext.Provider value={{ 
       isAuthenticated, 
       currentUser,
       login, 
       logout,
-      signup
+      signup,
+      updateUserEmail,
+      verifyEmailUpdate,
+      deleteAccount
     }}>
       {children}
     </AuthContext.Provider>
