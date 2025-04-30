@@ -129,7 +129,9 @@ function Navbar() {
           </div>
 
           <div className="navbar-center">
-            <Link to="/" className="logo">Fika</Link>
+            <Link to="/" className="logo">
+              <img style={{width: "70px", height: "70px"}} src="/Fika_Logo.jpg" alt="logo" />
+            </Link>
           </div>
 
           <div className="navbar-right">

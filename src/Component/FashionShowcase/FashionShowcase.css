@@ -2,10 +2,10 @@
     padding: 20px 0;
 }
 
-.section-title {
+.sectiontitle {
     text-align: center;
-    font-size: 32px;
-    font-weight: 500;
+    font-size: 2.5rem;
+    font-weight: 400;
     margin-bottom: 30px;
     letter-spacing: 2px;
     font-family: 'Carmine';
