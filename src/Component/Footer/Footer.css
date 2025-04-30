@@ -100,30 +100,3 @@
 .social-link:hover {
     color: #000;
 }
-
-/* Responsive */
-@media (max-width: 768px) {
-    .footer-content {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-
-    .footer-section {
-        margin-bottom: 30px;
-        width: 100%;
-    }
-
-    .footer-links {
-        align-items: center;
-    }
-
-    .footer-logo-section {
-        order: -1;
-        margin-bottom: 30px;
-    }
-
-    .copyright {
-        text-align: center;
-    }
-}

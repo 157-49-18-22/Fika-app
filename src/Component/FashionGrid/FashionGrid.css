@@ -251,7 +251,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
     .fashion-grid {
         grid-template-columns: 1fr;
     }
@@ -263,4 +263,4 @@
     .duo-image-container {
         flex-direction: column;
     }
-}
+} */
