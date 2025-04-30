@@ -18,7 +18,7 @@ const AllProducts = () => {
   const [fadeIn, setFadeIn] = useState(false);
   const [quickView, setQuickView] = useState(null);
   const [filtersVisible, setFiltersVisible] = useState(false);
-  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [priceRange, setPriceRange] = useState([0, 10000]);
   const [showDropdown, setShowDropdown] = useState(false);
   const searchRef = useRef(null);
   const [minRating, setMinRating] = useState(0);
@@ -69,6 +69,7 @@ const AllProducts = () => {
 
   const allProducts = getAllProducts();
 
+
   const sortOptions = [
     { id: "featured", name: "Featured" },
     { id: "newest", name: "Newest" },
@@ -88,16 +89,19 @@ const AllProducts = () => {
 
   // Filter products by category, search, price, rating, discount, stock, gender
   const filteredProducts = allProducts.filter(
-    (product) =>
-      (selectedCategory === "all" || product.category.toLowerCase() === selectedCategory.toLowerCase()) &&
-      (searchQuery === "" || 
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      (product.price >= priceRange[0] && product.price <= priceRange[1]) &&
-      (minRating === 0 || (product.rating && product.rating >= minRating)) &&
-      (!showDiscounted || product.discount) &&
-      (!inStockOnly || product.inStock) &&
-      (selectedGender === 'all' || (product.gender && product.gender.toLowerCase() === selectedGender))
+    (product) => {
+      const categoryMatch = selectedCategory === "all" || product.category.toLowerCase() === selectedCategory.toLowerCase();
+    
+      return categoryMatch &&
+        (searchQuery === "" || 
+          product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.category.toLowerCase().includes(searchQuery.toLowerCase())) &&
+        (product.price >= priceRange[0] && product.price <= priceRange[1]) &&
+        (minRating === 0 || (product.rating && product.rating >= minRating)) &&
+        (!showDiscounted || product.discount) &&
+        (!inStockOnly || product.inStock) &&
+        (selectedGender === 'all' || (product.gender && product.gender.toLowerCase() === selectedGender));
+    }
   );
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
@@ -239,6 +243,7 @@ const AllProducts = () => {
               key={category.id}
               className={`category-btn-horizontal ${selectedCategory === category.id ? "active" : ""}`}
               onClick={() => {
+                console.log('Category clicked:', category.id);
                 setSelectedCategory(category.id);
                 setVisibleItems(12);
               }}
@@ -341,7 +346,7 @@ const AllProducts = () => {
               <input
                 type="range"
                 min="0"
-                max="1000"
+                max="10000"
                 value={priceRange[1]}
                 onChange={e => setPriceRange([priceRange[0], parseInt(e.target.value)])}
                 className="price-slider"
@@ -375,7 +380,7 @@ const AllProducts = () => {
                 setMinRating(0);
                 setShowDiscounted(false);
                 setInStockOnly(false);
-                setPriceRange([0, 1000]);
+                setPriceRange([0, 10000]);
                 setSortOption('featured');
                 setSelectedGender('all');
               }}
@@ -508,7 +513,7 @@ const AllProducts = () => {
                     onClick={() => {
                       setSelectedCategory("all");
                       setSearchQuery("");
-                      setPriceRange([0, 1000]);
+                      setPriceRange([0, 10000]);
                     }}
                   >
                     Reset All Filters

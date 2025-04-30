@@ -408,7 +408,7 @@ export const allProductsData = [
   {
     id: 23,
     name: "Handblocked Botanical Dream Quilted Bedding Set",
-    category: "bedsets",
+    category: "Bedsets",
     price: 4299.0,
     image: "https://images.unsplash.com/photo-1584132905271-512c958d674a?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
     isNew: true,
@@ -426,7 +426,7 @@ export const allProductsData = [
   {
     id: 24,
     name: "Luxury Handblocked Cypress Print Bedsheet Set",
-    category: "bedsets",
+    category: "Bedsets",
     price: 2299.0,
     image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
     isNew: true,
@@ -462,7 +462,7 @@ export const allProductsData = [
   {
     id: 27,
     name: "Botanical Grace Handblock Print Bedsheet Set",
-    category: "bedsets",
+    category: "Bedsets",
     price: 2299.0,
     image: "/botanical-grace-handblock-print-bedsheet-set.jpg",
     isNew: true,
@@ -480,7 +480,7 @@ export const allProductsData = [
   {
     id: 28,
     name: "Tropical Bloom Handblock Print Bedsheet Set",
-    category: "bedsets",
+    category: "Bedsets",
     price: 2299.0,
     image: "/tropical-bloom-handblock-print-bedsheet-set.jpg",
     isNew: true,
@@ -498,7 +498,7 @@ export const allProductsData = [
   {
     id: 29,
     name: "Ornate Blossom Handblock Print Bedsheet Set",
-    category: "bedsets",
+    category: "Bedsets",
     price: 2299.0,
     image: "/ornate-blossom-handblock-print-bedsheet-set.jpg",
     isNew: true,
@@ -516,7 +516,7 @@ export const allProductsData = [
   {
     id: 30,
     name: "Royal Paisley Bloom Handblock Print Bedsheet set",
-    category: "bedsets",
+    category: "Bedsets",
     price: 2299.0,
     image: "/royal-paisley-bloom-handblock-print-bedsheet-set.jpg",
     isNew: true,
@@ -534,7 +534,7 @@ export const allProductsData = [
   {
     id: 31,
     name: "Whimsical Floral Handblocked Print Bedsheet Set",
-    category: "bedsets",
+    category: "Bedsets",
     price: 2299.0,
     image: "/whimsical-floral-handblocked-print-bedsheet-set.jpg",
     isNew: true,
@@ -552,7 +552,7 @@ export const allProductsData = [
   {
     id: 32,
     name: "Elegant Iris Bloom Handblocked Bedsheet Set",
-    category: "bedsets",
+    category: "Bedsets",
     price: 2299.0,
     image: "/elegant-iris-bloom-handblocked-bedsheet-set.jpg",
     isNew: true,
@@ -566,6 +566,46 @@ export const allProductsData = [
     material: "100% Cotton\n220-240 TC",
     care: "Cold Wash Separately\nGentle Cycle\nMild detergent\nDry in shade",
     reviews: []
+  },
+  {
+    id: 100,
+    name: "Luxury Cotton Bedsheet Set",
+    category: "bedsets",
+    price: 89.99,
+    image: "https://images.unsplash.com/photo-1616628188859-7a11abb7fcc9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    isNew: true,
+    discount: 10,
+    rating: 4.7,
+    reviewsCount: 28,
+    description: "Premium cotton bedsheet set for ultimate comfort.",
+    details: "Made from 100% premium cotton, this bedsheet set includes a fitted sheet, flat sheet, and two pillowcases. Available in multiple colors.",
+    sizes: ['Single', 'Double', 'Queen', 'King'],
+    colors: ['White', 'Beige', 'Blue', 'Grey'],
+    material: "100% Cotton",
+    care: "Machine wash cold, tumble dry low",
+    reviews: [
+      { id: 1, name: "Emma Thompson", rating: 5, comment: "Super soft and comfortable!", date: "2023-07-10" }
+    ]
+  },
+  {
+    id: 101,
+    name: "Silk Bedsheet Set",
+    category: "bedsets",
+    price: 129.99,
+    image: "https://images.unsplash.com/photo-1616628188859-7a11abb7fcc9?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+    isNew: true,
+    discount: 15,
+    rating: 4.9,
+    reviewsCount: 35,
+    description: "Luxurious silk bedsheet set for a premium sleeping experience.",
+    details: "Crafted from high-quality silk, this bedsheet set provides a smooth and cool sleeping surface. Includes fitted sheet, flat sheet, and two pillowcases.",
+    sizes: ['Double', 'Queen', 'King'],
+    colors: ['Ivory', 'Silver', 'Gold'],
+    material: "100% Silk",
+    care: "Dry clean only",
+    reviews: [
+      { id: 1, name: "James Wilson", rating: 5, comment: "Feels amazing, worth every penny!", date: "2023-07-15" }
+    ]
   }
 ];
 
