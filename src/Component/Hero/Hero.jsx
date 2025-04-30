@@ -74,7 +74,7 @@ function Hero() {
 
           <div className="product-grid">
             <div className="product-grid-item item1 width-40">
-              <div className="price-overlay">$48</div>
+              <div className="price-overlay">₹48</div>
               <img src="./hero_image2_1.png" alt="Product thumbnail" />
             </div>
             <div className="product-grid-item item2 width-60">
