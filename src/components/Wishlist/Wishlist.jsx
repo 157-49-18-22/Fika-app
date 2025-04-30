@@ -3,17 +3,13 @@ import { Link } from "react-router-dom";
 import { FaHeart, FaArrowRight, FaShoppingCart, FaTrash } from "react-icons/fa";
 import { useWishlist } from "../../context/WishlistContext";
 import { useCart } from "../../context/CartContext";
-<<<<<<< HEAD
 import { useAuth } from "../../context/AuthContext";
 import LoginPrompt from "../LoginPrompt/LoginPrompt";
-=======
->>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
 import "./Wishlist.css";
 
 const Wishlist = () => {
   const { wishlist, removeFromWishlist } = useWishlist();
   const { addToCart } = useCart();
-<<<<<<< HEAD
   const { isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
@@ -24,9 +20,6 @@ const Wishlist = () => {
     );
   }
 
-=======
-
->>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
   const handleAddToCart = (product) => {
     addToCart(product);
     removeFromWishlist(product.id);

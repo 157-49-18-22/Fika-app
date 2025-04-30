@@ -1,9 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext";
-<<<<<<< HEAD
 import { useAuthRedirect } from "../utils/authUtils";
-=======
->>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
 
 const CartContext = createContext();
 
@@ -13,10 +10,7 @@ export const useCart = () => {
 
 export const CartProvider = ({ children }) => {
   const { currentUser } = useAuth();
-<<<<<<< HEAD
   const { requireAuth } = useAuthRedirect();
-=======
->>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
   
   // Initialize cart from localStorage or empty array
   const [cart, setCart] = useState([]);
@@ -44,16 +38,8 @@ export const CartProvider = ({ children }) => {
     }
   }, [cart, currentUser]);
 
-<<<<<<< HEAD
   const addToCart = (product, size = "default", quantity = 1, navigate) => {
     if (!requireAuth('add items to cart', navigate)) return;
-=======
-  const addToCart = (product, size = "default", quantity = 1) => {
-    if (!currentUser?.email) {
-      console.log('Please login to add items to cart');
-      return;
-    }
->>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
     
     if (!product || !product.id) {
       console.error('Invalid product data:', product);
@@ -87,25 +73,15 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-<<<<<<< HEAD
   const removeFromCart = (productId, navigate) => {
     if (!requireAuth('remove items from cart', navigate)) return;
-=======
-  const removeFromCart = (productId) => {
-    if (!currentUser?.email) return;
->>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
     setCart((prevCart) =>
       prevCart.filter((item) => item.id !== productId)
     );
   };
 
-<<<<<<< HEAD
   const updateQuantity = (productId, newQuantity, navigate) => {
     if (!requireAuth('update cart quantity', navigate) || newQuantity < 1) return;
-=======
-  const updateQuantity = (productId, newQuantity) => {
-    if (!currentUser?.email || newQuantity < 1) return;
->>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
 
     setCart((prevCart) =>
       prevCart.map((item) =>
@@ -127,13 +103,8 @@ export const CartProvider = ({ children }) => {
     }, 0);
   };
 
-<<<<<<< HEAD
   const clearCart = (navigate) => {
     if (!requireAuth('clear cart', navigate)) return;
-=======
-  const clearCart = () => {
-    if (!currentUser?.email) return;
->>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
     setCart([]);
     localStorage.removeItem(`cart_${currentUser.email}`);
   };
