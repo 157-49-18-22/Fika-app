@@ -7,7 +7,7 @@
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 100;
     border-radius: 80px;
 }
 
@@ -67,7 +67,9 @@
     font-weight: 500;
     position: relative;
     transition: color 0.3s ease;
+    white-space: nowrap; /* Prevents line break */
 }
+
 
 .nav-link:hover,
 .nav-link.active {
@@ -150,8 +152,8 @@
 }
 
 .badge {
-    margin-top: 30px;
-    margin-right: 82px;
+    margin-top: 29px;
+    margin-right: 96px;
     position: absolute;
     top: -8px;
     right: -8px;
@@ -165,6 +167,54 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* Login Button Styles */
+.navbar .navbar-right .login-btn {
+    background: none !important;
+    color: #333;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    box-shadow: none;
+}
+
+.navbar .navbar-right .login-btn:hover {
+    color: #000;
+    background: none !important;
+}
+
+.navbar .navbar-right .login-icon {
+    font-size: 14px;
+    color: #333;
+}
+
+.navbar .navbar-right .login-btn:hover .login-icon {
+    color: #000;
+}
+
+.navbar .navbar-right .login-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #000;
+    transition: width 0.3s ease;
+}
+
+.navbar .navbar-right .login-btn:hover::after {
+    width: 100%;
 }
 
 /* Search Results Dropdown */
@@ -264,5 +314,40 @@
 
     .search-bar {
         width: 180px;
+    }
+}
+
+.login-prompt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.login-prompt-wrapper {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 90%;
+    width: 400px;
+    animation: slideIn 0.3s ease-out;
+    position: relative;
+    z-index: 10000;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
 }

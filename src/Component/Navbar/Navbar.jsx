@@ -6,6 +6,9 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
 import { getAllProducts } from "../../data/products";
+import UserDashboard from "../UserDashboard/UserDashboard";
+import { useAuthRedirect } from '../../utils/authUtils';
+import LoginPrompt from "../../components/LoginPrompt/LoginPrompt";
 
 function Navbar() {
   const { getCartCount } = useCart();
@@ -14,6 +17,7 @@ function Navbar() {
   const [showDropdown, setShowDropdown] = useState(false);
   const searchRef = useRef(null);
   const navigate = useNavigate();
+  const { requireAuth, showLoginPrompt, setShowLoginPrompt } = useAuthRedirect();
 
   // Get all products for search
   const allProducts = getAllProducts();
@@ -49,85 +53,118 @@ function Navbar() {
     }
   };
 
+  const handleWishlistClick = (e) => {
+    e.preventDefault();
+    if (!requireAuth('view wishlist')) {
+      setShowLoginPrompt(true);
+      return;
+    }
+    navigate('/wishlist');
+  };
+
+  const handleCartClick = (e) => {
+    e.preventDefault();
+    if (!requireAuth('view cart')) {
+      setShowLoginPrompt(true);
+      return;
+    }
+    navigate('/cart');
+  };
+
+  const handleCloseLoginPrompt = () => {
+    setShowLoginPrompt(false);
+  };
+
   return (
-    <div className="navbar">
-      <div className="navbar-container">
-        {/* <button className="mobile-menu-toggle" aria-label="Toggle menu">
-          <FaBars />
-        </button> */}
+    <>
+      <div className="navbar">
+        <div className="navbar-container">
+          {/* <button className="mobile-menu-toggle" aria-label="Toggle menu">
+            <FaBars />
+          </button> */}
 
-        <div className="navbar-left">
-          <NavLink to="/new-arrivals" className="nav-link">New Arrival</NavLink>
-          <NavLink to="/all-products" className="nav-link">All Product</NavLink>
-          <NavLink to="/blog" className="nav-link">Blog</NavLink>
-          <NavLink to="/contact" className="nav-link">Contact Us</NavLink>
-        </div>
-
-        <div className="navbar-center">
-          <Link to="/" className="logo">Fika</Link>
-        </div>
-
-        <div className="navbar-right">
-          <div className="search-bar" ref={searchRef}>
-            <form onSubmit={handleSearch}>
-              <input 
-                type="text" 
-                placeholder="Search Product..." 
-                value={searchQuery}
-                onChange={(e) => {
-                  setSearchQuery(e.target.value);
-                  setShowDropdown(true);
-                }}
-                onFocus={() => {
-                  if (searchQuery) setShowDropdown(true);
-                }}
-              />
-              <button type="submit" className="search-btn">
-                <FaSearch size={14} />
-              </button>
-            </form>
-
-            {/* Search Results Dropdown */}
-            {showDropdown && searchQuery && (
-              <div className="search-results-dropdown">
-                {filteredProducts.map((product) => (
-                  <div 
-                    key={product.id} 
-                    className="search-result-item"
-                    onClick={() => {
-                      navigate(`/product/${product.id}`);
-                      setShowDropdown(false);
-                      setSearchQuery("");
-                    }}
-                  >
-                    <img src={product.image} alt={product.name} className="search-result-image" />
-                    <div className="search-result-info">
-                      <div className="search-result-name">{product.name}</div>
-                      <div className="search-result-price">${product.price.toFixed(2)}</div>
-                    </div>
-                  </div>
-                ))}
-                {filteredProducts.length === 0 && (
-                  <div className="no-results">No products found</div>
-                )}
-              </div>
-            )}
+          <div className="navbar-left">
+            <NavLink to="/new-arrivals" className="nav-link">New Arrival</NavLink>
+            <NavLink to="/all-products" className="nav-link">All Product</NavLink>
+            <NavLink to="/blog" className="nav-link">Blog</NavLink>
+            <NavLink to="/contact" className="nav-link">Contact Us</NavLink>
           </div>
-          <Link to="/wishlist" className="" aria-label="Wishlist">
-            <FaHeart style={{ color: '#333' }} />
-            {wishlist.length > 0 && (
-              <span className="badge">{wishlist.length}</span>
-            )}
-          </Link>
-          <Link to="/cart" className="" aria-label="Shopping Cart">
-            <FiShoppingBag style={{ color: '#333' }} />
-            {getCartCount() > 0 && (
-              <span className="badge">{getCartCount()}</span>
-            )}
-          </Link>
+
+          <div className="navbar-center">
+            <Link to="/" className="logo">Fika</Link>
+          </div>
+
+          <div className="navbar-right">
+            <div className="search-bar" ref={searchRef}>
+              <form onSubmit={handleSearch}>
+                <input 
+                  type="text" 
+                  placeholder="Search Product..." 
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setShowDropdown(true);
+                  }}
+                  onFocus={() => {
+                    if (searchQuery) setShowDropdown(true);
+                  }}
+                />
+                <button type="submit" className="search-btn">
+                  <FaSearch size={14} />
+                </button>
+              </form>
+
+              {/* Search Results Dropdown */}
+              {showDropdown && searchQuery && (
+                <div className="search-results-dropdown">
+                  {filteredProducts.map((product) => (
+                    <div 
+                      key={product.id} 
+                      className="search-result-item"
+                      onClick={() => {
+                        navigate(`/product/${product.id}`);
+                        setShowDropdown(false);
+                        setSearchQuery("");
+                      }}
+                    >
+                      <img src={product.image} alt={product.name} className="search-result-image" />
+                      <div className="search-result-info">
+                        <div className="search-result-name">{product.name}</div>
+                        <div className="search-result-price">${product.price.toFixed(2)}</div>
+                      </div>
+                    </div>
+                  ))}
+                  {filteredProducts.length === 0 && (
+                    <div className="no-results">No products found</div>
+                  )}
+                </div>
+              )}
+            </div>
+            <Link to="/wishlist" className="" aria-label="Wishlist" onClick={handleWishlistClick}>
+              <FaHeart style={{ color: '#333' }} />
+              {wishlist.length > 0 && (
+                <span className="badge">{wishlist.length}</span>
+              )}
+            </Link>
+            <Link to="/cart" className="" aria-label="Shopping Cart" onClick={handleCartClick}>
+              <FiShoppingBag style={{ color: '#333' }} />
+              {getCartCount() > 0 && (
+                <span className="badge">{getCartCount()}</span>
+              )}
+            </Link>
+            <UserDashboard />
+          </div>
         </div>
       </div>
-    </div>
+      
+      {showLoginPrompt && (
+        <div className="login-prompt-overlay" onClick={handleCloseLoginPrompt}>
+          <div className="login-prompt-wrapper" onClick={(e) => e.stopPropagation()}>
+            <LoginPrompt message="Please login to access your cart and wishlist items." />
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

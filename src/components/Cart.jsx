@@ -1,100 +1,62 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
-import { FaPlus, FaMinus, FaTrash, FaShoppingCart, FaArrowRight, FaShoppingBag } from "react-icons/fa";
-import { getAllProducts } from "../data/products";
+import { FaPlus, FaMinus, FaTrash, FaShoppingCart, FaArrowRight, FaShoppingBag, FaUser } from "react-icons/fa";
+import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
+import LoginPrompt from "./LoginPrompt/LoginPrompt";
 import "./Cart/Cart.css";
 
 const Cart = () => {
-  const [cart, setCart] = useState([]);
+  const { cart, removeFromCart, updateQuantity, getCartTotal } = useCart();
+  const { isAuthenticated } = useAuth();
   const [showPayment, setShowPayment] = useState(false);
   const [promoCode, setPromoCode] = useState("");
 
-  // Fetch cart items from backend
-  useEffect(() => {
-    fetchCart();
-  }, []);
+  if (!isAuthenticated) {
+    return (
+      <div className="cart-container">
+        <LoginPrompt message="Please login to view and manage your cart items. Login to save your shopping cart and proceed to checkout." />
+      </div>
+    );
+  }
 
-  const fetchCart = () => {
-    axios.get("http://localhost:5000/api/cart")
-      .then(res => setCart(res.data))
-      .catch(err => console.error(err));
-  };
-
-  // Remove item from cart
-  const removeFromCart = (cartId) => {
-    axios.delete(`http://localhost:5000/api/cart/${cartId}`)
-      .then(res => {
-        fetchCart();
-      })
-      .catch(err => {
-        console.error(err);
-        alert("Error: " + (err.response?.data?.error || err.message));
-      });
-  };
-
-  // Update quantity in cart
-  const updateQuantity = (cartId, newQuantity) => {
-    if (newQuantity < 1) return;
-    axios.patch(`http://localhost:5000/api/cart/${cartId}`, { quantity: newQuantity })
-      .then(() => fetchCart())
-      .catch(err => {
-        console.error(err);
-        alert("Error: " + (err.response?.data?.error || err.message));
-      });
-  };
-
-  // Merge cart items with product details
-  const products = getAllProducts();
-  const mergedCart = cart.map(item => {
-    const product = products.find(p => p.id === item.product_id);
-    return product
-      ? { ...product, ...item, productId: product.id, cartId: item.id }
-      : item;
-  });
+  if (cart.length === 0) {
+    return (
+      <div className="cart-empty">
+        <h2>Your Cart is Empty</h2>
+        <p>Looks like you haven't added any items to your cart yet.</p>
+        <Link to="/all-products" className="continue-shopping-btn">
+          Continue Shopping
+        </Link>
+      </div>
+    );
+  }
 
   // Calculate subtotal
-  const subtotal = mergedCart.reduce((sum, item) => {
+  const subtotal = cart.reduce((sum, item) => {
     const price = item.discount ? item.price * (1 - item.discount / 100) : item.price;
     return sum + price * item.quantity;
   }, 0);
   const shipping = 0;
   const total = subtotal + shipping;
 
-  if (mergedCart.length === 0) {
-    return (
-      <div className="cart-section">
-        <div className="empty-cart">
-          <div className="empty-cart-icon">
-            <FaShoppingBag />
-          </div>
-          <h2>Your Shopping Cart is Empty</h2>
-          <p>Discover our amazing collection and add your favorite items to the cart!</p>
-          <Link to="/all-products" className="continue-shopping-btn">
-            Start Shopping <FaArrowRight />
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="cart-container">
-      <h2>
-        <FaShoppingCart className="cart-title-icon" /> Shopping Cart
-      </h2>
+      <div className="cart-header">
+        <h2>
+          <FaShoppingCart className="cart-title-icon" /> Shopping Cart
+        </h2>
+      </div>
       <div className="cart-content">
         <div className="cart-items">
-          {mergedCart.map((item) => (
-            <div key={item.id} className="cart-item">
+          {cart.map((item) => (
+            <div key={`${item.id}-${item.size}`} className="cart-item">
               <div className="cart-item-image">
                 <img src={item.image} alt={item.name} />
               </div>
               <div className="cart-item-details">
-                <Link to={`/product/${item.id}`} className="cart-item-name">
-                  {item.name}
-                </Link>
-                <span className="cart-item-category">{item.category}</span>
+                <h3>{item.name}</h3>
+                <p className="cart-item-category">{item.category}</p>
                 <div className="cart-item-price">
                   {item.discount ? (
                     <>
@@ -104,37 +66,35 @@ const Cart = () => {
                       <span className="original-price">
                         ${item.price.toFixed(2)}
                       </span>
-                      <span className="discount-badge">-{item.discount}%</span>
+                      <span className="discount-badge">
+                        -{item.discount}% OFF
+                      </span>
                     </>
                   ) : (
-                    `$${item.price.toFixed(2)}`
+                    <span className="regular-price">
+                      ${item.price.toFixed(2)}
+                    </span>
                   )}
                 </div>
-              </div>
-              <div className="cart-item-quantity">
-                <button className="quantity-btn" onClick={() => updateQuantity(item.cartId, item.quantity - 1)} disabled={item.quantity <= 1}>
-                  <FaMinus />
+                <div className="cart-item-quantity">
+                  <button
+                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                    disabled={item.quantity <= 1}
+                  >
+                    -
+                  </button>
+                  <span>{item.quantity}</span>
+                  <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+                    +
+                  </button>
+                </div>
+                <button
+                  className="remove-item-btn"
+                  onClick={() => removeFromCart(item.id)}
+                >
+                  Remove
                 </button>
-                <span className="quantity-value">{item.quantity}</span>
-                <button className="quantity-btn" onClick={() => updateQuantity(item.cartId, item.quantity + 1)}>
-                  <FaPlus />
-                </button>
               </div>
-              <div className="cart-item-total">
-                <span className="total-label">Total:</span>$
-                {(
-                  (item.discount
-                    ? item.price * (1 - item.discount / 100)
-                    : item.price) * item.quantity
-                ).toFixed(2)}
-              </div>
-              <button
-                className="remove-btn"
-                onClick={() => removeFromCart(item.cartId)}
-                title="Remove item"
-              >
-                <FaTrash />
-              </button>
             </div>
           ))}
         </div>
@@ -152,7 +112,7 @@ const Cart = () => {
           </div>
           <div className="summary-row">
             <span>
-              Subtotal ({mergedCart.length} {mergedCart.length === 1 ? "item" : "items"})
+              Subtotal ({cart.length} {cart.length === 1 ? "item" : "items"})
             </span>
             <span>${subtotal.toFixed(2)}</span>
           </div>

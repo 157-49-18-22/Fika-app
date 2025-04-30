@@ -17,6 +17,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -37,15 +38,25 @@ const Login = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    setError(''); // Clear any previous error when user types
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError(''); // Clear any previous error
+    
     if (formData.email && formData.password) {
-      login();
-      navigate('/');
+      try {
+        login({
+          email: formData.email,
+          password: formData.password // Note: In a real app, you'd want to hash this
+        });
+        navigate('/');
+      } catch (error) {
+        setError(error.message);
+      }
     } else {
-      alert('Please fill in all fields');
+      setError('Please fill in all fields');
     }
   };
 
@@ -112,6 +123,7 @@ const Login = () => {
           <div className="login-form-sub">
             To make account? <Link to="/signup" className="signup-link">Sign-UP</Link>
           </div>
+          {error && <div className="login-form-error">{error}</div>}
           <form className="login-form-fields" onSubmit={handleSubmit}>
             <input
               type="email"

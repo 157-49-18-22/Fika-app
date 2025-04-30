@@ -9,7 +9,7 @@ import AllProducts from './components/AllProducts/AllProducts.jsx';
 import Blog from './components/Blog/Blog.jsx';
 import Contact from './components/Contact/Contact.jsx';
 import ProductDetails from './components/ProductDetails/ProductDetails.jsx';
-import Cart from './components/Cart.jsx';
+import Cart from './components/Cart/Cart.jsx';
 import Wishlist from './components/Wishlist/Wishlist.jsx';
 import CategoryProducts from './components/CategoryProducts/CategoryProducts.jsx';
 import Navbar from './Component/Navbar/Navbar.jsx';
@@ -18,7 +18,7 @@ import Signup from './components/Signup.jsx';
 import './App.css';
 import Footer from './Component/Footer/Footer.jsx';
 
-// Non-homepage layout component
+// Layout component with navbar and footer
 const PageLayout = ({ children }) => {
   return (
     <div>
@@ -29,7 +29,7 @@ const PageLayout = ({ children }) => {
   );
 };
 
-// Protected Route component
+// Protected Route component for features that require login
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useAuth();
 
@@ -47,48 +47,48 @@ function App() {
         <WishlistProvider>
           <Router>
             <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
+              {/* Public Routes */}
               <Route path="/" element={
-                <ProtectedRoute>
+                <PageLayout>
                   <Homepage />
-                </ProtectedRoute>
+                </PageLayout>
               } />
               <Route path="/new-arrivals" element={
-                <ProtectedRoute>
-                  <PageLayout>
-                    <NewArrivals />
-                  </PageLayout>
-                </ProtectedRoute>
+                <PageLayout>
+                  <NewArrivals />
+                </PageLayout>
               } />
               <Route path="/all-products" element={
-                <ProtectedRoute>
-                  <PageLayout>
-                    <AllProducts />
-                  </PageLayout>
-                </ProtectedRoute>
+                <PageLayout>
+                  <AllProducts />
+                </PageLayout>
               } />
               <Route path="/blog" element={
-                <ProtectedRoute>
-                  <PageLayout>
-                    <Blog />
-                  </PageLayout>
-                </ProtectedRoute>
+                <PageLayout>
+                  <Blog />
+                </PageLayout>
               } />
               <Route path="/contact" element={
-                <ProtectedRoute>
-                  <PageLayout>
-                    <Contact />
-                  </PageLayout>
-                </ProtectedRoute>
+                <PageLayout>
+                  <Contact />
+                </PageLayout>
               } />
               <Route path="/product/:id" element={
-                <ProtectedRoute>
-                  <PageLayout>
-                    <ProductDetails />
-                  </PageLayout>
-                </ProtectedRoute>
+                <PageLayout>
+                  <ProductDetails />
+                </PageLayout>
               } />
+              <Route path="/category/:categoryName" element={
+                <PageLayout>
+                  <CategoryProducts />
+                </PageLayout>
+              } />
+
+              {/* Auth Routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+
+              {/* Protected Routes - Require Login */}
               <Route path="/cart" element={
                 <ProtectedRoute>
                   <PageLayout>
@@ -100,13 +100,6 @@ function App() {
                 <ProtectedRoute>
                   <PageLayout>
                     <Wishlist />
-                  </PageLayout>
-                </ProtectedRoute>
-              } />
-              <Route path="/category/:categoryName" element={
-                <ProtectedRoute>
-                  <PageLayout>
-                    <CategoryProducts />
                   </PageLayout>
                 </ProtectedRoute>
               } />

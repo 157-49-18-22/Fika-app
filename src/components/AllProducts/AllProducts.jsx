@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useWishlist } from "../../context/WishlistContext.jsx";
-import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight, FaSlidersH, FaDollarSign, FaSortAmountDown } from "react-icons/fa";
+import { useCart } from "../../context/CartContext.jsx";
+import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight, FaSlidersH, FaDollarSign, FaSortAmountDown, FaBed, FaCouch } from "react-icons/fa";
 import { GiLargeDress, GiRunningShoe, GiWatch, GiHeartNecklace, GiTrousers } from "react-icons/gi";
 import "./AllProductsStyles.css";
 import { getAllProducts } from "../../data/products";
@@ -17,7 +18,7 @@ const AllProducts = () => {
   const [fadeIn, setFadeIn] = useState(false);
   const [quickView, setQuickView] = useState(null);
   const [filtersVisible, setFiltersVisible] = useState(false);
-  const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [priceRange, setPriceRange] = useState([0, 10000]);
   const [showDropdown, setShowDropdown] = useState(false);
   const searchRef = useRef(null);
   const [minRating, setMinRating] = useState(0);
@@ -27,6 +28,7 @@ const AllProducts = () => {
   const [wishlistProductIds, setWishlistProductIds] = useState([]);
   
   const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
+  const { addToCart } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -51,17 +53,6 @@ const AllProducts = () => {
     };
   }, []);
 
-  // Fetch wishlist product ids from backend
-  const fetchWishlist = () => {
-    axios.get("http://localhost:5000/api/wishlist")
-      .then(res => setWishlistProductIds(res.data.map(item => item.product_id)))
-      .catch(err => console.error(err));
-  };
-
-  useEffect(() => {
-    fetchWishlist();
-  }, []);
-
   const categories = [
     { id: "all", name: "All Products", icon: <FaShoppingBag /> },
     { id: "clothing", name: "Clothing", icon: <FaTshirt /> },
@@ -70,9 +61,14 @@ const AllProducts = () => {
     { id: "accessories", name: "Accessories", icon: <GiHeartNecklace /> },
     { id: "pants", name: "Pants", icon: <GiTrousers /> },
     { id: "watches", name: "Watches", icon: <GiWatch /> },
+    { id: "bags and purses", name: "Bags and Purses", icon: <FaShoppingBag /> },
+    { id: "bedsets", name: "Bedsets", icon: <FaBed /> },
+    { id: "cushion covers", name: "Cushion Covers", icon: <FaCouch /> },
+    { id: "dohar and quilts", name: "Dohar and Quilts", icon: <FaBed /> },
   ];
 
   const allProducts = getAllProducts();
+
 
   const sortOptions = [
     { id: "featured", name: "Featured" },
@@ -86,23 +82,26 @@ const AllProducts = () => {
   // Count products per category
   const categoryCounts = categories.reduce((acc, cat) => {
     acc[cat.id] = allProducts.filter(
-      (product) => cat.id === 'all' || product.category === cat.id
+      (product) => cat.id === 'all' || product.category.toLowerCase() === cat.id.toLowerCase()
     ).length;
     return acc;
   }, {});
 
   // Filter products by category, search, price, rating, discount, stock, gender
   const filteredProducts = allProducts.filter(
-    (product) =>
-      (selectedCategory === "all" || product.category === selectedCategory) &&
-      (searchQuery === "" || 
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchQuery.toLowerCase())) &&
-      (product.price >= priceRange[0] && product.price <= priceRange[1]) &&
-      (minRating === 0 || (product.rating && product.rating >= minRating)) &&
-      (!showDiscounted || product.discount) &&
-      (!inStockOnly || product.inStock) &&
-      (selectedGender === 'all' || (product.gender && product.gender.toLowerCase() === selectedGender))
+    (product) => {
+      const categoryMatch = selectedCategory === "all" || product.category.toLowerCase() === selectedCategory.toLowerCase();
+    
+      return categoryMatch &&
+        (searchQuery === "" || 
+          product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.category.toLowerCase().includes(searchQuery.toLowerCase())) &&
+        (product.price >= priceRange[0] && product.price <= priceRange[1]) &&
+        (minRating === 0 || (product.rating && product.rating >= minRating)) &&
+        (!showDiscounted || product.discount) &&
+        (!inStockOnly || product.inStock) &&
+        (selectedGender === 'all' || (product.gender && product.gender.toLowerCase() === selectedGender));
+    }
   );
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
@@ -154,20 +153,10 @@ const AllProducts = () => {
       e.preventDefault();
       e.stopPropagation();
     }
-    axios.post("http://localhost:5000/api/cart", {
-      product_id: product.id,
-      quantity: 1
-    })
-      .then(() => {
-        setToastMessage(`${product.name} added to cart!`);
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 3000);
-      })
-      .catch((err) => {
-        setToastMessage("Error adding to cart: " + (err.response?.data?.error || err.message));
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 3000);
-      });
+    addToCart(product);
+    setToastMessage(`${product.name} added to cart!`);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
   };
 
   const handleAddToWishlistClick = (product, e) => {
@@ -175,20 +164,11 @@ const AllProducts = () => {
       e.preventDefault();
       e.stopPropagation();
     }
-    if (wishlistProductIds.includes(product.id)) {
-      // Remove from wishlist
-      axios.get("http://localhost:5000/api/wishlist")
-        .then(res => {
-          const item = res.data.find(w => w.product_id === product.id);
-          if (item) {
-            axios.delete(`http://localhost:5000/api/wishlist/${item.id}`)
-              .then(() => fetchWishlist());
-          }
-        });
+    
+    if (isInWishlist(product.id)) {
+      removeFromWishlist(product.id);
     } else {
-      // Add to wishlist
-      axios.post("http://localhost:5000/api/wishlist", { product_id: product.id })
-        .then(() => fetchWishlist());
+      addToWishlist(product);
     }
   };
 
@@ -263,6 +243,7 @@ const AllProducts = () => {
               key={category.id}
               className={`category-btn-horizontal ${selectedCategory === category.id ? "active" : ""}`}
               onClick={() => {
+                console.log('Category clicked:', category.id);
                 setSelectedCategory(category.id);
                 setVisibleItems(12);
               }}
@@ -365,7 +346,7 @@ const AllProducts = () => {
               <input
                 type="range"
                 min="0"
-                max="1000"
+                max="10000"
                 value={priceRange[1]}
                 onChange={e => setPriceRange([priceRange[0], parseInt(e.target.value)])}
                 className="price-slider"
@@ -399,7 +380,7 @@ const AllProducts = () => {
                 setMinRating(0);
                 setShowDiscounted(false);
                 setInStockOnly(false);
-                setPriceRange([0, 1000]);
+                setPriceRange([0, 10000]);
                 setSortOption('featured');
                 setSelectedGender('all');
               }}
@@ -453,11 +434,11 @@ const AllProducts = () => {
                         <FaShoppingCart />
                       </button>
                       <button 
-                        className={`product-action-btn wishlist-btn ${wishlistProductIds.includes(product.id) ? 'active' : ''}`}
+                        className={`product-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
                         onClick={(e) => handleAddToWishlistClick(product, e)}
-                        title={wishlistProductIds.includes(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                        title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
                       >
-                        {wishlistProductIds.includes(product.id) ? <FaHeart /> : <FaRegHeart />}
+                        {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
                       </button>
                       <button 
                         className="product-action-btn quickview-btn"
@@ -532,7 +513,7 @@ const AllProducts = () => {
                     onClick={() => {
                       setSelectedCategory("all");
                       setSearchQuery("");
-                      setPriceRange([0, 1000]);
+                      setPriceRange([0, 10000]);
                     }}
                   >
                     Reset All Filters
@@ -655,11 +636,11 @@ const AllProducts = () => {
                     </button>
                     
                     <button
-                      className={`add-to-wishlist-btn ${wishlistProductIds.includes(quickView.id) ? 'active' : ''}`}
+                      className={`add-to-wishlist-btn ${isInWishlist(quickView.id) ? 'active' : ''}`}
                       onClick={() => handleAddToWishlistClick(quickView)}
                     >
-                      {wishlistProductIds.includes(quickView.id) ? <FaHeart /> : <FaRegHeart />}
-                      {wishlistProductIds.includes(quickView.id) ? 'In Wishlist' : 'Add to Wishlist'}
+                      {isInWishlist(quickView.id) ? <FaHeart /> : <FaRegHeart />}
+                      {isInWishlist(quickView.id) ? 'In Wishlist' : 'Add to Wishlist'}
                     </button>
                   </div>
                   

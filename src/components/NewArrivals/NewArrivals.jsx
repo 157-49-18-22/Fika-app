@@ -6,6 +6,8 @@ import { useWishlist } from "../../context/WishlistContext.jsx";
 import { getAllProducts } from "../../data/products.js";
 import "./NewArrivalsSection.css";
 import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
+import LoginPrompt from "../../components/LoginPrompt/LoginPrompt";
 
 const NewArrivals = () => {
   const [newArrivals, setNewArrivals] = useState([]);
@@ -13,6 +15,8 @@ const NewArrivals = () => {
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   const [featuredProduct, setFeaturedProduct] = useState(null);
   const [timeLeft, setTimeLeft] = useState({ days: 3, hours: 11, minutes: 23, seconds: 45 });
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const { isAuthenticated } = useAuth();
   const [categoryProducts, setCategoryProducts] = useState({
     womensJeans: [],
     mensJeans: [],
@@ -93,11 +97,19 @@ const NewArrivals = () => {
 
   const handleAddToCart = (product, e) => {
     if (e) e.stopPropagation();
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true);
+      return;
+    }
     addToCart(product);
   };
 
   const handleAddToWishlist = (product, e) => {
     if (e) e.stopPropagation();
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true);
+      return;
+    }
     if (isInWishlist(product.id)) {
       removeFromWishlist(product.id);
     } else {
@@ -300,235 +312,245 @@ const NewArrivals = () => {
   };
 
   return (
-    <div className="arrivals-section">
-      {/* Introduction Section */}
-      <div className="arrivals-intro">
-        <div className="arrivals-intro-content">
-          <h1 className="arrivals-title">Discover Fresh Styles</h1>
-          <p className="arrivals-description">
-            Explore our latest collection of fashion-forward pieces designed to elevate your wardrobe. 
-            Every week, we curate new styles that reflect current trends while maintaining timeless appeal.
-          </p>
-          <div className="arrivals-features">
-            <div className="arrivals-feature-item">
-              <FaTag className="arrivals-feature-icon" />
-              <span>Exclusive Designs</span>
-            </div>
-            <div className="arrivals-feature-item">
-              <FaGift className="arrivals-feature-icon" />
-              <span>Free Shipping on orders over ₹100</span>
-            </div>
-            <div className="arrivals-feature-item">
-              <FaClock className="arrivals-feature-icon" />
-              <span>Limited Time Offers</span>
+    <>
+      <div className="arrivals-section">
+        {/* Introduction Section */}
+        <div className="arrivals-intro">
+          <div className="arrivals-intro-content">
+            <h1 className="arrivals-title">Discover Fresh Styles</h1>
+            <p className="arrivals-description">
+              Explore our latest collection of fashion-forward pieces designed to elevate your wardrobe. 
+              Every week, we curate new styles that reflect current trends while maintaining timeless appeal.
+            </p>
+            <div className="arrivals-features">
+              <div className="arrivals-feature-item">
+                <FaTag className="arrivals-feature-icon" />
+                <span>Exclusive Designs</span>
+              </div>
+              <div className="arrivals-feature-item">
+                <FaGift className="arrivals-feature-icon" />
+                <span>Free Shipping on orders over ₹100</span>
+              </div>
+              <div className="arrivals-feature-item">
+                <FaClock className="arrivals-feature-icon" />
+                <span>Limited Time Offers</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Featured Product Highlight */}
-      {featuredProduct && (
-        <div className="arrivals-featured-product">
-          <div className="arrivals-featured-image">
-            <img src={featuredProduct.image} alt={featuredProduct.name} />
-            {featuredProduct.discount && (
-              <div className="arrivals-featured-discount">
-                <span>{featuredProduct.discount}% OFF</span>
-              </div>
-            )}
-          </div>
-          <div className="arrivals-featured-info">
-            <div className="arrivals-limited-offer">
-              <h3>Limited Time Offer</h3>
-              <div className="arrivals-countdown">
-                <div className="arrivals-time-block">
-                  <span className="arrivals-time-value">{timeLeft.days}</span>
-                  <span className="arrivals-time-label">Days</span>
+        {/* Featured Product Highlight */}
+        {featuredProduct && (
+          <div className="arrivals-featured-product">
+            <div className="arrivals-featured-image">
+              <img src={featuredProduct.image} alt={featuredProduct.name} />
+              {featuredProduct.discount && (
+                <div className="arrivals-featured-discount">
+                  <span>{featuredProduct.discount}% OFF</span>
                 </div>
-                <div className="arrivals-time-separator">:</div>
-                <div className="arrivals-time-block">
-                  <span className="arrivals-time-value">{timeLeft.hours}</span>
-                  <span className="arrivals-time-label">Hours</span>
-                </div>
-                <div className="arrivals-time-separator">:</div>
-                <div className="arrivals-time-block">
-                  <span className="arrivals-time-value">{timeLeft.minutes}</span>
-                  <span className="arrivals-time-label">Min</span>
-                </div>
-                <div className="arrivals-time-separator">:</div>
-                <div className="arrivals-time-block">
-                  <span className="arrivals-time-value">{timeLeft.seconds}</span>
-                  <span className="arrivals-time-label">Sec</span>
-                </div>
-              </div>
-            </div>
-            <h2 className="arrivals-featured-title">{featuredProduct.name}</h2>
-            <p className="arrivals-featured-description">
-              {featuredProduct.description || "Experience premium quality and exceptional design with this must-have piece from our latest collection."}
-            </p>
-            <div className="arrivals-featured-pricing">
-              {featuredProduct.discount ? (
-                <>
-                  <span className="arrivals-current-price">₹{formatPrice(featuredProduct.price, featuredProduct.discount)}</span>
-                  <span className="arrivals-original-price">₹{getOriginalPrice(featuredProduct.price)}</span>
-                </>
-              ) : (
-                <span className="arrivals-current-price">₹{getOriginalPrice(featuredProduct.price)}</span>
               )}
             </div>
-            <div className="arrivals-featured-actions">
-              <button 
-                className="arrivals-cart-btn"
-                onClick={() => addToCart(featuredProduct)}
-              >
-                Add to Cart
-              </button>
-              <button 
-                className={`arrivals-wishlist-btn ₹{isInWishlist(featuredProduct.id) ? 'active' : ''}`}
-                onClick={() => isInWishlist(featuredProduct.id) ? removeFromWishlist(featuredProduct.id) : addToWishlist(featuredProduct)}
-              >
-                <FaHeart /> {isInWishlist(featuredProduct.id) ? "Added to Wishlist" : "Add to Wishlist"}
-              </button>
+            <div className="arrivals-featured-info">
+              <div className="arrivals-limited-offer">
+                <h3>Limited Time Offer</h3>
+                <div className="arrivals-countdown">
+                  <div className="arrivals-time-block">
+                    <span className="arrivals-time-value">{timeLeft.days}</span>
+                    <span className="arrivals-time-label">Days</span>
+                  </div>
+                  <div className="arrivals-time-separator">:</div>
+                  <div className="arrivals-time-block">
+                    <span className="arrivals-time-value">{timeLeft.hours}</span>
+                    <span className="arrivals-time-label">Hours</span>
+                  </div>
+                  <div className="arrivals-time-separator">:</div>
+                  <div className="arrivals-time-block">
+                    <span className="arrivals-time-value">{timeLeft.minutes}</span>
+                    <span className="arrivals-time-label">Min</span>
+                  </div>
+                  <div className="arrivals-time-separator">:</div>
+                  <div className="arrivals-time-block">
+                    <span className="arrivals-time-value">{timeLeft.seconds}</span>
+                    <span className="arrivals-time-label">Sec</span>
+                  </div>
+                </div>
+              </div>
+              <h2 className="arrivals-featured-title">{featuredProduct.name}</h2>
+              <p className="arrivals-featured-description">
+                {featuredProduct.description || "Experience premium quality and exceptional design with this must-have piece from our latest collection."}
+              </p>
+              <div className="arrivals-featured-pricing">
+                {featuredProduct.discount ? (
+                  <>
+                    <span className="arrivals-current-price">₹{formatPrice(featuredProduct.price, featuredProduct.discount)}</span>
+                    <span className="arrivals-original-price">₹{getOriginalPrice(featuredProduct.price)}</span>
+                  </>
+                ) : (
+                  <span className="arrivals-current-price">₹{getOriginalPrice(featuredProduct.price)}</span>
+                )}
+              </div>
+              <div className="arrivals-featured-actions">
+                <button 
+                  className="arrivals-cart-btn"
+                  onClick={() => addToCart(featuredProduct)}
+                >
+                  Add to Cart
+                </button>
+                <button 
+                  className={`arrivals-wishlist-btn ₹{isInWishlist(featuredProduct.id) ? 'active' : ''}`}
+                  onClick={() => isInWishlist(featuredProduct.id) ? removeFromWishlist(featuredProduct.id) : addToWishlist(featuredProduct)}
+                >
+                  <FaHeart /> {isInWishlist(featuredProduct.id) ? "Added to Wishlist" : "Add to Wishlist"}
+                </button>
+              </div>
             </div>
+          </div>
+        )}
+
+        {/* New Arrivals Section Header */}
+        <div className="arrivals-header">
+          <h2 className="arrivals-section-title">NEW ARRIVALS</h2>
+          <button className="arrivals-carousel-control" onClick={toggleAutoScroll}>
+            {isAutoPlay ? (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 9V15M14 9V15M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            ) : (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 16.5L16 12L10 7.5V16.5Z" fill="#222"/>
+                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            )}
+          </button>
+        </div>
+
+        {/* Category Selection */}
+        <div className="arrivals-category-tabs">
+          {categories.map(category => (
+            <button 
+              key={category} 
+              className={`arrivals-category-tab ₹{activeTab === category ? 'active' : ''}`}
+              onClick={() => setActiveTab(category)}
+            >
+              {category.charAt(0).toUpperCase() + category.slice(1)}
+            </button>
+          ))}
+        </div>
+
+        {/* Category Description */}
+        <div className="arrivals-category-description">
+          <p>
+            {activeTab === "all" 
+              ? "Browse our complete selection of new arrivals, featuring the latest trends and must-have pieces for the season." 
+              : activeTab === "clothing" 
+              ? "Discover our newest clothing items, from elegant dresses to casual essentials, all crafted with premium fabrics." 
+              : activeTab === "accessories" 
+              ? "Complete your look with our just-arrived accessories, including bags, jewelry, watches, and more." 
+              : "Step into style with our fresh footwear collection, featuring everything from casual comfort to evening elegance."}
+          </p>
+        </div>
+
+        {/* New Arrivals Products Container */}
+        <div className="arrivals-products-container">
+          <button className="arrivals-scroll-button left" onClick={() => scrollProducts('left', productsRowRef)}>
+            <FaChevronLeft />
+          </button>
+          
+          <div className="arrivals-products-row" ref={productsRowRef}>
+            {filteredProducts.map(product => renderProductCard(product))}
+          </div>
+          
+          <button className="arrivals-scroll-button right" onClick={() => scrollProducts('right', productsRowRef)}>
+            <FaChevronRight />
+          </button>
+        </div>
+
+        {/* Category-specific product sections */}
+        <div className="arrivals-sections-container">
+          {/* Women's Dresses */}
+          {renderProductsContainer("Women's Dresses", categoryProducts.womensDresses, "womensDresses")}
+          
+          {/* Women's Jeans */}
+          {renderProductsContainer("Women's Jeans", categoryProducts.womensJeans, "womensJeans")}
+          
+          {/* Men's Jeans */}
+          {renderProductsContainer("Men's Jeans", categoryProducts.mensJeans, "mensJeans")}
+          
+          {/* Women's Footwear */}
+          {renderProductsContainer("Women's Footwear", categoryProducts.womensFootwear, "womensFootwear")}
+          
+          {/* Accessories */}
+          {renderProductsContainer("Accessories", categoryProducts.accessories, "accessories")}
+        </div>
+
+        {/* Shopping Benefits */}
+        <div className="arrivals-benefits">
+          <div className="arrivals-benefit-item">
+            <div className="arrivals-benefit-icon">🚚</div>
+            <div className="arrivals-benefit-content">
+              <h3>Free Shipping</h3>
+              <p>On all orders over ₹100</p>
+            </div>
+          </div>
+          <div className="arrivals-benefit-item">
+            <div className="arrivals-benefit-icon">⭐</div>
+            <div className="arrivals-benefit-content">
+              <h3>Quality Guarantee</h3>
+              <p>Crafted with premium materials</p>
+            </div>
+          </div>
+          <div className="arrivals-benefit-item">
+            <div className="arrivals-benefit-icon">🔄</div>
+            <div className="arrivals-benefit-content">
+              <h3>Easy Returns</h3>
+              <p>30-day return policy</p>
+            </div>
+          </div>
+          <div className="arrivals-benefit-item">
+            <div className="arrivals-benefit-icon">💳</div>
+            <div className="arrivals-benefit-content">
+              <h3>Secure Payment</h3>
+              <p>Multiple payment options</p>
+            </div>
+          </div>
+        </div>
+
+        {/* View All Link */}
+        <div className="arrivals-view-all">
+          <Link to="/all-products" className="arrivals-view-all-btn">
+            View All Collections
+            <span className="arrivals-arrow-circle">&#8599;</span>
+          </Link>
+        </div>
+
+        {/* Newsletter Signup */}
+        <div className="arrivals-newsletter">
+          <div className="arrivals-newsletter-content">
+            <h3>Stay Updated</h3>
+            <p>Subscribe to our newsletter for exclusive offers and early access to new arrivals</p>
+            <form className="arrivals-newsletter-form" onSubmit={handleNewsletterSubmit}>
+              <input
+                type="email"
+                placeholder="Your email address"
+                value={newsletterEmail}
+                onChange={e => setNewsletterEmail(e.target.value)}
+                required
+              />
+              <button type="submit">Subscribe</button>
+            </form>
+            {newsletterSuccess && <div style={{color: 'green', marginTop: 8}}>Subscribed successfully!</div>}
+          </div>
+        </div>
+      </div>
+      
+      {showLoginPrompt && (
+        <div className="login-prompt-overlay" onClick={() => setShowLoginPrompt(false)}>
+          <div className="login-prompt-wrapper" onClick={(e) => e.stopPropagation()}>
+            <LoginPrompt message="Please login to add items to your cart or wishlist." />
           </div>
         </div>
       )}
-
-      {/* New Arrivals Section Header */}
-      <div className="arrivals-header">
-        <h2 className="arrivals-section-title">NEW ARRIVALS</h2>
-        <button className="arrivals-carousel-control" onClick={toggleAutoScroll}>
-          {isAutoPlay ? (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10 9V15M14 9V15M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          ) : (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10 16.5L16 12L10 7.5V16.5Z" fill="#222"/>
-              <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          )}
-        </button>
-      </div>
-
-      {/* Category Selection */}
-      <div className="arrivals-category-tabs">
-        {categories.map(category => (
-          <button 
-            key={category} 
-            className={`arrivals-category-tab ₹{activeTab === category ? 'active' : ''}`}
-            onClick={() => setActiveTab(category)}
-          >
-            {category.charAt(0).toUpperCase() + category.slice(1)}
-          </button>
-        ))}
-      </div>
-
-      {/* Category Description */}
-      <div className="arrivals-category-description">
-        <p>
-          {activeTab === "all" 
-            ? "Browse our complete selection of new arrivals, featuring the latest trends and must-have pieces for the season." 
-            : activeTab === "clothing" 
-            ? "Discover our newest clothing items, from elegant dresses to casual essentials, all crafted with premium fabrics." 
-            : activeTab === "accessories" 
-            ? "Complete your look with our just-arrived accessories, including bags, jewelry, watches, and more." 
-            : "Step into style with our fresh footwear collection, featuring everything from casual comfort to evening elegance."}
-        </p>
-      </div>
-
-      {/* New Arrivals Products Container */}
-      <div className="arrivals-products-container">
-        <button className="arrivals-scroll-button left" onClick={() => scrollProducts('left', productsRowRef)}>
-          <FaChevronLeft />
-        </button>
-        
-        <div className="arrivals-products-row" ref={productsRowRef}>
-          {filteredProducts.map(product => renderProductCard(product))}
-        </div>
-        
-        <button className="arrivals-scroll-button right" onClick={() => scrollProducts('right', productsRowRef)}>
-          <FaChevronRight />
-        </button>
-      </div>
-
-      {/* Category-specific product sections */}
-      <div className="arrivals-sections-container">
-        {/* Women's Dresses */}
-        {renderProductsContainer("Women's Dresses", categoryProducts.womensDresses, "womensDresses")}
-        
-        {/* Women's Jeans */}
-        {renderProductsContainer("Women's Jeans", categoryProducts.womensJeans, "womensJeans")}
-        
-        {/* Men's Jeans */}
-        {renderProductsContainer("Men's Jeans", categoryProducts.mensJeans, "mensJeans")}
-        
-        {/* Women's Footwear */}
-        {renderProductsContainer("Women's Footwear", categoryProducts.womensFootwear, "womensFootwear")}
-        
-        {/* Accessories */}
-        {renderProductsContainer("Accessories", categoryProducts.accessories, "accessories")}
-      </div>
-
-      {/* Shopping Benefits */}
-      <div className="arrivals-benefits">
-        <div className="arrivals-benefit-item">
-          <div className="arrivals-benefit-icon">🚚</div>
-          <div className="arrivals-benefit-content">
-            <h3>Free Shipping</h3>
-            <p>On all orders over ₹100</p>
-          </div>
-        </div>
-        <div className="arrivals-benefit-item">
-          <div className="arrivals-benefit-icon">⭐</div>
-          <div className="arrivals-benefit-content">
-            <h3>Quality Guarantee</h3>
-            <p>Crafted with premium materials</p>
-          </div>
-        </div>
-        <div className="arrivals-benefit-item">
-          <div className="arrivals-benefit-icon">🔄</div>
-          <div className="arrivals-benefit-content">
-            <h3>Easy Returns</h3>
-            <p>30-day return policy</p>
-          </div>
-        </div>
-        <div className="arrivals-benefit-item">
-          <div className="arrivals-benefit-icon">💳</div>
-          <div className="arrivals-benefit-content">
-            <h3>Secure Payment</h3>
-            <p>Multiple payment options</p>
-          </div>
-        </div>
-      </div>
-
-      {/* View All Link */}
-      <div className="arrivals-view-all">
-        <Link to="/all-products" className="arrivals-view-all-btn">
-          View All Collections
-          <span className="arrivals-arrow-circle">&#8599;</span>
-        </Link>
-      </div>
-
-      {/* Newsletter Signup */}
-      <div className="arrivals-newsletter">
-        <div className="arrivals-newsletter-content">
-          <h3>Stay Updated</h3>
-          <p>Subscribe to our newsletter for exclusive offers and early access to new arrivals</p>
-          <form className="arrivals-newsletter-form" onSubmit={handleNewsletterSubmit}>
-            <input
-              type="email"
-              placeholder="Your email address"
-              value={newsletterEmail}
-              onChange={e => setNewsletterEmail(e.target.value)}
-              required
-            />
-            <button type="submit">Subscribe</button>
-          </form>
-          {newsletterSuccess && <div style={{color: 'green', marginTop: 8}}>Subscribed successfully!</div>}
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 

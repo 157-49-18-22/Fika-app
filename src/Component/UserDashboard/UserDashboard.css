@@ -1,0 +1,287 @@
+.user-dashboard {
+font-family: 'Montserrat', sans-serif;
+text-decoration: none;
+color: #333;
+font-size: 14px;
+font-weight: 500;
+position: relative;
+transition: color 0.3s ease;
+white-space: nowrap;
+position: relative;
+display: inline-block;
+
+}
+
+.user-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  color: #333;
+}
+
+.user-btn:hover {
+  color: #666;
+}
+
+.dashboard-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.dashboard-header {
+  padding: 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  background: #e9ecef;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-avatar svg {
+  font-size: 20px;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-info h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.user-info p {
+  margin: 5px 0 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.dashboard-menu {
+  padding: 10px 0;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.2s;
+  gap: 10px;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background-color: #f8f9fa;
+}
+
+.menu-icon {
+  font-size: 16px;
+  color: #666;
+}
+
+.logout-btn {
+  color: #dc3545;
+}
+
+.logout-btn .menu-icon {
+  color: #dc3545;
+}
+
+/* Auth Buttons Styles */
+.auth-buttons {
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.auth-btn {
+  font-family: 'Montserrat', sans-serif;
+  text-decoration: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 20px;
+  background-color: #E91E63;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-btn:hover {
+  background-color: #D81B60;
+  color: white;
+}
+
+.login-icon {
+  font-size: 14px;
+  color: white;
+}
+
+/* Remove the underline effect */
+.auth-btn::after {
+  display: none;
+}
+
+.login-btn {
+  font-family: 'Montserrat', sans-serif;
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+  padding: 0;
+  background: none;
+}
+
+.login-btn:hover {
+  color: #000;
+}
+
+.login-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: #000;
+  transition: width 0.3s ease;
+}
+
+.login-btn:hover::after {
+  width: 100%;
+}
+
+.signup-btn:hover {
+  color: #000;
+}
+
+/* Login Dropdown Styles */
+.login-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  background: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.login-header {
+  margin-bottom: 20px;
+}
+
+.login-header h4 {
+  font-size: 18px;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+.login-header p {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.login-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.login-link {
+  display: block;
+  padding: 10px;
+  background: #2874f0;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.login-link:hover {
+  background: #1c5ad4;
+}
+
+.signup-prompt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.signup-prompt span {
+  color: #666;
+  font-size: 14px;
+}
+
+.signup-prompt a {
+  color: #2874f0;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.signup-prompt a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .dashboard-dropdown {
+    position: fixed;
+    top: auto;
+    bottom: 70px;
+    right: 16px;
+    width: calc(100% - 32px);
+    max-width: 320px;
+  }
+  
+  .auth-buttons {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .auth-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+} 
+

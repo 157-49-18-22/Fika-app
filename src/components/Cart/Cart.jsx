@@ -11,21 +11,32 @@ import {
 } from "react-icons/fa";
 import "./Cart.css";
 import Payment from "../Payment/Payment";
+import { useAuth } from "../../context/AuthContext";
+import LoginPrompt from "../LoginPrompt/LoginPrompt";
 
 const Cart = () => {
   const { cart, removeFromCart, updateQuantity, getCartTotal } = useCart();
+  const { isAuthenticated } = useAuth();
   const [showPayment, setShowPayment] = useState(false);
   const [promoCode, setPromoCode] = useState("");
 
+  if (!isAuthenticated) {
+    return (
+      <div className="cart-section">
+        <LoginPrompt message="Please login to view and manage your cart items. Login to access your shopping cart." />
+      </div>
+    );
+  }
+
   const handleQuantityDecrease = (productId) => {
-    const item = cart.find((item) => item.productId === productId);
+    const item = cart.find((item) => item.id === productId);
     if (item && item.quantity > 1) {
       updateQuantity(productId, item.quantity - 1);
     }
   };
 
   const handleQuantityIncrease = (productId) => {
-    const item = cart.find((item) => item.productId === productId);
+    const item = cart.find((item) => item.id === productId);
     if (item) {
       updateQuantity(productId, item.quantity + 1);
     }
@@ -41,18 +52,15 @@ const Cart = () => {
 
   if (cart.length === 0) {
     return (
-      <div className="cart-section">
-        <div className="empty-cart">
+      <div className="cart-empty-container">
+        <div className="empty-cart-content">
           <div className="empty-cart-icon">
             <FaShoppingBag />
           </div>
           <h2>Your Shopping Cart is Empty</h2>
-          <p>
-            Discover our amazing collection and add your favorite items to the
-            cart!
-          </p>
-          <Link to="/all-products" className="continue-shopping-btn">
-            Start Shopping <FaArrowRight />
+          <p>Discover our amazing collection and add your favorite items to the cart!</p>
+          <Link to="/all-products" className="start-shopping-btn">
+            START SHOPPING →
           </Link>
         </div>
       </div>
@@ -67,14 +75,14 @@ const Cart = () => {
       <div className="cart-content">
         <div className="cart-items">
           {cart.map((item) => (
-            <div key={item.productId} className="cart-item">
+            <div key={item.id} className="cart-item">
               <div className="cart-item-image">
                 <img src={item.image} alt={item.name} />
               </div>
 
               <div className="cart-item-details">
                 <Link
-                  to={`/product/${item.productId}`}
+                  to={`/product/${item.id}`}
                   className="cart-item-name"
                 >
                   {item.name}
@@ -100,7 +108,7 @@ const Cart = () => {
               <div className="cart-item-quantity">
                 <button
                   className="quantity-btn"
-                  onClick={() => handleQuantityDecrease(item.productId)}
+                  onClick={() => handleQuantityDecrease(item.id)}
                   disabled={item.quantity <= 1}
                 >
                   <FaMinus />
@@ -108,7 +116,7 @@ const Cart = () => {
                 <span className="quantity-value">{item.quantity}</span>
                 <button
                   className="quantity-btn"
-                  onClick={() => handleQuantityIncrease(item.productId)}
+                  onClick={() => handleQuantityIncrease(item.id)}
                 >
                   <FaPlus />
                 </button>
@@ -125,7 +133,7 @@ const Cart = () => {
 
               <button
                 className="remove-btn"
-                onClick={() => handleRemoveItem(item.productId)}
+                onClick={() => handleRemoveItem(item.id)}
                 title="Remove item"
               >
                 <FaTrash />

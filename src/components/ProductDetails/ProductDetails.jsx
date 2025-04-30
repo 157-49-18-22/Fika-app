@@ -22,12 +22,15 @@ import { useWishlist } from "../../context/WishlistContext.jsx";
 import { getAllProducts } from "../../data/products";
 import "./ProductDetails.css";
 import axios from "axios";
+import { useAuth } from '../../context/AuthContext';
+import LoginPrompt from '../LoginPrompt/LoginPrompt';
 
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { addToWishlist, isInWishlist } = useWishlist();
+  const { isAuthenticated } = useAuth();
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
@@ -51,6 +54,7 @@ const ProductDetails = () => {
   const [pincodeError, setPincodeError] = useState('');
   const galleryRef = useRef(null);
   const wrapperRef = useRef(null);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   const product = getAllProducts().find((p) => p.id === parseInt(id));
   const relatedProducts = getAllProducts()
@@ -107,7 +111,15 @@ const ProductDetails = () => {
     setSizeError("");
   };
 
-  const handleAddToCart = (product) => {
+  const handleAddToCart = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true);
+      return;
+    }
+    
     if (!selectedColor) {
       setColorError("Please select a color");
       return;
@@ -117,30 +129,48 @@ const ProductDetails = () => {
       return;
     }
     
-    axios.post("http://localhost:5000/api/cart", {
-      product_id: product.id,
-      quantity: quantity,
-      color: selectedColor,
-      size: selectedSize
-    })
-      .then(() => {
-        addToCart({ ...product, selectedColor, selectedSize });
-        setShowSuccessMessage(true);
-        setTimeout(() => setShowSuccessMessage(false), 3000);
-      })
-      .catch((err) => {
-        alert("Error adding to cart: " + (err.response?.data?.error || err.message));
-      });
+    const productToAdd = {
+      ...product,
+      selectedColor,
+      selectedSize,
+      quantity
+    };
+    
+    addToCart(productToAdd);
+    setShowSuccessMessage(true);
+    setTimeout(() => setShowSuccessMessage(false), 3000);
   };
 
-  const handleAddToWishlist = (product, e) => {
+  const handleAddToWishlist = (e) => {
+    e.preventDefault();
     e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true);
+      return;
+    }
     addToWishlist(product);
   };
 
   const handleQuickView = (productId, e) => {
     e.stopPropagation();
     navigate(`/product/${productId}`);
+  };
+
+  const handleRelatedProductAction = (e, action, product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (!isAuthenticated) {
+      setShowLoginPrompt(true);
+      return;
+    }
+    
+    if (action === 'cart') {
+      addToCart(product);
+    } else if (action === 'wishlist') {
+      addToWishlist(product);
+    }
   };
 
   const handlePincodeCheck = () => {
@@ -250,6 +280,14 @@ const ProductDetails = () => {
 
   return (
     <div className="product-details-container">
+      {showLoginPrompt && (
+        <div className="login-prompt-overlay" onClick={() => setShowLoginPrompt(false)}>
+          <div className="login-prompt-wrapper" onClick={(e) => e.stopPropagation()}>
+            <LoginPrompt message="Please login to add items to your cart or wishlist." />
+          </div>
+        </div>
+      )}
+
       <div className="product-details-wrapper" ref={wrapperRef}>
         <div className="product-gallery" ref={galleryRef}>
           <ProductGallery images={productImages} />
@@ -437,15 +475,13 @@ const ProductDetails = () => {
             <div className="main-cart-actions">
               <button
                 className="main-add-to-cart-btn"
-                onClick={() => handleAddToCart(product)}
+                onClick={handleAddToCart}
               >
                 <FaShoppingCart /> Add to Cart - {formatPrice(product.price * quantity)}
               </button>
               <button
-                className={`main-wishlist-btn ${
-                  isInWishlist(product.id) ? "in-wishlist" : ""
-                }`}
-                onClick={(e) => handleAddToWishlist(product, e)}
+                className={`main-wishlist-btn ${isInWishlist(product.id) ? "in-wishlist" : ""}`}
+                onClick={handleAddToWishlist}
               >
                 <FaHeart />
               </button>
@@ -649,7 +685,7 @@ const ProductDetails = () => {
                     className={`action-btn wishlist-btn ${
                       isInWishlist(relatedProduct.id) ? "active" : ""
                     }`}
-                    onClick={(e) => handleAddToWishlist(relatedProduct, e)}
+                    onClick={(e) => handleRelatedProductAction(e, 'wishlist', relatedProduct)}
                   >
                     <FaHeart />
                   </button>
@@ -661,11 +697,7 @@ const ProductDetails = () => {
                   </button>
                   <button
                     className="action-btn add-to-cart-btn"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      handleAddToCart(relatedProduct);
-                    }}
+                    onClick={(e) => handleRelatedProductAction(e, 'cart', relatedProduct)}
                   >
                     <FaShoppingCart />
                   </button>
@@ -714,7 +746,7 @@ const ProductDetails = () => {
                       className={`action-btn wishlist-btn ${
                         isInWishlist(recentProduct.id) ? "active" : ""
                       }`}
-                      onClick={(e) => handleAddToWishlist(recentProduct, e)}
+                      onClick={(e) => handleRelatedProductAction(e, 'wishlist', recentProduct)}
                     >
                       <FaHeart />
                     </button>
@@ -762,7 +794,7 @@ const ProductDetails = () => {
                       className={`action-btn wishlist-btn ${
                         isInWishlist(trendingProduct.id) ? "active" : ""
                       }`}
-                      onClick={(e) => handleAddToWishlist(trendingProduct, e)}
+                      onClick={(e) => handleRelatedProductAction(e, 'wishlist', trendingProduct)}
                     >
                       <FaHeart />
                     </button>
