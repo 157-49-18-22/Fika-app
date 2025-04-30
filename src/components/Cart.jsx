@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FaPlus, FaMinus, FaTrash, FaShoppingCart, FaArrowRight, FaShoppingBag, FaUser } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+<<<<<<< HEAD
 import LoginPrompt from "./LoginPrompt/LoginPrompt";
 import "./Cart/Cart.css";
 
@@ -32,6 +33,16 @@ const Cart = () => {
     );
   }
 
+=======
+import "./Cart/Cart.css";
+
+const Cart = () => {
+  const { cart, removeFromCart, updateQuantity } = useCart();
+  const { currentUser } = useAuth();
+  const [showPayment, setShowPayment] = useState(false);
+  const [promoCode, setPromoCode] = useState("");
+
+>>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
   // Calculate subtotal
   const subtotal = cart.reduce((sum, item) => {
     const price = item.discount ? item.price * (1 - item.discount / 100) : item.price;
@@ -40,17 +51,48 @@ const Cart = () => {
   const shipping = 0;
   const total = subtotal + shipping;
 
+<<<<<<< HEAD
+=======
+  if (cart.length === 0) {
+    return (
+      <div className="cart-section">
+        <div className="empty-cart">
+          <div className="empty-cart-icon">
+            <FaShoppingBag />
+          </div>
+          <h2>Your Shopping Cart is Empty</h2>
+          <p>Discover our amazing collection and add your favorite items to the cart!</p>
+          <Link to="/all-products" className="continue-shopping-btn">
+            Start Shopping <FaArrowRight />
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+>>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
   return (
     <div className="cart-container">
       <div className="cart-header">
         <h2>
           <FaShoppingCart className="cart-title-icon" /> Shopping Cart
         </h2>
+<<<<<<< HEAD
+=======
+        <div className="user-info">
+          <FaUser className="user-icon" />
+          <span className="user-email">{currentUser?.email}</span>
+        </div>
+>>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
       </div>
       <div className="cart-content">
         <div className="cart-items">
           {cart.map((item) => (
+<<<<<<< HEAD
             <div key={`${item.id}-${item.size}`} className="cart-item">
+=======
+            <div key={item.id} className="cart-item">
+>>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
               <div className="cart-item-image">
                 <img src={item.image} alt={item.name} />
               </div>
@@ -76,6 +118,7 @@ const Cart = () => {
                     </span>
                   )}
                 </div>
+<<<<<<< HEAD
                 <div className="cart-item-quantity">
                   <button
                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -95,6 +138,33 @@ const Cart = () => {
                   Remove
                 </button>
               </div>
+=======
+              </div>
+              <div className="cart-item-quantity">
+                <button className="quantity-btn" onClick={() => updateQuantity(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>
+                  <FaMinus />
+                </button>
+                <span className="quantity-value">{item.quantity}</span>
+                <button className="quantity-btn" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+                  <FaPlus />
+                </button>
+              </div>
+              <div className="cart-item-total">
+                <span className="total-label">Total:</span>$
+                {(
+                  (item.discount
+                    ? item.price * (1 - item.discount / 100)
+                    : item.price) * item.quantity
+                ).toFixed(2)}
+              </div>
+              <button
+                className="remove-btn"
+                onClick={() => removeFromCart(item.id)}
+                title="Remove item"
+              >
+                <FaTrash />
+              </button>
+>>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
             </div>
           ))}
         </div>

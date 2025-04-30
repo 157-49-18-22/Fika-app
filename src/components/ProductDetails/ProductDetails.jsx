@@ -129,6 +129,7 @@ const ProductDetails = () => {
       return;
     }
     
+<<<<<<< HEAD
     const productToAdd = {
       ...product,
       selectedColor,
@@ -137,6 +138,9 @@ const ProductDetails = () => {
     };
     
     addToCart(productToAdd);
+=======
+    addToCart({ ...product, selectedColor, selectedSize }, selectedSize, quantity);
+>>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
     setShowSuccessMessage(true);
     setTimeout(() => setShowSuccessMessage(false), 3000);
   };

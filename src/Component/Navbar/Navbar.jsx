@@ -7,8 +7,11 @@ import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
 import { getAllProducts } from "../../data/products";
 import UserDashboard from "../UserDashboard/UserDashboard";
+<<<<<<< HEAD
 import { useAuthRedirect } from '../../utils/authUtils';
 import LoginPrompt from "../../components/LoginPrompt/LoginPrompt";
+=======
+>>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
 
 function Navbar() {
   const { getCartCount } = useCart();
@@ -154,6 +157,22 @@ function Navbar() {
             </Link>
             <UserDashboard />
           </div>
+<<<<<<< HEAD
+=======
+          <Link to="/wishlist" className="" aria-label="Wishlist">
+            <FaHeart style={{ color: '#333' }} />
+            {wishlist.length > 0 && (
+              <span className="badge">{wishlist.length}</span>
+            )}
+          </Link>
+          <Link to="/cart" className="" aria-label="Shopping Cart">
+            <FiShoppingBag style={{ color: '#333' }} />
+            {getCartCount() > 0 && (
+              <span className="badge">{getCartCount()}</span>
+            )}
+          </Link>
+          <UserDashboard />
+>>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
         </div>
       </div>
       
