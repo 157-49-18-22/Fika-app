@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useWishlist } from "../../context/WishlistContext.jsx";
 import { useCart } from "../../context/CartContext.jsx";
-import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight, FaSlidersH, FaDollarSign, FaSortAmountDown } from "react-icons/fa";
+import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight, FaSlidersH, FaDollarSign, FaSortAmountDown, FaBed, FaCouch } from "react-icons/fa";
 import { GiLargeDress, GiRunningShoe, GiWatch, GiHeartNecklace, GiTrousers } from "react-icons/gi";
 import "./AllProductsStyles.css";
 import { getAllProducts } from "../../data/products";
@@ -61,6 +61,10 @@ const AllProducts = () => {
     { id: "accessories", name: "Accessories", icon: <GiHeartNecklace /> },
     { id: "pants", name: "Pants", icon: <GiTrousers /> },
     { id: "watches", name: "Watches", icon: <GiWatch /> },
+    { id: "bags and purses", name: "Bags and Purses", icon: <FaShoppingBag /> },
+    { id: "bedsets", name: "Bedsets", icon: <FaBed /> },
+    { id: "cushion covers", name: "Cushion Covers", icon: <FaCouch /> },
+    { id: "dohar and quilts", name: "Dohar and Quilts", icon: <FaBed /> },
   ];
 
   const allProducts = getAllProducts();
@@ -77,7 +81,7 @@ const AllProducts = () => {
   // Count products per category
   const categoryCounts = categories.reduce((acc, cat) => {
     acc[cat.id] = allProducts.filter(
-      (product) => cat.id === 'all' || product.category === cat.id
+      (product) => cat.id === 'all' || product.category.toLowerCase() === cat.id.toLowerCase()
     ).length;
     return acc;
   }, {});
@@ -85,7 +89,7 @@ const AllProducts = () => {
   // Filter products by category, search, price, rating, discount, stock, gender
   const filteredProducts = allProducts.filter(
     (product) =>
-      (selectedCategory === "all" || product.category === selectedCategory) &&
+      (selectedCategory === "all" || product.category.toLowerCase() === selectedCategory.toLowerCase()) &&
       (searchQuery === "" || 
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.category.toLowerCase().includes(searchQuery.toLowerCase())) &&
