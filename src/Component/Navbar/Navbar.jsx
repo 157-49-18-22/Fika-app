@@ -125,7 +125,6 @@ function Navbar() {
             <NavLink to="/new-arrivals" className="nav-link">New Arrival</NavLink>
             <NavLink to="/all-products" className="nav-link">All Product</NavLink>
             <NavLink to="/blog" className="nav-link">Blog</NavLink>
-            <NavLink to="/about" className="nav-link">About Us</NavLink>
             <NavLink to="/contact" className="nav-link">Contact Us</NavLink>
           </div>
 

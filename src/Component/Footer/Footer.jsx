@@ -55,7 +55,6 @@ const Footer = () => {
         <div className="footer-section">
           <h3 className="footer-heading">MORE DETAILS</h3>
           <div className="footer-links">
-            <a href="#" className="footer-link">About us</a>
             <a href="#" className="footer-link">Career</a>
             <a href="#" className="footer-link">Our Business</a>
             <a href="#" className="footer-link">Privacy Policy</a>
