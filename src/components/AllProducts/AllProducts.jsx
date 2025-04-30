@@ -55,10 +55,16 @@ const AllProducts = () => {
 
   const categories = [
     { id: "all", name: "All Products", icon: <FaShoppingBag /> },
-    { id: "cushions", name: "Cushions", icon: <FaCouch /> },
+    { id: "clothing", name: "Clothing", icon: <FaTshirt /> },
+    { id: "dresses", name: "Dresses", icon: <GiLargeDress /> },
+    { id: "shoes", name: "Shoes", icon: <GiRunningShoe /> },
+    { id: "accessories", name: "Accessories", icon: <GiHeartNecklace /> },
+    { id: "pants", name: "Pants", icon: <GiTrousers /> },
+    { id: "watches", name: "Watches", icon: <GiWatch /> },
+    { id: "bags and purses", name: "Bags and Purses", icon: <FaShoppingBag /> },
     { id: "bedsets", name: "Bedsets", icon: <FaBed /> },
-    { id: "mens-shirts", name: "Men's Shirts", icon: <FaTshirt /> },
-    { id: "dohars-quilts", name: "Dohars & Quilts", icon: <FaBed /> }
+    { id: "cushion covers", name: "Cushion Covers", icon: <FaCouch /> },
+    { id: "dohar and quilts", name: "Dohar and Quilts", icon: <FaBed /> }
   ];
 
   const allProducts = getAllProducts();

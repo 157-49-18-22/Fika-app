@@ -1,99 +1,158 @@
 .about-container {
   min-height: 100vh;
   background-color: #ffffff;
-  width: 100%;
 }
 
 .hero-section {
-  height: 600px;
+  height: 400px;
   width: 100%;
-  position: relative;
-  color: white;
-  text-align: center;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-}
-
-.slider-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  margin-top: 28px;
-}
-
-.slide {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  opacity: 0;
-  transition: all 1.5s ease-in-out;
-  filter: blur(1.8px);
-  transform: scale(1.05);
-}
-
-.slide.active {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-  padding: 2rem;
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  text-align: center;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
 }
 
-.hero-content h1 {
+.slider-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.slider-img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.7s cubic-bezier(.4,0,.2,1);
+  z-index: 1;
+}
+
+.slider-img.active {
+  opacity: 1;
+  z-index: 2;
+}
+
+.slider-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.slider-content {
+  text-align: center;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.slider-content h1 {
   font-size: 4rem;
   font-weight: 700;
   margin-bottom: 1rem;
   letter-spacing: 4px;
-  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
-  animation: scaleIn 1.2s ease-out;
-  font-family: 'Carmine' ;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+  font-family: 'Carmine';
 }
 
-.hero-content p {
+.slider-content p {
   font-size: 1.5rem;
   font-weight: 300;
   letter-spacing: 2px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  animation: fadeInUp 1.2s ease-out 0.3s both;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.slider-controls {
+  position: absolute;
+  bottom: 30px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.slider-arrow {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.slider-arrow:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
 }
 
 .slider-dots {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
-  gap: 10px;
-  z-index: 3;
+  gap: 8px;
 }
 
-.dot {
-  width: 12px;
-  height: 12px;
+.slider-dot {
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.5);
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-.dot.active {
+.slider-dot.active {
   background: white;
+  transform: scale(1.2);
+}
+
+.time-display {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.time-icon {
+  color: white;
+}
+
+.time-text {
+  color: white;
+  font-weight: 500;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .content-section {
@@ -137,25 +196,29 @@
 }
 
 @media (max-width: 768px) {
-  .hero-section h1 {
+  .slider-content h1 {
     font-size: 3rem;
   }
 
-  .hero-section p {
+  .slider-content p {
     font-size: 1.2rem;
   }
 
   .content-section {
     padding: 2rem 1.5rem;
   }
+
+  .time-display {
+    display: none;
+  }
 }
 
 @media (max-width: 480px) {
-  .hero-section h1 {
+  .slider-content h1 {
     font-size: 2.5rem;
   }
 
-  .hero-section p {
+  .slider-content p {
     font-size: 1rem;
   }
 
@@ -164,24 +227,72 @@
   }
 }
 
-@keyframes fadeInUp {
-  from {
+/* Text Animation Styles */
+.animated-title {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+.animated-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(50px) rotateX(-90deg);
+  animation: letterAnimation 0.6s forwards;
+  font-size: 4rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.animated-letter-small {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.4s forwards;
+  font-size: 1.5rem;
+  font-weight: 300;
+  letter-spacing: 2px;
+}
+
+@keyframes letterAnimation {
+  0% {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(50px) rotateX(-90deg);
   }
-  to {
+  50% {
+    opacity: 0.5;
+    transform: translateY(25px) rotateX(-45deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) rotateX(0deg);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-@keyframes scaleIn {
-  from {
-    transform: scale(0.8);
+.animated-tagline {
+  opacity: 0;
+  animation: taglineAppear 0.8s forwards;
+  animation-delay: 0.3s;
+}
+
+@keyframes taglineAppear {
+  0% {
     opacity: 0;
+    transform: scale(0.9);
   }
-  to {
-    transform: scale(1);
+  100% {
     opacity: 1;
+    transform: scale(1);
   }
 } 
