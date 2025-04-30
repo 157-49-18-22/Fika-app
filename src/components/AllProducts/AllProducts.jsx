@@ -352,8 +352,8 @@ const AllProducts = () => {
                 className="price-slider"
               />
               <div className="price-range-display">
-                <span>${priceRange[0]}</span>
-                <span>${priceRange[1]}</span>
+                <span>₹{priceRange[0]}</span>
+                <span>₹{priceRange[1]}</span>
               </div>
             </div>
             
@@ -464,14 +464,14 @@ const AllProducts = () => {
                       {product.discount ? (
                         <>
                           <span className="current-price">
-                            ${(product.price * (1 - product.discount / 100)).toFixed(2)}
+                            ₹{(product.price * (1 - product.discount / 100)).toFixed(2)}
                           </span>
                           <span className="original-price">
-                            ${product.price.toFixed(2)}
+                            ₹{product.price.toFixed(2)}
                           </span>
                         </>
                       ) : (
-                        <span className="current-price">${product.price.toFixed(2)}</span>
+                        <span className="current-price">₹{product.price.toFixed(2)}</span>
                       )}
                     </div>
                     
@@ -570,14 +570,14 @@ const AllProducts = () => {
                     {quickView.discount ? (
                       <>
                         <span className="current-price">
-                          ${(quickView.price * (1 - quickView.discount / 100)).toFixed(2)}
+                          ₹{(quickView.price * (1 - quickView.discount / 100)).toFixed(2)}
                         </span>
                         <span className="original-price">
-                          ${quickView.price.toFixed(2)}
+                          ₹{quickView.price.toFixed(2)}
                         </span>
                       </>
                     ) : (
-                      <span className="current-price">${quickView.price.toFixed(2)}</span>
+                      <span className="current-price">₹{quickView.price.toFixed(2)}</span>
                     )}
                   </div>
                   
