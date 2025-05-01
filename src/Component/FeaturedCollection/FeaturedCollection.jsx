@@ -214,7 +214,7 @@ const FeaturedCollection = () => {
                     <div className="price-badge">
                       <div className="price-info">
                         <span className="start-from">Start From</span>
-                        <span className="price">${product.price}USD</span>
+                        <span className="price"></span>
                       </div>
                     </div>
                     <button className="shop-btn">

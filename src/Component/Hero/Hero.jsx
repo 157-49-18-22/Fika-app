@@ -55,15 +55,17 @@ function Hero() {
           <div className="brand-section">
             <div className="trending-text">TRENDING</div>
             <div className="collection-text">Awesome Collection</div>
-            <div className="brand-logo">Fika</div>
-            <div className="brand-tagline">
+            <div className="brand-logo">
+              <img style={{width: "250px"}} src="/Fika_Logo.jpg" alt="logo" />
+            </div>
+            {/* <div className="brand-tagline">
               <span>A MOMENT TO SLOW DOWN</span>
               <span>AND APPRECIATE GOOD</span>
               <span>THINGS IN LIFE.</span>
-            </div>
-            <div className="view-all" onClick={handleViewAll} style={{ cursor: 'pointer' }}>
+            </div> */}
+            {/* <div className="view-all" onClick={handleViewAll} style={{ cursor: 'pointer' }}>
               View All <span className="arrow-circle">&#8599;</span>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -74,7 +76,7 @@ function Hero() {
 
           <div className="product-grid">
             <div className="product-grid-item item1 width-40">
-              <div className="price-overlay">₹48</div>
+              <div className="price-overlay"></div>
               <img src="./hero_image2_1.png" alt="Product thumbnail" />
             </div>
             <div className="product-grid-item item2 width-60">

@@ -156,7 +156,6 @@
 
 .brand-section {
     text-align: center;
-    padding: 20px 0;
 }
 
 .trending-text {
@@ -180,10 +179,11 @@
 .brand-logo {
     font-size: 70px;
     font-family: 'Montez', cursive;
-    margin-bottom: 15px;
+    /* margin-bottom: 15px; */
     color: #222;
     font-style: italic;
-    transform: rotate(-5deg);
+    height: 200px;
+    overflow: hidden;
 }
 
 .brand-tagline {
