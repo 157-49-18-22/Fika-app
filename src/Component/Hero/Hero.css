@@ -320,103 +320,29 @@
     text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
 }
 
-@media (min-width: 768px) {
-    .product-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        /* height: 300px; */
-    }
-    
-    /* Row 1: 40/60 */
-    .product-grid-item.item1 {
-        flex: 0 0 calc(40% - 5px);
-    }
-    
-    .product-grid-item.item2 {
-        flex: 0 0 calc(60% - 5px);
-    }
-    
-    /* Row 2: 60/40 */
-    .product-grid-item.item3 {
-        flex: 0 0 calc(70% - 5px);
-    }
-    
-    .product-grid-item.item4 {
-        flex: 0 0 calc(30% - 5px);
-    }
-    
-    /* Row 3: 40/60 */
-    .product-grid-item.item5 {
-        flex: 0 0 calc(40% - 5px);
-    }
-    
-    .product-grid-item.item6 {
-        flex: 0 0 calc(60% - 5px);
-    }
+/* Row 1: 40/60 */
+.product-grid-item.item1 {
+    flex: 0 0 calc(40% - 5px);
 }
 
-/* Media queries for responsiveness */
-@media (max-width: 1200px) {
-    .hero-main-title {
-        font-size: 3rem;
-    }
-    
-    .hero-heading-description {
-        width: 35%;
-    }
-    
-    .brand-logo {
-        font-size: 60px;
-    }
+.product-grid-item.item2 {
+    flex: 0 0 calc(60% - 5px);
 }
 
-@media (max-width: 992px) {
-    .hero {
-        padding: 3rem 2rem;
-    }
-    
-    .hero-main-title {
-        font-size: 2.5rem;
-    }
-    
-    .hero-heading-description {
-        position: relative;
-        width: 100%;
-        margin-top: 1.5rem;
-    }
-    
-    .hero-content {
-        flex-direction: column;
-    }
-    
-    .hero-content-left, 
-    .hero-content-middle, 
-    .hero-content-right {
-        width: 100%;
-    }
-    
-    .product-grid {
-        height: 300px;
-    }
+/* Row 2: 60/40 */
+.product-grid-item.item3 {
+    flex: 0 0 calc(70% - 5px);
 }
 
-@media (max-width: 768px) {
-    .hero {
-        padding: 2rem 1rem;
-    }
-    
-    .hero-main-title {
-        font-size: 2rem;
-    }
-    
-    .icon-wrapper img {
-        width: 40px;
-        height: 40px;
-    }
-    
-    .product-grid {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(3, 1fr);
-    }
+.product-grid-item.item4 {
+    flex: 0 0 calc(30% - 5px);
+}
+
+/* Row 3: 40/60 */
+.product-grid-item.item5 {
+    flex: 0 0 calc(40% - 5px);
+}
+
+.product-grid-item.item6 {
+    flex: 0 0 calc(60% - 5px);
 }
