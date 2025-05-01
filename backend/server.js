@@ -12,6 +12,8 @@ const wishlistRoutes = require('./routes/wishlistRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const newsletterRoutes = require('./routes/newsletterRoutes');
 const blogNewsletterRoutes = require('./routes/blogNewsletterRoutes');
+const productRoutes = require('./routes/productRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -39,6 +41,8 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/blog-newsletter', blogNewsletterRoutes);
 app.use('/api/email', emailRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
