@@ -142,14 +142,25 @@ const Blog = () => {
       <section className="blog-hero">
         <div className="blog-hero-content">
           <div className="animated-heading">
-            <span>O</span>
+            <span>F</span>
+            <span>E</span>
+            <span>A</span>
+            <span>T</span>
             <span>U</span>
             <span>R</span>
+            <span>E</span>
+            <span>D</span>
             <span className="space"></span>
-            <span>B</span>
-            <span>L</span>
+            <span className="space"></span>
+            <span>S</span>
+            <span>T</span>
             <span>O</span>
-            <span>G</span>
+            <span>R</span>
+            <span>I</span>
+            <span>E</span>
+            <span>S</span>
+
+          
           </div>
           <div className="blog-hero-description">
             <p>Explore Our Articles on Fashion Trends, Styling Tips, and Sustainable Fashion</p>

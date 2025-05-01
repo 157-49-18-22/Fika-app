@@ -3,13 +3,12 @@ import { Link } from "react-router-dom";
 import { FaPlus, FaMinus, FaTrash, FaShoppingCart, FaArrowRight, FaShoppingBag, FaUser } from "react-icons/fa";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
-<<<<<<< HEAD
 import LoginPrompt from "./LoginPrompt/LoginPrompt";
 import "./Cart/Cart.css";
 
 const Cart = () => {
   const { cart, removeFromCart, updateQuantity, getCartTotal } = useCart();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, currentUser } = useAuth();
   const [showPayment, setShowPayment] = useState(false);
   const [promoCode, setPromoCode] = useState("");
 
@@ -21,38 +20,6 @@ const Cart = () => {
     );
   }
 
-  if (cart.length === 0) {
-    return (
-      <div className="cart-empty">
-        <h2>Your Cart is Empty</h2>
-        <p>Looks like you haven't added any items to your cart yet.</p>
-        <Link to="/all-products" className="continue-shopping-btn">
-          Continue Shopping
-        </Link>
-      </div>
-    );
-  }
-
-=======
-import "./Cart/Cart.css";
-
-const Cart = () => {
-  const { cart, removeFromCart, updateQuantity } = useCart();
-  const { currentUser } = useAuth();
-  const [showPayment, setShowPayment] = useState(false);
-  const [promoCode, setPromoCode] = useState("");
-
->>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
-  // Calculate subtotal
-  const subtotal = cart.reduce((sum, item) => {
-    const price = item.discount ? item.price * (1 - item.discount / 100) : item.price;
-    return sum + price * item.quantity;
-  }, 0);
-  const shipping = 0;
-  const total = subtotal + shipping;
-
-<<<<<<< HEAD
-=======
   if (cart.length === 0) {
     return (
       <div className="cart-section">
@@ -70,29 +37,29 @@ const Cart = () => {
     );
   }
 
->>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
+  // Calculate subtotal
+  const subtotal = cart.reduce((sum, item) => {
+    const price = item.discount ? item.price * (1 - item.discount / 100) : item.price;
+    return sum + price * item.quantity;
+  }, 0);
+  const shipping = 0;
+  const total = subtotal + shipping;
+
   return (
     <div className="cart-container">
       <div className="cart-header">
         <h2>
           <FaShoppingCart className="cart-title-icon" /> Shopping Cart
         </h2>
-<<<<<<< HEAD
-=======
         <div className="user-info">
           <FaUser className="user-icon" />
           <span className="user-email">{currentUser?.email}</span>
         </div>
->>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
       </div>
       <div className="cart-content">
         <div className="cart-items">
           {cart.map((item) => (
-<<<<<<< HEAD
             <div key={`${item.id}-${item.size}`} className="cart-item">
-=======
-            <div key={item.id} className="cart-item">
->>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
               <div className="cart-item-image">
                 <img src={item.image} alt={item.name} />
               </div>
@@ -118,34 +85,20 @@ const Cart = () => {
                     </span>
                   )}
                 </div>
-<<<<<<< HEAD
-                <div className="cart-item-quantity">
-                  <button
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    disabled={item.quantity <= 1}
-                  >
-                    -
-                  </button>
-                  <span>{item.quantity}</span>
-                  <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
-                    +
-                  </button>
-                </div>
-                <button
-                  className="remove-item-btn"
-                  onClick={() => removeFromCart(item.id)}
-                >
-                  Remove
-                </button>
-              </div>
-=======
               </div>
               <div className="cart-item-quantity">
-                <button className="quantity-btn" onClick={() => updateQuantity(item.id, item.quantity - 1)} disabled={item.quantity <= 1}>
+                <button 
+                  className="quantity-btn" 
+                  onClick={() => updateQuantity(item.id, item.quantity - 1)} 
+                  disabled={item.quantity <= 1}
+                >
                   <FaMinus />
                 </button>
                 <span className="quantity-value">{item.quantity}</span>
-                <button className="quantity-btn" onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+                <button 
+                  className="quantity-btn" 
+                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                >
                   <FaPlus />
                 </button>
               </div>
@@ -164,7 +117,6 @@ const Cart = () => {
               >
                 <FaTrash />
               </button>
->>>>>>> 0c6c6f502019923f6ee4fd1657bc9331f5376831
             </div>
           ))}
         </div>

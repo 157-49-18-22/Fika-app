@@ -23,7 +23,7 @@ function Navbar() {
   const [typingText, setTypingText] = useState("");
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [typingSpeed, setTypingSpeed] = useState(150);
+  const [typingSpeed, setTypingSpeed] = useState(1550);
 
   // Get all products for search
   const allProducts = getAllProducts();
@@ -36,7 +36,7 @@ function Navbar() {
        product.category.toLowerCase().includes(searchQuery.toLowerCase()))
   ).slice(0, 5); // Limit to 5 results
 
-  const words = ["Search Products", "Find Your Style", "Discover Fashion", "Explore Collections"];
+  const words = ["Search Products","Explore Collections"];
 
   useEffect(() => {
     let timeout;
@@ -44,10 +44,10 @@ function Navbar() {
     
     if (isDeleting) {
       setTypingText(currentWord.substring(0, typingText.length - 1));
-      setTypingSpeed(50);
+      setTypingSpeed(1150);
     } else {
       setTypingText(currentWord.substring(0, typingText.length + 1));
-      setTypingSpeed(150);
+      setTypingSpeed(1150);
     }
 
     if (!isDeleting && typingText === currentWord) {
@@ -124,7 +124,7 @@ function Navbar() {
           <div className="navbar-left">
             <NavLink to="/new-arrivals" className="nav-link">New Arrival</NavLink>
             <NavLink to="/all-products" className="nav-link">All Product</NavLink>
-            <NavLink to="/blog" className="nav-link">Blog</NavLink>
+            <NavLink to="/blog" className="nav-link">Featured Stories</NavLink>
             <NavLink to="/contact" className="nav-link">Contact Us</NavLink>
           </div>
 

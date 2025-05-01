@@ -173,7 +173,7 @@
   transition: all 0.3s ease;
   position: sticky;
   top: 30px;
-  height: 800px;
+  height: fit-content;
 }
 
 .products-filters:hover {
