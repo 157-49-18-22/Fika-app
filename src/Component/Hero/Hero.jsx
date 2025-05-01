@@ -13,10 +13,6 @@ function Hero() {
     navigate('/all-products');
   };
 
-  const handleViewAll = () => {
-    navigate('/all-products');
-  };
-
   return (
     <section className="hero">
       <div className="hero-heading">
@@ -28,11 +24,12 @@ function Hero() {
             </span>
             rld of endless
           </h1>
-          <h1 className="hero-main-title">fashion possibilities</h1>
-
-          <div className="hero-heading-description">
-            <p>Elevate Your Style With Our Fashion Finds.</p>
-            <p>Discover Your Signature Style At Fika.</p>
+          <div className="hero-main-title-2"> 
+            <h1 className="hero-main-title">fashion possibilities</h1>
+            <div className="hero-heading-description">
+              <p>Elevate Your Style With Our Fashion Finds.</p>
+              <p>Discover Your Signature Style At Fika.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -58,14 +55,6 @@ function Hero() {
             <div className="brand-logo">
               <img style={{width: "250px"}} src="/Fika_Logo.jpg" alt="logo" />
             </div>
-            {/* <div className="brand-tagline">
-              <span>A MOMENT TO SLOW DOWN</span>
-              <span>AND APPRECIATE GOOD</span>
-              <span>THINGS IN LIFE.</span>
-            </div> */}
-            {/* <div className="view-all" onClick={handleViewAll} style={{ cursor: 'pointer' }}>
-              View All <span className="arrow-circle">&#8599;</span>
-            </div> */}
           </div>
         </div>
 

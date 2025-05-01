@@ -10,7 +10,7 @@
 }
 
 .hero {
-    padding: 4rem;
+    padding: 2rem;
     margin: 0 auto;
 }
 
@@ -26,10 +26,10 @@
 }
 
 .hero-main-title {
-    font-size: 3.7rem;
+    font-size: 3.5rem;
     line-height: 1.1;
     font-weight: 500;
-    font-family: 'Carmine', serif;
+    font-family: 'Montserrat', sans-serif;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: #000;
@@ -82,7 +82,7 @@
 
 /* Left Section */
 .hero-content-left {
-    flex: 1;
+    width: 33%;
     border-radius: 15px;
     overflow: hidden;
     background-color: #f8f8f8;
@@ -92,17 +92,14 @@
 
 .hero-content-left img {
     width: 100%;
-    /* height: 100%; */
-    /* object-fit: cover; */
     display: block;
 }
 
 /* Middle Section */
 .hero-content-middle {
-    flex: 1;
+    width: 33%;
     display: flex;
     flex-direction: column;
-    /* justify-content: space-between; */
     padding: 0 10px;
     height: fit-content;
 }
@@ -179,7 +176,6 @@
 .brand-logo {
     font-size: 70px;
     font-family: 'Montez', cursive;
-    /* margin-bottom: 15px; */
     color: #222;
     font-style: italic;
     height: 200px;
@@ -233,7 +229,7 @@
 
 /* Right Section */
 .hero-content-right {
-    flex: 1;
+    width: 33%;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -346,3 +342,24 @@
 .product-grid-item.item6 {
     flex: 0 0 calc(60% - 5px);
 }
+
+
+/* @media (max-width: 480px) {
+    .hero {
+        padding: 1rem;
+    }
+    .hero-heading {
+        margin-bottom: 1rem;
+    }
+       .hero-heading-content {
+        margin-bottom: 1rem;
+    }
+       .hero-main-title {
+        font-size: 1.2rem;
+    }
+    
+    .hero-heading-description p {
+        font-size: 0.5rem;
+    }
+      
+} */

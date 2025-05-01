@@ -1,14 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
 
-@font-face {
-    font-family: 'Carmine';
-    src: url('/public/fonts/Carmine.ttf') format('truetype'),
-        url('/public/fonts/Carmine.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
 .insta-feed-container {
     padding: 5% 2%;
     margin: 0 auto;
@@ -18,7 +9,6 @@
 
 .insta-feed-title {
     text-align: center;
-    font-family: 'Carmine', serif;
     font-size: 2rem;
     font-weight: 400;
     margin-bottom: 50px;

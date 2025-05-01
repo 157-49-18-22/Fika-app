@@ -2,7 +2,6 @@
   width: 1200px;
   margin: 0 auto;  
   font-family: 'Montserrat', sans-serif !important;
-  overflow-x: hidden;
 }
 
 :root {
@@ -49,8 +48,8 @@ body {
 
 /* For components that need scroll functionality without visible scrollbar */
 .scroll-container {
-  overflow-y: auto;
-  overflow-x: hidden;
+  /* overflow-y: auto; */
+  /* overflow-x: hidden; */
   -ms-overflow-style: none;
   scrollbar-width: none;
 }

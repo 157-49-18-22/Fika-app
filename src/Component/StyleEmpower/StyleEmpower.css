@@ -1,14 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
 
-@font-face {
-    font-family: 'Carmine';
-    src: url('/public/fonts/Carmine.ttf') format('truetype'),
-        url('/public/fonts/Carmine.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
 .style-empower-container {
     width: 100%;
     background-color: #F7F7F7;
@@ -50,7 +41,6 @@
     display: flex;
     align-items: center;
     gap: 15px;
-    font-family: 'Carmine', serif;
 }
 
 .style-image-marker {
@@ -99,7 +89,6 @@
     font-weight: 400;
     margin: 15px 0 40px;
     letter-spacing: 2px;
-    font-family: 'Carmine', serif;
 }
 
 .button-container {

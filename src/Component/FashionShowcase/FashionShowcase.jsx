@@ -4,7 +4,7 @@ import "./FashionShowcase.css";
 const FashionShowcase = () => {
   return (
     <div className="fashion-section">
-      <h1 className="sectiontitle" style={{ fontFamily: "carmine" }}>
+      <h1 className="sectiontitle">
         FASHION AT YOUR FINGERTIPS
       </h1>
       <div className="fashion-showcase">
@@ -12,7 +12,6 @@ const FashionShowcase = () => {
           <div className="main-content">
             <h1
               className="showcase-main-title"
-              style={{ fontFamily: "carmine" }}
             >
               1200+
             </h1>
