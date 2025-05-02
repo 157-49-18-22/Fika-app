@@ -522,37 +522,44 @@
   gap: 18px;
 }
 .login-form-fields input[type="email"],
-.login-form-fields input[type="password"] {
+.login-form-fields input[type="password"],
+.login-form-fields input[type="text"] {
   width: 100%;
   padding: 12px 16px;
   border-radius: 10px;
   border: 1.5px solid #3a3647;
-  background: #232136;
-  color: #fff;
+  background: #232136 !important;
+  color: #a18aff !important;
   font-size: 1.05rem;
   outline: none;
   transition: border 0.2s;
 }
 .login-form-fields input[type="email"]:focus,
-.login-form-fields input[type="password"]:focus {
+.login-form-fields input[type="password"]:focus,
+.login-form-fields input[type="text"]:focus {
   border: 1.5px solid #a18aff;
 }
-.login-form-check {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.97rem;
-  color: #bdb8d7;
+
+.login-form-fields select,
+.login-form-fields input[type="date"],
+.login-form-fields input[type="tel"] {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1.5px solid #3a3647;
+  background: #232136 !important;
+  color: #a18aff !important;
+  font-size: 1.05rem;
+  outline: none;
+  transition: border 0.2s;
 }
-.login-form-check input[type="checkbox"] {
-  accent-color: #a18aff;
-  width: 16px;
-  height: 16px;
+
+.login-form-fields select:focus,
+.login-form-fields input[type="date"]:focus,
+.login-form-fields input[type="tel"]:focus {
+  border: 1.5px solid #a18aff;
 }
-.login-form-check a {
-  color: #a18aff;
-  text-decoration: underline;
-}
+
 .login-form-btn {
   width: 100%;
   padding: 12px 0;
@@ -698,11 +705,23 @@
 
 }
 
-.password-input-container input {
+.password-input-container input,
+.password-input-container input[type="text"],
+.password-input-container input[type="email"],
+.password-input-container input[type="password"] {
   width: 100%;
   padding: 12px 45px 12px 16px !important;
   color: #a18aff !important;
+  background: #232136 !important;
+  border-radius: 10px;
+  border: 1.5px solid #3a3647;
+  font-size: 1.05rem;
+  outline: none;
+  transition: border 0.2s;
+}
 
+.password-input-container input:focus {
+  border: 1.5px solid #a18aff;
 }
 
 .password-toggle-btn {

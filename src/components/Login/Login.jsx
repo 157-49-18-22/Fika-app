@@ -140,14 +140,16 @@ const Login = () => {
           </div>
           {error && <div className="login-form-error">{error}</div>}
           <form className="login-form-fields" onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="emailOrPhone"
-              placeholder="Email or Phone Number"
-              value={formData.emailOrPhone}
-              onChange={handleChange}
-              required
-            />
+            <div className="password-input-container">
+              <input
+                type="text"
+                name="emailOrPhone"
+                placeholder="Email or Phone Number"
+                value={formData.emailOrPhone}
+                onChange={handleChange}
+                required
+              />
+            </div>
             <div className="password-input-container">
               <input
                 type={showPassword ? "text" : "password"}

@@ -293,14 +293,17 @@ const Signup = () => {
               {errors.contactNumber && <span className="error-message">{errors.contactNumber}</span>}
             </div>
 
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              className={errors.email ? 'error' : ''}
-            />
+            <div className="password-input-container">
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
+                className={errors.email ? 'error' : ''}
+                style={{ color: '#a18aff' }}
+              />
+            </div>
             {errors.email && <span className="error-message">{errors.email}</span>}
 
             <div className="password-input-container">
@@ -311,6 +314,7 @@ const Signup = () => {
                 value={formData.password}
                 onChange={handleChange}
                 className={errors.password ? 'error' : ''}
+                style={{ color: '#a18aff' }}
               />
               <button
                 type="button"
@@ -331,6 +335,7 @@ const Signup = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 className={errors.confirmPassword ? 'error' : ''}
+                style={{ color: '#a18aff' }}
               />
               <button
                 type="button"
