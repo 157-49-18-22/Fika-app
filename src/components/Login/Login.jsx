@@ -12,7 +12,7 @@ const sliderImages = [
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth();
+  const { login, isAuthenticated, setIsAuthenticated, setCurrentUser } = useAuth();
   const [formData, setFormData] = useState({ emailOrPhone: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
@@ -66,8 +66,13 @@ const Login = () => {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Login failed. Please try again.');
-      // Save user info to localStorage or context if needed
-      // ... (your existing logic)
+      // Save user info to AuthContext and localStorage
+      const user = data.user || { email: formData.emailOrPhone };
+      // Set auth state in context and localStorage
+      setIsAuthenticated(true);
+      setCurrentUser(user);
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('currentUser', JSON.stringify(user));
       // Redirect or set auth state
       navigate('/');
     } catch (error) {

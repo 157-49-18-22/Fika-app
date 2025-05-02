@@ -37,6 +37,20 @@ export const AuthProvider = ({ children }) => {
         setCurrentUser(null);
       }
     }
+    // Listen for localStorage changes (cross-tab and programmatic)
+    const handleStorage = () => {
+      const authStatus = localStorage.getItem('isAuthenticated');
+      const savedUser = localStorage.getItem('currentUser');
+      if (authStatus === 'true' && savedUser) {
+        setIsAuthenticated(true);
+        setCurrentUser(JSON.parse(savedUser));
+      } else {
+        setIsAuthenticated(false);
+        setCurrentUser(null);
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
   }, []);
 
   const signup = (userData) => {
@@ -197,7 +211,9 @@ export const AuthProvider = ({ children }) => {
       signup,
       updateUserEmail,
       verifyEmailUpdate,
-      deleteAccount
+      deleteAccount,
+      setCurrentUser,
+      setIsAuthenticated
     }}>
       {children}
     </AuthContext.Provider>
