@@ -9,7 +9,7 @@ import AllProducts from './components/AllProducts/AllProducts.jsx';
 import Blog from './components/Blog/Blog.jsx';
 import Contact from './components/Contact/Contact.jsx';
 import ProductDetails from './components/ProductDetails/ProductDetails.jsx';
-import Cart from './components/Cart.jsx';
+import Cart from './components/Cart/Cart.jsx';
 import Wishlist from './components/Wishlist/Wishlist.jsx';
 import CategoryProducts from './components/CategoryProducts/CategoryProducts.jsx';
 import Navbar from './Component/Navbar/Navbar.jsx';
