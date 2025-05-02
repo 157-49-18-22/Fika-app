@@ -24,7 +24,6 @@ const AllProducts = () => {
   const [minRating, setMinRating] = useState(0);
   const [showDiscounted, setShowDiscounted] = useState(false);
   const [inStockOnly, setInStockOnly] = useState(false);
-  const [selectedGender, setSelectedGender] = useState('all');
   const [wishlistProductIds, setWishlistProductIds] = useState([]);
   
   const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
@@ -57,7 +56,6 @@ const AllProducts = () => {
     { id: "all", name: "All Products", icon: <FaShoppingBag /> },
     { id: "cushions", name: "Cushions", icon: <FaCouch /> },
     { id: "bedsets", name: "Bedsets", icon: <FaBed /> },
-    { id: "cushion-covers", name: "Cushion Covers", icon: <FaCouch /> },
     { id: "dohars-quilts", name: "Dohars & Quilts", icon: <FaBed /> }
   ];
 
@@ -81,7 +79,7 @@ const AllProducts = () => {
     return acc;
   }, {});
 
-  // Filter products by category, search, price, rating, discount, stock, gender
+  // Filter products by category, search, price, rating, discount, stock
   const filteredProducts = allProducts.filter(
     (product) => {
       const categoryMatch = selectedCategory === "all" || product.category.toLowerCase() === selectedCategory.toLowerCase();
@@ -93,8 +91,7 @@ const AllProducts = () => {
         (product.price >= priceRange[0] && product.price <= priceRange[1]) &&
         (minRating === 0 || (product.rating && product.rating >= minRating)) &&
         (!showDiscounted || product.discount) &&
-        (!inStockOnly || product.inStock) &&
-        (selectedGender === 'all' || (product.gender && product.gender.toLowerCase() === selectedGender));
+        (!inStockOnly || product.inStock);
     }
   );
 
@@ -266,25 +263,6 @@ const AllProducts = () => {
               <button className="close-filters" onClick={() => setFiltersVisible(false)}>×</button>
             </div>
             
-            {/* Gender Filter */}
-            <div className="filter-group">
-              <h4>Gender</h4>
-              <div className="gender-options">
-                {['all', 'men', 'women', 'unisex'].map((gender) => (
-                  <label key={gender} className="gender-radio">
-                    <input
-                      type="radio"
-                      name="gender"
-                      value={gender}
-                      checked={selectedGender === gender}
-                      onChange={() => setSelectedGender(gender)}
-                    />
-                    {gender.charAt(0).toUpperCase() + gender.slice(1)}
-                  </label>
-                ))}
-              </div>
-            </div>
-            
             {/* Minimum Rating Filter */}
             <div className="filter-group">
               <h4><FaStar /> Minimum Rating</h4>
@@ -376,7 +354,6 @@ const AllProducts = () => {
                 setInStockOnly(false);
                 setPriceRange([0, 10000]);
                 setSortOption('featured');
-                setSelectedGender('all');
               }}
             >
               Clear All Filters

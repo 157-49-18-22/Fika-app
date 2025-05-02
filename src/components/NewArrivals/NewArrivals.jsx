@@ -18,20 +18,16 @@ const NewArrivals = () => {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const { isAuthenticated } = useAuth();
   const [categoryProducts, setCategoryProducts] = useState({
-    womensJeans: [],
-    mensJeans: [],
-    womensFootwear: [],
-    womensDresses: [],
-    accessories: []
+    cushions: [],
+    bedsets: [],
+    doharsAndQuilts: []
   });
   
   const productsRowRef = useRef(null);
   const categoryRowRefs = {
-    womensJeans: useRef(null),
-    mensJeans: useRef(null),
-    womensFootwear: useRef(null),
-    womensDresses: useRef(null),
-    accessories: useRef(null)
+    cushions: useRef(null),
+    bedsets: useRef(null),
+    doharsAndQuilts: useRef(null)
   };
   
   const autoScrollTimer = useRef(null);
@@ -57,11 +53,9 @@ const NewArrivals = () => {
 
     // Organize products by categories
     setCategoryProducts({
-      womensJeans: allProducts.filter(p => p.category === "clothing" && p.name.toLowerCase().includes("jeans") && !p.name.toLowerCase().includes("men")),
-      mensJeans: allProducts.filter(p => p.category === "clothing" && p.name.toLowerCase().includes("jeans") && p.name.toLowerCase().includes("men")),
-      womensFootwear: allProducts.filter(p => p.category === "footwear" && !p.name.toLowerCase().includes("men")),
-      womensDresses: allProducts.filter(p => p.category === "clothing" && p.name.toLowerCase().includes("dress")),
-      accessories: allProducts.filter(p => p.category === "accessories")
+      cushions: allProducts.filter(p => p.category === "cushions"),
+      bedsets: allProducts.filter(p => p.category === "bedsets"),
+      doharsAndQuilts: allProducts.filter(p => p.category === "dohars" || p.category === "quilts")
     });
   }, []);
 
@@ -89,7 +83,7 @@ const NewArrivals = () => {
     return () => clearInterval(timerInterval);
   }, []);
 
-  const categories = ["all", "clothing", "accessories", "footwear"];
+  const categories = ["all", "cushions", "bedsets", "dohars & quilts"];
 
   const filteredProducts = activeTab === "all" 
     ? newArrivals 
@@ -442,11 +436,11 @@ const NewArrivals = () => {
           <p>
             {activeTab === "all" 
               ? "Browse our complete selection of new arrivals, featuring the latest trends and must-have pieces for the season." 
-              : activeTab === "clothing" 
-              ? "Discover our newest clothing items, from elegant dresses to casual essentials, all crafted with premium fabrics." 
-              : activeTab === "accessories" 
-              ? "Complete your look with our just-arrived accessories, including bags, jewelry, watches, and more." 
-              : "Step into style with our fresh footwear collection, featuring everything from casual comfort to evening elegance."}
+              : activeTab === "cushions" 
+              ? "Discover our newest cushions, from elegant designs to casual essentials, all crafted with premium fabrics." 
+              : activeTab === "bedsets" 
+              ? "Complete your look with our just-arrived bedsets, including covers, sheets, and more." 
+              : "Explore our collection of dohars and quilts, perfect for every season and crafted with premium materials for ultimate comfort."}
           </p>
         </div>
 
@@ -467,20 +461,14 @@ const NewArrivals = () => {
 
         {/* Category-specific product sections */}
         <div className="arrivals-sections-container">
-          {/* Women's Dresses */}
-          {renderProductsContainer("Women's Dresses", categoryProducts.womensDresses, "womensDresses")}
+          {/* Cushions */}
+          {renderProductsContainer("Cushions", categoryProducts.cushions, "cushions")}
           
-          {/* Women's Jeans */}
-          {renderProductsContainer("Women's Jeans", categoryProducts.womensJeans, "womensJeans")}
+          {/* Bedsets */}
+          {renderProductsContainer("Bedsets", categoryProducts.bedsets, "bedsets")}
           
-          {/* Men's Jeans */}
-          {renderProductsContainer("Men's Jeans", categoryProducts.mensJeans, "mensJeans")}
-          
-          {/* Women's Footwear */}
-          {renderProductsContainer("Women's Footwear", categoryProducts.womensFootwear, "womensFootwear")}
-          
-          {/* Accessories */}
-          {renderProductsContainer("Accessories", categoryProducts.accessories, "accessories")}
+          {/* Dohars and Quilts */}
+          {renderProductsContainer("Dohars & Quilts", categoryProducts.doharsAndQuilts, "doharsAndQuilts")}
         </div>
 
         {/* Shopping Benefits */}

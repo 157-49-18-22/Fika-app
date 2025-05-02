@@ -19,6 +19,9 @@ const Signup = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    gender: '',
+    dateOfBirth: '',
+    contactNumber: '',
     terms: false
   });
   const [sliderIndex, setSliderIndex] = useState(0);
@@ -57,6 +60,27 @@ const Signup = () => {
       newErrors.lastName = 'Last name is required';
     }
 
+    if (!formData.gender) {
+      newErrors.gender = 'Please select your gender';
+    }
+
+    if (!formData.dateOfBirth) {
+      newErrors.dateOfBirth = 'Date of birth is required';
+    } else {
+      const dob = new Date(formData.dateOfBirth);
+      const today = new Date();
+      const age = today.getFullYear() - dob.getFullYear();
+      if (age < 13) {
+        newErrors.dateOfBirth = 'You must be at least 13 years old to register';
+      }
+    }
+
+    if (!formData.contactNumber) {
+      newErrors.contactNumber = 'Contact number is required';
+    } else if (!/^[0-9]{10}$/.test(formData.contactNumber)) {
+      newErrors.contactNumber = 'Please enter a valid 10-digit phone number';
+    }
+
     if (!formData.email) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -93,7 +117,10 @@ const Signup = () => {
       await signup({
         email: formData.email,
         password: formData.password,
-        name: `${formData.firstName} ${formData.lastName}`
+        name: `${formData.firstName} ${formData.lastName}`,
+        gender: formData.gender,
+        dateOfBirth: formData.dateOfBirth,
+        contactNumber: formData.contactNumber
       });
       navigate('/login');
     } catch (error) {
@@ -198,6 +225,47 @@ const Signup = () => {
             </div>
             {errors.firstName && <span className="error-message">{errors.firstName}</span>}
             {errors.lastName && <span className="error-message">{errors.lastName}</span>}
+
+            <div className="form-group">
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                className={errors.gender ? 'error' : ''}
+              >
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+              {errors.gender && <span className="error-message">{errors.gender}</span>}
+            </div>
+
+            <div className="form-group">
+              <input
+                type="date"
+                name="dateOfBirth"
+                placeholder="Date of Birth"
+                value={formData.dateOfBirth}
+                onChange={handleChange}
+                className={errors.dateOfBirth ? 'error' : ''}
+              />
+              {errors.dateOfBirth && <span className="error-message">{errors.dateOfBirth}</span>}
+            </div>
+
+            <div className="form-group">
+              <input
+                type="tel"
+                name="contactNumber"
+                placeholder="Contact Number"
+                value={formData.contactNumber}
+                onChange={handleChange}
+                className={errors.contactNumber ? 'error' : ''}
+                pattern="[0-9]{10}"
+                title="Please enter a valid 10-digit phone number"
+              />
+              {errors.contactNumber && <span className="error-message">{errors.contactNumber}</span>}
+            </div>
 
             <input
               type="email"

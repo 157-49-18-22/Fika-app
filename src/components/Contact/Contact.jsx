@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { FaFacebookF, FaTwitter, FaInstagram, FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
+import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
+import { BsFacebook, BsInstagram } from "react-icons/bs";
 import "./Contact.css";
 import Testimonials from "../Testimonials/Testimonials.jsx";
 import axios from "axios";
@@ -244,29 +245,24 @@ const Contact = () => {
               <motion.a 
                 href="#" 
                 aria-label="Facebook"
+                className="social-icon facebook"
                 variants={socialIconVariants}
                 whileHover="hover"
                 whileTap="tap"
               >
-                <FaFacebookF />
+                <BsFacebook size={24} />
               </motion.a>
               <motion.a 
-                href="#" 
-                aria-label="Twitter"
-                variants={socialIconVariants}
-                whileHover="hover"
-                whileTap="tap"
-              >
-                <FaTwitter />
-              </motion.a>
-              <motion.a 
-                href="#" 
+                href="https://www.instagram.com/fika_x_wishgenie?igsh=emFiOXd1a3g5bmc0" 
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label="Instagram"
+                className="social-icon instagram"
                 variants={socialIconVariants}
                 whileHover="hover"
                 whileTap="tap"
               >
-                <FaInstagram />
+                <BsInstagram size={24} />
               </motion.a>
             </motion.div>
           </motion.div>

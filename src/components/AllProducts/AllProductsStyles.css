@@ -1212,7 +1212,6 @@
 
 .rating-checkbox input[type="checkbox"]:checked {
   background-color: var(--primary-color);
-  border-color: var(--primary-color);
 }
 
 .gender-options {
@@ -1246,12 +1245,12 @@
 
 @media (max-width: 768px) {
   .category-bar-horizontal {
-    gap: 10px;
     padding: 10px;
+    overflow-x: auto;
   }
 
   .category-btn-horizontal {
-    padding: 8px 16px;
+    padding: 8px 12px;
     font-size: 0.9rem;
   }
 } 

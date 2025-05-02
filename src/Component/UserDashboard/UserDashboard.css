@@ -216,7 +216,12 @@ display: inline-block;
   color: #666;
   margin: 0;
   line-height: 1.4;
+  word-wrap: break-word;
+  max-width: 100%;
+  overflow-wrap: break-word; /* ensure wrapping */
+  white-space: normal;       /* very important */
 }
+
 
 .login-content {
   display: flex;
