@@ -12,7 +12,7 @@ const sliderImages = [
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login, isAuthenticated, setIsAuthenticated, setCurrentUser } = useAuth();
+  const auth = useAuth();
   const [formData, setFormData] = useState({ emailOrPhone: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
@@ -21,10 +21,10 @@ const Login = () => {
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
+    if (auth.isAuthenticated) {
       navigate('/');
     }
-  }, [isAuthenticated, navigate]);
+  }, [auth.isAuthenticated, navigate]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -58,7 +58,6 @@ const Login = () => {
     }
 
     try {
-      // Call backend login API with emailOrPhone and password
       const response = await fetch('http://localhost:5000/api/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -66,14 +65,12 @@ const Login = () => {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Login failed. Please try again.');
-      // Save user info to AuthContext and localStorage
+      
       const user = data.user || { email: formData.emailOrPhone };
-      // Set auth state in context and localStorage
-      setIsAuthenticated(true);
-      setCurrentUser(user);
+      auth.setIsAuthenticated(true);
+      auth.setCurrentUser(user);
       localStorage.setItem('isAuthenticated', 'true');
       localStorage.setItem('currentUser', JSON.stringify(user));
-      // Redirect or set auth state
       navigate('/');
     } catch (error) {
       setError(error.message || 'Login failed. Please try again.');
