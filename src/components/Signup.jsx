@@ -114,6 +114,30 @@ const Signup = () => {
 
     setIsLoading(true);
     try {
+      // First, create user in the backend
+      const response = await fetch('http://localhost:5000/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+          gender: formData.gender,
+          dateOfBirth: formData.dateOfBirth,
+          contactNumber: formData.contactNumber
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create account');
+      }
+
+      // If backend creation is successful, also update local auth context
       await signup({
         email: formData.email,
         password: formData.password,
@@ -122,6 +146,8 @@ const Signup = () => {
         dateOfBirth: formData.dateOfBirth,
         contactNumber: formData.contactNumber
       });
+
+      // Redirect to login page
       navigate('/login');
     } catch (error) {
       setErrors({ submit: error.message });

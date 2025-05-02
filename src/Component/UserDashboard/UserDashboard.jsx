@@ -104,13 +104,14 @@ const UserDashboard = () => {
               <span>Settings</span>
             </Link>
             <Link to="/wishlist" className="menu-item" onClick={() => setIsOpen(false)}>
-              <img src="/icons/wishlist.png" alt="Wishlist" />
-              <span>Wishlist</span>
-            </Link>
-            <Link to="/notifications" className="menu-item" onClick={() => setIsOpen(false)}>
-              <img src="/icons/notifications.png" alt="Notifications" />
-              <span>Notifications</span>
-            </Link>
+  <img src="https://cdn-icons-png.flaticon.com/512/1077/1077035.png" alt="Wishlist" />
+  <span>Wishlist</span>
+</Link>
+<Link to="/notifications" className="menu-item" onClick={() => setIsOpen(false)}>
+  <img src="https://cdn-icons-png.flaticon.com/512/1827/1827392.png" alt="Notifications" />
+  <span>Notifications</span>
+</Link>
+
             <button className="menu-item logout-btn" onClick={handleLogout}>
               <FaSignOutAlt className="menu-icon" />
               <span>Logout</span>

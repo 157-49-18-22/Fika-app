@@ -13,7 +13,7 @@ const sliderImages = [
 const Login = () => {
   const navigate = useNavigate();
   const { login, isAuthenticated } = useAuth();
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ emailOrPhone: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -52,17 +52,24 @@ const Login = () => {
     e.preventDefault();
     setError('');
     
-    if (!formData.email || !formData.password) {
+    if (!formData.emailOrPhone || !formData.password) {
       setError('Please fill in all fields');
       return;
     }
 
     try {
-      await login({
-        email: formData.email,
-        password: formData.password
+      // Call backend login API with emailOrPhone and password
+      const response = await fetch('http://localhost:5000/api/users/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ emailOrPhone: formData.emailOrPhone, password: formData.password })
       });
-      // No need to navigate here as the useEffect will handle it
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Login failed. Please try again.');
+      // Save user info to localStorage or context if needed
+      // ... (your existing logic)
+      // Redirect or set auth state
+      navigate('/');
     } catch (error) {
       setError(error.message || 'Login failed. Please try again.');
     }
@@ -134,10 +141,10 @@ const Login = () => {
           {error && <div className="login-form-error">{error}</div>}
           <form className="login-form-fields" onSubmit={handleSubmit}>
             <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={formData.email}
+              type="text"
+              name="emailOrPhone"
+              placeholder="Email or Phone Number"
+              value={formData.emailOrPhone}
               onChange={handleChange}
               required
             />
