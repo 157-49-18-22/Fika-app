@@ -278,6 +278,24 @@ const ProductDetails = () => {
     return `₹${price.toFixed(2)}`;
   };
 
+  const getSizeWidth = (size) => {
+    if (size === "Standard") return "180";
+    if (size === "4-5Y") return "45";
+    if (size === "6-7Y") return "50";
+    if (size === "40") return "50";
+    if (size === "42") return "52";
+    return "N/A";
+  };
+
+  const getSizeLength = (size) => {
+    if (size === "Standard") return "240";
+    if (size === "4-5Y") return "65";
+    if (size === "6-7Y") return "70";
+    if (size === "40") return "70";
+    if (size === "42") return "72";
+    return "N/A";
+  };
+
   return (
     <div className="product-details-container">
       {showLoginPrompt && (
@@ -396,12 +414,11 @@ const ProductDetails = () => {
                     </button>
                   </div>
                   <div className="size-options">
-                    {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => (
+                    {product.sizes.map((size) => (
                       <button
                         key={size}
-                        className={`size-btn ${!product.sizes.includes(size) ? 'unavailable' : ''} ${selectedSize === size ? 'selected' : ''}`}
+                        className={`size-btn ${selectedSize === size ? 'selected' : ''}`}
                         onClick={() => handleSizeSelect(size)}
-                        disabled={!product.sizes.includes(size)}
                       >
                         {size}
                       </button>
@@ -425,26 +442,13 @@ const ProductDetails = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <td>S</td>
-                            <td>45</td>
-                            <td>65</td>
-                          </tr>
-                          <tr>
-                            <td>M</td>
-                            <td>50</td>
-                            <td>70</td>
-                          </tr>
-                          <tr>
-                            <td>L</td>
-                            <td>55</td>
-                            <td>75</td>
-                          </tr>
-                          <tr>
-                            <td>XL</td>
-                            <td>60</td>
-                            <td>80</td>
-                          </tr>
+                          {product.sizes.map((size) => (
+                            <tr key={size}>
+                              <td>{size}</td>
+                              <td>{getSizeWidth(size)}</td>
+                              <td>{getSizeLength(size)}</td>
+                            </tr>
+                          ))}
                         </tbody>
                       </table>
                     </div>
