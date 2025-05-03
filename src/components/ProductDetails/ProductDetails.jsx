@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { io } from "socket.io-client";
 import {
   FaShoppingCart,
   FaHeart,
@@ -16,6 +17,8 @@ import {
   FaPinterest,
   FaTwitter,
   FaFacebook,
+  FaUsers,
+  FaShoppingBag,
 } from "react-icons/fa";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
@@ -55,11 +58,38 @@ const ProductDetails = () => {
   const galleryRef = useRef(null);
   const wrapperRef = useRef(null);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [viewerCount, setViewerCount] = useState(0);
+  const [purchaseCount, setPurchaseCount] = useState(0);
+  const socketRef = useRef();
 
   const product = getAllProducts().find((p) => p.id === parseInt(id));
   const relatedProducts = getAllProducts()
     .filter((p) => p.category === product?.category && p.id !== product?.id)
     .slice(0, 4);
+
+  useEffect(() => {
+    // Connect to Socket.IO server
+    socketRef.current = io('http://localhost:5000');
+
+    // Join product room
+    socketRef.current.emit('joinProduct', id);
+
+    // Listen for viewer count updates
+    socketRef.current.on('viewerCount', (count) => {
+      setViewerCount(count);
+    });
+
+    // Listen for purchase count updates
+    socketRef.current.on('purchaseCount', (count) => {
+      setPurchaseCount(count);
+    });
+
+    // Cleanup on unmount
+    return () => {
+      socketRef.current.emit('leaveProduct', id);
+      socketRef.current.disconnect();
+    };
+  }, [id]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -322,6 +352,14 @@ const ProductDetails = () => {
           <h1 className="product-title">{product.name}</h1>
 
           <div className="product-meta">
+            <div className="product-stats">
+              <div className="viewer-count">
+                <FaUsers /> {viewerCount} people viewing
+              </div>
+              <div className="purchase-count">
+                <FaShoppingBag /> {purchaseCount} people bought this
+              </div>
+            </div>
             <div className="rating">
               {renderStars(product.rating)}
               <span className="review-count">

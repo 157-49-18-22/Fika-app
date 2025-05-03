@@ -1426,4 +1426,33 @@
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+.product-stats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.viewer-count,
+.purchase-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #f8f8f8;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.viewer-count:hover,
+.purchase-count:hover {
+    background-color: #f0f0f0;
+}
+
+.viewer-count svg,
+.purchase-count svg {
+    color: #666;
 } 

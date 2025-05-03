@@ -4,6 +4,8 @@ const dotenv = require('dotenv');
 const path = require('path');
 const db = require('./config/db');
 const emailRoutes = require('./routes/emailRoutes');
+const http = require('http');
+const socketIo = require('socket.io');
 
 // Import routes
 const userRoutes = require('./routes/userRoutes');
@@ -19,10 +21,72 @@ const reviewRoutes = require('./routes/reviewRoutes');
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "http://localhost:5173", // Your frontend URL
+    methods: ["GET", "POST"]
+  }
+});
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Socket.IO connection handling
+const activeViewers = new Map(); // Store active viewers for each product
+
+io.on('connection', (socket) => {
+  console.log('New client connected');
+
+  // Handle viewer count
+  socket.on('joinProduct', (productId) => {
+    socket.join(`product_${productId}`);
+    const currentCount = activeViewers.get(productId) || 0;
+    activeViewers.set(productId, currentCount + 1);
+    io.to(`product_${productId}`).emit('viewerCount', activeViewers.get(productId));
+  });
+
+  socket.on('leaveProduct', (productId) => {
+    socket.leave(`product_${productId}`);
+    const currentCount = activeViewers.get(productId) || 0;
+    if (currentCount > 0) {
+      activeViewers.set(productId, currentCount - 1);
+      io.to(`product_${productId}`).emit('viewerCount', activeViewers.get(productId));
+    }
+  });
+
+  // Handle purchase count
+  socket.on('productPurchased', (productId) => {
+    // Update purchase count in database
+    db.query(
+      'UPDATE products SET purchaseCount = purchaseCount + 1 WHERE id = ?',
+      [productId],
+      (err) => {
+        if (err) {
+          console.error('Error updating purchase count:', err);
+          return;
+        }
+        // Get updated purchase count
+        db.query(
+          'SELECT purchaseCount FROM products WHERE id = ?',
+          [productId],
+          (err, results) => {
+            if (err) {
+              console.error('Error getting purchase count:', err);
+              return;
+            }
+            io.to(`product_${productId}`).emit('purchaseCount', results[0].purchaseCount);
+          }
+        );
+      }
+    );
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
+});
 
 // Database connection
 db.connect((err) => {
@@ -57,7 +121,7 @@ app.use((err, req, res, next) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`API is available at http://localhost:${PORT}`);
 }); 
