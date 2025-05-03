@@ -19,6 +19,9 @@ import About from './pages/About/About.jsx';
 import './App.css';
 import Footer from './Component/Footer/Footer.jsx';
 import Profile from './Component/Profile/Profile.jsx';
+import MyOrders from './Component/Orders/MyOrders';
+import Settings from './Component/Settings/Settings';
+import Notifications from './Component/Notifications/Notifications';
 
 // Layout component with navbar and footer
 const PageLayout = ({ children }) => {
@@ -109,6 +112,26 @@ function App() {
               <Route path="/profile" element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              } />
+              <Route path="/my-orders" element={
+                <ProtectedRoute>
+                  <MyOrders />
+                </ProtectedRoute>
+              } />
+              <Route path="/orders" element={
+                <ProtectedRoute>
+                  <MyOrders />
+                </ProtectedRoute>
+              } />
+              <Route path="/settings" element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              } />
+              <Route path="/notifications" element={
+                <ProtectedRoute>
+                  <Notifications />
                 </ProtectedRoute>
               } />
             </Routes>

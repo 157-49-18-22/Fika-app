@@ -151,22 +151,35 @@
     color: #000;
 }
 
+.icon-wrapper {
+    position: relative;
+    display: inline-block;
+    margin: 0 6px;
+    margin-top: 16px;
+}
+
 .badge {
-    margin-top: 29px;
-    margin-right: 96px;
     position: absolute;
     top: -8px;
-    right: -8px;
-    background-color: #000;
+    right: -10px;
+    background: #a18aff;
     color: #fff;
-    font-size: 10px;
-    font-weight: 600;
-    height: 15px;
-    width: 15px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 2px 7px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 1;
+    min-width: 20px;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+
+.wishlist-badge {
+    background: #ff6b81;
+}
+
+.cart-badge {
+    background: #6bcf63;
 }
 
 /* Login Button Styles */
@@ -280,4 +293,25 @@
     text-align: center;
     color: #666;
     font-size: 14px;
+}
+
+.action-prompt {
+    position: fixed;
+    top: 80px;
+    right: 40px;
+    background: #222;
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    z-index: 2000;
+    font-size: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    animation: fadeInOut 2s;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-20px);}
+    10% { opacity: 1; transform: translateY(0);}
+    90% { opacity: 1; transform: translateY(0);}
+    100% { opacity: 0; transform: translateY(-20px);}
 }

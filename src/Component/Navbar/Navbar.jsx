@@ -24,6 +24,8 @@ function Navbar() {
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [typingSpeed, setTypingSpeed] = useState(1550);
+  const [promptMsg, setPromptMsg] = useState("");
+  const [showPrompt, setShowPrompt] = useState(false);
 
   // Get all products for search
   const allProducts = getAllProducts();
@@ -113,6 +115,21 @@ function Navbar() {
     setShowLoginPrompt(false);
   };
 
+  const showActionPrompt = (msg) => {
+    setPromptMsg(msg);
+    setShowPrompt(true);
+    setTimeout(() => setShowPrompt(false), 2000);
+  };
+
+  // Example: Listen for custom events (optional, for global usage)
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.detail && e.detail.msg) showActionPrompt(e.detail.msg);
+    };
+    window.addEventListener('show-action-prompt', handler);
+    return () => window.removeEventListener('show-action-prompt', handler);
+  }, []);
+
   return (
     <>
       <div className="navbar">
@@ -180,18 +197,22 @@ function Navbar() {
                 </div>
               )}
             </div>
-            <Link to="/wishlist" className="" aria-label="Wishlist" onClick={handleWishlistClick}>
-              <FaHeart style={{ color: '#333' }} />
-              {wishlist.length > 0 && (
-                <span className="badge">{wishlist.length}</span>
-              )}
-            </Link>
-            <Link to="/cart" className="" aria-label="Shopping Cart" onClick={handleCartClick}>
-              <FiShoppingBag style={{ color: '#333' }} />
-              {getCartCount() > 0 && (
-                <span className="badge">{getCartCount()}</span>
-              )}
-            </Link>
+            <span className="icon-wrapper">
+              <Link to="/wishlist" className="" aria-label="Wishlist" onClick={handleWishlistClick}>
+                <FaHeart style={{ color: '#333' }} />
+                {wishlist.length > 0 && (
+                  <span className="badge wishlist-badge">{wishlist.length}</span>
+                )}
+              </Link>
+            </span>
+            <span className="icon-wrapper">
+              <Link to="/cart" className="" aria-label="Shopping Cart" onClick={handleCartClick}>
+                <FiShoppingBag style={{ color: '#333' }} />
+                {getCartCount() > 0 && (
+                  <span className="badge cart-badge">{getCartCount()}</span>
+                )}
+              </Link>
+            </span>
             <UserDashboard />
           </div>
         </div>
@@ -202,6 +223,11 @@ function Navbar() {
           <div className="login-prompt-wrapper" onClick={(e) => e.stopPropagation()}>
             <LoginPrompt message="Please login to access your cart and wishlist items." />
           </div>
+        </div>
+      )}
+      {showPrompt && (
+        <div className="action-prompt">
+          {promptMsg}
         </div>
       )}
     </>

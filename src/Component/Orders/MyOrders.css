@@ -1,0 +1,88 @@
+.my-orders-container {
+  max-width: 800px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 32px 24px;
+}
+
+.my-orders-container h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: #232136;
+  letter-spacing: 1px;
+}
+
+.no-orders {
+  text-align: center;
+  color: #888;
+  font-size: 1.1rem;
+  margin: 40px 0;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.order-card {
+  background: #f8f8ff;
+  border-radius: 12px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  padding: 20px 18px;
+  transition: box-shadow 0.2s;
+}
+.order-card:hover {
+  box-shadow: 0 4px 16px rgba(161,138,255,0.10);
+}
+
+.order-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-size: 1rem;
+  margin-bottom: 14px;
+  color: #444;
+}
+.order-header span {
+  min-width: 140px;
+}
+
+.order-items {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+.order-item-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+.order-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.order-item-name {
+  font-weight: 500;
+  color: #232136;
+}
+.order-item-qty, .order-item-price {
+  font-size: 0.97rem;
+  color: #666;
+} 

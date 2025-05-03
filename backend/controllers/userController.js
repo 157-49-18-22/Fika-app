@@ -39,6 +39,18 @@ const createUser = async (req, res) => {
             // Hash the password
             const hashedPassword = await bcrypt.hash(password, 10);
 
+            // Format dateOfBirth to YYYY-MM-DD (robust)
+            let formattedDob = null;
+            if (dateOfBirth) {
+                const dobObj = new Date(dateOfBirth);
+                if (!isNaN(dobObj.getTime())) {
+                    formattedDob = dobObj.toISOString().slice(0, 10);
+                } else {
+                    formattedDob = null;
+                }
+            }
+            console.log("DOB received:", dateOfBirth, "Formatted:", formattedDob);
+
             // Insert new user
             const query = `
                 INSERT INTO users (firstName, lastName, email, password, gender, dateOfBirth, contactNumber)
@@ -47,7 +59,7 @@ const createUser = async (req, res) => {
 
             db.query(
                 query,
-                [firstName, lastName, email, hashedPassword, gender, dateOfBirth, contactNumber],
+                [firstName, lastName, email, hashedPassword, gender, formattedDob, contactNumber],
                 (err, result) => {
                     if (err) {
                         console.error('Error creating user:', err);
@@ -93,13 +105,22 @@ const updateUser = (req, res) => {
     const { id } = req.params;
     const { firstName, lastName, gender, dateOfBirth, contactNumber } = req.body;
     
+    // Format dateOfBirth to YYYY-MM-DD
+    let formattedDob = null;
+    if (dateOfBirth) {
+        const dobObj = new Date(dateOfBirth);
+        if (!isNaN(dobObj)) {
+            formattedDob = dobObj.toISOString().slice(0, 10);
+        }
+    }
+
     const query = `
         UPDATE users 
         SET firstName = ?, lastName = ?, gender = ?, dateOfBirth = ?, contactNumber = ?
         WHERE id = ?
     `;
     
-    db.query(query, [firstName, lastName, gender, dateOfBirth, contactNumber, id], (err, result) => {
+    db.query(query, [firstName, lastName, gender, formattedDob, contactNumber, id], (err, result) => {
         if (err) {
             console.error('Error updating user:', err);
             res.status(500).json({ error: 'Internal server error' });
