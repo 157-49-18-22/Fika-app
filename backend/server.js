@@ -16,6 +16,7 @@ const newsletterRoutes = require('./routes/newsletterRoutes');
 const blogNewsletterRoutes = require('./routes/blogNewsletterRoutes');
 const productRoutes = require('./routes/productRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -24,7 +25,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:5173", // Your frontend URL
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
     methods: ["GET", "POST"]
   }
 });
@@ -107,6 +108,7 @@ app.use('/api/blog-newsletter', blogNewsletterRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/payment', paymentRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
