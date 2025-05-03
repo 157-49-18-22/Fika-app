@@ -1253,4 +1253,36 @@
     padding: 8px 12px;
     font-size: 0.9rem;
   }
+}
+
+.subcategory-options,
+.filter-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.subcategory-checkbox,
+.filter-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.subcategory-checkbox:hover,
+.filter-checkbox-label:hover {
+  color: black;
+}
+
+.subcategory-checkbox input[type="radio"],
+.filter-checkbox-label input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+}
+
+.subcategory-checkbox input[type="radio"]:checked + span,
+.filter-checkbox-label input[type="checkbox"]:checked + span {
+  color: black;
 } 

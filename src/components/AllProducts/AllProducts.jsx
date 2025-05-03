@@ -8,8 +8,16 @@ import "./AllProductsStyles.css";
 import { getAllProducts } from "../../data/products";
 import axios from "axios";
 
+// Category and sub-category mapping
+const CATEGORY_SUBCATEGORIES = {
+  "Cushions": ["Cushion Cover"],
+  "Bedsets": ["Bedcover", "Bedsheet"],
+  "Dohars & Quilts": ["Baby Quilts", "Dohar", "Quilt"]
+};
+
 const AllProducts = () => {
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("All Products");
+  const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [sortOption, setSortOption] = useState("featured");
   const [visibleItems, setVisibleItems] = useState(12);
   const [selectedImage, setSelectedImage] = useState(null);
@@ -32,6 +40,17 @@ const AllProducts = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const searchQuery = searchParams.get('search') || '';
+
+  // Get sub-categories for the selected category
+  const subCategories = CATEGORY_SUBCATEGORIES[selectedCategory] || [];
+
+  // Filter products based on selected category and sub-category
+  const allProducts = getAllProducts();
+  const filteredProducts = allProducts.filter(product => {
+    const matchCategory = selectedCategory === "All Products" || product.category === selectedCategory;
+    const matchSubCategory = !selectedSubCategory || product.subCategory === selectedSubCategory;
+    return matchCategory && matchSubCategory;
+  });
 
   useEffect(() => {
     setFadeIn(true);
@@ -59,9 +78,6 @@ const AllProducts = () => {
     { id: "dohars-quilts", name: "Dohars & Quilts", icon: <FaBed /> }
   ];
 
-  const allProducts = getAllProducts();
-
-
   const sortOptions = [
     { id: "featured", name: "Featured" },
     { id: "newest", name: "Newest" },
@@ -78,22 +94,6 @@ const AllProducts = () => {
     ).length;
     return acc;
   }, {});
-
-  // Filter products by category, search, price, rating, discount, stock
-  const filteredProducts = allProducts.filter(
-    (product) => {
-      const categoryMatch = selectedCategory === "all" || product.category.toLowerCase() === selectedCategory.toLowerCase();
-    
-      return categoryMatch &&
-        (searchQuery === "" || 
-          product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          product.category.toLowerCase().includes(searchQuery.toLowerCase())) &&
-        (product.price >= priceRange[0] && product.price <= priceRange[1]) &&
-        (minRating === 0 || (product.rating && product.rating >= minRating)) &&
-        (!showDiscounted || product.discount) &&
-        (!inStockOnly || product.inStock);
-    }
-  );
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortOption) {
@@ -232,10 +232,10 @@ const AllProducts = () => {
           {categories.map((category) => (
             <button
               key={category.id}
-              className={`category-btn-horizontal ${selectedCategory === category.id ? "active" : ""}`}
+              className={`category-btn-horizontal ${selectedCategory === category.name ? "active" : ""}`}
               onClick={() => {
-                console.log('Category clicked:', category.id);
-                setSelectedCategory(category.id);
+                setSelectedCategory(category.name);
+                setSelectedSubCategory("");
                 setVisibleItems(12);
               }}
             >
@@ -262,54 +262,85 @@ const AllProducts = () => {
               <h3><FaSlidersH /> Filters</h3>
               <button className="close-filters" onClick={() => setFiltersVisible(false)}>×</button>
             </div>
-            
-            {/* Minimum Rating Filter */}
-            <div className="filter-group">
-              <h4><FaStar /> Minimum Rating</h4>
-              <div className="rating-options">
-                {[4, 3, 2, 1].map((star) => (
-                  <label key={star} className="rating-checkbox">
+            {/* Show sub-category dropdown if a main category is selected, else show rating filter */}
+            {selectedCategory !== "All Products" && subCategories.length > 0 ? (
+              <div className="filter-group">
+                <h4>Sub-category</h4>
+                <div className="subcategory-options">
+                  <label className="subcategory-checkbox">
+                    <input
+                      type="radio"
+                      name="subCategory"
+                      value=""
+                      checked={selectedSubCategory === ""}
+                      onChange={() => setSelectedSubCategory("")}
+                    />
+                    <span>All</span>
+                  </label>
+                  {subCategories.map((sub) => (
+                    <label key={sub} className="subcategory-checkbox">
+                      <input
+                        type="radio"
+                        name="subCategory"
+                        value={sub}
+                        checked={selectedSubCategory === sub}
+                        onChange={() => setSelectedSubCategory(sub)}
+                      />
+                      <span>{sub}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="filter-group">
+                <h4><FaStar /> Minimum Rating</h4>
+                <div className="rating-options">
+                  {[4, 3, 2, 1].map((star) => (
+                    <label key={star} className="rating-checkbox">
+                      <input
+                        type="radio"
+                        name="minRating"
+                        value={star}
+                        checked={minRating === star}
+                        onChange={() => setMinRating(star)}
+                      />
+                      {star} stars & up
+                    </label>
+                  ))}
+                  <label className="rating-checkbox">
                     <input
                       type="radio"
                       name="minRating"
-                      value={star}
-                      checked={minRating === star}
-                      onChange={() => setMinRating(star)}
+                      value={0}
+                      checked={minRating === 0}
+                      onChange={() => setMinRating(0)}
                     />
-                    {star} stars & up
+                    Any
                   </label>
-                ))}
-                <label className="rating-checkbox">
-                  <input
-                    type="radio"
-                    name="minRating"
-                    value={0}
-                    checked={minRating === 0}
-                    onChange={() => setMinRating(0)}
-                  />
-                  Any
-                </label>
+                </div>
               </div>
-            </div>
+            )}
             
             {/* On Sale & In Stock Only */}
             <div className="filter-group">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={showDiscounted}
-                  onChange={() => setShowDiscounted((v) => !v)}
-                />
-                On Sale
-              </label>
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={inStockOnly}
-                  onChange={() => setInStockOnly((v) => !v)}
-                />
-                In Stock Only
-              </label>
+              <div className="filter-checkbox-group">
+                <label className="filter-checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={showDiscounted}
+                    onChange={() => setShowDiscounted((v) => !v)}
+                  />
+                  <span>On Sale</span>
+                </label>
+                <label className="filter-checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={inStockOnly}
+                    onChange={() => setInStockOnly((v) => !v)}
+                  />
+                  <span>In Stock Only</span>
+                </label>
+              </div>
             </div>
             
             {/* Price Range */}
@@ -348,7 +379,8 @@ const AllProducts = () => {
             {/* Clear All Filters Button */}
             <button className="reset-filters-btn" style={{marginTop:16, width:'100%'}}
               onClick={() => {
-                setSelectedCategory('all');
+                setSelectedCategory('All Products');
+                setSelectedSubCategory('');
                 setMinRating(0);
                 setShowDiscounted(false);
                 setInStockOnly(false);
@@ -482,7 +514,8 @@ const AllProducts = () => {
                   <button 
                     className="reset-filters-btn"
                     onClick={() => {
-                      setSelectedCategory("all");
+                      setSelectedCategory("All Products");
+                      setSelectedSubCategory("");
                       setSearchQuery("");
                       setPriceRange([0, 10000]);
                     }}

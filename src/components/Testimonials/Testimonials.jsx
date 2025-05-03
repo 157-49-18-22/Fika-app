@@ -23,7 +23,7 @@ const TestimonialTitle = styled.h2`
   color: #000000;
   text-align: center;
   margin-bottom: 1.2rem;
-  font-family: 'Carmine', serif;
+  font-family: 'Montserrat', sans-serif;
   position: relative;
   padding-bottom: 1rem;
 

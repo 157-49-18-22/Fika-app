@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaClock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import './Login/Login.css';
+import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const sliderImages = [
   'https://images.unsplash.com/photo-1540638349517-3abd5afc5847?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Modern geometric cushions
@@ -268,13 +270,19 @@ const Signup = () => {
             </div>
 
             <div className="form-group">
-              <input
-                type="date"
-                name="dateOfBirth"
-                placeholder="Date of Birth"
-                value={formData.dateOfBirth}
-                onChange={handleChange}
+              <ReactDatePicker
+                selected={formData.dateOfBirth ? new Date(formData.dateOfBirth) : null}
+                onChange={date => handleChange({ target: { name: "dateOfBirth", value: date } })}
+                placeholderText="Date of Birth"
+                dateFormat="dd-MM-yyyy"
                 className={errors.dateOfBirth ? 'error' : ''}
+                name="dateOfBirth"
+                showMonthDropdown
+                showYearDropdown
+                dropdownMode="select"
+                minDate={new Date(1950, 0, 1)}
+                maxDate={new Date(new Date().getFullYear() - 13, 11, 31)}
+                yearDropdownItemNumber={50}
               />
               {errors.dateOfBirth && <span className="error-message">{errors.dateOfBirth}</span>}
             </div>
