@@ -20,7 +20,9 @@ const Footer = () => {
         {/* Middle Section - Logo */}
         <div className="footer-logo-section">
           <div className="footer-logo">
-            <h2 className="logo-text">Fika</h2>
+            <Link to="/" className="logo">
+              <img style={{width: "70px"}} src="/Fika_Logo1.png" alt="logo" />
+            </Link>
           </div>
           
           <div className="social-links">

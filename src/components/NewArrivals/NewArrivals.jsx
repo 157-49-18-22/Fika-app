@@ -12,7 +12,7 @@ import LoginPrompt from "../../components/LoginPrompt/LoginPrompt";
 const NewArrivals = () => {
   const [newArrivals, setNewArrivals] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
-  const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const [isAutoPlay, setIsAutoPlay] = useState(false);
   const [featuredProduct, setFeaturedProduct] = useState(null);
   const [timeLeft, setTimeLeft] = useState({ days: 3, hours: 11, minutes: 23, seconds: 45 });
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
@@ -187,13 +187,11 @@ const NewArrivals = () => {
       >
         <div className="arrivals-product-image">
           <img src={product.image} alt={product.name} />
-          {product.discount && (
-            <span className="arrivals-discount-badge">-{product.discount}%</span>
-          )}
-          <div className="arrivals-product-badges">
+          
+          {/* <div className="arrivals-product-badges">
             {product.isNew && <span className="arrivals-new-badge">New</span>}
             {product.isBestSeller && <span className="arrivals-bestseller-badge">Best Seller</span>}
-          </div>
+          </div> */}
           <div className="arrivals-product-actions">
             <button 
               className="arrivals-action-btn cart-btn" 
@@ -225,11 +223,16 @@ const NewArrivals = () => {
               <>
                 <span className="arrivals-current-price">₹{formatPrice(product.price, product.discount)}</span>
                 <span className="arrivals-original-price">₹{getOriginalPrice(product.price)}</span>
+                <span className="arrivals-discount-badge">-{product.discount}%</span>
               </>
             ) : (
               <span className="arrivals-current-price">₹{getOriginalPrice(product.price)}</span>
+              
             )}
           </div>
+          {/* {product.discount && (
+            
+          )} */}
           {product.reviewsCount > 0 && (
             <div className="arrivals-product-rating">
               <div className="arrivals-stars">

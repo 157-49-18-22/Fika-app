@@ -1,14 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
 
-@font-face {
-    font-family: 'Carmine';
-    src: url('/public/fonts/Carmine.ttf') format('truetype'),
-         url('/public/fonts/Carmine.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
 /* Animations */
 @keyframes fadeIn {
     from {
@@ -63,7 +54,6 @@
 }
 
 .arrivals-title {
-    font-family: 'Carmine', serif;
     font-size: 3rem;
     font-weight: 400;
     color: #1D1D1D;
@@ -200,7 +190,6 @@
     font-weight: 500;
     color: #1D1D1D;
     margin-bottom: 1rem;
-    font-family: 'Carmine', serif;
 }
 
 .arrivals-featured-description {
@@ -296,7 +285,6 @@
     font-weight: 400;
     margin-bottom: 1rem;
     letter-spacing: 0.15em;
-    font-family: 'Carmine', serif;
     color: #222;
 }
 
@@ -441,16 +429,12 @@
 }
 
 .arrivals-discount-badge {
-    position: absolute;
-    top: 15px;
-    left: 15px;
     background-color: #ff5722;
     color: white;
     padding: 5px 10px;
     font-size: 0.75rem;
     border-radius: 20px;
     font-weight: 600;
-    z-index: 2;
 }
 
 /* Product Badges */
@@ -596,7 +580,8 @@
     bottom: 0;
     left: 0;
     width: 100%;
-    background: linear-gradient(to top, rgba(255, 255, 255, 0.95), transparent);
+    background: linear-gradient(to top, rgba(255, 255, 255, 1));
+    border-radius: 10px;
     padding: 1.2rem;
     transform: translateY(100%);
     transition: transform 0.3s ease;
@@ -731,7 +716,6 @@
     font-size: 2rem;
     font-weight: 400;
     letter-spacing: 0.1em;
-    font-family: 'Carmine', serif;
     color: #222;
     position: relative;
 }
@@ -868,7 +852,6 @@
     font-size: 1.5rem;
     font-weight: 500;
     margin-bottom: 1rem;
-    font-family: 'Carmine', serif;
     letter-spacing: 0.05em;
 }
 

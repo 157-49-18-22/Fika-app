@@ -172,8 +172,7 @@
 }
 
 .product-title {
-    font-family: 'Carmine', serif;
-    font-size: 2.5rem;
+    font-size: 1.5rem;
     font-weight: 400;
     margin-bottom: 2rem;
     color: #222;
@@ -215,7 +214,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    font-family: 'Carmine', serif;
+    /*  */
     color: #222;
 }
 
@@ -722,7 +721,7 @@
 
 .average-rating h3 {
     font-size: 48px;
-    font-family: 'Carmine', serif;
+    /*  */
     margin-bottom: 15px;
     color: #1D1D1D;
 }
@@ -862,7 +861,7 @@
 .related-products h2,
 .recently-viewed h2,
 .trending-products h2 {
-    font-family: 'Carmine', serif;
+    
     font-size: 2.5rem;
     font-weight: 400;
     margin-bottom: 3rem;
@@ -973,7 +972,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    font-family: 'Carmine', serif;
+    
     color: #222;
 }
 
@@ -1153,7 +1152,7 @@
 }
 
 .customer-testimonials h2 {
-    font-family: 'Carmine', serif;
+    
     font-size: 2.5rem;
     font-weight: 400;
     margin-bottom: 3rem;

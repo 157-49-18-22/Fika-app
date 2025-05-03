@@ -260,7 +260,7 @@
     font-size: 36px;
     font-weight: bold;
     color: #222;
-    font-family: 'Carmine', serif;
+    
 }
 
 .product-title {
@@ -299,7 +299,7 @@
     font-size: 36px;
     font-weight: bold;
     color: #fff;
-    font-family: 'Carmine', serif;
+    
     z-index: 2;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
 }

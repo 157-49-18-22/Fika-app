@@ -244,8 +244,8 @@
 
 .wishlist-btn {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 40px;
+  right: 0px;
   background: rgba(255, 255, 255, 0.9);
   border: none;
   border-radius: 50%;
@@ -262,6 +262,12 @@
 .wishlist-btn:hover {
   background: red;
   transform: scale(1.1);
+}
+
+.quickview-btn{
+  position: relative;
+  top: 36px;
+  right: 0px;
 }
 
 .wishlist-btn.active {

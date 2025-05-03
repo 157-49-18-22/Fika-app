@@ -18,11 +18,7 @@ function Hero() {
       <div className="hero-heading">
         <div className="hero-heading-content">
           <h1 className="hero-main-title">
-            Dive into a w
-            <span className="icon-wrapper">
-              <img src="/Frame10001.png" alt="o" />
-            </span>
-            rld of endless
+            Dive into a world of endless
           </h1>
           <div className="hero-main-title-2"> 
             <h1 className="hero-main-title">fashion possibilities</h1>
