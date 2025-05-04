@@ -364,7 +364,6 @@ const Profile = () => {
 
           {/* Deactivate/Delete Account */}
           <div className="account-actions">
-            <button className="deactivate-btn">Deactivate Account</button>
             <button className="delete-btn" onClick={handleDeleteClick}>Delete Account</button>
           </div>
         </div>
