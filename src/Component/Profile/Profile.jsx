@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Profile.css';
+import { FaClipboardList, FaBoxOpen } from 'react-icons/fa';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -135,7 +136,7 @@ const Profile = () => {
         <div className="sidebar-header">
           <div className="user-info">
             <span className="hello">Hello,</span>
-            <span className="username">{currentUser?.name || 'User'}</span>
+            <span className="username">{(currentUser?.firstName || '') + (currentUser?.lastName ? ' ' + currentUser.lastName : '')}</span>
           </div>
         </div>
 
@@ -143,10 +144,10 @@ const Profile = () => {
         <div className="sidebar-menu">
           {/* MY ORDERS Section */}
           <div className="menu-section">
-            <div className="menu-item">
-              <img src="/icons/orders.png" alt="Orders" />
+            <Link to="/orders" className="menu-item">
+              <FaBoxOpen style={{marginRight: '10px', fontSize: '18px'}} />
               <span>MY ORDERS</span>
-            </div>
+            </Link>
           </div>
 
           {/* ACCOUNT SETTINGS Section */}

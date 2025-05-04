@@ -43,33 +43,183 @@ const FeaturedStories = () => {
   const featuredPosts = [
     {
       id: 1,
-      title: "Summer Fashion Trends 2024",
+      title: "Cushion Styling Ideas for Every Room",
       excerpt:
-        "Discover the latest summer fashion trends that will dominate this season...",
-      category: "fashion",
-      image: "https://images.unsplash.com/photo-1445205170230-053b83016050",
-      author: "Sarah Johnson",
+        "Discover creative ways to style cushions to elevate your living space...",
+      category: "cushions",
+      image: "https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=600&q=80",
+      author: "Aarav Singh",
       date: "May 15, 2024",
-      readTime: "5 min read",
-      likes: 245,
-      comments: 32,
+      readTime: "4 min read",
+      likes: 210,
+      comments: 18,
       fullContent:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+        "Cushions are the easiest way to add color and comfort to any room. Learn how to mix and match patterns, textures, and sizes for a designer look.",
     },
     {
       id: 2,
-      title: "Sustainable Fashion Guide",
+      title: "Choosing the Perfect Bedsheet for Your Bedroom",
       excerpt:
-        "Learn how to build a sustainable wardrobe that's both stylish and eco-friendly...",
-      category: "sustainability",
-      image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8",
-      author: "Michael Chen",
+        "A guide to selecting bedsheets that match your style and ensure a good night's sleep...",
+      category: "bedsheets",
+      image: "https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?auto=format&fit=crop&w=600&q=80",
+      author: "Simran Kaur",
       date: "May 12, 2024",
-      readTime: "7 min read",
-      likes: 189,
-      comments: 28,
+      readTime: "5 min read",
+      likes: 185,
+      comments: 22,
       fullContent:
-        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        "From cotton to linen, explore the best fabrics and patterns for bedsheets that suit every season and decor theme.",
+    },
+    {
+      id: 3,
+      title: "Dohars & Quilts: Comfort Meets Style",
+      excerpt:
+        "Find out how dohars and quilts can add both warmth and elegance to your bedroom...",
+      category: "dohars & quilts",
+      image: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+      author: "Priya Mehra",
+      date: "May 10, 2024",
+      readTime: "6 min read",
+      likes: 170,
+      comments: 19,
+      fullContent:
+        "Dohars and quilts are perfect for every season. Learn about the latest trends, materials, and how to layer them for a cozy look.",
+    },
+    {
+      id: 4,
+      title: "How to Create a Luxurious Bedset",
+      excerpt:
+        "Tips and tricks to make your bed look and feel like a five-star hotel...",
+      category: "bedsets",
+      image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=600&q=80",
+      author: "Rohit Sharma",
+      date: "May 8, 2024",
+      readTime: "5 min read",
+      likes: 145,
+      comments: 15,
+      fullContent:
+        "A beautiful bedset can transform your bedroom. Discover how to layer sheets, duvets, and pillows for maximum comfort and style.",
+    },
+    {
+      id: 5,
+      title: "Home Decor Trends: Soft Furnishings Edition",
+      excerpt:
+        "Stay updated with the latest trends in cushions, throws, and bedding for 2024...",
+      category: "home decor",
+      image: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
+      author: "Ananya Gupta",
+      date: "May 6, 2024",
+      readTime: "4 min read",
+      likes: 130,
+      comments: 12,
+      fullContent:
+        "Soft furnishings are the heart of home decor. Explore trending colors, prints, and textures for cushions, bedsheets, and more this year.",
+    },
+    {
+      id: 6,
+      title: "Care Tips for Your Bedding Essentials",
+      excerpt:
+        "Learn how to keep your bedsheets, quilts, and cushions fresh and long-lasting...",
+      category: "care tips",
+      image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80",
+      author: "Mehul Patel",
+      date: "May 4, 2024",
+      readTime: "3 min read",
+      likes: 120,
+      comments: 10,
+      fullContent:
+        "Proper care can extend the life of your bedding. Get expert advice on washing, storing, and maintaining your soft furnishings.",
+    },
+    {
+      id: 7,
+      title: "Mix & Match: Styling Cushions and Throws",
+      excerpt:
+        "How to combine different cushions and throws for a cozy, stylish living room...",
+      category: "cushions",
+      image: "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=600&q=80",
+      author: "Neha Verma",
+      date: "May 2, 2024",
+      readTime: "4 min read",
+      likes: 110,
+      comments: 9,
+      fullContent:
+        "Mixing and matching cushions and throws can instantly refresh your space. Learn the secrets to a balanced and inviting look.",
+    },
+    {
+      id: 8,
+      title: "Seasonal Bedding: What to Use When?",
+      excerpt:
+        "A guide to choosing the right bedding for every season, from summer to winter...",
+      category: "bedsheets",
+      image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=600&q=80",
+      author: "Sarah Johnson",
+      date: "April 30, 2024",
+      readTime: "5 min read",
+      likes: 100,
+      comments: 8,
+      fullContent:
+        "Switching your bedding with the seasons keeps you comfortable year-round. Find out which materials and layers work best for each time of year.",
+    },
+    {
+      id: 9,
+      title: "How to Choose the Right Pillow for Better Sleep",
+      excerpt:
+        "A complete guide to picking pillows that support your sleep and style...",
+      category: "pillows",
+      image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=600&q=80",
+      author: "Kavita Joshi",
+      date: "April 28, 2024",
+      readTime: "4 min read",
+      likes: 95,
+      comments: 7,
+      fullContent:
+        "The right pillow can make all the difference. Learn about different types, fillings, and how to match them to your sleeping style.",
+    },
+    {
+      id: 10,
+      title: "Decorating with Throws: Cozy Up Your Home",
+      excerpt:
+        "Throws are more than just for warmth—see how to use them for style...",
+      category: "throws",
+      image: "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=600&q=80",
+      author: "Ritu Sharma",
+      date: "April 25, 2024",
+      readTime: "3 min read",
+      likes: 88,
+      comments: 6,
+      fullContent:
+        "Throws add instant coziness and color. Discover creative ways to drape and style them in every room.",
+    },
+    {
+      id: 11,
+      title: "Kids' Bedding: Fun & Functional Ideas",
+      excerpt:
+        "Make your kids' room cheerful and comfy with these bedding tips...",
+      category: "kids bedding",
+      image: "https://images.unsplash.com/photo-1504196606672-aef5c9cefc92?auto=format&fit=crop&w=600&q=80",
+      author: "Amit Sinha",
+      date: "April 22, 2024",
+      readTime: "5 min read",
+      likes: 77,
+      comments: 5,
+      fullContent:
+        "Kids' bedding should be both fun and practical. Explore playful prints, easy-care fabrics, and safety tips for your little ones.",
+    },
+    {
+      id: 12,
+      title: "Guest Room Makeover: Bedding Essentials",
+      excerpt:
+        "Impress your guests with a welcoming and comfortable bed setup...",
+      category: "guest room",
+      image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=600&q=80",
+      author: "Sonal Jain",
+      date: "April 20, 2024",
+      readTime: "4 min read",
+      likes: 70,
+      comments: 4,
+      fullContent:
+        "A great guest room starts with the right bedding. Get tips on layering, extra pillows, and thoughtful touches for visitors.",
     },
   ];
 
@@ -136,6 +286,19 @@ const FeaturedStories = () => {
         post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
+  // Filtered featured posts based on search and category
+  const filteredFeaturedPosts = featuredPosts.filter(
+    (post) =>
+      (selectedCategory === "all" || post.category === selectedCategory) &&
+      (
+        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.fullContent.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+  );
+
   return (
     <div className={`blog-container ${fadeIn ? 'fade-in' : ''}`}>
       {/* Hero Section */}
@@ -175,6 +338,9 @@ const FeaturedStories = () => {
                 value={searchQuery}
                 onChange={handleSearch}
                 className="search-input"
+                readOnly={false}
+                disabled={false}
+                style={{ pointerEvents: 'auto', background: 'rgba(255,255,255,0.15)', color: 'white' }}
               />
             </div>
           </div>
@@ -201,7 +367,7 @@ const FeaturedStories = () => {
           <div className="section-divider"></div>
         </div>
         <div className="featured-blog-grid">
-          {featuredPosts.map((post, index) => (
+          {filteredFeaturedPosts.map((post, index) => (
             <div
               key={post.id}
               className={`featured-blog-card ${index % 2 === 0 ? 'even' : 'odd'}`}

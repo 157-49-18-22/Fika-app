@@ -95,7 +95,7 @@ const NewArrivals = () => {
       setShowLoginPrompt(true);
       return;
     }
-    addToCart(product);
+    addToCart(product, undefined, 1, navigate);
   };
 
   const handleAddToWishlist = (product, e) => {
@@ -105,15 +105,15 @@ const NewArrivals = () => {
       return;
     }
     if (isInWishlist(product.id)) {
-      removeFromWishlist(product.id);
+      removeFromWishlist(product.id, navigate);
     } else {
-      addToWishlist(product);
+      addToWishlist(product, navigate);
     }
   };
 
   const handleQuickView = (id, e) => {
     if (e) e.stopPropagation();
-    navigate(`/product/₹{id}`);
+    navigate(`/product/${id}`);
   };
 
   const scrollProducts = (direction, ref) => {
@@ -183,7 +183,7 @@ const NewArrivals = () => {
       <div 
         key={product.id} 
         className="arrivals-product-card"
-        onClick={() => navigate(`/product/₹{product.id}`)}
+        onClick={() => navigate(`/product/${product.id}`)}
       >
         <div className="arrivals-product-image">
           <img src={product.image} alt={product.name} />
@@ -201,7 +201,7 @@ const NewArrivals = () => {
               <FaShoppingCart />
             </button>
             <button 
-              className={`arrivals-action-btn wishlist-btn ₹{isInWishlist(product.id) ? 'active' : ''}`}
+              className={`arrivals-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
               onClick={(e) => handleAddToWishlist(product, e)}
               title="Add to Wishlist"
             >
@@ -237,7 +237,7 @@ const NewArrivals = () => {
             <div className="arrivals-product-rating">
               <div className="arrivals-stars">
                 {Array.from({ length: 5 }).map((_, index) => (
-                  <span key={index} className={`arrivals-star ₹{index < Math.floor(product.rating) ? 'filled' : ''}`}>★</span>
+                  <span key={index} className={`arrivals-star ${index < Math.floor(product.rating) ? 'filled' : ''}`}>★</span>
                 ))}
               </div>
               <span className="arrivals-reviews-count">({product.reviewsCount})</span>
@@ -263,7 +263,7 @@ const NewArrivals = () => {
               ))}
             </div>
           </div>
-          <button className="arrivals-shop-now-btn">
+          <button className="arrivals-shop-now-btn" onClick={e => { e.stopPropagation(); navigate(`/product/${product.id}`); }}>
             Shop Now
           </button>
         </div>
@@ -326,7 +326,7 @@ const NewArrivals = () => {
               </div>
               <div className="arrivals-feature-item">
                 <FaGift className="arrivals-feature-icon" />
-                <span>Free Shipping on orders over ₹100</span>
+                <span>Free Shipping on orders over ₹1499</span>
               </div>
               <div className="arrivals-feature-item">
                 <FaClock className="arrivals-feature-icon" />
@@ -394,7 +394,7 @@ const NewArrivals = () => {
                   Add to Cart
                 </button>
                 <button 
-                  className={`arrivals-wishlist-btn ₹{isInWishlist(featuredProduct.id) ? 'active' : ''}`}
+                  className={`arrivals-wishlist-btn ${isInWishlist(featuredProduct.id) ? 'active' : ''}`}
                   onClick={() => isInWishlist(featuredProduct.id) ? removeFromWishlist(featuredProduct.id) : addToWishlist(featuredProduct)}
                 >
                   <FaHeart /> {isInWishlist(featuredProduct.id) ? "Added to Wishlist" : "Add to Wishlist"}
@@ -426,7 +426,7 @@ const NewArrivals = () => {
           {categories.map(category => (
             <button 
               key={category} 
-              className={`arrivals-category-tab ₹{activeTab === category ? 'active' : ''}`}
+              className={`arrivals-category-tab ${activeTab === category ? 'active' : ''}`}
               onClick={() => setActiveTab(category)}
             >
               {category.charAt(0).toUpperCase() + category.slice(1)}
@@ -480,7 +480,7 @@ const NewArrivals = () => {
             <div className="arrivals-benefit-icon">🚚</div>
             <div className="arrivals-benefit-content">
               <h3>Free Shipping</h3>
-              <p>On all orders over ₹100</p>
+              <p>On all orders over ₹1499</p>
             </div>
           </div>
           <div className="arrivals-benefit-item">
@@ -494,7 +494,7 @@ const NewArrivals = () => {
             <div className="arrivals-benefit-icon">🔄</div>
             <div className="arrivals-benefit-content">
               <h3>Easy Returns</h3>
-              <p>30-day return policy</p>
+              <p>15-day return policy</p>
             </div>
           </div>
           <div className="arrivals-benefit-item">
