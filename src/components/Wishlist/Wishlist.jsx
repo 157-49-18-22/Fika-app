@@ -68,10 +68,10 @@ const Wishlist = () => {
                 {item.discount ? (
                   <>
                     <span className="discounted-price">
-                      ${(item.price * (1 - item.discount / 100)).toFixed(2)}
+                      ₹{(item.price * (1 - item.discount / 100)).toFixed(2)}
                     </span>
                     <span className="original-price">
-                      ${item.price.toFixed(2)}
+                      ₹{item.price.toFixed(2)}
                     </span>
                     <span className="discount-badge">
                       -{item.discount}% OFF
@@ -79,7 +79,7 @@ const Wishlist = () => {
                   </>
                 ) : (
                   <span className="regular-price">
-                    ${item.price.toFixed(2)}
+                    ₹{item.price.toFixed(2)}
                   </span>
                 )}
               </div>

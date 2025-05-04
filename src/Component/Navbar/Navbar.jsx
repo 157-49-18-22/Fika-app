@@ -187,7 +187,7 @@ function Navbar() {
                       <img src={product.image} alt={product.name} className="search-result-image" />
                       <div className="search-result-info">
                         <div className="search-result-name">{product.name}</div>
-                        <div className="search-result-price">${product.price.toFixed(2)}</div>
+                        <div className="search-result-price">₹{product.price.toFixed(2)}</div>
                       </div>
                     </div>
                   ))}

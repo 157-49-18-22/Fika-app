@@ -123,7 +123,7 @@ const Cart = () => {
               </div>
 
               <div className="cart-item-total">
-                <span className="total-label">Total:</span>$
+                <span className="total-label">Total:</span>₹
                 {(
                   (item.discount
                     ? item.price * (1 - item.discount / 100)
@@ -158,17 +158,17 @@ const Cart = () => {
             <span>
               Subtotal ({cart.length} {cart.length === 1 ? "item" : "items"})
             </span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>₹{subtotal.toFixed(2)}</span>
           </div>
           <div className="summary-row">
             <span>Shipping</span>
             <span className="free-shipping">
-              {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+              {shipping === 0 ? "Free" : `₹${shipping.toFixed(2)}`}
             </span>
           </div>
           <div className="summary-row total">
             <span>Total</span>
-            <span>${total.toFixed(2)}</span>
+            <span>₹{total.toFixed(2)}</span>
           </div>
           <button className="checkout-btn" onClick={() => setShowPayment(true)}>
             Proceed to Checkout
