@@ -1,7 +1,9 @@
 import React from 'react';
 import './Settings.css';
+import { useNavigate } from 'react-router-dom';
 
 const Settings = () => {
+  const navigate = useNavigate();
   return (
     <div className="settings-container">
       <h2>Account Settings</h2>
@@ -31,7 +33,9 @@ const Settings = () => {
         <h3>Security</h3>
         <div className="settings-row">
           <span>Password:</span>
-          <span>******** <button className="settings-btn">Change</button></span>
+          <span>
+            ******** <button className="settings-btn" onClick={() => navigate('/change-password')}>Change</button>
+          </span>
         </div>
       </div>
     </div>

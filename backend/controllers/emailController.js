@@ -1,5 +1,11 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+const otpStore = require('../utils/otpStore');
+
+// Helper to generate a 6-digit OTP
+const generateVerificationCode = () => {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+};
 
 // Create transporter for sending emails
 const createTransporter = () => {
@@ -21,14 +27,19 @@ const createTransporter = () => {
 
 // Send verification email
 const sendVerificationEmail = async (req, res) => {
-  const { email, code } = req.body;
+  const { email } = req.body;
   console.log('Attempting to send verification code to:', email);
+
+  // Generate OTP
+  const code = generateVerificationCode();
+  // Store OTP in memory (for demo; use DB/Redis in production)
+  otpStore[email] = code;
 
   try {
     const transporter = createTransporter();
 
     // Send mail with defined transport object
-    const info = await transporter.sendMail({
+    await transporter.sendMail({
       from: `"Fika Support" <${process.env.GMAIL_USER}>`,
       to: email,
       subject: 'Email Verification Code',
@@ -45,10 +56,12 @@ const sendVerificationEmail = async (req, res) => {
       `,
     });
 
-    console.log('Email sent successfully!');
+    console.log('Email sent successfully! OTP:', code);
     res.status(200).json({
       success: true,
-      message: 'Verification email sent successfully'
+      message: 'Verification email sent successfully',
+      // For testing only; remove in production
+      code
     });
   } catch (error) {
     console.error('Error sending email:', {
@@ -64,6 +77,7 @@ const sendVerificationEmail = async (req, res) => {
   }
 };
 
+// Export OTP store for use in other controllers
 module.exports = {
   sendVerificationEmail,
 }; 

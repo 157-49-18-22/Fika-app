@@ -433,4 +433,26 @@
    .login-title, .login-subtitle, .login-heading (old), .login-form (old),
    .login-input-group, .login-input-icon, .login-btn (old), .login-wave,
    and the signup-specific styles (.signup-names-row etc.) are removed
-   as they are replaced by the new structure or belong elsewhere. */ 
+   as they are replaced by the new structure or belong elsewhere. */
+
+.google-login-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 5px;
+ 
+}
+
+.custom-google-login-btn {
+  width: 260px !important;
+  height: 52px !important;
+  font-size: 1.15rem !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.custom-google-login-btn:hover {
+  box-shadow: 0 4px 16px rgba(66,133,244,0.18);
+  transform: translateY(-2px) scale(1.04);
+  background: #f5f5f5 !important;
+} 

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FaClock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Login.css';
+import { GoogleLogin } from '@react-oauth/google';
 
 const sliderImages = [
   'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
@@ -169,6 +170,9 @@ const Login = () => {
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>
+            <div className="forgot-password-link">
+              <Link to="/forgot-password">Forgot Password?</Link>
+            </div>
             <div className="login-form-check">
               <input type="checkbox" id="terms" required />
               <label htmlFor="terms">I agree to the <a href="#">Terms & Conditions</a></label>
@@ -176,9 +180,34 @@ const Login = () => {
             <button className="login-form-btn" type="submit">Login</button>
           </form>
           <div className="login-form-or">or Login with</div>
-          <div className="login-form-socials">
-            <button className="social-btn google" type="button">Google</button>
-            <button className="social-btn apple" type="button">Apple</button>
+          <div className="login-form-socials google-login-center">
+            <GoogleLogin
+              onSuccess={credentialResponse => {
+                fetch('http://localhost:5000/api/auth/google', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ token: credentialResponse.credential })
+                })
+                .then(res => res.json())
+                .then(data => {
+                  if (data.success) {
+                    if (auth && auth.setIsAuthenticated && auth.setCurrentUser) {
+                      auth.setIsAuthenticated(true);
+                      auth.setCurrentUser(data.user);
+                      localStorage.setItem('isAuthenticated', 'true');
+                      localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    }
+                    window.location.href = '/';
+                  } else {
+                    alert('Google Login Failed: ' + data.message);
+                  }
+                });
+              }}
+              onError={() => {
+                alert('Google Login Failed');
+              }}
+              className="custom-google-login-btn"
+            />
           </div>
         </div>
       </div>

@@ -6,7 +6,7 @@ import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import Homepage from './Component/Homepage.jsx';
 import NewArrivals from './components/NewArrivals/NewArrivals.jsx';
 import AllProducts from './components/AllProducts/AllProducts.jsx';
-import Blog from './components/Blog/Blog.jsx';
+import FeaturedStories from './components/FeaturedStories/FeaturedStories.jsx';
 import Contact from './components/Contact/Contact.jsx';
 import ProductDetails from './components/ProductDetails/ProductDetails.jsx';
 import Cart from './components/Cart/Cart.jsx';
@@ -22,6 +22,9 @@ import Profile from './Component/Profile/Profile.jsx';
 import MyOrders from './Component/Orders/MyOrders';
 import Settings from './Component/Settings/Settings';
 import Notifications from './Component/Notifications/Notifications';
+import ChangePassword from './components/ChangePassword.jsx';
+import ForgotPassword from './components/ForgotPassword.jsx';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 // Layout component with navbar and footer
 const PageLayout = ({ children }) => {
@@ -47,38 +50,42 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   return (
-    <AuthProvider>
-      <CartProvider>
-        <WishlistProvider>
-          <Router>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/" element={<PageLayout><Homepage /></PageLayout>} />
-              <Route path="/new-arrivals" element={<PageLayout><NewArrivals /></PageLayout>} />
-              <Route path="/all-products" element={<PageLayout><Blog /></PageLayout>} />
-              <Route path="/blog" element={<PageLayout><Blog /></PageLayout>} />
-              <Route path="/contact" element={<PageLayout><Contact /></PageLayout>} />
-              <Route path="/about" element={<PageLayout><About /></PageLayout>} />
-              <Route path="/product/:id" element={<PageLayout><ProductDetails /></PageLayout>} />
-              <Route path="/category/:categoryName" element={<PageLayout><CategoryProducts /></PageLayout>} />
+    <GoogleOAuthProvider clientId="727732829380-un80uanpnh4rra3sfjr59a48et2rph38.apps.googleusercontent.com">
+      <AuthProvider>
+        <CartProvider>
+          <WishlistProvider>
+            <Router>
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/" element={<PageLayout><Homepage /></PageLayout>} />
+                <Route path="/new-arrivals" element={<PageLayout><NewArrivals /></PageLayout>} />
+                <Route path="/all-products" element={<PageLayout><AllProducts /></PageLayout>} />
+                <Route path="/featured-stories" element={<PageLayout><FeaturedStories /></PageLayout>} />
+                <Route path="/contact" element={<PageLayout><Contact /></PageLayout>} />
+                <Route path="/about" element={<PageLayout><About /></PageLayout>} />
+                <Route path="/product/:id" element={<PageLayout><ProductDetails /></PageLayout>} />
+                <Route path="/category/:categoryName" element={<PageLayout><CategoryProducts /></PageLayout>} />
 
-              {/* Auth Routes */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
+                {/* Auth Routes */}
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
 
-              {/* Protected Routes - Require Login */}
-              <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-              <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
-              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-              <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
-              <Route path="/orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
-              <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-              <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
-            </Routes>
-          </Router>
-        </WishlistProvider>
-      </CartProvider>
-    </AuthProvider>
+                {/* Protected Routes - Require Login */}
+                <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+                <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+                <Route path="/orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+                <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+                <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+                <Route path="/change-password" element={<PageLayout><ChangePassword /></PageLayout>} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+              </Routes>
+            </Router>
+          </WishlistProvider>
+        </CartProvider>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   );
 }
 

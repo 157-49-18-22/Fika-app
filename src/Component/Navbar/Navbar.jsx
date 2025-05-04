@@ -141,7 +141,7 @@ function Navbar() {
           <div className="navbar-left">
             <NavLink to="/new-arrivals" className="nav-link">New Arrival</NavLink>
             <NavLink to="/all-products" className="nav-link">All Product</NavLink>
-            <NavLink to="/blog" className="nav-link">Featured Stories</NavLink>
+            <NavLink to="/featured-stories" className="nav-link">Featured Stories</NavLink>
             <NavLink to="/contact" className="nav-link">Contact Us</NavLink>
           </div>
 
