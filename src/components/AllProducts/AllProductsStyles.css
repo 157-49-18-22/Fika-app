@@ -16,7 +16,6 @@
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
   --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.05);
   --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
-  --heading-font: 'Carmine', serif;
   --body-font: 'Montserrat', sans-serif;
   --transition: all 0.3s ease;
   --border-radius: 8px;
@@ -49,7 +48,6 @@
 }
 
 .animated-title {
-  font-family: 'Carmine';
   font-size: 2.5rem;
   font-weight: 700;
   color: var(--primary-color);

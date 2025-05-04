@@ -14,7 +14,7 @@ import Wishlist from './components/Wishlist/Wishlist.jsx';
 import CategoryProducts from './components/CategoryProducts/CategoryProducts.jsx';
 import Navbar from './Component/Navbar/Navbar.jsx';
 import Login from './components/Login/Login.jsx';
-import Signup from './components/Signup.jsx';
+import Signup from './components/Login/Signup.jsx';
 import About from './pages/About/About.jsx';
 import './App.css';
 import Footer from './Component/Footer/Footer.jsx';
@@ -53,87 +53,27 @@ function App() {
           <Router>
             <Routes>
               {/* Public Routes */}
-              <Route path="/" element={
-                <PageLayout>
-                  <Homepage />
-                </PageLayout>
-              } />
-              <Route path="/new-arrivals" element={
-                <PageLayout>
-                  <NewArrivals />
-                </PageLayout>
-              } />
-              <Route path="/all-products" element={
-                <PageLayout>
-                  <AllProducts />
-                </PageLayout>
-              } />
-              <Route path="/blog" element={
-                <PageLayout>
-                  <Blog />
-                </PageLayout>
-              } />
-              <Route path="/contact" element={
-                <PageLayout>
-                  <Contact />
-                </PageLayout>
-              } />
-              <Route path="/about" element={
-                <PageLayout>
-                  <About />
-                </PageLayout>
-              } />
-              <Route path="/product/:id" element={
-                <PageLayout>
-                  <ProductDetails />
-                </PageLayout>
-              } />
-              <Route path="/category/:categoryName" element={
-                <PageLayout>
-                  <CategoryProducts />
-                </PageLayout>
-              } />
+              <Route path="/" element={<PageLayout><Homepage /></PageLayout>} />
+              <Route path="/new-arrivals" element={<PageLayout><NewArrivals /></PageLayout>} />
+              <Route path="/all-products" element={<PageLayout><Blog /></PageLayout>} />
+              <Route path="/blog" element={<PageLayout><Blog /></PageLayout>} />
+              <Route path="/contact" element={<PageLayout><Contact /></PageLayout>} />
+              <Route path="/about" element={<PageLayout><About /></PageLayout>} />
+              <Route path="/product/:id" element={<PageLayout><ProductDetails /></PageLayout>} />
+              <Route path="/category/:categoryName" element={<PageLayout><CategoryProducts /></PageLayout>} />
 
               {/* Auth Routes */}
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
 
               {/* Protected Routes - Require Login */}
-              <Route path="/cart" element={
-                <ProtectedRoute>
-                  <Cart />
-                </ProtectedRoute>
-              } />
-              <Route path="/wishlist" element={
-                <ProtectedRoute>
-                  <Wishlist />
-                </ProtectedRoute>
-              } />
-              <Route path="/profile" element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              } />
-              <Route path="/my-orders" element={
-                <ProtectedRoute>
-                  <MyOrders />
-                </ProtectedRoute>
-              } />
-              <Route path="/orders" element={
-                <ProtectedRoute>
-                  <MyOrders />
-                </ProtectedRoute>
-              } />
-              <Route path="/settings" element={
-                <ProtectedRoute>
-                  <Settings />
-                </ProtectedRoute>
-              } />
-              <Route path="/notifications" element={
-                <ProtectedRoute>
-                  <Notifications />
-                </ProtectedRoute>
-              } />
+              <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+              <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+              <Route path="/orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+              <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
             </Routes>
           </Router>
         </WishlistProvider>

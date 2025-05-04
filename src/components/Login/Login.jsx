@@ -5,9 +5,9 @@ import { FaClock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Login.css';
 
 const sliderImages = [
-  'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Luxury blue cushions
-  'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Elegant white cushions
-  'https://images.unsplash.com/photo-1578500494198-246f612d3b3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Pattern cushions with flowers
+  'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+  'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+  'https://images.unsplash.com/photo-1578500494198-246f612d3b3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
 ];
 
 const Login = () => {
@@ -96,7 +96,6 @@ const Login = () => {
   return (
     <div className="login-bg-dark">
       <div className="login-card-dark">
-        {/* Left: Image Slider */}
         <div className="login-slider">
           <div className="slider-img-wrapper">
             {sliderImages.map((img, idx) => (
