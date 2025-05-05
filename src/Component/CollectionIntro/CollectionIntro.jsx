@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './CollectionIntro.css';
+import GenieLoader from '../../components/GenieLoader';
 
 const CircleText = () => {
   return (
@@ -19,13 +20,19 @@ const CircleText = () => {
 
 const CollectionIntro = () => {
   const navigate = useNavigate();
+  const [showLoader, setShowLoader] = useState(false);
 
   const handleCircleClick = () => {
+    setShowLoader(true);
+  };
+
+  const handleLoaderFinish = () => {
     navigate('/new-arrivals-wish');
   };
 
   return (
     <section className="collection-intro">
+      {showLoader && <GenieLoader onFinish={handleLoaderFinish} />}
       <div className="mint-container">
         {/* Left side heading */}
         <div className="heading-container">
@@ -49,7 +56,7 @@ const CollectionIntro = () => {
             <img src="/wish_ginne.jpg" alt="New collection with decorative pillows and throw" />
 
             {/* shop now button */}
-            <button className="wish-btn" onClick={handleCircleClick}>
+            <button className="wish-btn" onClick={handleCircleClick} disabled={showLoader}>
               Shop Now
             </button>
           

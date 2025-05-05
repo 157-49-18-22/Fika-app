@@ -67,8 +67,9 @@ function App() {
                 <Route path="/about" element={<PageLayout><About /></PageLayout>} />
                 <Route path="/product/:id" element={<PageLayout><ProductDetails /></PageLayout>} />
                 <Route path="/category/:categoryName" element={<PageLayout><CategoryProducts /></PageLayout>} />
-                <Route path="/new-arrivals-wish" element={<PageLayout><NewArrivalsWish /></PageLayout>} />
+              
                 <Route path="/loader" element={<LoaderPage />} />
+                <Route path="/new-arrivals-wish" element={<PageLayout><NewArrivalsWish /></PageLayout>} />
 
                 {/* Auth Routes */}
                 <Route path="/login" element={<Login />} />

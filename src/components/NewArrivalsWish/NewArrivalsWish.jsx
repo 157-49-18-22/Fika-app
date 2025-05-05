@@ -8,10 +8,8 @@ import "./NewArrivalsWish.css";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import LoginPrompt from "../../components/LoginPrompt/LoginPrompt";
-import GenieLoader from "../GenieLoader";
 
 const NewArrivalsWish = () => {
-  const [showLoader, setShowLoader] = useState(true);
   const [newArrivals, setNewArrivals] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
   const [isAutoPlay, setIsAutoPlay] = useState(false);
@@ -267,7 +265,7 @@ const NewArrivalsWish = () => {
       <div className="wish-category-section">
         <div className="wish-category-header">
           <h2 className="wish-category-title">{title}</h2>
-          <Link to={`/all-products?category=₹{title.toLowerCase().replace(/\s+/g, '-')}`} className="wish-view-category">
+          <Link to={`/all-products?category=${title.toLowerCase().replace(/\s+/g, '-')}`} className="wish-view-category">
             View All <span className="wish-arrow-circle">&#8599;</span>
           </Link>
         </div>
@@ -293,10 +291,213 @@ const NewArrivalsWish = () => {
   };
 
   return (
-    <>
-      {showLoader && <GenieLoader onFinish={() => setShowLoader(false)} />}
-      {!showLoader && <h1 style={{color: 'red', textAlign: 'center', marginTop: '100px'}}>Hello World</h1>}
-    </>
+    <div className="wish-section">
+      {/* Introduction Section */}
+      <div className="wish-intro">
+        <div className="wish-intro-content">
+          <h1 className="wish-title">Discover Fresh Styles</h1>
+          <p className="wish-description">
+            Explore our latest collection of fashion-forward pieces designed to elevate your wardrobe. 
+            Every week, we curate new styles that reflect current trends while maintaining timeless appeal.
+          </p>
+          <div className="wish-features">
+            <div className="wish-feature-item">
+              <FaTag className="wish-feature-icon" />
+              <span>Exclusive Designs</span>
+            </div>
+            <div className="wish-feature-item">
+              <FaGift className="wish-feature-icon" />
+              <span>Free Shipping on orders over ₹1499</span>
+            </div>
+            <div className="wish-feature-item">
+              <FaClock className="wish-feature-icon" />
+              <span>Limited Time Offers</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Featured Product Section */}
+      {featuredProduct && (
+        <div className="wish-featured-product">
+          <div className="wish-featured-image">
+            <img src={featuredProduct.image} alt={featuredProduct.name} />
+            {featuredProduct.discount && (
+              <div className="wish-featured-discount">
+                -{featuredProduct.discount}% OFF
+              </div>
+            )}
+          </div>
+          <div className="wish-featured-info">
+            <div className="wish-limited-offer">
+              <h3>Limited Time Offer</h3>
+              <div className="wish-countdown">
+                <div className="wish-time-block">
+                  <span className="wish-time-value">{timeLeft.days}</span>
+                  <span className="wish-time-label">Days</span>
+                </div>
+                <span className="wish-time-separator">:</span>
+                <div className="wish-time-block">
+                  <span className="wish-time-value">{timeLeft.hours}</span>
+                  <span className="wish-time-label">Hours</span>
+                </div>
+                <span className="wish-time-separator">:</span>
+                <div className="wish-time-block">
+                  <span className="wish-time-value">{timeLeft.minutes}</span>
+                  <span className="wish-time-label">Minutes</span>
+                </div>
+                <span className="wish-time-separator">:</span>
+                <div className="wish-time-block">
+                  <span className="wish-time-value">{timeLeft.seconds}</span>
+                  <span className="wish-time-label">Seconds</span>
+                </div>
+              </div>
+            </div>
+            <h2 className="wish-featured-title">{featuredProduct.name}</h2>
+            <p className="wish-featured-description">
+              {featuredProduct.description || "Experience premium quality and exceptional design with this must-have piece from our latest collection."}
+            </p>
+            <div className="wish-featured-pricing">
+              {featuredProduct.discount ? (
+                <>
+                  <span className="wish-current-price">₹{formatPrice(featuredProduct.price, featuredProduct.discount)}</span>
+                  <span className="wish-original-price">₹{getOriginalPrice(featuredProduct.price)}</span>
+                </>
+              ) : (
+                <span className="wish-current-price">₹{getOriginalPrice(featuredProduct.price)}</span>
+              )}
+            </div>
+            <div className="wish-featured-actions">
+              <button 
+                className="wish-cart-btn"
+                onClick={() => handleAddToCart(featuredProduct)}
+              >
+                Add to Cart
+              </button>
+              <button 
+                className={`wish-wishlist-btn ${isInWishlist(featuredProduct.id) ? 'active' : ''}`}
+                onClick={() => handleAddToWishlist(featuredProduct)}
+              >
+                <FaHeart /> {isInWishlist(featuredProduct.id) ? "Added to Wishlist" : "Add to Wishlist"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* TAB NAVIGATION */}
+      <div className="wish-tabs">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            className={`wish-tab-btn${activeTab === cat.toLowerCase() ? ' active' : ''}`}
+            onClick={() => setActiveTab(cat.toLowerCase())}
+          >
+            {cat.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      {/* Category Description */}
+      <div className="wish-category-description">
+        <p>
+          {activeTab === "all" 
+            ? "Browse our complete selection of new arrivals, featuring the latest trends and must-have pieces for the season." 
+            : activeTab === "cushions" 
+            ? "Discover our newest cushions, from elegant designs to casual essentials, all crafted with premium fabrics." 
+            : activeTab === "bedsets" 
+            ? "Complete your look with our just-arrived bedsets, including covers, sheets, and more." 
+            : "Explore our collection of dohars and quilts, perfect for every season and crafted with premium materials for ultimate comfort."}
+        </p>
+      </div>
+
+      {/* Main Horizontal Product Row */}
+      <div className="wish-products-container">
+        <button className="wish-scroll-button left" onClick={() => scrollProducts('left', productsRowRef)}>
+          <FaChevronLeft />
+        </button>
+        <div className="wish-products-row" ref={productsRowRef}>
+          {filteredProducts.map(product => renderProductCard(product))}
+        </div>
+        <button className="wish-scroll-button right" onClick={() => scrollProducts('right', productsRowRef)}>
+          <FaChevronRight />
+        </button>
+      </div>
+
+      {/* Category-specific product sections */}
+      <div className="wish-sections-container">
+        {renderProductsContainer("Cushions", categoryProducts.cushions, "cushions")}
+        {renderProductsContainer("Bedsets", categoryProducts.bedsets, "bedsets")}
+        {renderProductsContainer("Dohars & Quilts", categoryProducts.doharsAndQuilts, "doharsAndQuilts")}
+      </div>
+
+      {/* Shopping Benefits */}
+      <div className="wish-benefits">
+        <div className="wish-benefit-item">
+          <div className="wish-benefit-icon">🚚</div>
+          <div className="wish-benefit-content">
+            <h3>Free Shipping</h3>
+            <p>On all orders over ₹1499</p>
+          </div>
+        </div>
+        <div className="wish-benefit-item">
+          <div className="wish-benefit-icon">⭐</div>
+          <div className="wish-benefit-content">
+            <h3>Quality Guarantee</h3>
+            <p>Crafted with premium materials</p>
+          </div>
+        </div>
+        <div className="wish-benefit-item">
+          <div className="wish-benefit-icon">🔄</div>
+          <div className="wish-benefit-content">
+            <h3>Easy Returns</h3>
+            <p>15-day return policy</p>
+          </div>
+        </div>
+        <div className="wish-benefit-item">
+          <div className="wish-benefit-icon">💳</div>
+          <div className="wish-benefit-content">
+            <h3>Secure Payment</h3>
+            <p>Multiple payment options</p>
+          </div>
+        </div>
+      </div>
+
+      {/* View All Link */}
+      <div className="wish-view-all">
+        <Link to="/all-products" className="wish-view-all-btn">
+          View All Collections
+          <span className="wish-arrow-circle">&#8599;</span>
+        </Link>
+      </div>
+
+      {/* Newsletter Section */}
+      <div className="wish-newsletter">
+        <div className="wish-newsletter-content">
+          <h3>Stay Updated</h3>
+          <p>Subscribe to our newsletter for exclusive offers and early access to new arrivals</p>
+          <form className="wish-newsletter-form" onSubmit={handleNewsletterSubmit}>
+            <input
+              type="email"
+              placeholder="Your email address"
+              value={newsletterEmail}
+              onChange={e => setNewsletterEmail(e.target.value)}
+              required
+            />
+            <button type="submit">Subscribe</button>
+          </form>
+          {newsletterSuccess && <div style={{color: 'green', marginTop: 8}}>Subscribed successfully!</div>}
+        </div>
+      </div>
+
+      {showLoginPrompt && (
+        <div className="login-prompt-overlay" onClick={() => setShowLoginPrompt(false)}>
+          <div className="login-prompt-wrapper" onClick={(e) => e.stopPropagation()}>
+            <LoginPrompt message="Please login to add items to your cart or wishlist." />
+          </div>
+        </div>
+      )}
+    </div>
   );
 };
 

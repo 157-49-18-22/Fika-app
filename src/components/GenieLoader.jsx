@@ -6,7 +6,8 @@ const GenieLoader = ({ onFinish }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (onFinish) onFinish();
-    }, 3000); // 3 seconds animation
+    }, 1500); // 1.5 seconds animation
+
     return () => clearTimeout(timer);
   }, [onFinish]);
 
