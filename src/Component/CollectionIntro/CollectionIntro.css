@@ -1,5 +1,5 @@
 .collection-intro {
-    height: 800px;
+    height: 950px;
     margin: 0 auto;
     position: relative;
 }
@@ -7,10 +7,11 @@
 .mint-container {
     position: relative;
     width: 100%;
-    background-color: #D8F0E9;
+    background-color: #FFF2FF;
     border-radius: 20px;
     padding: 3rem;
     overflow: hidden;
+    /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); */
     height: 600px;
 }
 
@@ -50,7 +51,7 @@
 .collection-intro-container {
     position: relative;
     width: 95%;
-    height: 500px;
+    /* height: 500px; */
     margin: auto;
     margin-top: 2rem;
     border-radius: 20px;
@@ -79,11 +80,28 @@
     object-fit: cover;
 }
 
+.wish-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.wish-btn:hover {
+    background-color: #333;
+}
+
 /* Circular indicator styling */
 .circle-indicator {
     position: absolute;
-    top: -5px;
-    right: 120px;
+    bottom: 100px;
+    right: 400px;
     width: 120px;
     height: 120px;
     background-color: #000;
@@ -95,7 +113,7 @@
     transition: all 0.3s ease;
     z-index: 5;
     overflow: visible;
-    border: 10px solid #D8F0E9;
+    border: 10px solid;
 }
 
 .circle-indicator:hover {

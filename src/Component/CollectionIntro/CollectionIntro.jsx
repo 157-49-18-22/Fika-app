@@ -21,7 +21,7 @@ const CollectionIntro = () => {
   const navigate = useNavigate();
 
   const handleCircleClick = () => {
-    navigate('/all-products');
+    navigate('/new-arrivals-wish');
   };
 
   return (
@@ -46,7 +46,12 @@ const CollectionIntro = () => {
         <div className="collection-intro-container">
           {/* Overlaid image */}
           <div className="intro-image">
-            <img src="/maskgroup.png" alt="New collection with decorative pillows and throw" />
+            <img src="/wish_ginne.jpg" alt="New collection with decorative pillows and throw" />
+
+            {/* shop now button */}
+            <button className="wish-btn" onClick={handleCircleClick}>
+              Shop Now
+            </button>
           
             {/* Circular indicator */}
             <div className="circle-indicator" onClick={handleCircleClick}>

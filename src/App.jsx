@@ -25,7 +25,7 @@ import Notifications from './Component/Notifications/Notifications';
 import ChangePassword from './components/ChangePassword.jsx';
 import ForgotPassword from './components/ForgotPassword.jsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-
+import NewArrivalsWish from './components/NewArrivalsWish/NewArrivalsWish.jsx'; 
 // Layout component with navbar and footer
 const PageLayout = ({ children }) => {
   return (
@@ -65,6 +65,7 @@ function App() {
                 <Route path="/about" element={<PageLayout><About /></PageLayout>} />
                 <Route path="/product/:id" element={<PageLayout><ProductDetails /></PageLayout>} />
                 <Route path="/category/:categoryName" element={<PageLayout><CategoryProducts /></PageLayout>} />
+                <Route path="/new-arrivals-wish" element={<PageLayout><NewArrivalsWish /></PageLayout>} />
 
                 {/* Auth Routes */}
                 <Route path="/login" element={<Login />} />
