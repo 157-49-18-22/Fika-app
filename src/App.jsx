@@ -15,7 +15,7 @@ import CategoryProducts from './components/CategoryProducts/CategoryProducts.jsx
 import Navbar from './Component/Navbar/Navbar.jsx';
 import Login from './components/Login/Login.jsx';
 import Signup from './components/Login/Signup.jsx';
-import About from './pages/About/About.jsx';
+import About from './components/Aboutpage/About.jsx';
 import './App.css';
 import Footer from './Component/Footer/Footer.jsx';
 import Profile from './Component/Profile/Profile.jsx';
