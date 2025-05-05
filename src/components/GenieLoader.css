@@ -1,0 +1,94 @@
+.genie-loader-overlay {
+  position: fixed;
+  left: 0; top: 0; width: 100vw; height: 100vh;
+  background: #fff;
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.genie-img-anim {
+  position: relative;
+  width: 320px;
+  height: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: genie-float-img 2.5s cubic-bezier(.4,1.6,.6,1) forwards;
+}
+
+.genie-smog-bg {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  width: 340px;
+  height: 220px;
+  background: radial-gradient(circle at 50% 70%, #b388ff 0%, #ce93d8 40%, transparent 80%);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  filter: blur(32px);
+  opacity: 0.7;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@keyframes genie-float-img {
+  0% { transform: translateY(100px) scale(0.7); opacity: 0; }
+  20% { opacity: 1; }
+  80% { transform: translateY(-60px) scale(1.05); }
+  100% { transform: translateY(-120px) scale(1); opacity: 0; }
+}
+
+.genie-img {
+  width: 240px;
+  height: auto;
+  z-index: 2;
+  position: relative;
+}
+
+.genie-smoke {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 160px;
+  height: 160px;
+  background: radial-gradient(circle, #e0e0e0 60%, transparent 100%);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  filter: blur(4px);
+  opacity: 0.7;
+  animation: smoke-move 2.5s infinite linear;
+  z-index: 1;
+}
+
+@keyframes smoke-move {
+  0% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+  50% { opacity: 0.4; transform: translateX(-50%) scale(1.2); }
+  100% { opacity: 0.7; transform: translateX(-50%) scale(1); }
+}
+
+.genie-body {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  width: 50px;
+  height: 80px;
+  background: linear-gradient(180deg, #4a90e2 60%, #fff 100%);
+  border-radius: 50% 50% 40% 40% / 60% 60% 100% 100%;
+  transform: translateX(-50%);
+  box-shadow: 0 8px 24px #4a90e288;
+}
+
+.genie-face {
+  position: absolute;
+  bottom: 90px;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  background: #fff;
+  border-radius: 50%;
+  border: 2px solid #4a90e2;
+  transform: translateX(-50%);
+  box-shadow: 0 2px 8px #4a90e244;
+} 

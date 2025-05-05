@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Hero.css";
 
 function Hero() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleShopNow = () => {
     navigate('/new-arrivals');
@@ -13,8 +14,21 @@ function Hero() {
     navigate('/all-products');
   };
 
+  const handleImageClick = () => {
+    navigate('/loader');
+  };
+
   return (
-    <section className="hero">
+    <section className="hero" style={{position:'relative'}}>
+      {loading && (
+        <div className="genie-overlay">
+          <span className="genie-loader">
+            <span className="genie-smoke"></span>
+            <span className="genie-body"></span>
+            <span className="genie-sparkle"></span>
+          </span>
+        </div>
+      )}
       <div className="hero-heading">
         <div className="hero-heading-content">
           <h1 className="hero-main-title">
@@ -31,7 +45,7 @@ function Hero() {
       </div>
 
       <div className="hero-content">
-        <div className="hero-content-left">
+        <div className="hero-content-left" onClick={handleImageClick} style={{cursor:'pointer'}}>
           <img src="./hero_image1.png" alt="Shopping bag with products" />
         </div>
 
