@@ -145,7 +145,7 @@ const AllProducts = () => {
       e.stopPropagation();
     }
     addToCart(product);
-    setToastMessage(`${product.name} added to cart!`);
+    setToastMessage(`{product.name} added to cart!`);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
@@ -345,7 +345,7 @@ const AllProducts = () => {
             
             {/* Price Range */}
             <div className="filter-group">
-              <h4><FaDollarSign /> Price Range</h4>
+              <h4>Price Range</h4>
               <input
                 type="range"
                 min="0"
@@ -402,6 +402,30 @@ const AllProducts = () => {
                 <button className="sort-btn" onClick={() => setFiltersVisible(true)}>
                   <FaSort /> Sort
                 </button>
+                {filtersVisible && (
+                  <div className="mobile-sort-dropdown">
+                    <div className="mobile-sort-header">
+                      <h4><FaSortAmountDown /> Sort By</h4>
+                      <button className="close-sort" onClick={() => setFiltersVisible(false)}>
+                        <FaTimes />
+                      </button>
+                    </div>
+                    <div className="mobile-sort-options">
+                      {sortOptions.map((option) => (
+                        <button
+                          key={option.id}
+                          className={`mobile-sort-option ${sortOption === option.id ? 'active' : ''}`}
+                          onClick={() => {
+                            setSortOption(option.id);
+                            setFiltersVisible(false);
+                          }}
+                        >
+                          {option.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

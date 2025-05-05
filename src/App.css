@@ -5,8 +5,6 @@
 }
 
 :root {
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
   --text-dark: #1f2937;
   --text-medium: #4b5563;
   --text-light: #9ca3af;
@@ -48,8 +46,6 @@ body {
 
 /* For components that need scroll functionality without visible scrollbar */
 .scroll-container {
-  /* overflow-y: auto; */
-  /* overflow-x: hidden; */
   -ms-overflow-style: none;
   scrollbar-width: none;
 }

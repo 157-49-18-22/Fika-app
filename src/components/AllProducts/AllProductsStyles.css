@@ -117,6 +117,11 @@
   position: relative;
 }
 
+.sort-btn{
+  border: none;
+  background-color: transparent;
+}
+
 .search-input-container {
   position: relative;
   display: flex;
@@ -354,25 +359,80 @@
 }
 
 .sort-mobile {
-  display: none;
+  position: relative;
 }
 
-.sort-btn {
+.mobile-sort-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 280px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  margin-top: 8px;
+}
+
+.mobile-sort-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.mobile-sort-header h4 {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: none;
-  border: none;
-  font-size: 0.95rem;
+  margin: 0;
+  font-size: 1rem;
   color: var(--primary-color);
-  cursor: pointer;
 }
 
-/* Products Grid */
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 25px;
+.close-sort {
+  background: none;
+  border: none;
+  color: var(--medium-gray);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.close-sort:hover {
+  color: var(--primary-color);
+}
+
+.mobile-sort-options {
+  padding: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.mobile-sort-option {
+  width: 100%;
+  padding: 12px 16px;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: var(--transition);
+  color: var(--text-color);
+  font-size: 0.95rem;
+}
+
+.mobile-sort-option:hover {
+  background: var(--light-gray);
+}
+
+.mobile-sort-option.active {
+  background: var(--primary-color);
+  color: white;
 }
 
 .product-card {
@@ -1283,4 +1343,11 @@
 .subcategory-checkbox input[type="radio"]:checked + span,
 .filter-checkbox-label input[type="checkbox"]:checked + span {
   color: black;
+}
+
+/* Products Grid */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 25px;
 } 
