@@ -29,18 +29,13 @@ function Hero() {
           </span>
         </div>
       )}
-      <div className="hero-heading">
+         <div className="hero-heading">
         <div className="hero-heading-content">
           <h1 className="hero-main-title">
-            Dive into a world of endless
+          Enter into a world of luxurious comfort and artisanal charm
           </h1>
-          <div className="hero-main-title-2"> 
-            <h1 className="hero-main-title">fashion possibilities</h1>
-            <div className="hero-heading-description">
-              <p>Elevate Your Style With Our Fashion Finds.</p>
-              <p>Discover Your Signature Style At Fika.</p>
-            </div>
-          </div>
+         
+         
         </div>
       </div>
 

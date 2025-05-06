@@ -8,7 +8,7 @@ const StyleEmpower = () => {
         <div className="style-text-container">
           <div className="text-row first-row">
             <h2 className="style-text">
-              YOUR STYLE
+            Where Comfort 
               <img
                 src="/textured_image1.png"
                 alt="Texture 1"
@@ -23,12 +23,10 @@ const StyleEmpower = () => {
                 alt="Texture 2"
                 className="textured-image"
               />
-              YOUR RULES
+             Meets Craft
             </h2>
           </div>
-          <div className="text-row third-row">
-            <h1 className="empower-text">EMPOWER YOUR FASHION</h1>
-          </div>
+        
 
           <div className="button-container">
             <button className="shop-now-button">

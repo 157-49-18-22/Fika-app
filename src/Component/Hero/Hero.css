@@ -27,11 +27,11 @@
 
 .hero-main-title {
     font-size: 3.5rem;
-    line-height: 1.1;
+    line-height: 1.4;
     font-weight: 500;
     font-family: 'Montserrat', sans-serif;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+   
     color: #000;
     margin: 0;
     width: 100%;
@@ -64,14 +64,6 @@
     text-align: left;
 }
 
-.hero-heading-description p {
-    font-size: 0.9rem;
-    margin-top: 0.3rem;
-    font-weight: 500;
-    color: #333;
-    line-height: 1.4;
-    font-family: 'Montserrat', sans-serif;
-}
 
 /* Main Content Section */
 .hero-content {
@@ -178,7 +170,7 @@
     font-family: 'Montez', cursive;
     color: #222;
     font-style: italic;
-    height: 200px;
+    height: 250px;
     overflow: hidden;
 }
 

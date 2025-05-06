@@ -5,7 +5,7 @@ const FashionShowcase = () => {
   return (
     <div className="fashion-section">
       <h1 className="sectiontitle">
-        FASHION AT YOUR FINGERTIPS
+        CRAFT AT YOUR FINGERTIPS
       </h1>
       <div className="fashion-showcase">
         <div className="showcase-main-section">
