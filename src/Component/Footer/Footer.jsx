@@ -21,7 +21,7 @@ const Footer = () => {
         <div className="footer-logo-section">
           <div className="footer-logo">
             <Link to="/" className="logo">
-              <img style={{width: "70px"}} src="/Fika_Logo1.png" alt="logo" />
+              <img style={{width: "70px"}} src="/fika_page-001.jpg" alt="logo" />
             </Link>
           </div>
           

@@ -313,8 +313,9 @@ const FeaturedStories = () => {
             <span>R</span>
             <span>E</span>
             <span>D</span>
-            <span className="space"></span>
-            <span className="space"></span>
+          </div>
+          <br/>
+          <div className="animated-heading">
             <span>S</span>
             <span>T</span>
             <span>O</span>
@@ -322,8 +323,6 @@ const FeaturedStories = () => {
             <span>I</span>
             <span>E</span>
             <span>S</span>
-
-          
           </div>
           <div className="blog-hero-description">
             <p>Explore Our Articles on Fashion Trends, Styling Tips, and Sustainable Fashion</p>

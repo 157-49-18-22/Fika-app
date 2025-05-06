@@ -121,7 +121,6 @@ function Navbar() {
     setTimeout(() => setShowPrompt(false), 2000);
   };
 
-  // Example: Listen for custom events (optional, for global usage)
   useEffect(() => {
     const handler = (e) => {
       if (e.detail && e.detail.msg) showActionPrompt(e.detail.msg);
@@ -139,15 +138,15 @@ function Navbar() {
           </button> */}
 
           <div className="navbar-left">
-            <NavLink to="/new-arrivals" className="nav-link">New Arrival</NavLink>
-            <NavLink to="/all-products" className="nav-link">All Product</NavLink>
+            <NavLink to="/new-arrivals" className="nav-link">New Arrivals</NavLink>
+            <NavLink to="/all-products" className="nav-link">All Products</NavLink>
             <NavLink to="/featured-stories" className="nav-link">Featured Stories</NavLink>
             <NavLink to="/contact" className="nav-link">Contact Us</NavLink>
           </div>
 
           <div className="navbar-center">
             <Link to="/" className="logo">
-              <img style={{width: "70px", height: "70px"}} src="/fika_page-0001.jpg" alt="logo" />
+              <img style={{width: "70px", height: "70px"}} src="/fika_page-001.jpg" alt="logo" />
             </Link>
           </div>
 

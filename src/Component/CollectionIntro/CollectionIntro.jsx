@@ -52,7 +52,7 @@ const CollectionIntro = () => {
       </div>
         <div className="collection-intro-container">
           {/* Overlaid image */}
-          <div className="intro-image">
+          <div className="intro-image" onClick={handleCircleClick}>
             <img src="/wish_ginne.jpg" alt="New collection with decorative pillows and throw" />
 
             {/* shop now button */}
