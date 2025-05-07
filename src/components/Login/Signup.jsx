@@ -117,7 +117,7 @@ const Signup = () => {
     setIsLoading(true);
     try {
       // First, create user in the backend
-      const response = await fetch('http://localhost:5000/api/users', {
+      const response = await fetch('http://13.202.119.111:5000/api/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

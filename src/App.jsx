@@ -27,6 +27,14 @@ import ForgotPassword from './components/ForgotPassword.jsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import NewArrivalsWish from './components/NewArrivalsWish/NewArrivalsWish.jsx';
 import LoaderPage from './components/LoaderPage.jsx';
+import AdminDashboard from './components/Admin/AdminDashboard.jsx';
+import DashboardOverview from './components/Admin/DashboardOverview.jsx';
+import Orders from './components/Admin/Orders.jsx';
+import Analytics from './components/Admin/Analytics.jsx';
+import NotificationsAdmin from './components/Admin/Notifications.jsx';
+import Users from './components/Admin/Users.jsx';
+import Categories from './components/Admin/Categories.jsx';
+import Products from './components/Admin/Products.jsx';
 
 // Layout component with navbar and footer
 const PageLayout = ({ children }) => {
@@ -50,6 +58,21 @@ const ProtectedRoute = ({ children }) => {
   return <PageLayout>{children}</PageLayout>;
 };
 
+// Admin Route component for admin-only features
+const AdminRoute = ({ children }) => {
+  const { isAuthenticated, user } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!user?.isAdmin) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
 function App() {
   return (
     <GoogleOAuthProvider clientId="727732829380-un80uanpnh4rra3sfjr59a48et2rph38.apps.googleusercontent.com">
@@ -67,7 +90,6 @@ function App() {
                 <Route path="/about" element={<PageLayout><About /></PageLayout>} />
                 <Route path="/product/:id" element={<PageLayout><ProductDetails /></PageLayout>} />
                 <Route path="/category/:categoryName" element={<PageLayout><CategoryProducts /></PageLayout>} />
-              
                 <Route path="/loader" element={<LoaderPage />} />
                 <Route path="/new-arrivals-wish" element={<PageLayout><NewArrivalsWish /></PageLayout>} />
 
@@ -85,6 +107,21 @@ function App() {
                 <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
                 <Route path="/change-password" element={<PageLayout><ChangePassword /></PageLayout>} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
+
+                {/* Admin Routes */}
+                <Route path="/admin" element={
+                  <AdminRoute>
+                    <AdminDashboard />
+                  </AdminRoute>
+                }>
+                  <Route index element={<DashboardOverview />} />
+                  <Route path="orders" element={<Orders />} />
+                  <Route path="analytics" element={<Analytics />} />
+                  <Route path="notifications" element={<NotificationsAdmin />} />
+                  <Route path="users" element={<Users />} />
+                  <Route path="categories" element={<Categories />} />
+                  <Route path="products" element={<Products />} />
+                </Route>
               </Routes>
             </Router>
           </WishlistProvider>

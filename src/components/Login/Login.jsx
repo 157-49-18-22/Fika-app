@@ -59,24 +59,21 @@ const Login = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/users/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emailOrPhone: formData.emailOrPhone, password: formData.password })
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Login failed. Please try again.');
-      
-      const user = data.user || { email: formData.emailOrPhone };
-      auth.setIsAuthenticated(true);
-      auth.setCurrentUser(user);
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('currentUser', JSON.stringify(user));
-      navigate('/');
+      await auth.login({ email: formData.emailOrPhone, password: formData.password });
     } catch (error) {
       setError(error.message || 'Login failed. Please try again.');
     }
   };
+
+  useEffect(() => {
+    if (auth.isAuthenticated) {
+      if (auth.user && auth.user.isAdmin) {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
+    }
+  }, [auth.isAuthenticated, auth.user, navigate]);
 
   // Slider auto-play
   useEffect(() => {

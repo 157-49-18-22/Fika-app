@@ -36,6 +36,8 @@ display: inline-block;
   width: 250px;
   z-index: 1000;
   overflow: hidden;
+  min-width: 250px;
+  max-width: 350px;
 }
 
 .dashboard-header {
@@ -65,10 +67,14 @@ display: inline-block;
   flex: 1;
 }
 
-.user-info h4 {
-  margin: 0;
-  font-size: 16px;
-  color: #333;
+.user-info h4,
+.profile-welcome {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  word-break: break-word;
+  max-width: 260px;
+  font-size: 1rem;
 }
 
 .user-info p {

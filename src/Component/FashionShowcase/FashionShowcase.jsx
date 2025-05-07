@@ -13,7 +13,7 @@ const FashionShowcase = () => {
             <h1
               className="showcase-main-title"
             >
-              1200+
+              100+
             </h1>
             <h2 className="main-subtitle">Awesome Collection</h2>
             <p className="main-description">

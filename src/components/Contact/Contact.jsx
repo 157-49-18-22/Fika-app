@@ -16,7 +16,7 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    axios.post("http://localhost:5000/api/contact", form)
+    axios.post("http://13.202.119.111:5000/api/contact", form)
       .then(() => {
         setSuccess(true);
         setForm({ name: "", email: "", message: "" });

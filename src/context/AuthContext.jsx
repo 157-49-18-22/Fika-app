@@ -12,6 +12,20 @@ export const AuthProvider = ({ children }) => {
     return savedUsers ? JSON.parse(savedUsers) : [];
   });
 
+  // Add admin user if not exists
+  useEffect(() => {
+    const adminExists = users.some(user => user.email === 'admin@example.com');
+    if (!adminExists) {
+      const adminUser = {
+        email: 'admin@example.com',
+        password: 'admin123',
+        name: 'Admin',
+        isAdmin: true
+      };
+      setUsers(prevUsers => [...prevUsers, adminUser]);
+    }
+  }, []);
+
   useEffect(() => {
     // Save users to localStorage whenever it changes
     localStorage.setItem('users', JSON.stringify(users));
@@ -62,15 +76,16 @@ export const AuthProvider = ({ children }) => {
     const existingUser = users.find(user => user.email === userData.email);
     if (existingUser) {
       throw new Error('User with this email already exists');
-      }
+    }
 
     // Create new user object
     const newUser = {
-        email: userData.email,
+      email: userData.email,
       password: userData.password, // In a real app, this would be hashed
-        name: userData.name || userData.email.split('@')[0],
-        ...userData
-      };
+      name: userData.name || userData.email.split('@')[0],
+      isAdmin: false, // Default to non-admin
+      ...userData
+    };
 
     // Add user to users array
     setUsers(prevUsers => [...prevUsers, newUser]);
@@ -205,15 +220,14 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={{
       isAuthenticated,
-      currentUser,
+      user: currentUser,
       login,
       logout,
       signup,
       updateUserEmail,
       verifyEmailUpdate,
       deleteAccount,
-      setIsAuthenticated,
-      setCurrentUser
+      sendVerificationEmail
     }}>
       {children}
     </AuthContext.Provider>
@@ -221,5 +235,9 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const useAuth = () => {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
 }; 

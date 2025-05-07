@@ -8,7 +8,7 @@ const UserDashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  const { isAuthenticated, currentUser, logout } = useAuth();
+  const { isAuthenticated, currentUser, logout, user } = useAuth();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -30,8 +30,11 @@ const UserDashboard = () => {
   };
 
   const getUserName = () => {
-    const name = currentUser?.email.split('@')[0];
-    return name?.charAt(0).toUpperCase() + name?.slice(1);
+    if (user?.name) return user.name;
+    if (user?.email) return user.email.split('@')[0];
+    if (currentUser?.name) return currentUser.name;
+    if (currentUser?.email) return currentUser.email.split('@')[0];
+    return 'User';
   };
 
   // Show login dropdown if not logged in
@@ -86,7 +89,7 @@ const UserDashboard = () => {
             </div>
             <div className="user-info">
               <h4>Welcome, {getUserName()}</h4>
-              <p>{currentUser?.email}</p>
+              <p>{user?.email || currentUser?.email}</p>
             </div>
           </div>
 
@@ -104,13 +107,13 @@ const UserDashboard = () => {
               <span>Settings</span>
             </Link>
             <Link to="/wishlist" className="menu-item" onClick={() => setIsOpen(false)}>
-  <img src="https://cdn-icons-png.flaticon.com/512/1077/1077035.png" alt="Wishlist" />
-  <span>Wishlist</span>
-</Link>
-<Link to="/notifications" className="menu-item" onClick={() => setIsOpen(false)}>
-  <img src="https://cdn-icons-png.flaticon.com/512/1827/1827392.png" alt="Notifications" />
-  <span>Notifications</span>
-</Link>
+              <img src="https://cdn-icons-png.flaticon.com/512/1077/1077035.png" alt="Wishlist" />
+              <span>Wishlist</span>
+            </Link>
+            <Link to="/notifications" className="menu-item" onClick={() => setIsOpen(false)}>
+              <img src="https://cdn-icons-png.flaticon.com/512/1827/1827392.png" alt="Notifications" />
+              <span>Notifications</span>
+            </Link>
 
             <button className="menu-item logout-btn" onClick={handleLogout}>
               <FaSignOutAlt className="menu-icon" />

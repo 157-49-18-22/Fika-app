@@ -6,7 +6,7 @@ import { FaClipboardList, FaBoxOpen } from 'react-icons/fa';
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { currentUser, updateUserEmail, verifyEmailUpdate, deleteAccount } = useAuth();
+  const { currentUser, user, updateUserEmail, verifyEmailUpdate, deleteAccount } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
@@ -22,6 +22,16 @@ const Profile = () => {
     mobile: currentUser?.mobile || '',
     newEmail: currentUser?.email || ''
   });
+
+  const getUserName = () => {
+    if (user?.name) return user.name;
+    if (user?.email) return user.email.split('@')[0];
+    if (currentUser?.firstName || currentUser?.lastName)
+      return `${currentUser?.firstName || ''}${currentUser?.lastName ? ' ' + currentUser.lastName : ''}`.trim();
+    if (currentUser?.name) return currentUser.name;
+    if (currentUser?.email) return currentUser.email.split('@')[0];
+    return 'User';
+  };
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -135,8 +145,7 @@ const Profile = () => {
         {/* Left Sidebar */}
         <div className="sidebar-header">
           <div className="user-info">
-            <span className="hello">Hello,</span>
-            <span className="username">{(currentUser?.firstName || '') + (currentUser?.lastName ? ' ' + currentUser.lastName : '')}</span>
+            <span className="hello">Hello, <span className="username">{getUserName()}</span></span>
           </div>
         </div>
 
