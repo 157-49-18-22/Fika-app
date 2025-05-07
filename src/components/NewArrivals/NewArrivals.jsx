@@ -166,7 +166,7 @@ const NewArrivals = () => {
   // Newsletter submit handler
   const handleNewsletterSubmit = (e) => {
     e.preventDefault();
-    axios.post("http://localhost:5000/api/newsletter", { email: newsletterEmail })
+    axios.post("http://13.202.119.111:5000/api/newsletter", { email: newsletterEmail })
       .then(() => {
         setNewsletterSuccess(true);
         setNewsletterEmail("");

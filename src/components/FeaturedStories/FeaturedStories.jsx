@@ -25,7 +25,7 @@ const FeaturedStories = () => {
 
   const handleSubscribe = (e) => {
     e.preventDefault();
-    axios.post("http://localhost:5000/api/blog-newsletter", { email })
+    axios.post("http://13.202.119.111:5000/api/blog-newsletter", { email })
       .then(() => {
         setShowSuccess(true);
         setEmail("");
