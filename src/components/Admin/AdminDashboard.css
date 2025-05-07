@@ -18,10 +18,6 @@
   /* Admin Dashboard Layout */
   .admin-dashboard {
     display: flex;
-    min-height: 100vh;
-   
-    font-family: 'Inter', 'Poppins', Arial, sans-serif;
-    width: 95vw;
     margin-left: -20vw;
   }
   
@@ -327,7 +323,7 @@
   /* Main Content Area */
   .admin-content {
     flex: 1;
-    margin-left: 240px;
+    margin-left: 400px;
     background: #f7f8fa;
     min-height: 100vh;
     padding: 0 0 32px 0;

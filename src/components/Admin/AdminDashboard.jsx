@@ -15,9 +15,9 @@ const AdminDashboard = () => {
     navigate('/login');
   };
 
-  if (!user?.isAdmin) {
-    return <div>Access Denied</div>;
-  }
+  // if (!user?.isAdmin) {
+  //   return <div>Access Denied</div>;
+  // }
 
   return (
     <div className="admin-dashboard">

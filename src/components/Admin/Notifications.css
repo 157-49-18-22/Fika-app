@@ -1,7 +1,3 @@
-body, .notifications-page-bg {
-  background: linear-gradient(120deg, #f3f0ff 0%, #f8fafc 100%);
-}
-
 .notifications-admin-page {
   min-height: 100vh;
   padding: 40px 0 40px 0;
