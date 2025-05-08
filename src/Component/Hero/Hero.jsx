@@ -55,10 +55,10 @@ function Hero() {
           </div>
 
           <div className="brand-section">
-            <div className="trending-text">TRENDING</div>
-            <div className="collection-text">Awesome Collection</div>
+            {/* <div className="trending-text">TRENDING</div>
+            <div className="collection-text">Awesome Collection</div> */}
             <div className="brand-logo">
-              <img style={{width: "250px"}} src="/fika_page-0001.jpg" alt="logo" />
+              <img style={{width: "300px"}} src="/fika_page-0001.jpg" alt="logo" />
             </div>
           </div>
         </div>
