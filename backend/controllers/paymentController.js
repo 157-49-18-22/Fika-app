@@ -3,15 +3,15 @@ const crypto = require('crypto');
 
 // Initialize Razorpay
 const razorpay = new Razorpay({
-  key_id: 'rzp_test_2LKLmubQ5uu0M4',
-  key_secret: 'r3WxUOnCSmWAedhkRKHaXApE'
+  key_id: 'rzp_test_05BxV9TnB6Qc7g',
+  key_secret: 'J6wyqGXN02nsAAZm8w9Ivzjm'
 });
 
 const paymentController = {
     // Get Razorpay Key
     getRazorpayKey: (req, res) => {
         res.json({
-            key: 'rzp_test_2LKLmubQ5uu0M4'
+            key: 'rzp_test_05BxV9TnB6Qc7g'
         });
     },
 
