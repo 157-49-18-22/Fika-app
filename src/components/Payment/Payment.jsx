@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
-import { useAuth } from "../../context/AuthContext";
 import "./Payment.css";
+import axios from "axios";
 
 const Payment = ({ onClose }) => {
   const navigate = useNavigate();
   const { cart, getCartTotal, clearCart } = useCart();
-  const { currentUser } = useAuth();
-  const [paymentMethod, setPaymentMethod] = useState("card");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -17,17 +15,39 @@ const Payment = ({ onClose }) => {
     setError("");
 
     try {
+      // Create order on backend
+      const orderResponse = await axios.post('http://13.202.119.111:5000/api/payment/create-order', {
+        amount: Math.round(getCartTotal() * 100), // Convert to paise
+        currency: "INR"
+      });
+
       const options = {
         key: "rzp_test_2LKLmubQ5uu0M4",
-        amount: Math.round(getCartTotal() * 100),
-        currency: "INR",
+        amount: orderResponse.data.amount,
+        currency: orderResponse.data.currency,
         name: "Fika App",
         description: "Test Payment",
-        handler: function(response) {
-          console.log("Payment ID: ", response.razorpay_payment_id);
-          alert('Payment Successful');
-          clearCart();
-          navigate('/');
+        order_id: orderResponse.data.id,
+        handler: async function(response) {
+          try {
+            // Verify payment on backend
+            const verifyResponse = await axios.post('http://13.202.119.111:5000/api/payment/verify-payment', {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            });
+
+            if (verifyResponse.data.success) {
+              alert('Payment Successful');
+              clearCart();
+              navigate('/');
+            } else {
+              setError("Payment verification failed");
+            }
+          } catch (err) {
+            console.error('Verification error:', err);
+            setError("Error verifying payment");
+          }
         },
         modal: {
           ondismiss: function() {
@@ -87,24 +107,6 @@ const Payment = ({ onClose }) => {
               Total Items: {cart.reduce((sum, item) => sum + item.quantity, 0)}
             </p>
             <p>Total Amount: ₹{getCartTotal().toFixed(2)}</p>
-          </div>
-        </div>
-
-        <div className="payment-methods">
-          <h3>Payment Method</h3>
-          <div className="method-options">
-            <button
-              className={`method-btn ${paymentMethod === "card" ? "active" : ""}`}
-              onClick={() => setPaymentMethod("card")}
-            >
-              Credit/Debit Card
-            </button>
-            <button
-              className={`method-btn ${paymentMethod === "upi" ? "active" : ""}`}
-              onClick={() => setPaymentMethod("upi")}
-            >
-              UPI
-            </button>
           </div>
         </div>
 
