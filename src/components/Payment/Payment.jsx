@@ -15,11 +15,16 @@ const Payment = ({ onClose }) => {
     setError("");
 
     try {
+      const amount = Math.round(getCartTotal() * 100); // Convert to paise
+      console.log('Creating order with amount:', amount);
+
       // Create order on backend
       const orderResponse = await axios.post('http://13.202.119.111:5000/api/payment/create-order', {
-        amount: Math.round(getCartTotal() * 100), // Convert to paise
+        amount: amount,
         currency: "INR"
       });
+
+      console.log('Order created:', orderResponse.data);
 
       const options = {
         key: "rzp_test_2LKLmubQ5uu0M4",
@@ -30,6 +35,7 @@ const Payment = ({ onClose }) => {
         order_id: orderResponse.data.id,
         handler: async function(response) {
           try {
+            console.log('Payment response:', response);
             // Verify payment on backend
             const verifyResponse = await axios.post('http://13.202.119.111:5000/api/payment/verify-payment', {
               razorpay_order_id: response.razorpay_order_id,
@@ -37,16 +43,18 @@ const Payment = ({ onClose }) => {
               razorpay_signature: response.razorpay_signature
             });
 
+            console.log('Verification response:', verifyResponse.data);
+
             if (verifyResponse.data.success) {
               alert('Payment Successful');
               clearCart();
               navigate('/');
             } else {
-              setError("Payment verification failed");
+              setError("Payment verification failed: " + (verifyResponse.data.message || 'Unknown error'));
             }
           } catch (err) {
-            console.error('Verification error:', err);
-            setError("Error verifying payment");
+            console.error('Verification error:', err.response?.data || err.message);
+            setError("Error verifying payment: " + (err.response?.data?.details || err.message));
           }
         },
         modal: {
@@ -65,8 +73,8 @@ const Payment = ({ onClose }) => {
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
     } catch (err) {
-      console.error(err);
-      setError("Error in payment processing: " + err.message);
+      console.error('Payment error:', err.response?.data || err);
+      setError("Error in payment processing: " + (err.response?.data?.details || err.message));
     } finally {
       setLoading(false);
     }
