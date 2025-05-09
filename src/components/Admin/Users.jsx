@@ -1,66 +1,104 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import './Users.css';
-import { FaUser, FaEdit, FaTrash, FaUserPlus } from 'react-icons/fa';
-
-const initialUsers = [
-  { id: 1, name: 'John Doe', email: 'john@example.com', role: 'admin', status: 'active' },
-  { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'user', status: 'active' },
-  { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'user', status: 'inactive' },
-];
-
-const emptyUser = { name: '', email: '', role: 'user', status: 'active' };
 
 const Users = () => {
-  const [users, setUsers] = useState(initialUsers);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [editUser, setEditUser] = useState(null);
-  const [form, setForm] = useState(emptyUser);
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    role: 'user',
+    status: 'active'
+  });
 
-  const openAddModal = () => {
-    setEditUser(null);
-    setForm(emptyUser);
-    setShowModal(true);
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('http://13.202.119.111:5000/api/admin/users');
+      setUsers(response.data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      setError('Failed to fetch users');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const openEditModal = (user) => {
-    setEditUser(user);
-    setForm(user);
-    setShowModal(true);
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setForm(emptyUser);
-    setEditUser(null);
-  };
-
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editUser) {
-      setUsers(users.map((u) => (u.id === editUser.id ? { ...editUser, ...form } : u)));
-    } else {
-      setUsers([...users, { ...form, id: Date.now() }]);
+    try {
+      if (selectedUser) {
+        // Update existing user
+        await axios.put(`http://13.202.119.111:5000/api/admin/users/${selectedUser.id}`, formData);
+      } else {
+        // Create new user
+        await axios.post('http://13.202.119.111:5000/api/admin/users', formData);
+      }
+      setShowModal(false);
+      setSelectedUser(null);
+      setFormData({
+        name: '',
+        email: '',
+        role: 'user',
+        status: 'active'
+      });
+      fetchUsers();
+    } catch (err) {
+      console.error('Error saving user:', err);
+      setError('Failed to save user');
     }
-    closeModal();
   };
 
-  const handleDelete = (id) => {
+  const handleEdit = (user) => {
+    setSelectedUser(user);
+    setFormData({
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      status: user.status
+    });
+    setShowModal(true);
+  };
+
+  const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
-      setUsers(users.filter((u) => u.id !== id));
+      try {
+        await axios.delete(`http://13.202.119.111:5000/api/admin/users/${id}`);
+        fetchUsers();
+      } catch (err) {
+        console.error('Error deleting user:', err);
+        setError('Failed to delete user');
+      }
     }
   };
+
+  if (loading) return <div className="loading">Loading...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
-    <div className="users-admin-page">
+    <div className="users-container">
       <div className="users-header">
-        <h2><FaUser /> Users Management</h2>
-        <button className="add-user-btn" onClick={openAddModal}>
-          <FaUserPlus /> Add New User
+        <h2>Users Management</h2>
+        <button className="add-user-btn" onClick={() => setShowModal(true)}>
+          <FaPlus /> Add New User
         </button>
       </div>
 
@@ -68,7 +106,6 @@ const Users = () => {
         <table className="users-table">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Name</th>
               <th>Email</th>
               <th>Role</th>
@@ -79,24 +116,25 @@ const Users = () => {
           <tbody>
             {users.map(user => (
               <tr key={user.id}>
-                <td>{user.id}</td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
-                <td>
-                  <span className={`role-badge ${user.role}`}>
-                    {user.role}
-                  </span>
-                </td>
+                <td>{user.role}</td>
                 <td>
                   <span className={`status-badge ${user.status}`}>
                     {user.status}
                   </span>
                 </td>
-                <td className="actions">
-                  <button className="edit-btn" title="Edit User" onClick={() => openEditModal(user)}>
+                <td className="action-buttons">
+                  <button 
+                    className="edit-btn"
+                    onClick={() => handleEdit(user)}
+                  >
                     <FaEdit />
                   </button>
-                  <button className="delete-btn" title="Delete User" onClick={() => handleDelete(user.id)}>
+                  <button 
+                    className="delete-btn"
+                    onClick={() => handleDelete(user.id)}
+                  >
                     <FaTrash />
                   </button>
                 </td>
@@ -107,31 +145,74 @@ const Users = () => {
       </div>
 
       {showModal && (
-        <div className="modal-backdrop">
-          <div className="modal">
-            <h3>{editUser ? 'Edit User' : 'Add New User'}</h3>
-            <form onSubmit={handleSubmit} className="user-form">
-              <label>Name:
-                <input name="name" value={form.name} onChange={handleChange} required />
-              </label>
-              <label>Email:
-                <input name="email" value={form.email} onChange={handleChange} required type="email" />
-              </label>
-              <label>Role:
-                <select name="role" value={form.role} onChange={handleChange}>
-                  <option value="admin">admin</option>
-                  <option value="user">user</option>
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>{selectedUser ? 'Edit User' : 'Add New User'}</h3>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>Name</label>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Role</label>
+                <select
+                  name="role"
+                  value={formData.role}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
                 </select>
-              </label>
-              <label>Status:
-                <select name="status" value={form.status} onChange={handleChange}>
-                  <option value="active">active</option>
-                  <option value="inactive">inactive</option>
+              </div>
+              <div className="form-group">
+                <label>Status</label>
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
                 </select>
-              </label>
-              <div className="modal-actions">
-                <button type="submit">{editUser ? 'Update' : 'Add'}</button>
-                <button type="button" onClick={closeModal}>Cancel</button>
+              </div>
+              <div className="modal-buttons">
+                <button type="submit" className="save-btn">
+                  {selectedUser ? 'Update' : 'Save'}
+                </button>
+                <button 
+                  type="button" 
+                  className="cancel-btn"
+                  onClick={() => {
+                    setShowModal(false);
+                    setSelectedUser(null);
+                    setFormData({
+                      name: '',
+                      email: '',
+                      role: 'user',
+                      status: 'active'
+                    });
+                  }}
+                >
+                  Cancel
+                </button>
               </div>
             </form>
           </div>

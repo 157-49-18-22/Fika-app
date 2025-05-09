@@ -66,7 +66,7 @@ const Analytics = () => {
         </div>
         <div className="kpi-card">
           <div className="kpi-label">Revenue</div>
-          <div className="kpi-value">$12,345</div>
+          <div className="kpi-value">₹12,345</div>
         </div>
       </div>
       <div className="analytics-charts-row">

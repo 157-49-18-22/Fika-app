@@ -13,7 +13,7 @@ const DashboardOverview = () => {
   const stats = [
     { icon: <FaUsers />, label: 'Total Users', value: 3256, color: '#6c47ff' },
     { icon: <FaBox />, label: 'Total Orders', value: 394, color: '#3f37c9' },
-    { icon: <FaDollarSign />, label: 'Revenue', value: '$2,536', color: '#f8961e' },
+    { icon: '₹', label: 'Revenue', value: '₹2,536', color: '#f8961e' },
     { icon: <FaCar />, label: 'Available Cars', value: 38, color: '#4cc9f0' },
   ];
 

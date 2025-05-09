@@ -22,11 +22,11 @@ import {
 } from "react-icons/fa";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
-import { getAllProducts } from "../../data/products";
 import "./ProductDetails.css";
 import axios from "axios";
 import { useAuth } from '../../context/AuthContext';
 import LoginPrompt from '../LoginPrompt/LoginPrompt';
+import config from '../../config';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -43,6 +43,10 @@ const ProductDetails = () => {
   const [selectedColor, setSelectedColor] = useState("");
   const [colorError, setColorError] = useState("");
   const [sizeError, setSizeError] = useState("");
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [relatedProducts, setRelatedProducts] = useState([]);
   const [availableColors] = useState([
     { name: "Black", code: "#000000", available: true },
     { name: "White", code: "#FFFFFF", available: true },
@@ -62,14 +66,33 @@ const ProductDetails = () => {
   const [purchaseCount, setPurchaseCount] = useState(0);
   const socketRef = useRef();
 
-  const product = getAllProducts().find((p) => p.id === parseInt(id));
-  const relatedProducts = getAllProducts()
-    .filter((p) => p.category === product?.category && p.id !== product?.id)
-    .slice(0, 4);
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(`${config.API_URL}/api/products/${id}`);
+        setProduct(response.data);
+        
+        // Fetch related products
+        const relatedResponse = await axios.get(`${config.API_URL}/api/products`);
+        const related = relatedResponse.data
+          .filter(p => p.category === response.data.category && p.id !== response.data.id)
+          .slice(0, 4);
+        setRelatedProducts(related);
+      } catch (err) {
+        console.error('Error fetching product:', err);
+        setError(err.message || 'Failed to fetch product');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
 
   useEffect(() => {
     // Connect to Socket.IO server
-    socketRef.current = io('http://localhost:5000');
+    socketRef.current = io(config.SOCKET_URL);
 
     // Join product room
     socketRef.current.emit('joinProduct', id);
@@ -109,6 +132,22 @@ const ProductDetails = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (loading) {
+    return <div className="loading">Loading...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <h2>Error</h2>
+        <p>{error}</p>
+        <button onClick={() => navigate(-1)} className="back-button">
+          ← Back to Products
+        </button>
+      </div>
+    );
+  }
 
   if (!product) {
     return (

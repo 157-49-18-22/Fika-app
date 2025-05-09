@@ -5,7 +5,6 @@ import { useCart } from "../../context/CartContext.jsx";
 import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight, FaSlidersH, FaDollarSign, FaSortAmountDown, FaBed, FaCouch } from "react-icons/fa";
 import { GiLargeDress, GiRunningShoe, GiWatch, GiHeartNecklace, GiTrousers } from "react-icons/gi";
 import "./AllProductsStyles.css";
-import { getAllProducts } from "../../data/products";
 import axios from "axios";
 
 // Category and sub-category mapping
@@ -16,6 +15,9 @@ const CATEGORY_SUBCATEGORIES = {
 };
 
 const AllProducts = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All Products");
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
   const [sortOption, setSortOption] = useState("featured");
@@ -41,15 +43,52 @@ const AllProducts = () => {
   const searchParams = new URLSearchParams(location.search);
   const searchQuery = searchParams.get('search') || '';
 
+  // Fetch products from the backend
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        let url = 'http://localhost:5000/api/products';
+        
+        // Handle category filter
+        if (selectedCategory !== "All Products") {
+          url = `http://localhost:5000/api/products/category/${selectedCategory}`;
+        }
+        
+        // Handle sub-category filter
+        if (selectedSubCategory) {
+          url = `http://localhost:5000/api/products/subcategory/${selectedSubCategory}`;
+        }
+        
+        // Handle search
+        if (searchQuery) {
+          url = `http://localhost:5000/api/products/search?q=${searchQuery}`;
+        }
+
+        const response = await axios.get(url);
+        setProducts(response.data);
+        setError(null);
+      } catch (err) {
+        setError('Error fetching products. Please try again later.');
+        console.error('Error fetching products:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [selectedCategory, selectedSubCategory, searchQuery]);
+
   // Get sub-categories for the selected category
   const subCategories = CATEGORY_SUBCATEGORIES[selectedCategory] || [];
 
   // Filter products based on selected category and sub-category
-  const allProducts = getAllProducts();
-  const filteredProducts = allProducts.filter(product => {
+  const filteredProducts = products.filter(product => {
     const matchCategory = selectedCategory === "All Products" || product.category === selectedCategory;
-    const matchSubCategory = !selectedSubCategory || product.subCategory === selectedSubCategory;
-    return matchCategory && matchSubCategory;
+    const matchSubCategory = !selectedSubCategory || product.sub_category === selectedSubCategory;
+    const matchPrice = Number(product.mrp) >= priceRange[0] && Number(product.mrp) <= priceRange[1];
+    const matchStock = !inStockOnly || Number(product.inventory) > 0;
+    return matchCategory && matchSubCategory && matchPrice && matchStock;
   });
 
   useEffect(() => {
@@ -89,7 +128,7 @@ const AllProducts = () => {
 
   // Count products per category
   const categoryCounts = categories.reduce((acc, cat) => {
-    acc[cat.id] = allProducts.filter(
+    acc[cat.id] = products.filter(
       (product) => cat.id === 'all' || product.category.toLowerCase() === cat.id.toLowerCase()
     ).length;
     return acc;
@@ -98,23 +137,15 @@ const AllProducts = () => {
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortOption) {
       case "newest":
-        return b.isNew === a.isNew ? 0 : b.isNew ? -1 : 1;
+        return new Date(b.created_at) - new Date(a.created_at);
       case "priceAsc":
-        const priceA = a.discount ? a.price * (1 - a.discount / 100) : a.price;
-        const priceB = b.discount ? b.price * (1 - b.discount / 100) : b.price;
-        return priceA - priceB;
+        return Number(a.mrp) - Number(b.mrp);
       case "priceDesc":
-        const priceADesc = a.discount
-          ? a.price * (1 - a.discount / 100)
-          : a.price;
-        const priceBDesc = b.discount
-          ? b.price * (1 - b.discount / 100)
-          : b.price;
-        return priceBDesc - priceADesc;
+        return Number(b.mrp) - Number(a.mrp);
       case "nameAsc":
-        return a.name.localeCompare(b.name);
+        return a.product_name.localeCompare(b.product_name);
       case "nameDesc":
-        return b.name.localeCompare(a.name);
+        return b.product_name.localeCompare(a.product_name);
       default:
         return 0;
     }
@@ -204,6 +235,18 @@ const AllProducts = () => {
 
   return (
     <section className={`products-section ${fadeIn ? 'fade-in' : ''}`}>
+      {loading && (
+        <div className="loading-spinner">
+          Loading products...
+        </div>
+      )}
+
+      {error && (
+        <div className="error-message">
+          {error}
+        </div>
+      )}
+
       {/* Toast notification */}
       {showToast && (
         <div className="products-toast">
@@ -213,7 +256,7 @@ const AllProducts = () => {
 
       <div className="products-container">
         {/* Hero Header */}
-        <div className="products-header">
+        <div className="products-header" style={{flexDirection:'column'}}>
           <div className="animated-title">
             {Array.from("Our Collection").map((letter, index) => (
               <span key={index} className={letter === ' ' ? 'space' : ''} style={{ animationDelay: `${0.1 * index}s` }}>
@@ -439,18 +482,10 @@ const AllProducts = () => {
                   <div className="product-image-container">
                     <img 
                       src={product.image} 
-                      alt={product.name} 
+                      alt={product.product_name} 
                       className="product-image" 
                       loading="lazy" 
                     />
-                    
-                    {product.isNew && (
-                      <div className="product-badge new">New</div>
-                    )}
-                    
-                    {product.discount && (
-                      <div className="product-badge discount">-{product.discount}%</div>
-                    )}
                     
                     <div className="product-actions">
                       <button 
@@ -485,33 +520,13 @@ const AllProducts = () => {
                   </div>
                   
                   <div className="product-info">
-                    <h3 className="product-name">{product.name}</h3>
+                    <h3 className="product-name">{product.product_name}</h3>
                     
                     <div className="product-price">
-                      {product.discount ? (
-                        <>
-                          <span className="current-price">
-                            ₹{(product.price * (1 - product.discount / 100)).toFixed(2)}
-                          </span>
-                          <span className="original-price">
-                            ₹{product.price.toFixed(2)}
-                          </span>
-                        </>
-                      ) : (
-                        <span className="current-price">₹{product.price.toFixed(2)}</span>
-                      )}
+                      <span className="current-price">
+                        ₹{Number(product.mrp).toFixed(2)}
+                      </span>
                     </div>
-                    
-                    {product.rating && (
-                      <div className="product-rating">
-                        <div className="stars">
-                          {renderStars(product.rating)}
-                        </div>
-                        {product.reviewsCount && (
-                          <span className="reviews-count">({product.reviewsCount})</span>
-                        )}
-                      </div>
-                    )}
                     
                     <button className="shop-now-btn">
                       Shop Now <FaArrowRight className="" />

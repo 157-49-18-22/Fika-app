@@ -3,11 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaShoppingCart, FaHeart, FaEye, FaChevronLeft, FaChevronRight, FaClock, FaTag, FaGift } from "react-icons/fa";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
-import { getAllProducts } from "../../data/products.js";
 import "./NewArrivalsSection.css";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import LoginPrompt from "../../components/LoginPrompt/LoginPrompt";
+import config from "../../config";
 
 const NewArrivals = () => {
   const [newArrivals, setNewArrivals] = useState([]);
@@ -22,6 +22,8 @@ const NewArrivals = () => {
     bedsets: [],
     doharsAndQuilts: []
   });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
   const productsRowRef = useRef(null);
   const categoryRowRefs = {
@@ -37,57 +39,122 @@ const NewArrivals = () => {
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterSuccess, setNewsletterSuccess] = useState(false);
 
-  // Get products with isNew flag and categorize products
+  // Fetch products from backend
   useEffect(() => {
-    const allProducts = getAllProducts();
-    const newProducts = allProducts.filter(product => product.isNew);
-    setNewArrivals(newProducts);
+    let isMounted = true;
     
-    // Set a featured product (first item with discount)
-    const discountedProduct = newProducts.find(product => product.discount);
-    if (discountedProduct) {
-      setFeaturedProduct(discountedProduct);
-    } else if (newProducts.length > 0) {
-      setFeaturedProduct(newProducts[0]);
-    }
+    const fetchProducts = async () => {
+      try {
+        if (!isMounted) return;
+        setLoading(true);
+        
+        const response = await axios.get(`${config.API_URL}/api/products`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        if (!isMounted) return;
+        
+        if (!response.data || !Array.isArray(response.data)) {
+          throw new Error('Invalid response format from API');
+        }
 
-    // Organize products by categories
-    setCategoryProducts({
-      cushions: allProducts.filter(p => p.category === "cushions"),
-      bedsets: allProducts.filter(p => p.category === "bedsets"),
-      doharsAndQuilts: allProducts.filter(p => p.category === "dohars" || p.category === "quilts")
-    });
-  }, []);
+        const products = response.data;
+        
+        // Get products added in the last 30 days as new arrivals
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        
+        const newProducts = products.filter(product => {
+          if (!product.created_at) return true;
+          const productDate = new Date(product.created_at);
+          return productDate >= thirtyDaysAgo;
+        });
+        
+        if (!isMounted) return;
+        
+        setNewArrivals(newProducts);
+        
+        // Set featured product (first item with discount or first new arrival)
+        const discountedProduct = newProducts.find(product => product.discount);
+        if (discountedProduct) {
+          setFeaturedProduct(discountedProduct);
+        } else if (newProducts.length > 0) {
+          setFeaturedProduct(newProducts[0]);
+        }
+
+        // Organize products by categories
+        const categorizedProducts = {
+          cushions: products.filter(p => p.category?.toLowerCase() === "cushions"),
+          bedsets: products.filter(p => p.category?.toLowerCase() === "bedsets"),
+          doharsAndQuilts: products.filter(p => 
+            p.category?.toLowerCase() === "dohars" || 
+            p.category?.toLowerCase() === "quilts"
+          )
+        };
+        
+        if (!isMounted) return;
+        setCategoryProducts(categorizedProducts);
+        setLoading(false);
+      } catch (err) {
+        if (!isMounted) return;
+        console.error('Error fetching products:', err);
+        setError(err.message || 'Failed to fetch products');
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+    
+    return () => {
+      isMounted = false;
+    };
+  }, []); // Empty dependency array since we only want to fetch once
 
   // Countdown timer for featured product
   useEffect(() => {
-    const timerInterval = setInterval(() => {
-      setTimeLeft(prevTime => {
-        const { days, hours, minutes, seconds } = prevTime;
-        
-        if (seconds > 0) {
-          return { ...prevTime, seconds: seconds - 1 };
-        } else if (minutes > 0) {
-          return { ...prevTime, minutes: minutes - 1, seconds: 59 };
-        } else if (hours > 0) {
-          return { ...prevTime, hours: hours - 1, minutes: 59, seconds: 59 };
-        } else if (days > 0) {
-          return { ...prevTime, days: days - 1, hours: 23, minutes: 59, seconds: 59 };
-        }
-        
-        // Reset when countdown reaches zero
-        return { days: 3, hours: 11, minutes: 23, seconds: 45 };
-      });
-    }, 1000);
+    let timerInterval;
     
-    return () => clearInterval(timerInterval);
-  }, []);
+    const startCountdown = () => {
+      timerInterval = setInterval(() => {
+        setTimeLeft(prevTime => {
+          const { days, hours, minutes, seconds } = prevTime;
+          
+          if (seconds > 0) {
+            return { ...prevTime, seconds: seconds - 1 };
+          } else if (minutes > 0) {
+            return { ...prevTime, minutes: minutes - 1, seconds: 59 };
+          } else if (hours > 0) {
+            return { ...prevTime, hours: hours - 1, minutes: 59, seconds: 59 };
+          } else if (days > 0) {
+            return { ...prevTime, days: days - 1, hours: 23, minutes: 59, seconds: 59 };
+          }
+          
+          // Reset when countdown reaches zero
+          return { days: 3, hours: 11, minutes: 23, seconds: 45 };
+        });
+      }, 1000);
+    };
+
+    startCountdown();
+    
+    return () => {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
+    };
+  }, []); // Empty dependency array since we only want this to run once
 
   const categories = ["all", "cushions", "bedsets", "dohars & quilts"];
 
   const filteredProducts = activeTab === "all" 
     ? newArrivals 
     : newArrivals.filter(product => product.category === activeTab);
+  
+  console.log('Filtered Products:', filteredProducts);
+  console.log('Active Tab:', activeTab);
 
   const handleAddToCart = (product, e) => {
     if (e) e.stopPropagation();
@@ -129,9 +196,13 @@ const NewArrivals = () => {
 
   // Auto scroll functionality
   useEffect(() => {
+    let scrollInterval;
+    
     if (isAutoPlay && productsRowRef.current) {
-      autoScrollTimer.current = setInterval(() => {
+      scrollInterval = setInterval(() => {
         const container = productsRowRef.current;
+        if (!container) return;
+        
         const isAtEnd = container.scrollLeft >= (container.scrollWidth - container.clientWidth - 10);
         
         if (isAtEnd) {
@@ -143,42 +214,51 @@ const NewArrivals = () => {
     }
 
     return () => {
-      if (autoScrollTimer.current) {
-        clearInterval(autoScrollTimer.current);
+      if (scrollInterval) {
+        clearInterval(scrollInterval);
       }
     };
-  }, [isAutoPlay]);
+  }, [isAutoPlay]); // Only re-run when isAutoPlay changes
 
   // Format price with discount
   const formatPrice = (price, discount) => {
     if (discount) {
-      const discountedPrice = price * (1 - discount / 100);
+      const discountedPrice = Number(price) * (1 - discount / 100);
       return discountedPrice.toFixed(2);
     }
-    return price.toFixed(2);
+    return Number(price).toFixed(2);
   };
 
   // Calculate original price display
   const getOriginalPrice = (price) => {
-    return price.toFixed(2);
+    return Number(price).toFixed(2);
   };
 
   // Newsletter submit handler
   const handleNewsletterSubmit = (e) => {
     e.preventDefault();
-    axios.post("http://13.202.119.111:5000/api/newsletter", { email: newsletterEmail })
+    axios.post(`${config.API_URL}/api/newsletter`, { email: newsletterEmail })
       .then(() => {
         setNewsletterSuccess(true);
         setNewsletterEmail("");
         setTimeout(() => setNewsletterSuccess(false), 3000);
       })
       .catch(err => {
+        console.error('Newsletter subscription error:', err);
         alert("Error: " + (err.response?.data?.error || err.message));
       });
   };
 
-  // Render product card - reusable component for all product sections
+  // Optimize image loading with error handling
+  const handleImageError = (e, fallbackImage = '/placeholder-image.jpg') => {
+    e.target.onerror = null; // Prevent infinite loop
+    e.target.src = fallbackImage;
+  };
+
+  // Render product card with optimized image loading
   const renderProductCard = (product) => {
+    if (!product) return null;
+    
     return (
       <div 
         key={product.id} 
@@ -186,12 +266,12 @@ const NewArrivals = () => {
         onClick={() => navigate(`/product/${product.id}`)}
       >
         <div className="arrivals-product-image">
-          <img src={product.image} alt={product.name} />
-          
-          {/* <div className="arrivals-product-badges">
-            {product.isNew && <span className="arrivals-new-badge">New</span>}
-            {product.isBestSeller && <span className="arrivals-bestseller-badge">Best Seller</span>}
-          </div> */}
+          <img 
+            src={product.image || '/placeholder-image.jpg'} 
+            alt={product.product_name || 'Product'} 
+            onError={(e) => handleImageError(e)}
+            loading="lazy"
+          />
           <div className="arrivals-product-actions">
             <button 
               className="arrivals-action-btn cart-btn" 
@@ -215,52 +295,41 @@ const NewArrivals = () => {
               <FaEye />
             </button>
           </div>
+          {product.discount && (
+            <div className="arrivals-discount-badge">
+              -{product.discount}%
+            </div>
+          )}
         </div>
         <div className="arrivals-product-info">
-          <h3>{product.name}</h3>
+          <h3 className="arrivals-product-name">{product.product_name}</h3>
           <div className="arrivals-product-price">
             {product.discount ? (
               <>
-                <span className="arrivals-current-price">₹{formatPrice(product.price, product.discount)}</span>
-                <span className="arrivals-original-price">₹{getOriginalPrice(product.price)}</span>
-                <span className="arrivals-discount-badge">-{product.discount}%</span>
+                <span className="arrivals-original-price">₹{product.mrp}</span>
+                <span className="arrivals-discounted-price">
+                  ₹{product.mrp * (1 - product.discount / 100)}
+                </span>
               </>
             ) : (
-              <span className="arrivals-current-price">₹{getOriginalPrice(product.price)}</span>
-              
+              <span className="arrivals-current-price">₹{product.mrp}</span>
             )}
           </div>
-          {/* {product.discount && (
-            
-          )} */}
-          {product.reviewsCount > 0 && (
-            <div className="arrivals-product-rating">
-              <div className="arrivals-stars">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <span key={index} className={`arrivals-star ${index < Math.floor(product.rating) ? 'filled' : ''}`}>★</span>
-                ))}
-              </div>
-              <span className="arrivals-reviews-count">({product.reviewsCount})</span>
-            </div>
-          )}
         </div>
         <div className="arrivals-hover-details">
           <div className="arrivals-product-details">
             <p className="arrivals-material">{product.material}</p>
             <div className="arrivals-available-sizes">
-              {product.sizes && product.sizes.map((size, idx) => (
-                <span key={idx} className="arrivals-size-badge">{size}</span>
-              ))}
+              {product.dimension && <span className="arrivals-size-badge">{product.dimension}</span>}
             </div>
             <div className="arrivals-colors-available">
-              {product.colors && product.colors.map((color, idx) => (
+              {product.color && (
                 <span 
-                  key={idx} 
                   className="arrivals-color-swatch" 
-                  style={{ backgroundColor: color.toLowerCase() }}
-                  title={color}
+                  style={{ backgroundColor: product.color.toLowerCase() }}
+                  title={product.color}
                 ></span>
-              ))}
+              )}
             </div>
           </div>
           <button className="arrivals-shop-now-btn" onClick={e => { e.stopPropagation(); navigate(`/product/${product.id}`); }}>
@@ -308,6 +377,16 @@ const NewArrivals = () => {
     );
   };
 
+  if (loading) {
+    console.log('Loading state:', loading);
+    return <div className="loading">Loading...</div>;
+  }
+
+  if (error) {
+    console.error('Error state:', error);
+    return <div className="error">Error: {error}</div>;
+  }
+
   return (
     <>
       <div className="arrivals-section">
@@ -340,7 +419,7 @@ const NewArrivals = () => {
         {featuredProduct && (
           <div className="arrivals-featured-product">
             <div className="arrivals-featured-image">
-              <img src={featuredProduct.image} alt={featuredProduct.name} />
+              <img src={featuredProduct.image} alt={featuredProduct.product_name} />
               {featuredProduct.discount && (
                 <div className="arrivals-featured-discount">
                   <span>{featuredProduct.discount}% OFF</span>
@@ -372,18 +451,18 @@ const NewArrivals = () => {
                   </div>
                 </div>
               </div>
-              <h2 className="arrivals-featured-title">{featuredProduct.name}</h2>
+              <h2 className="arrivals-featured-title">{featuredProduct.product_name}</h2>
               <p className="arrivals-featured-description">
                 {featuredProduct.description || "Experience premium quality and exceptional design with this must-have piece from our latest collection."}
               </p>
               <div className="arrivals-featured-pricing">
                 {featuredProduct.discount ? (
                   <>
-                    <span className="arrivals-current-price">₹{formatPrice(featuredProduct.price, featuredProduct.discount)}</span>
-                    <span className="arrivals-original-price">₹{getOriginalPrice(featuredProduct.price)}</span>
+                    <span className="arrivals-current-price">₹{formatPrice(featuredProduct.mrp, featuredProduct.discount)}</span>
+                    <span className="arrivals-original-price">₹{getOriginalPrice(featuredProduct.mrp)}</span>
                   </>
                 ) : (
-                  <span className="arrivals-current-price">₹{getOriginalPrice(featuredProduct.price)}</span>
+                  <span className="arrivals-current-price">₹{getOriginalPrice(featuredProduct.mrp)}</span>
                 )}
               </div>
               <div className="arrivals-featured-actions">

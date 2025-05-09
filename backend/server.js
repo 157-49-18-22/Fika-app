@@ -18,6 +18,7 @@ const productRoutes = require('./routes/productRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const authRoutes = require('./routes/authRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -32,7 +33,11 @@ const io = socketIo(server, {
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173', 'http://127.0.0.1:3000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true
+}));
 app.use(express.json());
 
 // Socket.IO connection handling
@@ -60,25 +65,25 @@ io.on('connection', (socket) => {
 
   // Handle purchase count
   socket.on('productPurchased', (productId) => {
-    // Update purchase count in database
+    // Update inventory in database
     db.query(
-      'UPDATE products SET purchaseCount = purchaseCount + 1 WHERE id = ?',
+      'UPDATE allproducts SET inventory = inventory - 1 WHERE id = ?',
       [productId],
       (err) => {
         if (err) {
-          console.error('Error updating purchase count:', err);
+          console.error('Error updating inventory:', err);
           return;
         }
-        // Get updated purchase count
+        // Get updated inventory
         db.query(
-          'SELECT purchaseCount FROM products WHERE id = ?',
+          'SELECT inventory FROM allproducts WHERE id = ?',
           [productId],
           (err, results) => {
             if (err) {
-              console.error('Error getting purchase count:', err);
+              console.error('Error getting inventory:', err);
               return;
             }
-            io.to(`product_${productId}`).emit('purchaseCount', results[0].purchaseCount);
+            io.to(`product_${productId}`).emit('inventoryUpdate', results[0].inventory);
           }
         );
       }
@@ -111,6 +116,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Basic route
 app.get('/', (req, res) => {

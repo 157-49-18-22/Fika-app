@@ -41,8 +41,8 @@
     flex: 1;
     display: flex;
     gap: 2rem;
-    position: relative;
-    position: sticky;
+    /* position: relative;
+    position: sticky; */
     top: 2rem;
     height: fit-content;
     align-self: flex-start;
