@@ -1233,4 +1233,21 @@
   color: #7c3aed;
   font-weight: 600;
   box-shadow: 0 2px 8px rgba(124, 58, 237, 0.08);
+}
+
+.wish-logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 12px auto;
+  height: 1px;
+}
+
+.wish-genie-logo {
+  max-width: 400px;
+  width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 50px;
+  margin-left: 70px;
 } 

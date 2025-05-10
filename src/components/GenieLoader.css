@@ -14,7 +14,7 @@
 .lamp-container {
   position: relative;
   width: 500px;
-  height: 600px;
+  height: 60%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -22,12 +22,12 @@
 }
 
 .lamp-img {
-  width: 200px;
+  width: 260px;
   height: auto;
   position: absolute;
   bottom: 0;
   z-index: 1;
-  margin-bottom: -100px;
+  margin-bottom: -170px;
 }
 
 .genie-container {
@@ -41,16 +41,16 @@
 }
 
 .genie-img {
-  width: 230px;
+  width: 200px;
   height: auto;
   position: absolute;
-  margin-top: 100px;
+  margin-top: -10px;
  
-  margin-right: 190px;
+  margin-right: 220px;
   z-index: 2;
   opacity: 0;
   animation: genie-appear-rise 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  animation-delay: 1s;
+  animation-delay: 0.5s;
 }
 
 @keyframes genie-appear-rise {

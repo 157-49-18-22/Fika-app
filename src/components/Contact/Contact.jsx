@@ -205,65 +205,24 @@ const Contact = () => {
             className="contact-info-area"
             variants={infoVariants}
           >
-            <motion.div 
-              className="contact-illustration"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <img src="https://cdni.iconscout.com/illustration/premium/thumb/contact-us-3483601-2912018.png" alt="Contact illustration" />
-            </motion.div>
-            <motion.div 
-              className="contact-details" 
-              variants={itemVariants}
-            >
-              <motion.p 
-                variants={itemVariants}
-                whileHover={{ x: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <FaMapMarkerAlt /> 151 New Park Ave, Hartford, CT 06106 United States
-              </motion.p>
-              <motion.p 
-                variants={itemVariants}
-                whileHover={{ x: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <FaPhoneAlt /> +1 (203) 302-9545
-              </motion.p>
-              <motion.p 
-                variants={itemVariants}
-                whileHover={{ x: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <FaEnvelope /> contactus@invertasoft.com
-              </motion.p>
-            </motion.div>
-            <motion.div 
-              className="contact-socials" 
-              variants={itemVariants}
-            >
-              <motion.a 
-                href="#" 
-                aria-label="Facebook"
-                className="social-icon facebook"
-                variants={socialIconVariants}
-                whileHover="hover"
-                whileTap="tap"
-              >
-                <BsFacebook size={24} />
-              </motion.a>
-              <motion.a 
-                href="https://www.instagram.com/fika_x_wishgenie?igsh=emFiOXd1a3g5bmc0" 
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-                className="social-icon instagram"
-                variants={socialIconVariants}
-                whileHover="hover"
-                whileTap="tap"
-              >
-                <BsInstagram size={24} />
-              </motion.a>
+            <motion.div className="contact-details-row">
+              <motion.div className="contact-details-col" variants={itemVariants}>
+                <FaMapMarkerAlt size={32} />
+                <h3>Headquarters</h3>
+                <p>Corporate Office- B-206, 2nd Floor, Puri High Street, Sec-81,<br />Faridabad, Haryana-121004<br />INDIA</p>
+              </motion.div>
+              <motion.div className="contact-details-col" variants={itemVariants}>
+                <FaPhoneAlt size={32} />
+                <h3>Phone</h3>
+                <p>+65 4415 4294<br />Monday-Thursday: 08-16.55<br />Friday: 08-15</p>
+              </motion.div>
+              <motion.div className="contact-details-col" variants={itemVariants}>
+                <FaEnvelope size={32} />
+                <h3>Mail</h3>
+                <p>email@rdesiigninc.in
+                <br />
+                wishgenie.shop@gmail.com.</p>
+              </motion.div>
             </motion.div>
           </motion.div>
         </motion.div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useWishlist } from "../../context/WishlistContext.jsx";
 import { useCart } from "../../context/CartContext.jsx";
-import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight, FaSlidersH, FaDollarSign, FaSortAmountDown, FaBed, FaCouch } from "react-icons/fa";
+import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight, FaSlidersH, FaDollarSign, FaSortAmountDown, FaBed, FaCouch, FaGift } from "react-icons/fa";
 import { GiLargeDress, GiRunningShoe, GiWatch, GiHeartNecklace, GiTrousers } from "react-icons/gi";
 import "./AllProductsStyles.css";
 import axios from "axios";
@@ -114,7 +114,9 @@ const AllProducts = () => {
     { id: "all", name: "All Products", icon: <FaShoppingBag /> },
     { id: "cushions", name: "Cushions", icon: <FaCouch /> },
     { id: "bedsets", name: "Bedsets", icon: <FaBed /> },
-    { id: "dohars-quilts", name: "Dohars & Quilts", icon: <FaBed /> }
+    { id: "dohars-quilts", name: "Dohars & Quilts", icon: <FaBed /> },
+    { id: "wish-genie", name: "Wish Genie", icon: <FaGift /> },
+    { id: "mens-shirts", name: "Men's Shirts", icon: <FaTshirt /> }
   ];
 
   const sortOptions = [

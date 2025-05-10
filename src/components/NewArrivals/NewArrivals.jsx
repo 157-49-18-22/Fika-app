@@ -146,7 +146,14 @@ const NewArrivals = () => {
     };
   }, []); // Empty dependency array since we only want this to run once
 
-  const categories = ["all", "cushions", "bedsets", "dohars & quilts"];
+  const categories = [
+    "all",
+    "cushions",
+    "bedsets",
+    "dohars & quilts",
+    "wish genie",
+    "men's shirts"
+  ];
 
   const filteredProducts = activeTab === "all" 
     ? newArrivals 
@@ -369,8 +376,7 @@ const NewArrivals = () => {
           <div className="arrivals-intro-content">
             <h1 className="arrivals-title">Discover Fresh Styles</h1>
             <p className="arrivals-description">
-              Explore our latest collection of fashion-forward pieces designed to elevate your wardrobe. 
-              Every week, we curate new styles that reflect current trends while maintaining timeless appeal.
+            Explore our latestcollection in home décor, stylish mens shirts, and scented candles fresh arrivals for you and your space
             </p>
             <div className="arrivals-features">
               <div className="arrivals-feature-item">

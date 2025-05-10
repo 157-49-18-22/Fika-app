@@ -2,6 +2,7 @@
     height: 950px;
     margin: 0 auto;
     position: relative;
+    /* Removed background image and overlay */
 }
 
 .mint-container {
@@ -17,8 +18,9 @@
 
 /* Main heading styling */
 .heading-container {
-    width: 50%;
+    width: 100%;
     margin-bottom: 3rem;
+    text-align: center;
 }
 
 .main-heading {
@@ -27,6 +29,7 @@
     color: #333;
     line-height: 1.6;
     margin: 0;
+    text-align: center;
 }
 
 /* Description text styling */

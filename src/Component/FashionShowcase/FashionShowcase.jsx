@@ -15,11 +15,9 @@ const FashionShowcase = () => {
             >
               100+
             </h1>
-            <h2 className="main-subtitle">Awesome Collection</h2>
+            <h2 className="main-subtitle">Collection of Inspired Living</h2>
             <p className="main-description">
-              Elevate Your Style With Our Fashion Finds. Discover Your Signature
-              Style At Fashion Avenue. Elevate Your Style With Our Fashion
-              Finds. Discover Your Signature Style At Fashion Avenue.
+            Transform your space with a collection that speaks style and soul. Explore pieces crafted to inspire and elevate everyday living.
             </p>
           </div>
           <div className="shop-nowbtn">

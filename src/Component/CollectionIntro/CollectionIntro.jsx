@@ -37,15 +37,9 @@ const CollectionIntro = () => {
         {/* Left side heading */}
         <div className="heading-container">
           <h1 className="main-heading">
-            ELEVATE YOUR WARDROBE<br />
-            WITH OUR FASHION FINDS
+            YOUR DREAMS ARE WITHIN REACH<br />
+            MANIFEST THEM NOW
           </h1>
-        </div>
-        
-        {/* Right side descriptive text */}
-        <div className="description-container">
-          <p>Elevate Your Style With Our Fashion Finds.</p>
-          <p>Discover Your Signature Style</p>
         </div>
         
         {/* Collection intro inner container */}

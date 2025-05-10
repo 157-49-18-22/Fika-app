@@ -26,12 +26,12 @@ const FashionGrid = () => {
           <div className="our-blog-badge">OUR BLOGS</div>
           <div className="info-content">
             <h2 className="info-title">
-              DIVE INTO A WORLD<br/>
-              OF ENDLESS FASHION<br/>
-              POSSIBILITIES
+            Dive into a world of endless <br/>
+            home décor possibilities<br/>
+            
             </h2>
             <p className="info-text">
-              Elevate Your Style With Our Fashion Finds.<br/>
+            Elevate every corner of your space with style and comfort<br/>
               Discover Your Signature Style At Fika.
             </p>
           </div>

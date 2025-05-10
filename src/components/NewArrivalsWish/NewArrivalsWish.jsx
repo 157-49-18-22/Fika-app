@@ -8,6 +8,7 @@ import "./NewArrivalsWish.css";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import LoginPrompt from "../../components/LoginPrompt/LoginPrompt";
+import WishGenieLogo from '../../assets/Wish Genie.png';
 
 const NewArrivalsWish = () => {
   const [newArrivals, setNewArrivals] = useState([]);
@@ -18,16 +19,16 @@ const NewArrivalsWish = () => {
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const { isAuthenticated } = useAuth();
   const [categoryProducts, setCategoryProducts] = useState({
-    cushions: [],
-    bedsets: [],
-    doharsAndQuilts: []
+    scentedCandles: [],
+    crystalJewellery: [],
+    journals: []
   });
   
   const productsRowRef = useRef(null);
   const categoryRowRefs = {
-    cushions: useRef(null),
-    bedsets: useRef(null),
-    doharsAndQuilts: useRef(null)
+    scentedCandles: useRef(null),
+    crystalJewellery: useRef(null),
+    journals: useRef(null)
   };
   
   const autoScrollTimer = useRef(null);
@@ -53,9 +54,9 @@ const NewArrivalsWish = () => {
 
     // Organize products by categories
     setCategoryProducts({
-      cushions: allProducts.filter(p => p.category === "cushions"),
-      bedsets: allProducts.filter(p => p.category === "bedsets"),
-      doharsAndQuilts: allProducts.filter(p => p.category === "dohars" || p.category === "quilts")
+      scentedCandles: allProducts.filter(p => p.category?.toLowerCase() === "scented candles"),
+      crystalJewellery: allProducts.filter(p => p.category?.toLowerCase() === "crystal jewellery"),
+      journals: allProducts.filter(p => p.category?.toLowerCase() === "journals")
     });
   }, []);
 
@@ -81,7 +82,12 @@ const NewArrivalsWish = () => {
     return () => clearInterval(timerInterval);
   }, []);
 
-  const categories = ["all", "cushions", "bedsets", "dohars & quilts"];
+  const categories = [
+    "all",
+    "scented candles",
+    "crystal jewellery",
+    "journals"
+  ];
 
   const filteredProducts = activeTab === "all" 
     ? newArrivals 
@@ -292,13 +298,16 @@ const NewArrivalsWish = () => {
 
   return (
     <div className="wish-section">
+      {/* Wish Genie Logo */}
+      <div className="wish-logo-container">
+        <img src={WishGenieLogo} alt="Wish Genie Logo" className="wish-genie-logo" />
+      </div>
       {/* Introduction Section */}
       <div className="wish-intro">
         <div className="wish-intro-content">
-          <h1 className="wish-title">Discover Fresh Styles</h1>
+          <h1 className="wish-title">Explore Our Manifestation Products</h1>
           <p className="wish-description">
-            Explore our latest collection of fashion-forward pieces designed to elevate your wardrobe. 
-            Every week, we curate new styles that reflect current trends while maintaining timeless appeal.
+          Wishgenie specialises in high vibration manifestation tools designed to help you align with your highest potential. Whether you are seeking love, success, health, or peace , our carefully curated collection of products help and guide you towards your dreams.
           </p>
           <div className="wish-features">
             <div className="wish-feature-item">
@@ -403,11 +412,11 @@ const NewArrivalsWish = () => {
         <p>
           {activeTab === "all" 
             ? "Browse our complete selection of new arrivals, featuring the latest trends and must-have pieces for the season." 
-            : activeTab === "cushions" 
-            ? "Discover our newest cushions, from elegant designs to casual essentials, all crafted with premium fabrics." 
-            : activeTab === "bedsets" 
-            ? "Complete your look with our just-arrived bedsets, including covers, sheets, and more." 
-            : "Explore our collection of dohars and quilts, perfect for every season and crafted with premium materials for ultimate comfort."}
+            : activeTab === "scented candles" 
+            ? "Discover our newest scented candles, from elegant designs to casual essentials, all crafted with premium fabrics." 
+            : activeTab === "crystal jewellery" 
+            ? "Complete your look with our just-arrived crystal jewellery, including covers, sheets, and more." 
+            : "Explore our collection of journals, perfect for every season and crafted with premium materials for ultimate comfort."}
         </p>
       </div>
 
@@ -426,9 +435,9 @@ const NewArrivalsWish = () => {
 
       {/* Category-specific product sections */}
       <div className="wish-sections-container">
-        {renderProductsContainer("Cushions", categoryProducts.cushions, "cushions")}
-        {renderProductsContainer("Bedsets", categoryProducts.bedsets, "bedsets")}
-        {renderProductsContainer("Dohars & Quilts", categoryProducts.doharsAndQuilts, "doharsAndQuilts")}
+        {renderProductsContainer("Scented Candles", categoryProducts.scentedCandles, "scentedCandles")}
+        {renderProductsContainer("Crystal Jewellery", categoryProducts.crystalJewellery, "crystalJewellery")}
+        {renderProductsContainer("Journals", categoryProducts.journals, "journals")}
       </div>
 
       {/* Shopping Benefits */}
