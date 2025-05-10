@@ -409,15 +409,26 @@ const NewArrivalsWish = () => {
 
       {/* Category Description */}
       <div className="wish-category-description">
-        <p>
-          {activeTab === "all" 
-            ? "Browse our complete selection of new arrivals, featuring the latest trends and must-have pieces for the season." 
-            : activeTab === "scented candles" 
-            ? "Discover our newest scented candles, from elegant designs to casual essentials, all crafted with premium fabrics." 
-            : activeTab === "crystal jewellery" 
-            ? "Complete your look with our just-arrived crystal jewellery, including covers, sheets, and more." 
-            : "Explore our collection of journals, perfect for every season and crafted with premium materials for ultimate comfort."}
-        </p>
+        {activeTab === "all" && (
+          <p>
+            Discover our newest scented candles, from elegant designs to casual essentials, all crafted with premium fabrics. Each candle is designed to bring warmth and ambiance to your space, perfect for relaxation and creating a cozy atmosphere.
+          </p>
+        )}
+        {activeTab === "scented candles" && (
+          <p>
+            Explore our collection of scented candles, each one crafted with care to provide a unique and soothing experience. From calming lavender to invigorating citrus, our candles are made with premium materials to ensure a long-lasting and delightful fragrance.
+          </p>
+        )}
+        {activeTab === "crystal jewellery" && (
+          <p>
+            Discover our stunning crystal jewellery collection, featuring unique pieces that combine elegance with natural beauty. Each item is carefully crafted to bring positive energy and style to your everyday look.
+          </p>
+        )}
+        {activeTab === "journals" && (
+          <p>
+            Explore our selection of beautifully designed journals, perfect for capturing your thoughts and dreams. Each journal is crafted with high-quality materials to inspire creativity and mindfulness.
+          </p>
+        )}
       </div>
 
       {/* Main Horizontal Product Row */}

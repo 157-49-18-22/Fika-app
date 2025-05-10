@@ -38,20 +38,21 @@
   display: flex;
   justify-content: center;
   overflow: hidden;
+  
 }
 
 .genie-img {
   width: 200px;
   height: auto;
   position: absolute;
-  margin-top: -10px;
- 
-  margin-right: 220px;
+  bottom: 50px; /* pushes it upward from bottom */
+  right: 260px;
   z-index: 2;
   opacity: 0;
   animation: genie-appear-rise 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   animation-delay: 0.5s;
 }
+
 
 @keyframes genie-appear-rise {
   0% {
