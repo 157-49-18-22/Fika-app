@@ -35,7 +35,7 @@ const Products = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${config.API_URL}/api/products`);
+      const response = await axios.get('http://13.202.119.111:5000/api/products');
       setProducts(response.data);
       setError(null);
     } catch (err) {
@@ -44,6 +44,7 @@ const Products = () => {
     } finally {
       setLoading(false);
     }
+    console.log(response.data);
   };
 
   const handleInputChange = (e) => {

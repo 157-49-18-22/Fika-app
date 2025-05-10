@@ -70,11 +70,11 @@ const ProductDetails = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${config.API_URL}/api/products/${id}`);
+        const response = await axios.get(`http://13.202.119.111:5000/api/products/${id}`);
         setProduct(response.data);
         
         // Fetch related products
-        const relatedResponse = await axios.get(`${config.API_URL}/api/products`);
+        const relatedResponse = await axios.get('http://13.202.119.111:5000/api/products');
         const related = relatedResponse.data
           .filter(p => p.category === response.data.category && p.id !== response.data.id)
           .slice(0, 4);
@@ -85,10 +85,13 @@ const ProductDetails = () => {
       } finally {
         setLoading(false);
       }
+      console.log(response.data);
     };
 
     fetchProduct();
   }, [id]);
+
+  console.log(response.data);
 
   useEffect(() => {
     // Connect to Socket.IO server
@@ -388,7 +391,7 @@ const ProductDetails = () => {
             </Link>
           </nav>
 
-          <h1 className="product-title">{product.name}</h1>
+          <h1 className="product-title">{product.product_name}</h1>
 
           <div className="product-meta">
             <div className="product-stats">
@@ -399,24 +402,9 @@ const ProductDetails = () => {
                 <FaShoppingBag /> {purchaseCount} people bought this
               </div>
             </div>
-            <div className="rating">
-              {renderStars(product.rating)}
-              <span className="review-count">
-                ({product.reviewsCount} Reviews)
-              </span>
-            </div>
             <div className="product-price">
-              {product.discount ? (
-                <>
-                  <span className="original-price">{formatPrice(product.price)}</span>
-                  <span className="discounted-price">
-                    {formatPrice(product.price * (1 - product.discount / 100))}
-                  </span>
-                  <span className="discount-tag">-{product.discount}%</span>
-                </>
-              ) : (
-                <span className="current-price">{formatPrice(product.price)}</span>
-              )}
+              <span className="current-price">₹{product.mrp}</span>
+              <span className="cost-price">Cost Price: ₹{product.cost_price}</span>
             </div>
           </div>
 
@@ -436,24 +424,14 @@ const ProductDetails = () => {
           </div>
 
           <div className="product-colors">
-            <h3>Available Colors</h3>
+            <h3>Color</h3>
             <div className="color-options">
-              {availableColors.map((color) => (
-                <div
-                  key={color.code}
-                  className={`color-option ${!color.available ? 'unavailable' : ''} ${selectedColor === color.code ? 'selected' : ''}`}
-                  style={{ backgroundColor: color.code }}
-                  onClick={() => handleColorSelect(color)}
-                  title={color.name}
-                />
-              ))}
+              <div
+                className="color-option selected"
+                style={{ backgroundColor: product.color.toLowerCase() }}
+                title={product.color}
+              />
             </div>
-            {colorError && <div className="error-message">{colorError}</div>}
-            {selectedColor && (
-              <div className="selected-color-info">
-                Selected: {availableColors.find(c => c.code === selectedColor)?.name}
-              </div>
-            )}
           </div>
 
           <div className="delivery-check">
@@ -545,10 +523,17 @@ const ProductDetails = () => {
                   <span>{quantity}</span>
                   <button
                     onClick={() => setQuantity((q) => q + 1)}
-                    disabled={quantity >= 10}
+                    disabled={quantity >= product.inventory}
                   >
                     +
                   </button>
+                </div>
+                <div className="inventory-info">
+                  {product.inventory > 0 ? (
+                    <span className="in-stock">In Stock ({product.inventory} available)</span>
+                  ) : (
+                    <span className="out-of-stock">Out of Stock</span>
+                  )}
                 </div>
               </div>
             </div>
@@ -557,8 +542,9 @@ const ProductDetails = () => {
               <button
                 className="main-add-to-cart-btn"
                 onClick={handleAddToCart}
+                disabled={product.inventory <= 0}
               >
-                <FaShoppingCart /> Add to Cart - {formatPrice(product.price * quantity)}
+                <FaShoppingCart /> Add to Cart - ₹{product.mrp * quantity}
               </button>
               <button
                 className={`main-wishlist-btn ${isInWishlist(product.id) ? "in-wishlist" : ""}`}
@@ -627,36 +613,26 @@ const ProductDetails = () => {
           <div className="tab-content">
             {activeTab === "description" && (
               <div className="description">
-                <p>{product.description}</p>
-                <div className="description-features">
-                  <h4>Key Features</h4>
-                  <ul>
-                    <li>Premium quality materials</li>
-                    <li>Handcrafted with attention to detail</li>
-                    <li>Eco-friendly production process</li>
-                    <li>Designed for comfort and style</li>
-                  </ul>
-                </div>
+                <p>{product.product_description}</p>
               </div>
             )}
             {activeTab === "details" && (
               <div className="details">
                 <div className="details-section">
-                  <h4>Material & Care</h4>
-                  <p>
-                    <strong>Material:</strong> {product.material}
-                  </p>
-                  <p>
-                    <strong>Care Instructions:</strong> {product.care}
-                  </p>
+                  <h4>Product Information</h4>
+                  <ul>
+                    <li><strong>Product Code:</strong> {product.product_code}</li>
+                    <li><strong>Category:</strong> {product.category}</li>
+                    <li><strong>Sub Category:</strong> {product.sub_category}</li>
+                    <li><strong>Color:</strong> {product.color}</li>
+                    <li><strong>Material:</strong> {product.material}</li>
+                    <li><strong>Product Details:</strong> {product.product_details}</li>
+                    <li><strong>Dimensions:</strong> {product.dimension}</li>
+                  </ul>
                 </div>
                 <div className="details-section">
-                  <h4>Product Specifications</h4>
-                  <ul>
-                    <li>Weight: {product.weight || "0.5 kg"}</li>
-                    <li>Dimensions: {product.dimensions || "30 x 20 x 10 cm"}</li>
-                    <li>Origin: {product.origin || "Made in USA"}</li>
-                  </ul>
+                  <h4>Care Instructions</h4>
+                  <p>{product.care_instructions}</p>
                 </div>
               </div>
             )}
@@ -797,13 +773,13 @@ const ProductDetails = () => {
                 <div className="product-price">
                   {relatedProduct.discount ? (
                     <>
-                      <span className="original-price">{formatPrice(relatedProduct.price)}</span>
+                      <span className="original-price">{formatPrice(relatedProduct.mrp)}</span>
                       <span className="discounted-price">
-                        {formatPrice(relatedProduct.price * (1 - relatedProduct.discount / 100))}
+                        {formatPrice(relatedProduct.mrp * (1 - relatedProduct.discount / 100))}
                       </span>
                     </>
                   ) : (
-                    <span className="current-price">{formatPrice(relatedProduct.price)}</span>
+                    <span className="current-price">{formatPrice(relatedProduct.mrp)}</span>
                   )}
                 </div>
               </div>
@@ -844,13 +820,13 @@ const ProductDetails = () => {
                   <div className="product-price">
                     {recentProduct.discount ? (
                       <>
-                        <span className="original-price">{formatPrice(recentProduct.price)}</span>
+                        <span className="original-price">{formatPrice(recentProduct.mrp)}</span>
                         <span className="discounted-price">
-                          {formatPrice(recentProduct.price * (1 - recentProduct.discount / 100))}
+                          {formatPrice(recentProduct.mrp * (1 - recentProduct.discount / 100))}
                         </span>
                       </>
                     ) : (
-                      <span className="current-price">{formatPrice(recentProduct.price)}</span>
+                      <span className="current-price">{formatPrice(recentProduct.mrp)}</span>
                     )}
                   </div>
                 </div>
@@ -900,13 +876,13 @@ const ProductDetails = () => {
                   <div className="product-price">
                     {trendingProduct.discount ? (
                       <>
-                        <span className="original-price">{formatPrice(trendingProduct.price)}</span>
+                        <span className="original-price">{formatPrice(trendingProduct.mrp)}</span>
                         <span className="discounted-price">
-                          {formatPrice(trendingProduct.price * (1 - trendingProduct.discount / 100))}
+                          {formatPrice(trendingProduct.mrp * (1 - trendingProduct.discount / 100))}
                         </span>
                       </>
                     ) : (
-                      <span className="current-price">{formatPrice(trendingProduct.price)}</span>
+                      <span className="current-price">{formatPrice(trendingProduct.mrp)}</span>
                     )}
                   </div>
                   <div className="trending-rating">

@@ -48,21 +48,21 @@ const AllProducts = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        let url = 'http://localhost:5000/api/products';
+        let url = 'http://13.202.119.111:5000/api/products';
         
         // Handle category filter
         if (selectedCategory !== "All Products") {
-          url = `http://localhost:5000/api/products/category/${selectedCategory}`;
+          url = `http://13.202.119.111:5000/api/products/category/${selectedCategory}`;
         }
         
         // Handle sub-category filter
         if (selectedSubCategory) {
-          url = `http://localhost:5000/api/products/subcategory/${selectedSubCategory}`;
+          url = `http://13.202.119.111:5000/api/products/subcategory/${selectedSubCategory}`;
         }
         
         // Handle search
         if (searchQuery) {
-          url = `http://localhost:5000/api/products/search?q=${searchQuery}`;
+          url = `http://13.202.119.111:5000/api/products/search?q=${searchQuery}`;
         }
 
         const response = await axios.get(url);
@@ -481,7 +481,7 @@ const AllProducts = () => {
                 >
                   <div className="product-image-container">
                     <img 
-                      src={product.image} 
+                      src={product.image || '/placeholder-image.jpg'} 
                       alt={product.product_name} 
                       className="product-image" 
                       loading="lazy" 
@@ -492,6 +492,7 @@ const AllProducts = () => {
                         className="product-action-btn cart-btn"
                         onClick={(e) => handleAddToCartClick(product, e)}
                         title="Add to Cart"
+                        disabled={product.inventory <= 0}
                       >
                         <FaShoppingCart />
                       </button>
@@ -509,19 +510,12 @@ const AllProducts = () => {
                       >
                         <FaEye />
                       </button>
-                      <button 
-                        className="product-action-btn expand-btn"
-                        onClick={(e) => handleImageClick(product.image, e)}
-                        title="Expand Image"
-                      >
-                        <FaSearch />
-                      </button>
                     </div>
                   </div>
                   
                   <div className="product-info">
                     <h3 className="product-name">{product.product_name}</h3>
-                    
+                    <p className="product-category">{product.category} - {product.sub_category}</p>
                     <div className="product-price">
                       <span className="current-price">
                         ₹{Number(product.mrp).toFixed(2)}

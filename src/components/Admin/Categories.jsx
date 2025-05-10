@@ -1,27 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Categories.css';
 import { FaList, FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
+import axios from 'axios';
 
 const Categories = () => {
-  const [categories, setCategories] = useState([
-    { id: 1, name: 'Coffee', description: 'Hot and cold coffee drinks', status: 'active' },
-    { id: 2, name: 'Tea', description: 'Various tea selections', status: 'active' },
-    { id: 3, name: 'Pastries', description: 'Fresh baked goods', status: 'active' },
-  ]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({ name: '', description: '', status: 'active' });
+  const [form, setForm] = useState({ 
+    category: '', 
+    sub_category: '', 
+    status: 'active' 
+  });
   const [editId, setEditId] = useState(null);
 
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('http://13.202.119.111:5000/api/products');
+      
+      // Extract unique categories and their sub-categories
+      const categoryMap = response.data.reduce((acc, product) => {
+        if (!acc[product.category]) {
+          acc[product.category] = {
+            id: Date.now() + Math.random(), // Generate unique ID
+            category: product.category,
+            sub_categories: new Set(),
+            status: 'active'
+          };
+        }
+        if (product.sub_category) {
+          acc[product.category].sub_categories.add(product.sub_category);
+        }
+        return acc;
+      }, {});
+
+      // Convert Set to Array for sub_categories
+      const categoriesList = Object.values(categoryMap).map(cat => ({
+        ...cat,
+        sub_categories: Array.from(cat.sub_categories)
+      }));
+
+      setCategories(categoriesList);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+      setError('Failed to fetch categories');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const openModal = () => {
-    setForm({ name: '', description: '', status: 'active' });
+    setForm({ category: '', sub_category: '', status: 'active' });
     setEditId(null);
     setShowModal(true);
   };
+
   const openEditModal = (category) => {
-    setForm({ name: category.name, description: category.description, status: category.status });
+    setForm({ 
+      category: category.category, 
+      sub_category: category.sub_categories[0] || '', 
+      status: category.status 
+    });
     setEditId(category.id);
     setShowModal(true);
   };
+
   const closeModal = () => setShowModal(false);
 
   const handleChange = (e) => {
@@ -29,24 +79,46 @@ const Categories = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (editId) {
-      setCategories(categories.map(cat => cat.id === editId ? { ...cat, ...form } : cat));
-    } else {
-      setCategories([
-        ...categories,
-        { ...form, id: Date.now() }
-      ]);
+    try {
+      if (editId) {
+        // Update existing category
+        await axios.put(`http://13.202.119.111:5000/api/products/category/${form.category}`, {
+          category: form.category,
+          sub_category: form.sub_category,
+          status: form.status
+        });
+      } else {
+        // Create new category
+        await axios.post('http://13.202.119.111:5000/api/products', {
+          category: form.category,
+          sub_category: form.sub_category,
+          status: form.status
+        });
+      }
+      setShowModal(false);
+      fetchCategories(); // Refresh the categories list
+    } catch (err) {
+      console.error('Error saving category:', err);
+      setError('Failed to save category');
     }
-    setShowModal(false);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this category?')) {
-      setCategories(categories.filter(cat => cat.id !== id));
+  const handleDelete = async (category) => {
+    if (window.confirm(`Are you sure you want to delete the category "${category.category}"?`)) {
+      try {
+        await axios.delete(`http://13.202.119.111:5000/api/products/category/${category.category}`);
+        fetchCategories(); // Refresh the categories list
+      } catch (err) {
+        console.error('Error deleting category:', err);
+        setError('Failed to delete category');
+      }
     }
   };
+
+  if (loading) return <div className="loading">Loading categories...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <div className="categories-admin-page">
@@ -61,17 +133,24 @@ const Categories = () => {
         {categories.map(category => (
           <div key={category.id} className="category-card">
             <div className="category-header">
-              <h3>{category.name}</h3>
+              <h3>{category.category}</h3>
               <div className="category-actions">
                 <button className="edit-btn" title="Edit Category" onClick={() => openEditModal(category)}>
                   <FaEdit />
                 </button>
-                <button className="delete-btn" title="Delete Category" onClick={() => handleDelete(category.id)}>
+                <button className="delete-btn" title="Delete Category" onClick={() => handleDelete(category)}>
                   <FaTrash />
                 </button>
               </div>
             </div>
-            <p className="category-description">{category.description}</p>
+            <div className="sub-categories">
+              <h4>Sub Categories:</h4>
+              <ul>
+                {category.sub_categories.map((sub, index) => (
+                  <li key={index}>{sub}</li>
+                ))}
+              </ul>
+            </div>
             <span className={`status-badge ${category.status}`}>
               {category.status}
             </span>
@@ -82,62 +161,41 @@ const Categories = () => {
       {showModal && (
         <div className="modal-backdrop">
           <div className="modal">
-            <h3 style={{ color: '#6c47ff', fontWeight: 700, fontSize: '1.35rem', marginBottom: 8, letterSpacing: '0.2px' }}>{editId ? 'Edit Category' : 'Add New Category'}</h3>
-            <div style={{ width: '100%', height: '2px', background: 'linear-gradient(90deg, #6c47ff 30%, #a084ff 100%)', borderRadius: 2, marginBottom: 18, opacity: 0.13 }} />
+            <h3>{editId ? 'Edit Category' : 'Add New Category'}</h3>
             <form className="category-form" onSubmit={handleSubmit}>
-              <label>Name:
-                <input name="name" value={form.name} onChange={handleChange} required />
+              <label>Category Name:
+                <input 
+                  name="category" 
+                  value={form.category} 
+                  onChange={handleChange} 
+                  required 
+                />
               </label>
-              <label>Description:
-                <input name="description" value={form.description} onChange={handleChange} required />
+              <label>Sub Category:
+                <input 
+                  name="sub_category" 
+                  value={form.sub_category} 
+                  onChange={handleChange} 
+                  required 
+                />
               </label>
               <label>Status:
                 <select
                   name="status"
                   value={form.status}
                   onChange={handleChange}
-                  style={{
-                    padding: '10px 12px',
-                    border: '1.5px solid #e0e0e0',
-                    borderRadius: 7,
-                    fontSize: '1rem',
-                    background: '#f7f8fa',
-                    transition: 'border 0.18s',
-                    marginTop: 4,
-                    color: '#222',
-                    outline: 'none',
-                  }}
-                  onFocus={e => e.target.style.border = '1.5px solid #6c47ff'}
-                  onBlur={e => e.target.style.border = '1.5px solid #e0e0e0'}
                 >
-                  <option value="active">active</option>
-                  <option value="inactive">inactive</option>
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
                 </select>
               </label>
               <div className="modal-actions">
-                <button type="submit" style={{
-                  background: 'linear-gradient(90deg, #6c47ff 60%, #a084ff 100%)',
-                  color: '#fff',
-                  border: 'none',
-                  borderRadius: 8,
-                  fontWeight: 600,
-                  fontSize: '1.05rem',
-                  padding: '8px 24px',
-                  cursor: 'pointer',
-                  boxShadow: '0 2px 8px rgba(108,71,255,0.08)',
-                  marginRight: 8
-                }}>{editId ? 'Update' : 'Add'}</button>
-                <button type="button" onClick={closeModal} style={{
-                  background: '#f7f8fa',
-                  color: '#6c47ff',
-                  border: '1.5px solid #e0e0e0',
-                  borderRadius: 8,
-                  fontWeight: 600,
-                  fontSize: '1.05rem',
-                  padding: '8px 24px',
-                  cursor: 'pointer',
-                  transition: 'background 0.2s, border 0.2s'
-                }}>Cancel</button>
+                <button type="submit" className="save-btn">
+                  {editId ? 'Update' : 'Add'}
+                </button>
+                <button type="button" onClick={closeModal} className="cancel-btn">
+                  Cancel
+                </button>
               </div>
             </form>
           </div>

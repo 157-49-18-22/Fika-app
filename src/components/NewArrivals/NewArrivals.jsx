@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaShoppingCart, FaHeart, FaEye, FaChevronLeft, FaChevronRight, FaClock, FaTag, FaGift } from "react-icons/fa";
+import { FaShoppingCart, FaHeart, FaEye, FaChevronLeft, FaChevronRight, FaClock, FaTag, FaGift, FaRegHeart, FaArrowRight } from "react-icons/fa";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
 import "./NewArrivalsSection.css";
@@ -48,7 +48,7 @@ const NewArrivals = () => {
         if (!isMounted) return;
         setLoading(true);
         
-        const response = await axios.get(`${config.API_URL}/api/products`, {
+        const response = await axios.get('http://13.202.119.111:5000/api/products', {
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
@@ -90,8 +90,7 @@ const NewArrivals = () => {
           cushions: products.filter(p => p.category?.toLowerCase() === "cushions"),
           bedsets: products.filter(p => p.category?.toLowerCase() === "bedsets"),
           doharsAndQuilts: products.filter(p => 
-            p.category?.toLowerCase() === "dohars" || 
-            p.category?.toLowerCase() === "quilts"
+            p.category?.toLowerCase() === "dohars & quilts"
           )
         };
         
@@ -257,83 +256,58 @@ const NewArrivals = () => {
 
   // Render product card with optimized image loading
   const renderProductCard = (product) => {
-    if (!product) return null;
-    
     return (
       <div 
         key={product.id} 
-        className="arrivals-product-card"
+        className="product-card"
         onClick={() => navigate(`/product/${product.id}`)}
       >
-        <div className="arrivals-product-image">
+        <div className="product-image-container">
           <img 
             src={product.image || '/placeholder-image.jpg'} 
-            alt={product.product_name || 'Product'} 
-            onError={(e) => handleImageError(e)}
+            alt={product.product_name} 
+            className="product-image" 
             loading="lazy"
+            onError={(e) => handleImageError(e)} 
           />
-          <div className="arrivals-product-actions">
+          
+          <div className="product-actions">
             <button 
-              className="arrivals-action-btn cart-btn" 
+              className="product-action-btn cart-btn"
               onClick={(e) => handleAddToCart(product, e)}
               title="Add to Cart"
+              disabled={product.inventory <= 0}
             >
               <FaShoppingCart />
             </button>
             <button 
-              className={`arrivals-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
+              className={`product-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
               onClick={(e) => handleAddToWishlist(product, e)}
-              title="Add to Wishlist"
+              title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
             >
-              <FaHeart />
+              {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
             </button>
             <button 
-              className="arrivals-action-btn quickview-btn"
+              className="product-action-btn quickview-btn"
               onClick={(e) => handleQuickView(product.id, e)}
               title="Quick View"
             >
               <FaEye />
             </button>
           </div>
-          {product.discount && (
-            <div className="arrivals-discount-badge">
-              -{product.discount}%
-            </div>
-          )}
         </div>
-        <div className="arrivals-product-info">
-          <h3 className="arrivals-product-name">{product.product_name}</h3>
-          <div className="arrivals-product-price">
-            {product.discount ? (
-              <>
-                <span className="arrivals-original-price">₹{product.mrp}</span>
-                <span className="arrivals-discounted-price">
-                  ₹{product.mrp * (1 - product.discount / 100)}
-                </span>
-              </>
-            ) : (
-              <span className="arrivals-current-price">₹{product.mrp}</span>
-            )}
+        
+        <div className="product-info">
+          <h3 className="product-name">{product.product_name}</h3>
+          <p className="product-category">{product.category} - {product.sub_category}</p>
+          <div className="product-price">
+            <span className="current-price">
+              ₹{Number(product.mrp).toFixed(2)}
+            </span>
           </div>
-        </div>
-        <div className="arrivals-hover-details">
-          <div className="arrivals-product-details">
-            <p className="arrivals-material">{product.material}</p>
-            <div className="arrivals-available-sizes">
-              {product.dimension && <span className="arrivals-size-badge">{product.dimension}</span>}
-            </div>
-            <div className="arrivals-colors-available">
-              {product.color && (
-                <span 
-                  className="arrivals-color-swatch" 
-                  style={{ backgroundColor: product.color.toLowerCase() }}
-                  title={product.color}
-                ></span>
-              )}
-            </div>
-          </div>
-          <button className="arrivals-shop-now-btn" onClick={e => { e.stopPropagation(); navigate(`/product/${product.id}`); }}>
-            Shop Now
+          
+          <button className="shop-now-btn">
+            Shop Now <FaArrowRight className="" />
           </button>
         </div>
       </div>

@@ -10,10 +10,12 @@ const Users = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
-    role: 'user',
-    status: 'active'
+    gender: 'male',
+    dateOfBirth: '',
+    contactNumber: ''
   });
 
   useEffect(() => {
@@ -23,7 +25,7 @@ const Users = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://13.202.119.111:5000/api/admin/users');
+      const response = await axios.get('http://13.202.119.111:5000/api/users');
       setUsers(response.data);
       setError(null);
     } catch (err) {
@@ -47,18 +49,20 @@ const Users = () => {
     try {
       if (selectedUser) {
         // Update existing user
-        await axios.put(`http://13.202.119.111:5000/api/admin/users/${selectedUser.id}`, formData);
+        await axios.put(`http://13.202.119.111:5000/api/users/${selectedUser.id}`, formData);
       } else {
         // Create new user
-        await axios.post('http://13.202.119.111:5000/api/admin/users', formData);
+        await axios.post('http://13.202.119.111:5000/api/users', formData);
       }
       setShowModal(false);
       setSelectedUser(null);
       setFormData({
-        name: '',
+        firstName: '',
+        lastName: '',
         email: '',
-        role: 'user',
-        status: 'active'
+        gender: 'male',
+        dateOfBirth: '',
+        contactNumber: ''
       });
       fetchUsers();
     } catch (err) {
@@ -70,10 +74,12 @@ const Users = () => {
   const handleEdit = (user) => {
     setSelectedUser(user);
     setFormData({
-      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
-      role: user.role,
-      status: user.status
+      gender: user.gender,
+      dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : '',
+      contactNumber: user.contactNumber || ''
     });
     setShowModal(true);
   };
@@ -81,13 +87,18 @@ const Users = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        await axios.delete(`http://13.202.119.111:5000/api/admin/users/${id}`);
+        await axios.delete(`http://13.202.119.111:5000/api/users/${id}`);
         fetchUsers();
       } catch (err) {
         console.error('Error deleting user:', err);
         setError('Failed to delete user');
       }
     }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Not set';
+    return new Date(dateString).toLocaleDateString();
   };
 
   if (loading) return <div className="loading">Loading...</div>;
@@ -108,22 +119,22 @@ const Users = () => {
             <tr>
               <th>Name</th>
               <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
+              <th>Gender</th>
+              <th>Contact</th>
+              <th>Date of Birth</th>
+              <th>Joined Date</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.map(user => (
               <tr key={user.id}>
-                <td>{user.name}</td>
+                <td>{`${user.firstName} ${user.lastName}`}</td>
                 <td>{user.email}</td>
-                <td>{user.role}</td>
-                <td>
-                  <span className={`status-badge ${user.status}`}>
-                    {user.status}
-                  </span>
-                </td>
+                <td>{user.gender}</td>
+                <td>{user.contactNumber || 'Not set'}</td>
+                <td>{formatDate(user.dateOfBirth)}</td>
+                <td>{formatDate(user.created_at)}</td>
                 <td className="action-buttons">
                   <button 
                     className="edit-btn"
@@ -150,11 +161,21 @@ const Users = () => {
             <h3>{selectedUser ? 'Edit User' : 'Add New User'}</h3>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label>Name</label>
+                <label>First Name</label>
                 <input
                   type="text"
-                  name="name"
-                  value={formData.name}
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Last Name</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
                   onChange={handleInputChange}
                   required
                 />
@@ -170,28 +191,37 @@ const Users = () => {
                 />
               </div>
               <div className="form-group">
-                <label>Role</label>
+                <label>Gender</label>
                 <select
-                  name="role"
-                  value={formData.role}
+                  name="gender"
+                  value={formData.gender}
                   onChange={handleInputChange}
                   required
                 >
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
                 </select>
               </div>
               <div className="form-group">
-                <label>Status</label>
-                <select
-                  name="status"
-                  value={formData.status}
+                <label>Date of Birth</label>
+                <input
+                  type="date"
+                  name="dateOfBirth"
+                  value={formData.dateOfBirth}
                   onChange={handleInputChange}
-                  required
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
+                />
+              </div>
+              <div className="form-group">
+                <label>Contact Number</label>
+                <input
+                  type="tel"
+                  name="contactNumber"
+                  value={formData.contactNumber}
+                  onChange={handleInputChange}
+                  pattern="[0-9]{10}"
+                  title="Please enter a valid 10-digit phone number"
+                />
               </div>
               <div className="modal-buttons">
                 <button type="submit" className="save-btn">
@@ -204,10 +234,12 @@ const Users = () => {
                     setShowModal(false);
                     setSelectedUser(null);
                     setFormData({
-                      name: '',
+                      firstName: '',
+                      lastName: '',
                       email: '',
-                      role: 'user',
-                      status: 'active'
+                      gender: 'male',
+                      dateOfBirth: '',
+                      contactNumber: ''
                     });
                   }}
                 >
