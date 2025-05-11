@@ -11,7 +11,9 @@ import axios from "axios";
 const CATEGORY_SUBCATEGORIES = {
   "Cushions": ["Cushion Cover"],
   "Bedsets": ["Bedcover", "Bedsheet"],
-  "Dohars & Quilts": ["Baby Quilts", "Dohar", "Quilt"]
+  "Dohars & Quilts": ["Baby Quilts", "Dohar", "Quilt"],
+  "Wish Genie": ["Scented Candles", "Crystal Jewellery", "Journals"],
+  "Men's Shirts": ["Formal Shirts", "Casual Shirts", "Denim Shirts", "Printed Shirts", "Linen Shirts"]
 };
 
 const AllProducts = () => {
@@ -308,7 +310,7 @@ const AllProducts = () => {
               <button className="close-filters" onClick={() => setFiltersVisible(false)}>×</button>
             </div>
             {/* Show sub-category dropdown if a main category is selected, else show rating filter */}
-            {selectedCategory !== "All Products" && subCategories.length > 0 ? (
+            {selectedCategory !== "All Products" && selectedCategory !== "Wish Genie" && subCategories.length > 0 ? (
               <div className="filter-group">
                 <h4>Sub-category</h4>
                 <div className="subcategory-options">
@@ -337,33 +339,65 @@ const AllProducts = () => {
                 </div>
               </div>
             ) : (
-              <div className="filter-group">
-                <h4><FaStar /> Minimum Rating</h4>
-                <div className="rating-options">
-                  {[4, 3, 2, 1].map((star) => (
-                    <label key={star} className="rating-checkbox">
+              selectedCategory === "Wish Genie" && subCategories.length > 0 ? (
+                <div className="filter-group wish-genie-subcategories">
+                  <h4>Sub-category</h4>
+                  <div className="subcategory-options">
+                    <label className="subcategory-checkbox">
                       <input
                         type="radio"
-                        name="minRating"
-                        value={star}
-                        checked={minRating === star}
-                        onChange={() => setMinRating(star)}
+                        name="subCategory"
+                        value=""
+                        checked={selectedSubCategory === ""}
+                        onChange={() => setSelectedSubCategory("")}
                       />
-                      {star} stars & up
+                      <span>All</span>
                     </label>
-                  ))}
-                  <label className="rating-checkbox">
-                    <input
-                      type="radio"
-                      name="minRating"
-                      value={0}
-                      checked={minRating === 0}
-                      onChange={() => setMinRating(0)}
-                    />
-                    Any
-                  </label>
+                    {subCategories.map((sub) => (
+                      <label key={sub} className="subcategory-checkbox">
+                        <input
+                          type="radio"
+                          name="subCategory"
+                          value={sub}
+                          checked={selectedSubCategory === sub}
+                          onChange={() => setSelectedSubCategory(sub)}
+                        />
+                        <span>{sub}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              ) : (
+                selectedCategory !== "Wish Genie" && (
+                  <div className="filter-group">
+                    <h4><FaStar /> Minimum Rating</h4>
+                    <div className="rating-options">
+                      {[4, 3, 2, 1].map((star) => (
+                        <label key={star} className="rating-checkbox">
+                          <input
+                            type="radio"
+                            name="minRating"
+                            value={star}
+                            checked={minRating === star}
+                            onChange={() => setMinRating(star)}
+                          />
+                          {star} stars & up
+                        </label>
+                      ))}
+                      <label className="rating-checkbox">
+                        <input
+                          type="radio"
+                          name="minRating"
+                          value={0}
+                          checked={minRating === 0}
+                          onChange={() => setMinRating(0)}
+                        />
+                        Any
+                      </label>
+                    </div>
+                  </div>
+                )
+              )
             )}
             
             {/* On Sale & In Stock Only */}
