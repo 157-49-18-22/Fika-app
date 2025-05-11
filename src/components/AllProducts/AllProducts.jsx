@@ -81,6 +81,8 @@ const AllProducts = () => {
     fetchProducts();
   }, [selectedCategory, selectedSubCategory, searchQuery]);
 
+  console.log('Products data:', products);
+
   // Get sub-categories for the selected category
   const subCategories = CATEGORY_SUBCATEGORIES[selectedCategory] || [];
 
