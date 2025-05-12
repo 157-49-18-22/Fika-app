@@ -208,14 +208,16 @@ const Contact = () => {
             <motion.div className="contact-details-row">
               <motion.div className="contact-details-col" variants={itemVariants}>
                 <FaMapMarkerAlt size={32} />
-                <h3>Headquarters</h3>
+                <h3>Office</h3>
                 <p>Corporate Office- B-206, 2nd Floor, Puri High Street, Sec-81,<br />Faridabad, Haryana-121004<br />INDIA</p>
               </motion.div>
-              {/* <motion.div className="contact-details-col" variants={itemVariants}>
+              <motion.div className="contact-details-col" variants={itemVariants}>
                 <FaPhoneAlt size={32} />
-                <h3>Phone</h3>
-                <p><br />Monday-Thursday: 08-16.55<br />Friday: 08-15</p>
-              </motion.div> */}
+                <h3>Whatsapp Contact
+                  
+                </h3>
+                <p>+91 9355031087<br />Mon-Sat: 10 AM-6 PM</p>
+              </motion.div>
               <motion.div className="contact-details-col" variants={itemVariants}>
                 <FaEnvelope size={32} />
                 <h3>Mail</h3>
