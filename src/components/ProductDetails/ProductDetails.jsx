@@ -71,12 +71,37 @@ const ProductDetails = () => {
       try {
         setLoading(true);
         const response = await axios.get(`http://13.202.119.111:5000/api/products/${id}`);
-        setProduct(response.data);
-        
+        // Normalize product data
+        const raw = response.data;
+        console.log(raw);
+        const normalized = {
+          ...raw,
+          image: raw.image || '/placeholder-image.jpg',
+          reviews: raw.reviews || [],
+          reviewsCount: raw.reviewsCount || 0,
+          discount: raw.discount || 0,
+          isNew: raw.isNew || false,
+          sizes: raw.sizes || [],
+          rating: raw.rating || 4.5,
+          mrp: Number(raw.mrp) || 0,
+          cost_price: Number(raw.cost_price) || 0,
+          color: raw.color || 'N/A',
+          product_description: raw.product_description || '',
+          product_details: raw.product_details || '',
+          material: raw.material || '',
+          dimension: raw.dimension || '',
+          care_instructions: raw.care_instructions || '',
+          inventory: raw.inventory || 0,
+          product_name: raw.product_name || '',
+          product_code: raw.product_code || '',
+          category: raw.category || '',
+          sub_category: raw.sub_category || '',
+        };
+        setProduct(normalized);
         // Fetch related products
         const relatedResponse = await axios.get('http://13.202.119.111:5000/api/products');
         const related = relatedResponse.data
-          .filter(p => p.category === response.data.category && p.id !== response.data.id)
+          .filter(p => p.category === raw.category && p.id !== raw.id)
           .slice(0, 4);
         setRelatedProducts(related);
       } catch (err) {
@@ -85,13 +110,10 @@ const ProductDetails = () => {
       } finally {
         setLoading(false);
       }
-      console.log(response.data);
     };
 
     fetchProduct();
   }, [id]);
-
-  console.log(response.data);
 
   useEffect(() => {
     // Connect to Socket.IO server

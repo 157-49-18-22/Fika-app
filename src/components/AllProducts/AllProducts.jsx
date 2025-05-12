@@ -116,11 +116,11 @@ const AllProducts = () => {
 
   const categories = [
     { id: "all", name: "All Products", icon: <FaShoppingBag /> },
-    { id: "cushions", name: "Cushions", icon: <FaCouch /> },
-    { id: "bedsets", name: "Bedsets", icon: <FaBed /> },
-    { id: "dohars-quilts", name: "Dohars & Quilts", icon: <FaBed /> },
+    { id: "Cushion Covers", name: "Cushion Covers", icon: <FaCouch /> },
+    { id: "Bedsets", name: "Bedsets", icon: <FaBed /> },
+    { id: "Dohars & Quilts", name: "Dohars & Quilts", icon: <FaBed /> },
+    { id: "Bags & Pouches", name: "Bags & Pouches", icon: <FaTshirt /> },
     { id: "wish-genie", name: "Wish Genie", icon: <FaGift /> },
-    { id: "mens-shirts", name: "Men's Shirts", icon: <FaTshirt /> }
   ];
 
   const sortOptions = [
@@ -280,7 +280,7 @@ const AllProducts = () => {
         <div className="category-bar-horizontal">
           {categories.map((category) => (
             <button
-              key={category.id}
+              key={category.name}
               className={`category-btn-horizontal ${selectedCategory === category.name ? "active" : ""}`}
               onClick={() => {
                 setSelectedCategory(category.name);

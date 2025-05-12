@@ -211,11 +211,11 @@ const Contact = () => {
                 <h3>Headquarters</h3>
                 <p>Corporate Office- B-206, 2nd Floor, Puri High Street, Sec-81,<br />Faridabad, Haryana-121004<br />INDIA</p>
               </motion.div>
-              <motion.div className="contact-details-col" variants={itemVariants}>
+              {/* <motion.div className="contact-details-col" variants={itemVariants}>
                 <FaPhoneAlt size={32} />
                 <h3>Phone</h3>
-                <p>+65 4415 4294<br />Monday-Thursday: 08-16.55<br />Friday: 08-15</p>
-              </motion.div>
+                <p><br />Monday-Thursday: 08-16.55<br />Friday: 08-15</p>
+              </motion.div> */}
               <motion.div className="contact-details-col" variants={itemVariants}>
                 <FaEnvelope size={32} />
                 <h3>Mail</h3>

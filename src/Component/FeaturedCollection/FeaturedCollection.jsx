@@ -1,69 +1,53 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './FeaturedCollection.css';
+import config from '../../config';
 
 const FeaturedCollection = () => {
   const navigate = useNavigate();
-  const [activeIndex, setActiveIndex] = useState(3);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [enteringCardId, setEnteringCardId] = useState(null);
-  const lastIndex = useRef(3);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const lastIndex = useRef(0);
 
-  const products = [
-    {
-      id: 1,
-      image: '/image-1.png',
-      title: 'Floral Pink Pillowcase',
-      price: '48.75',
-      isNew: false
-    },
-    {
-      id: 2,
-      image: '/image-2.png',
-      title: 'Colorful Embroidered Pillowcase',
-      price: '52.99',
-      isNew: false
-    },
-    {
-      id: 3,
-      image: '/image-3.png',
-      title: 'Blue Pattern Pillowcase',
-      price: '45.50',
-      isNew: false
-    },
-    {
-      id: 4,
-      image: '/image-4.png',
-      title: 'Orange Embroidered Pillowcase',
-      price: '120.25',
-      isNew: true
-    },
-    {
-      id: 5,
-      image: '/image-5.png',
-      title: 'Colorful Cushion Set',
-      price: '89.99',
-      isNew: false
-    },
-    {
-      id: 6,
-      image: '/image-6.png',
-      title: 'Kids Pattern Pillowcase',
-      price: '35.50',
-      isNew: false
-    },
-    {
-      id: 7,
-      image: '/image-4.png',
-      title: 'Golden Embroidered Cushion',
-      price: '65.75',
-      isNew: false
-    }
-  ];
+  // Fetch products from the backend
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get('http://13.202.119.111:5000/api/products');
+        
+        // Get products added in the last 30 days as featured
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        
+        const featuredProducts = response.data.filter(product => {
+          if (!product.created_at) return true;
+          const productDate = new Date(product.created_at);
+          return productDate >= thirtyDaysAgo;
+        });
+
+        setProducts(featuredProducts);
+        setError(null);
+      } catch (err) {
+        setError('Error fetching products. Please try again later.');
+        console.error('Error fetching products:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   // Create an extended array for infinite scrolling illusion
   const extendedProducts = useMemo(() => {
+    if (products.length === 0) return [];
     // Create copies of the products to add before and after the original array
     const before = products.slice(-3).map(p => ({ ...p, id: `before-${p.id}` }));
     const after = products.slice(0, 3).map(p => ({ ...p, id: `after-${p.id}` }));
@@ -74,7 +58,7 @@ const FeaturedCollection = () => {
 
   // Advanced rotation handling for infinite loop effect
   const rotateCarousel = useCallback(() => {
-    if (isTransitioning) return;
+    if (isTransitioning || productsLength === 0) return;
     
     setIsTransitioning(true);
     
@@ -97,14 +81,14 @@ const FeaturedCollection = () => {
 
   useEffect(() => {
     let interval;
-    if (isAutoPlay) {
+    if (isAutoPlay && productsLength > 0) {
       interval = setInterval(rotateCarousel, 3000);
     }
     return () => clearInterval(interval);
-  }, [isAutoPlay, rotateCarousel]);
+  }, [isAutoPlay, rotateCarousel, productsLength]);
 
   const handleCardClick = (index) => {
-    if (isTransitioning) return;
+    if (isTransitioning || productsLength === 0) return;
     
     setIsTransitioning(true);
     
@@ -130,6 +114,8 @@ const FeaturedCollection = () => {
   };
 
   const getCardClass = (index) => {
+    if (productsLength === 0) return 'card card-hidden';
+    
     // Calculate the relative position considering the infinite loop
     let position = index - activeIndex;
     
@@ -151,6 +137,8 @@ const FeaturedCollection = () => {
   };
 
   const getVisibleRange = () => {
+    if (productsLength === 0) return [];
+    
     // Return indices for visible cards (active card +/- 3 in each direction)
     const visibleRange = [];
     for (let i = -3; i <= 3; i++) {
@@ -174,6 +162,18 @@ const FeaturedCollection = () => {
     handleCardClick(index);
     navigate('/all-products');
   };
+
+  if (loading) {
+    return <div className="loading">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="error">{error}</div>;
+  }
+
+  if (products.length === 0) {
+    return <div className="no-products">No featured products available</div>;
+  }
 
   return (
     <section className="featured-collection">
@@ -206,18 +206,20 @@ const FeaturedCollection = () => {
             >
               <div className="card-inner">
                 <div className="card-image">
-                  <img src={product.image} alt={product.title} />
-                  {product.isNew && <span className="new-label">NEW</span>}
+                  <img src={product.image} alt={product.product_name} />
+                  {new Date(product.created_at) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) && 
+                    <span className="new-label">NEW</span>
+                  }
                 </div>
                 {index === activeIndex && (
                   <div className="card-info">
                     <div className="price-badge">
                       <div className="price-info">
                         <span className="start-from">Start From</span>
-                        <span className="price"></span>
+                        <span className="price">₹{Number(product.mrp).toFixed(2)}</span>
                       </div>
                     </div>
-                    <button className="shop-btn">
+                    <button className="shop-btn" onClick={() => navigate(`/product/${product.id}`)}>
                       <svg className="shop-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M7.5 7.67V6.7C7.5 4.45 9.31 2.24 11.56 2.03C14.24 1.77 16.5 3.88 16.5 6.51V7.89" stroke="white" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
                         <path d="M9.0001 22H15.0001C19.0201 22 19.7401 20.39 19.9501 18.43L20.7001 12.43C20.9701 9.99 20.2701 8 16.0001 8H8.0001C3.7301 8 3.0301 9.99 3.3001 12.43L4.0501 18.43C4.2601 20.39 4.9801 22 9.0001 22Z" stroke="white" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
