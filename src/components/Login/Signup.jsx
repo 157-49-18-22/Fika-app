@@ -5,9 +5,10 @@ import { useAuth } from '../../context/AuthContext';
 import './Login.css';
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import fikaLogo from '/fika_logo1.png';;
 
 const sliderImages = [
-  'https://images.unsplash.com/photo-1540638349517-3abd5afc5847?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Modern geometric cushions
+  'https://images.unsplash.com/photo-1526827826797-7b05204a22ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',  // Modern geometric cushions
   'https://images.unsplash.com/photo-1579656381226-5fc0f0100c3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Cozy textured cushions
   'https://images.unsplash.com/photo-1567225557594-88d73e55f2cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Designer pattern cushions
 ];
@@ -218,18 +219,17 @@ const Signup = () => {
             </div>
           </div>
           <div className="slider-overlay">
-            <div className="slider-logo">
-              FIKA
-              <div className="time-display">
-                <FaClock className="logo-watch" />
-                <span className="time-text">{formatTime(currentTime)}</span>
-              </div>
+            <div className="slider-logo" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '12px'}}>
+              <img src={fikaLogo} alt="Fika Logo" style={{width: '90px', bottom:'50px',marginRight:'330px',
+              }} />
+             
             </div>
             <div className="slider-caption">
               <div>Capturing Moments,<br/>Creating Memories</div>
             </div>
           </div>
         </div>
+       
         {/* Right: Signup Form */}
         <div className="login-form-dark">
           <div className="login-form-title">Create an account</div>
