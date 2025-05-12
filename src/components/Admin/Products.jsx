@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import './Products.css';
-import config from '../../config';
+import { db } from '../../firebase/config';
+import { 
+  collection, 
+  getDocs, 
+  doc, 
+  setDoc, 
+  updateDoc, 
+  deleteDoc, 
+  serverTimestamp,
+  query,
+  where
+} from 'firebase/firestore';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -35,16 +45,23 @@ const Products = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://13.202.119.111:5000/api/products');
-      setProducts(response.data);
+      const productsRef = collection(db, 'products');
+      const querySnapshot = await getDocs(productsRef);
+      
+      const productsData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      
+      setProducts(productsData);
       setError(null);
+      console.log('Fetched products from Firebase:', productsData);
     } catch (err) {
-      console.error('Error fetching products:', err);
+      console.error('Error fetching products from Firebase:', err);
       setError('Failed to fetch products');
     } finally {
       setLoading(false);
     }
-    console.log(response.data);
   };
 
   const handleInputChange = (e) => {
@@ -58,13 +75,60 @@ const Products = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Convert numeric fields to numbers
+      const numericFormData = {
+        ...formData,
+        cost_price: Number(formData.cost_price),
+        inventory: Number(formData.inventory),
+        mrp: Number(formData.mrp),
+        discount: formData.discount ? Number(formData.discount) : 0
+      };
+
       if (selectedProduct) {
         // Update existing product
-        await axios.put(`${config.API_URL}/api/products/${selectedProduct.id}`, formData);
+        console.log('Updating product with ID:', selectedProduct.id, typeof selectedProduct.id);
+        
+        if (typeof selectedProduct.id === 'number') {
+          // If ID is a number, handle as a string or find the document by query
+          const productsRef = collection(db, 'products');
+          const q = query(productsRef, where('id', '==', selectedProduct.id));
+          const querySnapshot = await getDocs(q);
+          
+          if (!querySnapshot.empty) {
+            const docRef = querySnapshot.docs[0].ref;
+            await updateDoc(docRef, {
+              ...numericFormData,
+              updatedAt: serverTimestamp()
+            });
+            console.log('Product updated in Firebase by numeric ID:', selectedProduct.id);
+          } else {
+            throw new Error(`Product with numeric ID ${selectedProduct.id} not found`);
+          }
+        } else {
+          // If ID is a string (document ID), update directly
+          const productRef = doc(db, 'products', selectedProduct.id);
+          await updateDoc(productRef, {
+            ...numericFormData,
+            updatedAt: serverTimestamp()
+          });
+          console.log('Product updated in Firebase by document ID:', selectedProduct.id);
+        }
       } else {
-        // Create new product
-        await axios.post(`${config.API_URL}/api/products`, formData);
+        // Create new product with a unique ID
+        const newProductRef = doc(collection(db, 'products'));
+        // Generate a new numeric ID for the product
+        const highestId = products.reduce((max, product) => 
+          (product.id && typeof product.id === 'number' && product.id > max) ? product.id : max, 0);
+        
+        await setDoc(newProductRef, {
+          ...numericFormData,
+          id: highestId + 1, // Ensure a unique numeric ID for compatibility
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+        console.log('New product added to Firebase:', newProductRef.id);
       }
+      
       setShowModal(false);
       setSelectedProduct(null);
       setFormData({
@@ -84,31 +148,33 @@ const Products = () => {
         discount: '',
         image: ''
       });
+      
+      // Refresh the products list
       fetchProducts();
     } catch (err) {
-      console.error('Error saving product:', err);
-      setError('Failed to save product');
+      console.error('Error saving product to Firebase:', err);
+      setError('Failed to save product: ' + err.message);
     }
   };
 
   const handleEdit = (product) => {
     setSelectedProduct(product);
     setFormData({
-      product_name: product.product_name,
-      category: product.category,
-      sub_category: product.sub_category,
-      product_code: product.product_code,
-      color: product.color,
-      product_description: product.product_description,
-      material: product.material,
-      product_details: product.product_details,
-      dimension: product.dimension,
-      care_instructions: product.care_instructions,
-      cost_price: product.cost_price,
-      inventory: product.inventory,
-      mrp: product.mrp,
+      product_name: product.product_name || '',
+      category: product.category || '',
+      sub_category: product.sub_category || '',
+      product_code: product.product_code || '',
+      color: product.color || '',
+      product_description: product.product_description || '',
+      material: product.material || '',
+      product_details: product.product_details || '',
+      dimension: product.dimension || '',
+      care_instructions: product.care_instructions || '',
+      cost_price: product.cost_price || '',
+      inventory: product.inventory || '',
+      mrp: product.mrp || '',
       discount: product.discount || '',
-      image: product.image
+      image: product.image || ''
     });
     setShowModal(true);
   };
@@ -116,10 +182,12 @@ const Products = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        await axios.delete(`${config.API_URL}/api/products/${id}`);
+        const productRef = doc(db, 'products', id);
+        await deleteDoc(productRef);
+        console.log('Product deleted from Firebase:', id);
         fetchProducts();
       } catch (err) {
-        console.error('Error deleting product:', err);
+        console.error('Error deleting product from Firebase:', err);
         setError('Failed to delete product');
       }
     }

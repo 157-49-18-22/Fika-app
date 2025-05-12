@@ -23,10 +23,31 @@ import {
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
 import "./ProductDetails.css";
-import axios from "axios";
 import { useAuth } from '../../context/AuthContext';
 import LoginPrompt from '../LoginPrompt/LoginPrompt';
 import config from '../../config';
+import { db } from '../../firebase/config';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+
+const getAllProducts = async () => {
+  try {
+    const productsRef = collection(db, 'products');
+    const querySnapshot = await getDocs(productsRef);
+    return querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+  } catch (error) {
+    console.error('Error fetching all products:', error);
+    return [];
+  }
+};
+
+const formatPrice = (price) => {
+  const numPrice = Number(price);
+  if (isNaN(numPrice)) return '₹0.00';
+  return `₹${numPrice.toFixed(2)}`;
+};
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -65,17 +86,35 @@ const ProductDetails = () => {
   const [viewerCount, setViewerCount] = useState(0);
   const [purchaseCount, setPurchaseCount] = useState(0);
   const socketRef = useRef();
+  const [recentlyViewedProducts, setRecentlyViewedProducts] = useState([]);
+  const [trendingProducts, setTrendingProducts] = useState([]);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://13.202.119.111:5000/api/products/${id}`);
-        // Normalize product data
-        const raw = response.data;
-        console.log(raw);
+        console.log('Fetching product with ID:', id); // Debug log
+
+        // Fetch product from Firestore using numeric ID
+        const productsRef = collection(db, 'products');
+        const q = query(productsRef, where('id', '==', parseInt(id)));
+        const querySnapshot = await getDocs(q);
+        
+        if (querySnapshot.empty) {
+          console.log('Product not found in Firestore'); // Debug log
+          setError('Product not found');
+          setLoading(false);
+          return;
+        }
+
+        // Get the first matching document
+        const productDoc = querySnapshot.docs[0];
+        const raw = productDoc.data();
+        console.log('Raw product data:', raw); // Debug log
+        
         const normalized = {
           ...raw,
+          id: productDoc.id,
           image: raw.image || '/placeholder-image.jpg',
           reviews: raw.reviews || [],
           reviewsCount: raw.reviewsCount || 0,
@@ -97,11 +136,18 @@ const ProductDetails = () => {
           category: raw.category || '',
           sub_category: raw.sub_category || '',
         };
+        console.log('Normalized product data:', normalized); // Debug log
         setProduct(normalized);
-        // Fetch related products
-        const relatedResponse = await axios.get('http://13.202.119.111:5000/api/products');
-        const related = relatedResponse.data
-          .filter(p => p.category === raw.category && p.id !== raw.id)
+
+        // Fetch related products from Firestore
+        const relatedQuery = query(
+          productsRef,
+          where('category', '==', raw.category)
+        );
+        const relatedSnapshot = await getDocs(relatedQuery);
+        const related = relatedSnapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .filter(p => p.id !== parseInt(id))
           .slice(0, 4);
         setRelatedProducts(related);
       } catch (err) {
@@ -112,7 +158,9 @@ const ProductDetails = () => {
       }
     };
 
-    fetchProduct();
+    if (id) {
+      fetchProduct();
+    }
   }, [id]);
 
   useEffect(() => {
@@ -157,6 +205,25 @@ const ProductDetails = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const fetchAllProducts = async () => {
+      const products = await getAllProducts();
+      // Filter out current product and get recently viewed
+      const filteredProducts = products.filter(p => p.id !== product?.id);
+      setRecentlyViewedProducts(filteredProducts.slice(0, 4));
+      
+      // Get trending products (sorted by rating)
+      const trending = [...filteredProducts]
+        .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+        .slice(0, 4);
+      setTrendingProducts(trending);
+    };
+
+    if (product) {
+      fetchAllProducts();
+    }
+  }, [product]);
 
   if (loading) {
     return <div className="loading">Loading...</div>;
@@ -206,31 +273,45 @@ const ProductDetails = () => {
   };
 
   const handleAddToCart = (e) => {
+    console.log('Add to cart button clicked');
     e.preventDefault();
     e.stopPropagation();
     
     if (!isAuthenticated) {
+      console.log('User not authenticated, showing login prompt');
       setShowLoginPrompt(true);
       return;
     }
     
-    if (!selectedColor) {
-      setColorError("Please select a color");
-      return;
-    }
-    if (!selectedSize) {
-      setSizeError("Please select a size");
-      return;
-    }
+    // Log product data for debugging
+    console.log('Product data:', {
+      id: product.id,
+      name: product.product_name,
+      price: product.mrp,
+      sizes: product.sizes,
+      color: product.color
+    });
     
+    // Create the product object to add to cart
     const productToAdd = {
-      ...product,
-      selectedColor,
-      selectedSize,
-      quantity
+      id: product.id,
+      name: product.product_name,
+      price: product.mrp,
+      discount: product.discount || 0,
+      image: product.image || '/placeholder-image.jpg',
+      category: product.category,
+      size: selectedSize || 'Standard',
+      quantity: quantity,
+      color: product.color || 'Default',
+      product_code: product.product_code
     };
     
+    console.log('Adding to cart:', productToAdd);
+    
+    // Add to cart - no need for async/await
     addToCart(productToAdd);
+    
+    // Show success message
     setShowSuccessMessage(true);
     setTimeout(() => setShowSuccessMessage(false), 3000);
   };
@@ -366,10 +447,6 @@ const ProductDetails = () => {
         </div>
       </div>
     );
-  };
-
-  const formatPrice = (price) => {
-    return `₹${price.toFixed(2)}`;
   };
 
   const getSizeWidth = (size) => {
@@ -813,107 +890,100 @@ const ProductDetails = () => {
       <div className="recently-viewed">
         <h2>Recently Viewed</h2>
         <div className="recently-viewed-grid">
-          {getAllProducts()
-            .filter((p) => p.id !== product.id)
-            .slice(0, 4)
-            .map((recentProduct) => (
-              <div key={recentProduct.id} className="recent-product-card">
-                <div className="recent-product-image">
-                  <img src={recentProduct.image} alt={recentProduct.name} />
-                  <div className="product-actions">
-                    <button
-                      className={`action-btn wishlist-btn ${
-                        isInWishlist(recentProduct.id) ? "active" : ""
-                      }`}
-                      onClick={(e) => handleRelatedProductAction(e, 'wishlist', recentProduct)}
-                    >
-                      <FaHeart />
-                    </button>
-                    <button
-                      className="action-btn quick-view-btn"
-                      onClick={(e) => handleQuickView(recentProduct.id, e)}
-                    >
-                      <FaEye />
-                    </button>
-                  </div>
-                </div>
-                <div className="recent-product-info">
-                  <h3>{recentProduct.name}</h3>
-                  <div className="product-price">
-                    {recentProduct.discount ? (
-                      <>
-                        <span className="original-price">{formatPrice(recentProduct.mrp)}</span>
-                        <span className="discounted-price">
-                          {formatPrice(recentProduct.mrp * (1 - recentProduct.discount / 100))}
-                        </span>
-                      </>
-                    ) : (
-                      <span className="current-price">{formatPrice(recentProduct.mrp)}</span>
-                    )}
-                  </div>
+          {recentlyViewedProducts.map((recentProduct) => (
+            <div key={recentProduct.id} className="recent-product-card">
+              <div className="recent-product-image">
+                <img src={recentProduct.image} alt={recentProduct.name} />
+                <div className="product-actions">
+                  <button
+                    className={`action-btn wishlist-btn ${
+                      isInWishlist(recentProduct.id) ? "active" : ""
+                    }`}
+                    onClick={(e) => handleRelatedProductAction(e, 'wishlist', recentProduct)}
+                  >
+                    <FaHeart />
+                  </button>
+                  <button
+                    className="action-btn quick-view-btn"
+                    onClick={(e) => handleQuickView(recentProduct.id, e)}
+                  >
+                    <FaEye />
+                  </button>
                 </div>
               </div>
-            ))}
+              <div className="recent-product-info">
+                <h3>{recentProduct.name}</h3>
+                <div className="product-price">
+                  {recentProduct.discount ? (
+                    <>
+                      <span className="original-price">{formatPrice(recentProduct.mrp)}</span>
+                      <span className="discounted-price">
+                        {formatPrice(recentProduct.mrp * (1 - recentProduct.discount / 100))}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="current-price">{formatPrice(recentProduct.mrp)}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
       <div className="trending-products">
         <h2>Trending Now</h2>
         <div className="trending-products-grid">
-          {getAllProducts()
-            .filter((p) => p.id !== product.id)
-            .sort((a, b) => b.rating - a.rating)
-            .slice(0, 4)
-            .map((trendingProduct) => (
-              <div key={trendingProduct.id} className="trending-product-card">
-                <div className="trending-product-image">
-                  <img src={trendingProduct.image} alt={trendingProduct.name} />
-                  <div className="product-actions">
-                    <button
-                      className={`action-btn wishlist-btn ${
-                        isInWishlist(trendingProduct.id) ? "active" : ""
-                      }`}
-                      onClick={(e) => handleRelatedProductAction(e, 'wishlist', trendingProduct)}
-                    >
-                      <FaHeart />
-                    </button>
-                    <button
-                      className="action-btn quick-view-btn"
-                      onClick={(e) => handleQuickView(trendingProduct.id, e)}
-                    >
-                      <FaEye />
-                    </button>
+          {trendingProducts.map((trendingProduct) => (
+            <div key={trendingProduct.id} className="trending-product-card">
+              <div className="trending-product-image">
+                <img src={trendingProduct.image} alt={trendingProduct.name} />
+                <div className="product-actions">
+                  <button
+                    className={`action-btn wishlist-btn ${
+                      isInWishlist(trendingProduct.id) ? "active" : ""
+                    }`}
+                    onClick={(e) => handleRelatedProductAction(e, 'wishlist', trendingProduct)}
+                  >
+                    <FaHeart />
+                  </button>
+                  <button
+                    className="action-btn quick-view-btn"
+                    onClick={(e) => handleQuickView(trendingProduct.id, e)}
+                  >
+                    <FaEye />
+                  </button>
+                </div>
+                {trendingProduct.isNew && (
+                  <div className="new-badge">NEW</div>
+                )}
+                {trendingProduct.discount && (
+                  <div className="discount-badge">
+                    -{trendingProduct.discount}%
                   </div>
-                  {trendingProduct.isNew && (
-                    <div className="new-badge">NEW</div>
-                  )}
-                  {trendingProduct.discount && (
-                    <div className="discount-badge">
-                      -{trendingProduct.discount}%
-                    </div>
+                )}
+              </div>
+              <div className="trending-product-info">
+                <h3>{trendingProduct.name}</h3>
+                <div className="product-price">
+                  {trendingProduct.discount ? (
+                    <>
+                      <span className="original-price">{formatPrice(trendingProduct.mrp)}</span>
+                      <span className="discounted-price">
+                        {formatPrice(trendingProduct.mrp * (1 - trendingProduct.discount / 100))}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="current-price">{formatPrice(trendingProduct.mrp)}</span>
                   )}
                 </div>
-                <div className="trending-product-info">
-                  <h3>{trendingProduct.name}</h3>
-                  <div className="product-price">
-                    {trendingProduct.discount ? (
-                      <>
-                        <span className="original-price">{formatPrice(trendingProduct.mrp)}</span>
-                        <span className="discounted-price">
-                          {formatPrice(trendingProduct.mrp * (1 - trendingProduct.discount / 100))}
-                        </span>
-                      </>
-                    ) : (
-                      <span className="current-price">{formatPrice(trendingProduct.mrp)}</span>
-                    )}
-                  </div>
-                  <div className="trending-rating">
-                    {renderStars(trendingProduct.rating)}
-                    <span>({trendingProduct.reviewsCount})</span>
-                  </div>
+                <div className="trending-rating">
+                  {renderStars(trendingProduct.rating)}
+                  <span>({trendingProduct.reviewsCount})</span>
                 </div>
               </div>
-            ))}
+            </div>
+          ))}
         </div>
       </div>
 
