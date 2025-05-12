@@ -1,13 +1,17 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FaClock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Login.css';
 import { GoogleLogin } from '@react-oauth/google';
+import fikaLogo from '/fika_logo1.png';
+
 
 const sliderImages = [
   'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-  'https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+ 'https://images.unsplash.com/photo-1540551079-b1236c0cd8ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+
   'https://images.unsplash.com/photo-1578500494198-246f612d3b3d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
 ];
 
@@ -19,7 +23,6 @@ const Login = () => {
   const [sliderIndex, setSliderIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -53,40 +56,28 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);
     
     if (!formData.emailOrPhone || !formData.password) {
       setError('Please fill in all fields');
-      setIsLoading(false);
       return;
     }
 
     try {
-      await auth.login({ 
-        email: formData.emailOrPhone, 
-        password: formData.password 
-      });
-      // If successful, the auth context will update and the useEffect will redirect
+      await auth.login({ email: formData.emailOrPhone, password: formData.password });
     } catch (error) {
       setError(error.message || 'Login failed. Please try again.');
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setError('');
-    setIsLoading(true);
-    
-    try {
-      await auth.loginWithGoogle();
-      // If successful, the auth context will update and the useEffect will redirect
-    } catch (error) {
-      setError(error.message || 'Google login failed. Please try again.');
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (auth.isAuthenticated) {
+      if (auth.user && auth.user.isAdmin) {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     }
-  };
+  }, [auth.isAuthenticated, auth.user, navigate]);
 
   // Slider auto-play
   useEffect(() => {
@@ -104,14 +95,9 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
-  // Show loading state from auth context
-  if (auth.loading) {
-    return <div className="loading">Loading...</div>;
-  }
-
   return (
     <div className="login-bg-dark">
-      <div className="login-card-dark">
+      <div className="login-card-dark" >
         <div className="login-slider">
           <div className="slider-img-wrapper">
             {sliderImages.map((img, idx) => (
@@ -136,12 +122,10 @@ const Login = () => {
             </div>
           </div>
           <div className="slider-overlay">
-            <div className="slider-logo">
-              FIKA
-              <div className="time-display">
-                <FaClock className="logo-watch" />
-                <span className="time-text">{formatTime(currentTime)}</span>
-              </div>
+            <div className="slider-logo" style={{display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '12px'}}>
+              <img src={fikaLogo} alt="Fika Logo" style={{width: '90px', bottom:'50px',marginRight:'330px',
+              }} />
+              
             </div>
            
             <div className="slider-caption">
@@ -188,24 +172,41 @@ const Login = () => {
             <div className="forgot-password-link">
               <Link to="/forgot-password">Forgot Password?</Link>
             </div>
-            <button 
-              className="login-form-btn" 
-              type="submit"
-              disabled={isLoading}
-            >
-              {isLoading ? 'Logging in...' : 'Login'}
-            </button>
+            <div className="login-form-check">
+              <input type="checkbox" id="terms" required />
+              <label htmlFor="terms">I agree to the <a href="#">Terms & Conditions</a></label>
+            </div>
+            <button className="login-form-btn" type="submit">Login</button>
           </form>
           <div className="login-form-or">or Login with</div>
-          <div className="login-form-socials">
-            <button 
-              className="social-btn google" 
-              type="button"
-              onClick={handleGoogleLogin}
-              disabled={isLoading}
-            >
-              Google
-            </button>
+          <div className="login-form-socials google-login-center">
+            <GoogleLogin
+              onSuccess={credentialResponse => {
+                fetch('http://localhost:5000/api/auth/google', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ token: credentialResponse.credential })
+                })
+                .then(res => res.json())
+                .then(data => {
+                  if (data.success) {
+                    if (auth && auth.setIsAuthenticated && auth.setCurrentUser) {
+                      auth.setIsAuthenticated(true);
+                      auth.setCurrentUser(data.user);
+                      localStorage.setItem('isAuthenticated', 'true');
+                      localStorage.setItem('currentUser', JSON.stringify(data.user));
+                    }
+                    window.location.href = '/';
+                  } else {
+                    alert('Google Login Failed: ' + data.message);
+                  }
+                });
+              }}
+              onError={() => {
+                alert('Google Login Failed');
+              }}
+              className="custom-google-login-btn"
+            />
           </div>
         </div>
       </div>

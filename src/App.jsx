@@ -35,6 +35,7 @@ import NotificationsAdmin from './components/Admin/Notifications.jsx';
 import Users from './components/Admin/Users.jsx';
 import Categories from './components/Admin/Categories.jsx';
 import Products from './components/Admin/Products.jsx';
+import ReturnsExchange from './pages/ReturnsExchange.jsx';
 
 // Layout component with navbar and footer
 const PageLayout = ({ children }) => {
@@ -92,6 +93,7 @@ function App() {
                 <Route path="/category/:categoryName" element={<PageLayout><CategoryProducts /></PageLayout>} />
                 <Route path="/loader" element={<LoaderPage />} />
                 <Route path="/new-arrivals-wish" element={<PageLayout><NewArrivalsWish /></PageLayout>} />
+                <Route path="/returns-exchange" element={<PageLayout><ReturnsExchange /></PageLayout>} />
 
                 {/* Auth Routes */}
                 <Route path="/login" element={<Login />} />

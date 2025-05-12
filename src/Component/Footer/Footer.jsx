@@ -8,11 +8,12 @@ const Footer = () => {
       <div className="footer-content">
         {/* Left Section */}
         <div className="footer-section">
-          <h3 className="footer-heading">HELP & INFORMATION</h3>
+          <h3 className="footer-heading">CUSTOMER SERVICE</h3>
           <div className="footer-links">
-            <Link to="/help" className="footer-link">Help</Link>
-            <Link to="/track-order" className="footer-link">Track Order</Link>
-            <Link to="/delivery-return" className="footer-link">Delivery & Return</Link>
+            <Link to="/profile" className="footer-link">My Account</Link>
+            <Link to="/returns-exchange" className="footer-link">Returns and Exchange</Link>
+            <Link to="/track-order" className="footer-link">Order Tracking</Link>
+            <Link to="/shipping-policy" className="footer-link">Shipping Policy</Link>
           </div>
           <p className="copyright">Copyright @2025</p>
         </div>

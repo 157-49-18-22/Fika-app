@@ -22,7 +22,7 @@
 }
 
 .lamp-img {
-  width: 260px;
+  width: 180px;
   height: auto;
   position: absolute;
   bottom: 0;
@@ -38,6 +38,8 @@
   display: flex;
   justify-content: center;
   overflow: hidden;
+  margin-bottom: -50px;
+ 
   
 }
 
@@ -45,13 +47,14 @@
   width: 200px;
   height: auto;
   position: absolute;
-  bottom: 50px; /* pushes it upward from bottom */
-  right: 260px;
+  left: 80px;
+
   z-index: 2;
   opacity: 0;
   animation: genie-appear-rise 3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   animation-delay: 0.5s;
 }
+
 
 
 @keyframes genie-appear-rise {
