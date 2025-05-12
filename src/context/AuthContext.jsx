@@ -1,233 +1,171 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged, 
+  GoogleAuthProvider, 
+  signInWithPopup,
+  sendPasswordResetEmail,
+  updateProfile,
+  sendEmailVerification
+} from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../firebase/config';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [verificationCode, setVerificationCode] = useState(null);
-  const [users, setUsers] = useState(() => {
-    // Initialize with users from localStorage or empty array
-    const savedUsers = localStorage.getItem('users');
-    return savedUsers ? JSON.parse(savedUsers) : [];
-  });
-
-  // Add admin user if not exists
-  useEffect(() => {
-    const adminExists = users.some(user => user.email === 'admin@example.com');
-    if (!adminExists) {
-      const adminUser = {
-        email: 'admin@example.com',
-        password: 'admin123',
-        name: 'Admin',
-        isAdmin: true
-      };
-      setUsers(prevUsers => [...prevUsers, adminUser]);
-    }
-  }, []);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Save users to localStorage whenever it changes
-    localStorage.setItem('users', JSON.stringify(users));
-  }, [users]);
-
-  useEffect(() => {
-    // Check if user is already logged in
-    const authStatus = localStorage.getItem('isAuthenticated');
-    const savedUser = localStorage.getItem('currentUser');
-    if (authStatus === 'true' && savedUser) {
-      try {
-        const parsedUser = JSON.parse(savedUser);
-        if (!parsedUser.email) {
-          throw new Error('Invalid user data');
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // Get additional user data from Firestore
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            setCurrentUser({
+              ...user,
+              ...userDoc.data()
+            });
+          } else {
+            setCurrentUser(user);
+          }
+          setIsAuthenticated(true);
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          setCurrentUser(user);
+          setIsAuthenticated(true);
         }
-        setIsAuthenticated(true);
-        setCurrentUser(parsedUser);
-      } catch (error) {
-        // If there's an error parsing the user data, clear it
-        localStorage.removeItem('currentUser');
-        localStorage.setItem('isAuthenticated', 'false');
-        setIsAuthenticated(false);
-        setCurrentUser(null);
-      }
-    }
-    // Listen for localStorage changes (cross-tab and programmatic)
-    const handleStorage = () => {
-      const authStatus = localStorage.getItem('isAuthenticated');
-      const savedUser = localStorage.getItem('currentUser');
-      if (authStatus === 'true' && savedUser) {
-        setIsAuthenticated(true);
-        setCurrentUser(JSON.parse(savedUser));
       } else {
-        setIsAuthenticated(false);
         setCurrentUser(null);
+        setIsAuthenticated(false);
       }
-    };
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
-  }, []);
-
-  const signup = (userData) => {
-    if (!userData.email || !userData.password) {
-      throw new Error('Email and password are required for signup');
-    }
-
-    // Check if user already exists
-    const existingUser = users.find(user => user.email === userData.email);
-    if (existingUser) {
-      throw new Error('User with this email already exists');
-    }
-
-    // Create new user object
-    const newUser = {
-      email: userData.email,
-      password: userData.password, // In a real app, this would be hashed
-      name: userData.name || userData.email.split('@')[0],
-      isAdmin: false, // Default to non-admin
-      ...userData
-    };
-
-    // Add user to users array
-    setUsers(prevUsers => [...prevUsers, newUser]);
-  };
-
-  const login = (credentials) => {
-    if (!credentials.email || !credentials.password) {
-      throw new Error('Email and password are required for login');
-    }
-
-    // Find user by email
-    const user = users.find(user => user.email === credentials.email);
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    // Verify password
-    if (user.password !== credentials.password) {
-      throw new Error('Invalid password');
-    }
-
-    // Set authenticated user
-    const { password, ...userWithoutPassword } = user;
-    setIsAuthenticated(true);
-    setCurrentUser(userWithoutPassword);
-    localStorage.setItem('isAuthenticated', 'true');
-    localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
-  };
-
-  const logout = () => {
-    setIsAuthenticated(false);
-    setCurrentUser(null);
-    localStorage.setItem('isAuthenticated', 'false');
-    localStorage.removeItem('currentUser');
-  };
-
-  const generateVerificationCode = () => {
-    // Generate a 6-digit verification code
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  };
-
-  const sendVerificationEmail = async (email, code) => {
-    try {
-      const response = await fetch('http://localhost:5000/api/email/send-verification', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, code }),
-      });
-
-      const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.message);
-      }
-
-      return {
-        success: true,
-        message: `We have sent a verification code to ${email}. Please check your email and enter the code below.`
-      };
-    } catch (error) {
-      console.error('Failed to send verification email:', error);
-      throw new Error('Failed to send verification email. Please try again.');
-    }
-  };
-
-  const updateUserEmail = async (newEmail) => {
-    if (!currentUser) {
-      throw new Error('No user is currently logged in');
-    }
-
-    // Check if email is already in use
-    const emailExists = users.some(user => user.email === newEmail);
-    if (emailExists) {
-      throw new Error('Email is already in use');
-    }
-
-    // Generate and store verification code
-    const code = generateVerificationCode();
-    setVerificationCode(code);
-
-    // Return verification response
-    return await sendVerificationEmail(newEmail, code);
-  };
-
-  const verifyEmailUpdate = (code, newEmail) => {
-    if (code !== verificationCode) {
-      throw new Error('Invalid verification code');
-    }
-
-    // Update user's email in users array
-    const updatedUsers = users.map(user => {
-      if (user.email === currentUser.email) {
-        return { ...user, email: newEmail };
-      }
-      return user;
+      setLoading(false);
     });
 
-    // Update current user
-    const updatedUser = { ...currentUser, email: newEmail };
+    return unsubscribe;
+  }, []);
 
-    // Update state and localStorage
-    setUsers(updatedUsers);
-    setCurrentUser(updatedUser);
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
-    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
-    setVerificationCode(null);
-
-    return true;
+  const signup = async (userData) => {
+    setError(null);
+    
+    try {
+      // Create user with Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(
+        auth, 
+        userData.email, 
+        userData.password
+      );
+      
+      // Set user display name
+      await updateProfile(userCredential.user, {
+        displayName: `${userData.firstName} ${userData.lastName}`
+      });
+      
+      // Send email verification
+      await sendEmailVerification(userCredential.user);
+      
+      // Store additional user data in Firestore
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        gender: userData.gender,
+        dateOfBirth: userData.dateOfBirth,
+        contactNumber: userData.contactNumber,
+        createdAt: new Date(),
+        isAdmin: false
+      });
+      
+      return userCredential.user;
+    } catch (error) {
+      setError(error.message);
+      throw error;
+    }
   };
 
-  const deleteAccount = () => {
-    if (!currentUser) {
-      throw new Error('No user is currently logged in');
+  const login = async (credentials) => {
+    setError(null);
+    
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth, 
+        credentials.email, 
+        credentials.password
+      );
+      
+      return userCredential.user;
+    } catch (error) {
+      setError(error.message);
+      throw error;
     }
+  };
 
-    // Remove user from users array
-    const updatedUsers = users.filter(user => user.email !== currentUser.email);
-    setUsers(updatedUsers);
+  const loginWithGoogle = async () => {
+    setError(null);
+    
+    try {
+      const provider = new GoogleAuthProvider();
+      const userCredential = await signInWithPopup(auth, provider);
+      
+      // Check if this is a new user
+      const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+      
+      if (!userDoc.exists()) {
+        // If new user, create a document in the users collection
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
+          firstName: userCredential.user.displayName?.split(' ')[0] || '',
+          lastName: userCredential.user.displayName?.split(' ').slice(1).join(' ') || '',
+          email: userCredential.user.email,
+          createdAt: new Date(),
+          isAdmin: false
+        });
+      }
+      
+      return userCredential.user;
+    } catch (error) {
+      setError(error.message);
+      throw error;
+    }
+  };
 
-    // Clear current user and authentication status
-    setCurrentUser(null);
-    setIsAuthenticated(false);
-    localStorage.setItem('users', JSON.stringify(updatedUsers));
-    localStorage.setItem('isAuthenticated', 'false');
-    localStorage.removeItem('currentUser');
+  const logout = async () => {
+    setError(null);
+    
+    try {
+      await signOut(auth);
+    } catch (error) {
+      setError(error.message);
+      throw error;
+    }
+  };
 
-    return true;
+  const resetPassword = async (email) => {
+    setError(null);
+    
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      setError(error.message);
+      throw error;
+    }
   };
 
   return (
     <AuthContext.Provider value={{
       isAuthenticated,
       user: currentUser,
+      loading,
+      error,
       login,
       logout,
       signup,
-      updateUserEmail,
-      verifyEmailUpdate,
-      deleteAccount,
-      sendVerificationEmail
+      loginWithGoogle,
+      resetPassword,
     }}>
       {children}
     </AuthContext.Provider>

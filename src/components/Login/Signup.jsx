@@ -14,7 +14,7 @@ const sliderImages = [
 
 const Signup = () => {
   const navigate = useNavigate();
-  const { signup } = useAuth();
+  const { signup, loginWithGoogle, loading } = useAuth();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -116,34 +116,11 @@ const Signup = () => {
 
     setIsLoading(true);
     try {
-      // First, create user in the backend
-      const response = await fetch('http://13.202.119.111:5000/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          email: formData.email,
-          password: formData.password,
-          gender: formData.gender,
-          dateOfBirth: formData.dateOfBirth,
-          contactNumber: formData.contactNumber
-        })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to create account');
-      }
-
-      // If backend creation is successful, also update local auth context
       await signup({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
-        name: `${formData.firstName} ${formData.lastName}`,
         gender: formData.gender,
         dateOfBirth: formData.dateOfBirth,
         contactNumber: formData.contactNumber
@@ -151,6 +128,29 @@ const Signup = () => {
 
       // Redirect to login page
       navigate('/login');
+    } catch (error) {
+      let errorMessage = error.message;
+      
+      // Handle Firebase auth errors with more user-friendly messages
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'This email is already registered. Please use a different email or try logging in.';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'Please choose a stronger password. It should be at least 6 characters.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Please enter a valid email address.';
+      }
+      
+      setErrors({ submit: errorMessage });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    setIsLoading(true);
+    try {
+      await loginWithGoogle();
+      navigate('/');
     } catch (error) {
       setErrors({ submit: error.message });
     } finally {
@@ -184,6 +184,11 @@ const Signup = () => {
   const handleDotClick = (idx) => setSliderIndex(idx);
   const handlePrev = () => setSliderIndex((prev) => (prev - 1 + sliderImages.length) % sliderImages.length);
   const handleNext = () => setSliderIndex((prev) => (prev + 1) % sliderImages.length);
+
+  // Show loading state from auth context
+  if (loading) {
+    return <div className="loading">Loading...</div>;
+  }
 
   return (
     <div className="login-bg-dark">
@@ -379,8 +384,14 @@ const Signup = () => {
           </form>
           <div className="login-form-or">or register with</div>
           <div className="login-form-socials">
-            <button className="social-btn google" type="button">Google</button>
-            <button className="social-btn apple" type="button">Apple</button>
+            <button 
+              className="social-btn google" 
+              type="button"
+              onClick={handleGoogleSignup}
+              disabled={isLoading}
+            >
+              Google
+            </button>
           </div>
         </div>
       </div>
