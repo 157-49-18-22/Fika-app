@@ -4,10 +4,11 @@ import { FaShoppingCart, FaHeart, FaEye, FaChevronLeft, FaChevronRight, FaClock,
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
 import "./NewArrivalsSection.css";
-import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import LoginPrompt from "../../components/LoginPrompt/LoginPrompt";
 import config from "../../config";
+import { db } from '../../firebase/config';
+import { collection, getDocs } from 'firebase/firestore';
 
 const NewArrivals = () => {
   const [newArrivals, setNewArrivals] = useState([]);
@@ -39,44 +40,27 @@ const NewArrivals = () => {
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterSuccess, setNewsletterSuccess] = useState(false);
 
-  // Fetch products from backend
+  // Fetch products from Firestore
   useEffect(() => {
     let isMounted = true;
-    
     const fetchProducts = async () => {
       try {
         if (!isMounted) return;
         setLoading(true);
-        
-        const response = await axios.get('http://13.202.119.111:5000/api/products', {
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          }
+        const querySnapshot = await getDocs(collection(db, 'products'));
+        const products = [];
+        querySnapshot.forEach((doc) => {
+          products.push({ id: doc.id, ...doc.data() });
         });
-        
-        if (!isMounted) return;
-        
-        if (!response.data || !Array.isArray(response.data)) {
-          throw new Error('Invalid response format from API');
-        }
-
-        const products = response.data;
-        
         // Get products added in the last 30 days as new arrivals
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        
         const newProducts = products.filter(product => {
           if (!product.created_at) return true;
           const productDate = new Date(product.created_at);
           return productDate >= thirtyDaysAgo;
         });
-        
-        if (!isMounted) return;
-        
         setNewArrivals(newProducts);
-        
         // Set featured product (first item with discount or first new arrival)
         const discountedProduct = newProducts.find(product => product.discount);
         if (discountedProduct) {
@@ -84,17 +68,12 @@ const NewArrivals = () => {
         } else if (newProducts.length > 0) {
           setFeaturedProduct(newProducts[0]);
         }
-
         // Organize products by categories
         const categorizedProducts = {
           cushions: products.filter(p => p.category?.toLowerCase() === "cushions"),
           bedsets: products.filter(p => p.category?.toLowerCase() === "bedsets"),
-          doharsAndQuilts: products.filter(p => 
-            p.category?.toLowerCase() === "dohars & quilts"
-          )
+          doharsAndQuilts: products.filter(p => p.category?.toLowerCase() === "dohars & quilts")
         };
-        
-        if (!isMounted) return;
         setCategoryProducts(categorizedProducts);
         setLoading(false);
       } catch (err) {
@@ -104,13 +83,11 @@ const NewArrivals = () => {
         setLoading(false);
       }
     };
-
     fetchProducts();
-    
     return () => {
       isMounted = false;
     };
-  }, []); // Empty dependency array since we only want to fetch once
+  }, []);
 
   // Countdown timer for featured product
   useEffect(() => {

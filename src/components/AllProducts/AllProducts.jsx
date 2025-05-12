@@ -5,7 +5,8 @@ import { useCart } from "../../context/CartContext.jsx";
 import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight, FaSlidersH, FaDollarSign, FaSortAmountDown, FaBed, FaCouch, FaGift } from "react-icons/fa";
 import { GiLargeDress, GiRunningShoe, GiWatch, GiHeartNecklace, GiTrousers } from "react-icons/gi";
 import "./AllProductsStyles.css";
-import axios from "axios";
+import { db } from '../../firebase/config';
+import { collection, getDocs } from 'firebase/firestore';
 
 // Category and sub-category mapping
 const CATEGORY_SUBCATEGORIES = {
@@ -45,30 +46,17 @@ const AllProducts = () => {
   const searchParams = new URLSearchParams(location.search);
   const searchQuery = searchParams.get('search') || '';
 
-  // Fetch products from the backend
+  // Fetch products from Firestore
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        let url = 'http://13.202.119.111:5000/api/products';
-        
-        // Handle category filter
-        if (selectedCategory !== "All Products") {
-          url = `http://13.202.119.111:5000/api/products/category/${selectedCategory}`;
-        }
-        
-        // Handle sub-category filter
-        if (selectedSubCategory) {
-          url = `http://13.202.119.111:5000/api/products/subcategory/${selectedSubCategory}`;
-        }
-        
-        // Handle search
-        if (searchQuery) {
-          url = `http://13.202.119.111:5000/api/products/search?q=${searchQuery}`;
-        }
-
-        const response = await axios.get(url);
-        setProducts(response.data);
+        const querySnapshot = await getDocs(collection(db, 'products'));
+        const productsArr = [];
+        querySnapshot.forEach((doc) => {
+          productsArr.push({ id: doc.id, ...doc.data() });
+        });
+        setProducts(productsArr);
         setError(null);
       } catch (err) {
         setError('Error fetching products. Please try again later.');
@@ -77,9 +65,8 @@ const AllProducts = () => {
         setLoading(false);
       }
     };
-
     fetchProducts();
-  }, [selectedCategory, selectedSubCategory, searchQuery]);
+  }, []);
 
   console.log('Products data:', products);
 
