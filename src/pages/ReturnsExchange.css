@@ -271,7 +271,7 @@ input[type="file"] {
   border-radius: 20px;
   font-weight: 600;
   font-size: 1rem;
- 
+
   transition: background 0.2s, color 0.2s;
 }
 .status-step.active {
