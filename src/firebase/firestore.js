@@ -233,4 +233,138 @@ export const getComments = async (postId) => {
     console.error('Error getting comments:', error);
     throw error;
   }
+};
+
+// WISH GENIE PRODUCTS
+
+/**
+ * Create a new Wish Genie product
+ * @param {Object} productData - Product data including all fields
+ * @returns {Promise<string>} - The ID of the created product
+ */
+export const createWishGenieProduct = async (productData) => {
+  try {
+    const productsCollection = collection(db, 'wish_genie');
+    const productRef = await addDoc(productsCollection, {
+      ...productData,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    return productRef.id;
+  } catch (error) {
+    console.error('Error creating Wish Genie product:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get all Wish Genie products
+ * @returns {Promise<Array>} - Array of product objects
+ */
+export const getWishGenieProducts = async () => {
+  try {
+    const productsQuery = query(
+      collection(db, 'wish_genie'),
+      orderBy('createdAt', 'desc')
+    );
+    
+    const querySnapshot = await getDocs(productsQuery);
+    const products = [];
+    
+    querySnapshot.forEach((doc) => {
+      products.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    return products;
+  } catch (error) {
+    console.error('Error getting Wish Genie products:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get a Wish Genie product by ID
+ * @param {string} productId - The product ID
+ * @returns {Promise<Object|null>} - The product object or null if not found
+ */
+export const getWishGenieProduct = async (productId) => {
+  try {
+    const productRef = doc(db, 'wish_genie', productId);
+    const productDoc = await getDoc(productRef);
+    if (!productDoc.exists()) {
+      return null;
+    }
+    return { id: productDoc.id, ...productDoc.data() };
+  } catch (error) {
+    console.error('Error getting Wish Genie product:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update a Wish Genie product
+ * @param {string} productId - The product ID
+ * @param {Object} productData - The data to update
+ * @returns {Promise<void>}
+ */
+export const updateWishGenieProduct = async (productId, productData) => {
+  try {
+    const productRef = doc(db, 'wish_genie', productId);
+    await updateDoc(productRef, {
+      ...productData,
+      updatedAt: serverTimestamp()
+    });
+  } catch (error) {
+    console.error('Error updating Wish Genie product:', error);
+    throw error;
+  }
+};
+
+/**
+ * Delete a Wish Genie product
+ * @param {string} productId - The product ID to delete
+ * @returns {Promise<void>}
+ */
+export const deleteWishGenieProduct = async (productId) => {
+  try {
+    await deleteDoc(doc(db, 'wish_genie', productId));
+  } catch (error) {
+    console.error('Error deleting Wish Genie product:', error);
+    throw error;
+  }
+};
+
+/**
+ * Initialize Wish Genie collection with a test product
+ * @returns {Promise<void>}
+ */
+export const initializeWishGenieCollection = async () => {
+  try {
+    const testProduct = {
+      'Burn Time': '32-36 hrs',
+      'Burning Instructions': 'Ensure candle is on a heat resistant surface. Trim wick to 5mm before relighting. Do not allow candle to burn to base of vessel.',
+      'Category': 'Luxury/Crystal Candles',
+      'Diameter': '2.75" (at top) 3.5" (at bottom)',
+      'Fragrances': 'British Tea Rose',
+      'Height Dimensions': '5" (with lid) 3.5" (w/o lid)',
+      'Jar type': 'Silver Bell Jar',
+      'MRP': '1590',
+      'Product code': '1111',
+      'Sticker Content Main': 'Reiki Energised Love Ritual Crystal Candle',
+      'Sticker Content Sub': 'Infused with Rose quartz',
+      'Product Description': 'Experience the power of love and manifestation with our Reiki Energised Love Ritual Crystal Candle. This beautiful candle is infused with Rose Quartz, known as the stone of universal love. Perfect for creating a romantic atmosphere and enhancing your manifestation practices.',
+      'createdAt': serverTimestamp(),
+      'updatedAt': serverTimestamp()
+    };
+
+    const productsCollection = collection(db, 'wish_genie');
+    await addDoc(productsCollection, testProduct);
+    console.log('Test product added successfully');
+  } catch (error) {
+    console.error('Error initializing Wish Genie collection:', error);
+    throw error;
+  }
 }; 

@@ -226,6 +226,17 @@ const AllProducts = () => {
     return stars;
   };
 
+  // Update the category click handler
+  const handleCategoryClick = (category) => {
+    if (category.name === "Wish Genie") {
+      navigate('/new-arrivals-wish');
+      return;
+    }
+    setSelectedCategory(category.name);
+    setSelectedSubCategory("");
+    setVisibleItems(12);
+  };
+
   return (
     <section className={`products-section ${fadeIn ? 'fade-in' : ''}`}>
       {loading && (
@@ -269,27 +280,16 @@ const AllProducts = () => {
             <button
               key={category.name}
               className={`category-btn-horizontal ${selectedCategory === category.name ? "active" : ""}`}
-              onClick={() => {
-                setSelectedCategory(category.name);
-                setSelectedSubCategory("");
-                setVisibleItems(12);
-              }}
+              onClick={() => handleCategoryClick(category)}
             >
               <span className="category-icon-horizontal">{category.icon}</span>
-              {category.name} <span style={{color:'#888',fontWeight:400}}>({categoryCounts[category.id]})</span>
+              {category.name} 
+              {category.name !== "Wish Genie" && (
+                <span style={{color:'#888',fontWeight:400}}>({categoryCounts[category.id]})</span>
+              )}
             </button>
           ))}
         </div>
-
-        {/* Filters Bar */}
-        {/* <div className="filters-bar">
-          <button 
-            className="filter-toggle-btn" 
-            onClick={() => setFiltersVisible(!filtersVisible)}
-          >
-            Filters
-          </button>
-        </div> */}
 
         <div className="products-main-content">
           {/* Side Filters Panel */}

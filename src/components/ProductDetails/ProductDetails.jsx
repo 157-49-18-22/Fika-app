@@ -88,6 +88,7 @@ const ProductDetails = () => {
   const socketRef = useRef();
   const [recentlyViewedProducts, setRecentlyViewedProducts] = useState([]);
   const [trendingProducts, setTrendingProducts] = useState([]);
+  const [productImages, setProductImages] = useState([]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -116,6 +117,9 @@ const ProductDetails = () => {
           ...raw,
           id: productDoc.id,
           image: raw.image || '/placeholder-image.jpg',
+          image2: raw.image2 || '/placeholder-image.jpg',
+          image3: raw.image3 || '/placeholder-image.jpg',
+          image4: raw.image4 || '/placeholder-image.jpg',
           reviews: raw.reviews || [],
           reviewsCount: raw.reviewsCount || 0,
           discount: raw.discount || 0,
@@ -224,6 +228,47 @@ const ProductDetails = () => {
       fetchAllProducts();
     }
   }, [product]);
+
+  useEffect(() => {
+    const fetchProductImages = async () => {
+      if (!product?.product_code) return;
+      
+      try {
+        // Fetch the directory listing for the product folder
+        const response = await fetch(`/${product.product_code}/`);
+        const text = await response.text();
+        
+        // Parse the directory listing to find image files
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+        const links = Array.from(doc.getElementsByTagName('a'));
+        
+        // Filter for image files and create full paths
+        const images = links
+          .map(link => link.href)
+          .filter(href => {
+            const lowerHref = href.toLowerCase();
+            return lowerHref.endsWith('.jpg') || 
+                   lowerHref.endsWith('.jpeg') || 
+                   lowerHref.endsWith('.png') || 
+                   lowerHref.endsWith('.gif');
+          })
+          .map(href => {
+            // Convert the full URL to a relative path
+            const url = new URL(href);
+            return url.pathname;
+          });
+
+        setProductImages(images.length > 0 ? images : [product?.image || '/placeholder-image.jpg']);
+      } catch (error) {
+        console.error('Error fetching product images:', error);
+        // Fallback to main product image
+        setProductImages([product?.image || '/placeholder-image.jpg']);
+      }
+    };
+
+    fetchProductImages();
+  }, [product?.product_code, product?.image]);
 
   if (loading) {
     return <div className="loading">Loading...</div>;
@@ -386,13 +431,6 @@ const ProductDetails = () => {
     return stars;
   };
 
-  const productImages = [
-    product?.image,
-    product?.image.replace("w=800", "w=801"),
-    product?.image.replace("w=800", "w=802"),
-    product?.image.replace("w=800", "w=803"),
-  ].filter(Boolean);
-
   const ProductGallery = ({ images }) => {
     const [magnifierPosition, setMagnifierPosition] = useState({ x: 0, y: 0 });
     const containerRef = useRef(null);
@@ -502,8 +540,8 @@ const ProductDetails = () => {
               </div>
             </div>
             <div className="product-price">
-              <span className="current-price">₹{product.mrp}</span>
-              <span className="cost-price">Cost Price: ₹{product.cost_price}</span>
+              <span className="cost-price" style={{fontSize: '18px'}}>Price: ₹{product.cost_price}</span>
+              <span className="current-price" style={{textDecoration: 'line-through'}}>₹{product.mrp}</span>
             </div>
           </div>
 

@@ -82,6 +82,7 @@
 }
 
 .wish-description {
+  /* display: none; */
   font-size: 1.1rem;
   color: var(--text-purple);
   line-height: 1.8;

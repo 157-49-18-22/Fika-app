@@ -26,6 +26,7 @@ import ChangePassword from './components/ChangePassword.jsx';
 import ForgotPassword from './components/ForgotPassword.jsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import NewArrivalsWish from './components/NewArrivalsWish/NewArrivalsWish.jsx';
+import ScrollToTop from './components/ScrollToTop';
 
 import AdminDashboard from './components/Admin/AdminDashboard.jsx';
 import DashboardOverview from './components/Admin/DashboardOverview.jsx';
@@ -36,6 +37,8 @@ import Users from './components/Admin/Users.jsx';
 import Categories from './components/Admin/Categories.jsx';
 import Products from './components/Admin/Products.jsx';
 import ReturnsExchange from './pages/ReturnsExchange.jsx';
+import WishGenieProducts from './components/Admin/WishGenieProducts.jsx';
+import ProductDetailWish from './components/ProductDetailWish/ProductDetailWish';
 
 // Layout component with navbar and footer
 const PageLayout = ({ children }) => {
@@ -81,6 +84,7 @@ function App() {
         <CartProvider>
           <WishlistProvider>
             <Router>
+              <ScrollToTop />
               <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<PageLayout><Homepage /></PageLayout>} />
@@ -123,7 +127,10 @@ function App() {
                   <Route path="users" element={<Users />} />
                   <Route path="categories" element={<Categories />} />
                   <Route path="products" element={<Products />} />
+                  <Route path="wish-genie" element={<WishGenieProducts />} />
                 </Route>
+
+                <Route path="/product-wish/:id" element={<PageLayout><ProductDetailWish /></PageLayout>} />
               </Routes>
             </Router>
           </WishlistProvider>

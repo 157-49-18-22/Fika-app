@@ -100,6 +100,10 @@ const AdminDashboard = () => {
             <span className="nav-icon"><AiOutlineShopping /></span>
             <span className="nav-text">Products</span>
           </NavLink>
+          <NavLink to="/admin/wish-genie" className={({ isActive }) => 'nav-item' + (isActive ? ' active' : '')}>
+            <span className="nav-icon"><AiOutlineShopping /></span>
+            <span className="nav-text">Wish Genie</span>
+          </NavLink>
           <NavLink to="/admin/orders" className={({ isActive }) => 'nav-item' + (isActive ? ' active' : '')}>
             <span className="nav-icon"><AiOutlineShopping /></span>
             <span className="nav-text">Orders</span>

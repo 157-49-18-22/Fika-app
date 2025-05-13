@@ -3,15 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaShoppingCart, FaHeart, FaEye, FaChevronLeft, FaChevronRight, FaClock, FaTag, FaGift } from "react-icons/fa";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
-import { getAllProducts } from "../../data/products.js";
 import "./NewArrivalsWish.css";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import LoginPrompt from "../../components/LoginPrompt/LoginPrompt";
 import WishGenieLogo from '../../assets/Wish Genie.png';
+import { getWishGenieProducts, initializeWishGenieCollection } from '../../firebase/firestore';
 
 const NewArrivalsWish = () => {
-  const [newArrivals, setNewArrivals] = useState([]);
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
   const [isAutoPlay, setIsAutoPlay] = useState(false);
   const [featuredProduct, setFeaturedProduct] = useState(null);
@@ -23,6 +23,9 @@ const NewArrivalsWish = () => {
     crystalJewellery: [],
     journals: []
   });
+  const [wishGenieProducts, setWishGenieProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
   const productsRowRef = useRef(null);
   const categoryRowRefs = {
@@ -34,52 +37,50 @@ const NewArrivalsWish = () => {
   const autoScrollTimer = useRef(null);
   const { addToCart } = useCart();
   const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
-  const navigate = useNavigate();
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterSuccess, setNewsletterSuccess] = useState(false);
 
-  // Get products with isNew flag and categorize products
+  // Fetch Wish Genie products
   useEffect(() => {
-    const allProducts = getAllProducts();
-    const newProducts = allProducts.filter(product => product.isNew);
-    setNewArrivals(newProducts);
-    
-    // Set a featured product (first item with discount)
-    const discountedProduct = newProducts.find(product => product.discount);
-    if (discountedProduct) {
-      setFeaturedProduct(discountedProduct);
-    } else if (newProducts.length > 0) {
-      setFeaturedProduct(newProducts[0]);
-    }
-
-    // Organize products by categories
-    setCategoryProducts({
-      scentedCandles: allProducts.filter(p => p.category?.toLowerCase() === "scented candles"),
-      crystalJewellery: allProducts.filter(p => p.category?.toLowerCase() === "crystal jewellery"),
-      journals: allProducts.filter(p => p.category?.toLowerCase() === "journals")
-    });
-  }, []);
-
-  // Countdown timer for featured product
-  useEffect(() => {
-    const timerInterval = setInterval(() => {
-      setTimeLeft(prevTime => {
-        const { days, hours, minutes, seconds } = prevTime;
+    const fetchWishGenieProducts = async () => {
+      try {
+        setLoading(true);
+        let products = await getWishGenieProducts();
         
-        if (seconds > 0) {
-          return { ...prevTime, seconds: seconds - 1 };
-        } else if (minutes > 0) {
-          return { ...prevTime, minutes: minutes - 1, seconds: 59 };
-        } else if (hours > 0) {
-          return { ...prevTime, hours: hours - 1, minutes: 59, seconds: 59 };
-        } else if (days > 0) {
-          return { ...prevTime, days: days - 1, hours: 23, minutes: 59, seconds: 59 };
+        // If no products exist, initialize the collection with a test product
+        if (products.length === 0) {
+          console.log('No products found, initializing collection...');
+          await initializeWishGenieCollection();
+          products = await getWishGenieProducts();
         }
-        // Reset when countdown reaches zero
-        return { days: 3, hours: 11, minutes: 23, seconds: 45 };
-      });
-    }, 1000);
-    return () => clearInterval(timerInterval);
+        
+        console.log('Fetched products:', products);
+        
+        // Categorize products
+        const categorizedProducts = {
+          scentedCandles: products.filter(p => p.Category?.toLowerCase().includes('candle')),
+          crystalJewellery: products.filter(p => p.Category?.toLowerCase().includes('crystal')),
+          journals: products.filter(p => p.Category?.toLowerCase().includes('journal'))
+        };
+        
+        setCategoryProducts(categorizedProducts);
+        setWishGenieProducts(products);
+        
+        // Set featured product (first item with discount or first product)
+        if (products.length > 0) {
+          setFeaturedProduct(products[0]);
+        }
+        
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching Wish Genie products:', err);
+        setError('Failed to fetch products');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWishGenieProducts();
   }, []);
 
   const categories = [
@@ -90,8 +91,8 @@ const NewArrivalsWish = () => {
   ];
 
   const filteredProducts = activeTab === "all" 
-    ? newArrivals 
-    : newArrivals.filter(product => product.category === activeTab);
+    ? wishGenieProducts 
+    : wishGenieProducts.filter(product => product.Category?.toLowerCase() === activeTab);
 
   const handleAddToCart = (product, e) => {
     if (e) e.stopPropagation();
@@ -117,7 +118,7 @@ const NewArrivalsWish = () => {
 
   const handleQuickView = (id, e) => {
     if (e) e.stopPropagation();
-    navigate(`/product/${id}`);
+    navigate(`/product-wish/${id}`);
   };
 
   const scrollProducts = (direction, ref) => {
@@ -153,16 +154,22 @@ const NewArrivalsWish = () => {
 
   // Format price with discount
   const formatPrice = (price, discount) => {
+    if (!price) return '0.00';
+    const numPrice = Number(price);
+    if (isNaN(numPrice)) return '0.00';
+    
     if (discount) {
-      const discountedPrice = price * (1 - discount / 100);
+      const discountedPrice = numPrice * (1 - discount / 100);
       return discountedPrice.toFixed(2);
     }
-    return price.toFixed(2);
+    return numPrice.toFixed(2);
   };
 
   // Calculate original price display
   const getOriginalPrice = (price) => {
-    return price.toFixed(2);
+    if (!price) return '0.00';
+    const numPrice = Number(price);
+    return isNaN(numPrice) ? '0.00' : numPrice.toFixed(2);
   };
 
   // Newsletter submit handler
@@ -185,10 +192,10 @@ const NewArrivalsWish = () => {
       <div 
         key={product.id} 
         className="wish-product-card"
-        onClick={() => navigate(`/product/${product.id}`)}
+        onClick={() => navigate(`/product-wish/${product.id}`)}
       >
         <div className="wish-product-image">
-          <img src={product.image} alt={product.name} />
+          <img src={product.image || '/placeholder-image.jpg'} alt={product['Sticker Content Main']} />
           <div className="wish-product-actions">
             <button 
               className="wish-action-btn cart-btn" 
@@ -214,47 +221,22 @@ const NewArrivalsWish = () => {
           </div>
         </div>
         <div className="wish-product-info">
-          <h3>{product.name}</h3>
+          <h3>{product['Sticker Content Main']}</h3>
+          <p className="wish-product-subtitle">{product['Sticker Content Sub']}</p>
           <div className="wish-product-price">
-            {product.discount ? (
-              <>
-                <span className="wish-current-price">₹{formatPrice(product.price, product.discount)}</span>
-                <span className="wish-original-price">₹{getOriginalPrice(product.price)}</span>
-                <span className="wish-discount-badge">-{product.discount}%</span>
-              </>
-            ) : (
-              <span className="wish-current-price">₹{getOriginalPrice(product.price)}</span>
-            )}
+            <span className="wish-current-price">₹{getOriginalPrice(product.MRP)}</span>
           </div>
-          {product.reviewsCount > 0 && (
-            <div className="wish-product-rating">
-              <div className="wish-stars">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <span key={index} className={`wish-star ${index < Math.floor(product.rating) ? 'filled' : ''}`}>★</span>
-                ))}
-              </div>
-              <span className="wish-reviews-count">({product.reviewsCount})</span>
-            </div>
-          )}
+          <div className="wish-product-details">
+            <p className="wish-material">Burn Time: {product['Burn Time']}</p>
+            <p className="wish-dimensions">Dimensions: {product['Height Dimensions'] || product['Height/Dimensions']}</p>
+            <p className="wish-fragrance">Fragrance: {product.Fragrances}</p>
+          </div>
         </div>
         <div className="wish-hover-details">
           <div className="wish-product-details">
-            <p className="wish-material">{product.material}</p>
-            <div className="wish-available-sizes">
-              {product.sizes && product.sizes.map((size, idx) => (
-                <span key={idx} className="wish-size-badge">{size}</span>
-              ))}
-            </div>
-            <div className="wish-colors-available">
-              {product.colors && product.colors.map((color, idx) => (
-                <span 
-                  key={idx} 
-                  className="wish-color-swatch" 
-                  style={{ backgroundColor: color.toLowerCase() }}
-                  title={color}
-                ></span>
-              ))}
-            </div>
+            <p className="wish-material">{product['Product Description']?.substring(0, 100)}...</p>
+            <p className="wish-dimensions">Diameter: {product.Diameter}</p>
+            <p className="wish-jar-type">Jar Type: {product['Jar type']}</p>
           </div>
           <button className="wish-shop-now-btn" onClick={e => { e.stopPropagation(); navigate(`/product/${product.id}`); }}>
             Shop Now
