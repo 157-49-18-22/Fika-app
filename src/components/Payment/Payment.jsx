@@ -10,6 +10,52 @@ const Payment = ({ onClose }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // COD state
+  const [showCODForm, setShowCODForm] = useState(false);
+  const [codForm, setCodForm] = useState({
+    name: '',
+    address: '',
+    landmark: '',
+    city: '',
+    state: '',
+    pincode: '',
+    phone: '',
+    deliveryTime: ''
+  });
+  const [codSuccess, setCodSuccess] = useState(false);
+
+  const handleCODChange = (e) => {
+    setCodForm({ ...codForm, [e.target.name]: e.target.value });
+  };
+
+  const handleCODSubmit = (e) => {
+    e.preventDefault();
+    setCodSuccess(true);
+    setShowCODForm(false);
+
+    // Create new order object
+    const newOrder = {
+      id: 'ORD' + Date.now(),
+      date: new Date().toISOString().slice(0, 10),
+      status: 'Pending',
+      total: getCartTotal(),
+      address: { ...codForm },
+      items: cart.map(item => ({
+        name: item.name,
+        qty: item.quantity,
+        price: item.price,
+        image: item.image
+      }))
+    };
+
+    // Get existing orders from localStorage
+    const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+    // Add new order
+    localStorage.setItem('orders', JSON.stringify([newOrder, ...existingOrders]));
+
+    clearCart();
+  };
+
   const displayRazorpay = async () => {
     setLoading(true);
     setError("");
@@ -126,9 +172,110 @@ const Payment = ({ onClose }) => {
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? "Processing..." : `Pay ₹${getCartTotal().toFixed(2)}`}
+            {loading ? "Processing..." : `Pay Now ₹${getCartTotal().toFixed(2)}`}
+          </button>
+          <button
+            className="submit-payment-btn"
+            onClick={() => setShowCODForm(true)}
+          >
+            Cash on Delivery (COD)
           </button>
         </div>
+
+        {showCODForm && (
+          <div className="cod-form-overlay">
+            <form className="cod-form" onSubmit={handleCODSubmit}>
+              <h3>Enter Delivery Address</h3>
+              <input
+                type="text"
+                name="name"
+                placeholder="Full Name"
+                value={codForm.name}
+                onChange={handleCODChange}
+                required
+              />
+              <input
+                type="text"
+                name="address"
+                placeholder="Address"
+                value={codForm.address}
+                onChange={handleCODChange}
+                required
+              />
+              <input
+                type="text"
+                name="landmark"
+                placeholder="Landmark (e.g. near park, mall)"
+                value={codForm.landmark}
+                onChange={handleCODChange}
+                required
+              />
+              <input
+                type="text"
+                name="city"
+                placeholder="City"
+                value={codForm.city}
+                onChange={handleCODChange}
+                required
+              />
+              <input
+                type="text"
+                name="state"
+                placeholder="State"
+                value={codForm.state}
+                onChange={handleCODChange}
+                required
+              />
+              <input
+                type="text"
+                name="pincode"
+                placeholder="Pin Code"
+                value={codForm.pincode}
+                onChange={handleCODChange}
+                required
+                pattern="[0-9]{6}"
+                maxLength={6}
+              />
+              <input
+                type="text"
+                name="phone"
+                placeholder="Phone Number"
+                value={codForm.phone}
+                onChange={handleCODChange}
+                required
+              />
+              <div className="date-field-group">
+                <label htmlFor="deliveryTime" className="date-label">Time of Delivery</label>
+                <div className="date-input-wrapper">
+                  <input
+                    type="time"
+                    id="deliveryTime"
+                    name="deliveryTime"
+                    value={codForm.deliveryTime}
+                    onChange={handleCODChange}
+                    required
+                    className="date-input"
+                  />
+             
+                </div>
+              </div>
+              <div className="button-row">
+                <button type="submit" className="save-btn">Save</button>
+                <button type="button" className="close-btn" onClick={() => setShowCODForm(false)}>Cancel</button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {codSuccess && (
+          <div className="cod-success-overlay">
+            <div className="cod-success-modal">
+              <h3>Order Placed Successfully!</h3>
+              <p>Your COD order has been placed. Thank you!</p>
+              <button onClick={() => { setCodSuccess(false); onClose(); }}>OK</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

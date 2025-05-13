@@ -144,16 +144,6 @@ const Cart = () => {
 
         <div className="order-summary">
           <h3 className="summary-header">Order Summary</h3>
-          <div className="promo-code">
-            <input
-              type="text"
-              className="promo-code-input"
-              placeholder="Enter promo code"
-              value={promoCode}
-              onChange={(e) => setPromoCode(e.target.value)}
-            />
-            <button className="submit-promo">Apply</button>
-          </div>
           <div className="summary-row">
             <span>
               Subtotal ({cart.length} {cart.length === 1 ? "item" : "items"})
