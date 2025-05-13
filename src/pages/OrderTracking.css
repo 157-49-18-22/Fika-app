@@ -66,7 +66,7 @@
   border-radius: 8px;
   padding: 12px 0;
   font-size: 1.1rem;
-  cursor: pointer;
+  cursor: pointer;  
   transition: background 0.2s;
 }
 .order-tracking-btn:hover {
@@ -119,7 +119,7 @@
 }
 .status-step.active .status-circle {
   background: black;
-  
+  color: #fff;
 }
 .status-step.done .status-circle {
   background: black;
