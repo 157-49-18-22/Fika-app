@@ -2,15 +2,19 @@
 
 .style-empower-container {
     width: 100%;
-    background-image: url('https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=1200&q=80');
+    background-image: url('../../assets/blur02_3.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     border-radius: 20px;
-    padding: 60px 20px;
+    padding: 0;
     margin: 40px 0;
     font-family: 'Montserrat', sans-serif;
     position: relative;
+    height: 380px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .style-empower-container::before {
@@ -20,13 +24,21 @@
     background: rgba(255,255,255,0.2);
     border-radius: 20px;
     z-index: 1;
+    height: 200px;
 }
 
 .style-empower-content {
-    width: fit-content;
+    width: 100%;
+    max-width: 900px;
     margin: 0 auto;
     position: relative;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
 }
 
 .style-text-container {
@@ -130,6 +142,7 @@
     border: none;
     text-transform: uppercase;
     font-family: 'Montserrat', sans-serif;
+    margin-top: 300px;
 }
 
 .shop-now-button:hover {
@@ -162,4 +175,14 @@
     border-radius: 20px;
     object-fit: cover;
     display: inline-block;
+}
+
+@media (max-width: 600px) {
+  .style-empower-container {
+    height: 220px;
+    border-radius: 12px;
+  }
+  .style-empower-content {
+    padding: 20px 8px;
+  }
 }
