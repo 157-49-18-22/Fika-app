@@ -13,7 +13,7 @@ const Footer = () => {
             <Link to="/profile" className="footer-link">My Account</Link>
             <Link to="/returns-exchange" className="footer-link">Returns and Exchange</Link>
             <Link to="/track-order" className="footer-link">Order Tracking</Link>
-            <Link to="/shipping-policy" className="footer-link">Shipping Policy</Link>
+            <Link to="/terms" className="footer-link">Shipping Policy</Link>
           </div>
           <p className="copyright">Copyright @2025</p>
         </div>
@@ -48,6 +48,7 @@ const Footer = () => {
             <Link to="/career" className="footer-link">Career</Link>
             <Link to="/business" className="footer-link">Our Business</Link>
             <Link to="/privacy-policy" className="footer-link">Privacy Policy</Link>
+            <Link to="/terms" className="footer-link">Terms & Conditions</Link>
           </div>
         </div>
       </div>
