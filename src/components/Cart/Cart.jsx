@@ -77,7 +77,7 @@ const Cart = () => {
           {cart.map((item) => (
             <div key={item.id} className="cart-item">
               <div className="cart-item-image">
-                <img src={item.image} alt={item.name} />
+                <img src={item.image} alt={item.name || item.product_name || 'Product'} />
               </div>
 
               <div className="cart-item-details">
@@ -85,22 +85,22 @@ const Cart = () => {
                   to={`/product/${item.id}`}
                   className="cart-item-name"
                 >
-                  {item.name}
+                  {item.name || item.product_name || 'Product'}
                 </Link>
                 <span className="cart-item-category">{item.category}</span>
                 <div className="cart-item-price">
                   {item.discount ? (
                     <>
                       <span className="discounted-price">
-                        ${(item.price * (1 - item.discount / 100)).toFixed(2)}
+                        ₹{((Number(item.price) || 0) * (1 - (Number(item.discount) || 0) / 100)).toFixed(2)}
                       </span>
                       <span className="original-price">
-                        ${item.price.toFixed(2)}
+                        ₹{(Number(item.price) || 0).toFixed(2)}
                       </span>
                       <span className="discount-badge">-{item.discount}%</span>
                     </>
                   ) : (
-                    `$${item.price.toFixed(2)}`
+                    `₹${(Number(item.price) || 0).toFixed(2)}`
                   )}
                 </div>
               </div>
@@ -126,8 +126,8 @@ const Cart = () => {
                 <span className="total-label">Total:</span>₹
                 {(
                   (item.discount
-                    ? item.price * (1 - item.discount / 100)
-                    : item.price) * item.quantity
+                    ? (Number(item.price) || 0) * (1 - (Number(item.discount) || 0) / 100)
+                    : (Number(item.price) || 0)) * item.quantity
                 ).toFixed(2)}
               </div>
 

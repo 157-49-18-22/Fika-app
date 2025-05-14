@@ -100,7 +100,19 @@ const NewArrivalsWish = () => {
       setShowLoginPrompt(true);
       return;
     }
-    addToCart(product, undefined, 1, navigate);
+    // Normalize product fields for cart
+    const productToAdd = {
+      id: product.id,
+      name: product['Sticker Content Main'] || product.name || product.product_name || 'Product',
+      price: Number(product.MRP) || Number(product.price) || 0,
+      image: product.image || '/placeholder-image.jpg',
+      category: product.Category || product.category || '',
+      quantity: 1,
+      discount: Number(product.discount) || 0,
+      color: product.color || 'Default',
+      product_code: product['Product code'] || product.product_code || '',
+    };
+    addToCart(productToAdd, undefined, 1, navigate);
   };
 
   const handleAddToWishlist = (product, e) => {
@@ -186,6 +198,16 @@ const NewArrivalsWish = () => {
       });
   };
 
+  // Helper to get the first image from the comma-separated image field
+  const getFirstImage = (imageField) => {
+    if (!imageField) return '/placeholder-image.jpg';
+    const imagesArr = imageField.split(',').map(img => img.trim()).filter(Boolean);
+    if (imagesArr.length > 0) {
+      return imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
+    }
+    return '/placeholder-image.jpg';
+  };
+
   // Render product card - reusable component for all product sections
   const renderProductCard = (product) => {
     return (
@@ -195,7 +217,7 @@ const NewArrivalsWish = () => {
         onClick={() => navigate(`/product-wish/${product.id}`)}
       >
         <div className="wish-product-image">
-          <img src={product.image || '/placeholder-image.jpg'} alt={product['Sticker Content Main']} />
+          <img src={getFirstImage(product.image)} alt={product['Sticker Content Main']} />
           <div className="wish-product-actions">
             <button 
               className="wish-action-btn cart-btn" 
@@ -312,7 +334,7 @@ const NewArrivalsWish = () => {
       {featuredProduct && (
         <div className="wish-featured-product">
           <div className="wish-featured-image">
-            <img src={featuredProduct.image} alt={featuredProduct.name} />
+            <img src={getFirstImage(featuredProduct.image)} alt={featuredProduct.name} />
             {featuredProduct.discount && (
               <div className="wish-featured-discount">
                 -{featuredProduct.discount}% OFF

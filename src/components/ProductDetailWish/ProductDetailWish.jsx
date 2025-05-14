@@ -112,20 +112,21 @@ const ProductDetailWish = () => {
       setShowLoginPrompt(true);
       return;
     }
-    
+    // Normalize product fields for cart
     const productToAdd = {
       id: product.id,
-      name: product['Sticker Content Main'],
-      price: product.MRP,
+      name: product['Sticker Content Main'] || product.name || product.product_name || 'Product',
+      price: Number(product.MRP) || Number(product.price) || 0,
       image: product.image || '/placeholder-image.jpg',
-      category: product.Category,
+      category: product.Category || product.category || '',
       quantity: quantity,
-      product_code: product['Product code']
+      discount: Number(product.discount) || 0,
+      color: product.color || 'Default',
+      product_code: product['Product code'] || product.product_code || '',
     };
-    
     addToCart(productToAdd);
     setShowSuccessMessage(true);
-    setTimeout(() => setShowSuccessMessage(false), 3000);
+    setTimeout(() => setShowSuccessMessage(false), 1000);
   };
 
   const handleAddToWishlist = (e) => {
@@ -152,9 +153,20 @@ const ProductDetailWish = () => {
       setShowLoginPrompt(true);
       return;
     }
-    
     if (action === 'cart') {
-      addToCart(product);
+      // Normalize related product fields for cart
+      const productToAdd = {
+        id: product.id,
+        name: product['Sticker Content Main'] || product.name || product.product_name || 'Product',
+        price: Number(product.MRP) || Number(product.price) || 0,
+        image: product.image || '/placeholder-image.jpg',
+        category: product.Category || product.category || '',
+        quantity: 1,
+        discount: Number(product.discount) || 0,
+        color: product.color || 'Default',
+        product_code: product['Product code'] || product.product_code || '',
+      };
+      addToCart(productToAdd);
     } else if (action === 'wishlist') {
       addToWishlist(product);
     }
@@ -187,12 +199,10 @@ const ProductDetailWish = () => {
     );
   }
 
-  const productImages = [
-    product?.image,
-    product?.image.replace("w=800", "w=801"),
-    product?.image.replace("w=800", "w=802"),
-    product?.image.replace("w=800", "w=803"),
-  ].filter(Boolean);
+  // Get all images from the comma-separated image field
+  const productImages = product.image
+    ? product.image.split(',').map(img => img.trim()).filter(Boolean).map(img => img.startsWith('/') ? img : `/${img}`)
+    : ['/placeholder-image.jpg'];
 
   const ProductGallery = ({ images }) => {
     const [magnifierPosition, setMagnifierPosition] = useState({ x: 0, y: 0 });
