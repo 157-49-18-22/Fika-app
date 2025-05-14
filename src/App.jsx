@@ -27,6 +27,7 @@ import ForgotPassword from './components/ForgotPassword.jsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import NewArrivalsWish from './components/NewArrivalsWish/NewArrivalsWish.jsx';
 import ScrollToTop from './components/ScrollToTop';
+import TermsAndConditions from './components/Login/TermsAndConditions';
 
 import AdminDashboard from './components/Admin/AdminDashboard.jsx';
 import DashboardOverview from './components/Admin/DashboardOverview.jsx';
@@ -95,6 +96,7 @@ function App() {
                 <Route path="/about" element={<PageLayout><About /></PageLayout>} />
                 <Route path="/product/:id" element={<PageLayout><ProductDetails /></PageLayout>} />
                 <Route path="/category/:categoryName" element={<PageLayout><CategoryProducts /></PageLayout>} />
+                <Route path="/terms" element={<PageLayout><TermsAndConditions /></PageLayout>} />
             
                 <Route path="/new-arrivals-wish" element={<PageLayout><NewArrivalsWish /></PageLayout>} />
                 <Route path="/returns-exchange" element={<PageLayout><ReturnsExchange /></PageLayout>} />

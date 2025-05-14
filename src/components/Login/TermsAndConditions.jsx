@@ -1,19 +1,34 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import './Login.css';
 
-const TermsAndConditions = ({ show, onClose }) => {
+const TermsAndConditions = () => {
   const [activeTab, setActiveTab] = useState('return');
-  if (!show) return null;
+
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
-        <button className="modal-close-btn" onClick={onClose}>&times;</button>
-        <div className="modal-tabs">
-          <button className={activeTab === 'return' ? 'active' : ''} onClick={() => setActiveTab('return')}>Return & Exchange Policy</button>
-          <button className={activeTab === 'shipping' ? 'active' : ''} onClick={() => setActiveTab('shipping')}>Shipping Policy</button>
+    <div className="terms-page">
+      <div className="terms-container">
+        <div className="terms-header">
+          <h1>Terms & Conditions</h1>
+          <Link to="/signup" className="back-link">← Back to Sign Up</Link>
         </div>
-        <div className="modal-body">
+        <div className="terms-tabs">
+          <button 
+            className={activeTab === 'return' ? 'active' : ''} 
+            onClick={() => setActiveTab('return')}
+          >
+            Return & Exchange Policy
+          </button>
+          <button 
+            className={activeTab === 'shipping' ? 'active' : ''} 
+            onClick={() => setActiveTab('shipping')}
+          >
+            Shipping Policy
+          </button>
+        </div>
+        <div className="terms-content">
           {activeTab === 'return' ? (
-            <div className="modal-policy-content">
+            <div className="policy-content">
               <h2>Return & Exchange Policy</h2>
               <p>We have 2 DAYS RETURN POLICY only on fresh articles. In case of defected/damaged product, complaint should be raised within 24 hours of delivery of product.</p>
               <p>If the customer is unsatisfied with the product delivered then he/she needs to mail us at email@rdesiigninc.in within 2 days from the date of receiving the parcel or register a return pickup from the tab "exchange & return" on the home page. FIKA will arrange a pick-up from your place (reverse pick-up may not be available on selected pin -codes). We have two options for processing such returns :-</p>
@@ -38,7 +53,7 @@ const TermsAndConditions = ({ show, onClose }) => {
               </ol>
             </div>
           ) : (
-            <div className="modal-policy-content">
+            <div className="policy-content">
               <h2>Shipping Policy</h2>
               <ol>
                 <li>Shipping within India for orders above Rs. 2,999/- is free.</li>
