@@ -34,11 +34,14 @@ const io = socketIo(server, {
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173', 'http://127.0.0.1:3000'],
+  origin: ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173', 'http://127.0.0.1:3000', 'https://fika-india.com'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true
 }));
 app.use(express.json());
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../dist')));
 
 // Socket.IO connection handling
 const activeViewers = new Map(); // Store active viewers for each product
@@ -121,6 +124,11 @@ app.use('/api/admin', adminRoutes);
 // Basic route
 app.get('/', (req, res) => {
     res.json({ message: 'Welcome to the Fika App Backend API' });
+});
+
+// Handle client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
 });
 
 // Error handling middleware

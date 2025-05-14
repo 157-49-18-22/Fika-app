@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -174,7 +173,7 @@ const Login = () => {
             </div>
             <div className="login-form-check">
               <input type="checkbox" id="terms" required />
-              <label htmlFor="terms">I agree to the <a href="#">Terms & Conditions</a></label>
+              <label htmlFor="terms">I agree to the <Link to="/terms">Terms & Conditions</Link></label>
             </div>
             <button className="login-form-btn" type="submit">Login</button>
           </form>
