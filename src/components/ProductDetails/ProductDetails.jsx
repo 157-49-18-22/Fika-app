@@ -230,45 +230,18 @@ const ProductDetails = () => {
   }, [product]);
 
   useEffect(() => {
-    const fetchProductImages = async () => {
-      if (!product?.product_code) return;
-      
-      try {
-        // Fetch the directory listing for the product folder
-        const response = await fetch(`/${product.product_code}/`);
-        const text = await response.text();
-        
-        // Parse the directory listing to find image files
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(text, 'text/html');
-        const links = Array.from(doc.getElementsByTagName('a'));
-        
-        // Filter for image files and create full paths
-        const images = links
-          .map(link => link.href)
-          .filter(href => {
-            const lowerHref = href.toLowerCase();
-            return lowerHref.endsWith('.jpg') || 
-                   lowerHref.endsWith('.jpeg') || 
-                   lowerHref.endsWith('.png') || 
-                   lowerHref.endsWith('.gif');
-          })
-          .map(href => {
-            // Convert the full URL to a relative path
-            const url = new URL(href);
-            return url.pathname;
-          });
-
-        setProductImages(images.length > 0 ? images : [product?.image || '/placeholder-image.jpg']);
-      } catch (error) {
-        console.error('Error fetching product images:', error);
-        // Fallback to main product image
-        setProductImages([product?.image || '/placeholder-image.jpg']);
-      }
-    };
-
-    fetchProductImages();
-  }, [product?.product_code, product?.image]);
+    // If product and product.image exist, split by comma and trim
+    if (product && product.image) {
+      const imagesArr = product.image
+        .split(',')
+        .map(img => img.trim())
+        .filter(Boolean)
+        .map(img => img.startsWith('/') ? img : `/${img}`); // Ensure leading slash for public folder
+      setProductImages(imagesArr.length > 0 ? imagesArr : ['/placeholder-image.jpg']);
+    } else {
+      setProductImages(['/placeholder-image.jpg']);
+    }
+  }, [product]);
 
   if (loading) {
     return <div className="loading">Loading...</div>;

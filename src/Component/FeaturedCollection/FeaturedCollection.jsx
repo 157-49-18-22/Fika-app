@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { db } from '../../firebase/config';
+import { collection, getDocs } from 'firebase/firestore';
 import './FeaturedCollection.css';
 import config from '../../config';
 
@@ -15,24 +16,31 @@ const FeaturedCollection = () => {
   const [error, setError] = useState(null);
   const lastIndex = useRef(0);
 
-  // Fetch products from the backend
+  // Fetch products from Firestore
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://13.202.119.111:5000/api/products');
-        
-        // Get products added in the last 30 days as featured
+        const querySnapshot = await getDocs(collection(db, 'products'));
+        const productsArr = [];
         const thirtyDaysAgo = new Date();
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        
-        const featuredProducts = response.data.filter(product => {
-          if (!product.created_at) return true;
-          const productDate = new Date(product.created_at);
-          return productDate >= thirtyDaysAgo;
+        querySnapshot.forEach((doc) => {
+          const data = { id: doc.id, ...doc.data() };
+          // Only include products created in the last 30 days
+          if (!data.created_at || new Date(data.created_at) >= thirtyDaysAgo) {
+            // Parse the image field for the first image
+            let firstImage = '/placeholder-image.jpg';
+            if (data.image) {
+              const imagesArr = data.image.split(',').map(img => img.trim()).filter(Boolean);
+              if (imagesArr.length > 0) {
+                firstImage = imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
+              }
+            }
+            productsArr.push({ ...data, firstImage });
+          }
         });
-
-        setProducts(featuredProducts);
+        setProducts(productsArr);
         setError(null);
       } catch (err) {
         setError('Error fetching products. Please try again later.');
@@ -41,7 +49,6 @@ const FeaturedCollection = () => {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
 
@@ -206,7 +213,7 @@ const FeaturedCollection = () => {
             >
               <div className="card-inner">
                 <div className="card-image">
-                  <img src={product.image} alt={product.product_name} />
+                  <img src={product.firstImage} alt={product.product_name} />
                   {new Date(product.created_at) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) && 
                     <span className="new-label">NEW</span>
                   }

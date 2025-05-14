@@ -498,61 +498,71 @@ const AllProducts = () => {
             </div>
 
             <div className="products-grid">
-              {sortedProducts.slice(0, visibleItems).map((product) => (
-                <div 
-                  key={product.id} 
-                  className="product-card"
-                  onClick={() => navigate(`/product/${product.id}`)}
-                >
-                  <div className="product-image-container">
-                    <img 
-                      src={product.image || '/placeholder-image.jpg'} 
-                      alt={product.product_name} 
-                      className="product-image" 
-                      loading="lazy" 
-                    />
+              {sortedProducts.slice(0, visibleItems).map((product) => {
+                // Parse the image field for the first image
+                let firstImage = '';
+                if (product.image) {
+                  const imagesArr = product.image.split(',').map(img => img.trim()).filter(Boolean);
+                  if (imagesArr.length > 0) {
+                    firstImage = imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
+                  }
+                }
+                return (
+                  <div 
+                    key={product.id} 
+                    className="product-card"
+                    onClick={() => navigate(`/product/${product.id}`)}
+                  >
+                    <div className="product-image-container">
+                      <img 
+                        src={firstImage} 
+                        alt={product.product_name} 
+                        className="product-image" 
+                        loading="lazy" 
+                      />
+                      
+                      <div className="product-actions">
+                        <button 
+                          className="product-action-btn cart-btn"
+                          onClick={(e) => handleAddToCartClick(product, e)}
+                          title="Add to Cart"
+                          disabled={product.inventory <= 0}
+                        >
+                          <FaShoppingCart />
+                        </button>
+                        <button 
+                          className={`product-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
+                          onClick={(e) => handleAddToWishlistClick(product, e)}
+                          title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                        >
+                          {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
+                        </button>
+                        <button 
+                          className="product-action-btn quickview-btn"
+                          onClick={(e) => handleQuickView(product, e)}
+                          title="Quick View"
+                        >
+                          <FaEye />
+                        </button>
+                      </div>
+                    </div>
                     
-                    <div className="product-actions">
-                      <button 
-                        className="product-action-btn cart-btn"
-                        onClick={(e) => handleAddToCartClick(product, e)}
-                        title="Add to Cart"
-                        disabled={product.inventory <= 0}
-                      >
-                        <FaShoppingCart />
-                      </button>
-                      <button 
-                        className={`product-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
-                        onClick={(e) => handleAddToWishlistClick(product, e)}
-                        title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
-                      >
-                        {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
-                      </button>
-                      <button 
-                        className="product-action-btn quickview-btn"
-                        onClick={(e) => handleQuickView(product, e)}
-                        title="Quick View"
-                      >
-                        <FaEye />
+                    <div className="product-info">
+                      <h3 className="product-name">{product.product_name}</h3>
+                      <p className="product-category">{product.category} - {product.sub_category}</p>
+                      <div className="product-price">
+                        <span className="current-price">
+                          ₹{Number(product.mrp).toFixed(2)}
+                        </span>
+                      </div>
+                      
+                      <button className="shop-now-btn">
+                        Shop Now <FaArrowRight className="" />
                       </button>
                     </div>
                   </div>
-                  
-                  <div className="product-info">
-                    <h3 className="product-name">{product.product_name}</h3>
-                    <p className="product-category">{product.category} - {product.sub_category}</p>
-                    <div className="product-price">
-                      <span className="current-price">
-                        ₹{Number(product.mrp).toFixed(2)}
-                      </span>
-                    </div>
-                    
-                    <button className="shop-now-btn">
-                      Shop Now <FaArrowRight className="" />
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             {visibleItems < sortedProducts.length && (

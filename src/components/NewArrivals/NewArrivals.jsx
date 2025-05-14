@@ -123,14 +123,11 @@ const NewArrivals = () => {
     };
   }, []); // Empty dependency array since we only want this to run once
 
-  const categories = [
-    "all",
-    "cushions",
-    "bedsets",
-    "dohars & quilts",
-    "wish genie",
-    "men's shirts"
-  ];
+  // Dynamically generate categories from newArrivals
+  const categories = React.useMemo(() => {
+    const uniqueCategories = Array.from(new Set(newArrivals.map(p => p.category).filter(Boolean)));
+    return ['all', ...uniqueCategories];
+  }, [newArrivals]);
 
   const filteredProducts = activeTab === "all" 
     ? newArrivals 
@@ -238,6 +235,16 @@ const NewArrivals = () => {
     e.target.src = fallbackImage;
   };
 
+  // Helper to get the first image from the comma-separated image field
+  const getFirstImage = (imageField) => {
+    if (!imageField) return '/placeholder-image.jpg';
+    const imagesArr = imageField.split(',').map(img => img.trim()).filter(Boolean);
+    if (imagesArr.length > 0) {
+      return imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
+    }
+    return '/placeholder-image.jpg';
+  };
+
   // Render product card with optimized image loading
   const renderProductCard = (product) => {
     return (
@@ -248,7 +255,7 @@ const NewArrivals = () => {
       >
         <div className="product-image-container">
           <img 
-            src={product.image || '/placeholder-image.jpg'} 
+            src={getFirstImage(product.image)} 
             alt={product.product_name} 
             className="product-image" 
             loading="lazy"
@@ -376,7 +383,7 @@ const NewArrivals = () => {
         {featuredProduct && (
           <div className="arrivals-featured-product">
             <div className="arrivals-featured-image">
-              <img src={featuredProduct.image} alt={featuredProduct.product_name} />
+              <img src={getFirstImage(featuredProduct.image)} alt={featuredProduct.product_name} />
               {featuredProduct.discount && (
                 <div className="arrivals-featured-discount">
                   <span>{featuredProduct.discount}% OFF</span>
