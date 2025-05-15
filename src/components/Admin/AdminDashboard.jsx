@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FaUsers, FaShoppingCart, FaBox, FaList, FaChartLine, FaMoneyBillWave, FaTruck, FaStar } from 'react-icons/fa';
-import axios from 'axios';
+import { getDashboardStats } from '../../firebase/firestore';
 import './AdminDashboard.css';
 // Modern icons
 import { AiOutlineHome, AiOutlineShopping, AiOutlineUser, AiOutlineTags, AiOutlineBarChart, AiOutlineBell, AiOutlineLogout, AiOutlineAppstore } from 'react-icons/ai';
@@ -13,6 +13,8 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalUsers: 0,
+    maleUsers: 0,
+    femaleUsers: 0,
     totalOrders: 0,
     totalProducts: 0,
     totalCategories: 0,
@@ -35,32 +37,8 @@ const AdminDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      // Fetch users
-      const usersResponse = await axios.get('http://13.202.119.111:5000/api/users');
-      const totalUsers = usersResponse.data.length;
-      const maleUsers = usersResponse.data.filter(user => user.gender === 'male').length;
-      const femaleUsers = usersResponse.data.filter(user => user.gender === 'female').length;
-
-      // Fetch products
-      const productsResponse = await axios.get('http://13.202.119.111:5000/api/products');
-      const totalProducts = productsResponse.data.length;
-
-      // Extract unique categories
-      const categories = new Set(productsResponse.data.map(product => product.category));
-      const totalCategories = categories.size;
-
-      // Set default values for order-related stats
-      setStats({
-        totalUsers,
-        maleUsers,
-        femaleUsers,
-        totalOrders: 0, // Default value
-        totalProducts,
-        totalCategories,
-        totalRevenue: 0, // Default value
-        pendingOrders: 0, // Default value
-        averageRating: 0 // Default value
-      });
+      const dashboardStats = await getDashboardStats();
+      setStats(dashboardStats);
       setError(null);
     } catch (err) {
       console.error('Error fetching dashboard data:', err);
@@ -196,7 +174,7 @@ const AdminDashboard = () => {
                   </div>
                   <div className="stat-info">
                     <h3>Total Revenue</h3>
-                    <p className="stat-value">₹{stats.totalRevenue}</p>
+                    <p className="stat-value">₹{stats.totalRevenue.toLocaleString()}</p>
                   </div>
                 </div>
 

@@ -450,4 +450,74 @@ export const deleteUser = async (userId) => {
     console.error('Error deleting user:', error);
     throw error;
   }
+};
+
+// DASHBOARD STATISTICS
+
+/**
+ * Get dashboard statistics
+ * @returns {Promise<Object>} - Object containing various statistics
+ */
+export const getDashboardStats = async () => {
+  try {
+    // Get users
+    const usersQuery = query(collection(db, 'users'));
+    const usersSnapshot = await getDocs(usersQuery);
+    const users = [];
+    usersSnapshot.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
+    
+    const totalUsers = users.length;
+    const maleUsers = users.filter(user => user.gender === 'male').length;
+    const femaleUsers = users.filter(user => user.gender === 'female').length;
+
+    // Get products
+    const productsQuery = query(collection(db, 'wish_genie'));
+    const productsSnapshot = await getDocs(productsQuery);
+    const products = [];
+    productsSnapshot.forEach(doc => products.push({ id: doc.id, ...doc.data() }));
+    
+    const totalProducts = products.length;
+    const categories = new Set(products.map(product => product.Category));
+    const totalCategories = categories.size;
+
+    // Get orders (if you have an orders collection)
+    let totalOrders = 0;
+    let pendingOrders = 0;
+    let totalRevenue = 0;
+    let averageRating = 0;
+
+    try {
+      const ordersQuery = query(collection(db, 'orders'));
+      const ordersSnapshot = await getDocs(ordersQuery);
+      const orders = [];
+      ordersSnapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
+      
+      totalOrders = orders.length;
+      pendingOrders = orders.filter(order => order.status === 'pending').length;
+      totalRevenue = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+      
+      // Calculate average rating if you have ratings
+      const ratings = orders.filter(order => order.rating).map(order => order.rating);
+      if (ratings.length > 0) {
+        averageRating = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
+      }
+    } catch (error) {
+      console.log('Orders collection not found or error:', error);
+    }
+
+    return {
+      totalUsers,
+      maleUsers,
+      femaleUsers,
+      totalOrders,
+      totalProducts,
+      totalCategories,
+      totalRevenue,
+      pendingOrders,
+      averageRating
+    };
+  } catch (error) {
+    console.error('Error getting dashboard stats:', error);
+    throw error;
+  }
 }; 
