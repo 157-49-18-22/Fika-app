@@ -7,23 +7,23 @@ const FashionGrid = () => {
       <div className="fashion-grid">
         {/* Left section - Large image */}
         <div className="grid-item main-image">
-          <div className="exclusive-badge">EXCLUSIVE DESIGN</div>
+          {/* <div className="exclusive-badge">EXCLUSIVE DESIGN</div> */}
           <img src="./photos-150.png" alt="Decorative cushion on sofa" />
           <div className="content-overlay">
             <div className="action-button-container">
-              <button className="action-button">
+              {/* <button className="action-button">
                 GOOD STYLE BOOSTS CONFIDENCE
-              </button>
-              <button className="read-more-button">
+              </button> */}
+              {/* <button className="read-more-button">
                 READ MORE
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
 
         {/* Right top section - Teal background with text */}
         <div className="grid-item info-box">
-          <div className="our-blog-badge">OUR BLOGS</div>
+          {/* <div className="our-blog-badge">OUR BLOGS</div> */}
           <div className="info-content">
             <h2 className="info-title">
             Dive into a world of endless <br/>
@@ -43,27 +43,27 @@ const FashionGrid = () => {
             <div className="duo-image">
               <img src="./photos-152.png" alt="Stylish room design" />
               <div className="image-overlay">
-                <button className="image-action-button">
+                {/* <button className="image-action-button">
                   GOOD STYLE BOOSTS CONFIDENCE
-                </button>
-                <div className="arrow-icon">
+                </button> */}
+                {/* <div className="arrow-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                   </svg>
-                </div>
+                </div> */}
               </div>
             </div>
             <div className="duo-image">
               <img src="./photos-151.png" alt="Interior design" />
               <div className="image-overlay">
-                <button className="image-action-button">
+                {/* <button className="image-action-button">
                   GOOD STYLE BOOSTS CONFIDENCE
                 </button>
                 <div className="arrow-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                   </svg>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

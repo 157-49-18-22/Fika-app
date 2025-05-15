@@ -259,21 +259,15 @@
 }
 
 .social-icon.instagram:hover {
-  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  background-color: #E1306C;
   color: white;
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(225, 48, 108, 0.4);
-}
-
-.testimonials-section-wrapper {
-  margin-top: 60px;
+  transform: translateY(-3px);
 }
 
 .contact-details-row {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 40px;
+  gap: 30px;
   margin-top: 40px;
 }
 

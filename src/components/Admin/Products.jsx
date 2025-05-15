@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import './Products.css';
 import { db } from '../../firebase/config';
@@ -31,12 +31,33 @@ const Products = () => {
     product_details: '',
     dimension: '',
     care_instructions: '',
-    cost_price: '',
     inventory: '',
     mrp: '',
     discount: '',
     image: ''
   });
+
+  // Helper function to get first image from comma-separated string
+  const getFirstImage = (imageField) => {
+    if (!imageField) return '/placeholder-image.jpg';
+    const imagesArr = imageField.split(',').map(img => img.trim()).filter(Boolean);
+    if (imagesArr.length > 0) {
+      return imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
+    }
+    return '/placeholder-image.jpg';
+  };
+
+  // Process products once with useMemo to avoid reprocessing on every render
+  const processedProducts = useMemo(() => {
+    return products.map(product => ({
+      ...product,
+      firstImage: getFirstImage(product.image),
+      product_name: product.product_name || 'Unnamed Product',
+      category: product.category || 'Uncategorized',
+      mrp: product.mrp || 0,
+      inventory: product.inventory || 0
+    }));
+  }, [products]);
 
   useEffect(() => {
     fetchProducts();
@@ -142,7 +163,6 @@ const Products = () => {
         product_details: '',
         dimension: '',
         care_instructions: '',
-        cost_price: '',
         inventory: '',
         mrp: '',
         discount: '',
@@ -170,7 +190,6 @@ const Products = () => {
       product_details: product.product_details || '',
       dimension: product.dimension || '',
       care_instructions: product.care_instructions || '',
-      cost_price: product.cost_price || '',
       inventory: product.inventory || '',
       mrp: product.mrp || '',
       discount: product.discount || '',
@@ -218,14 +237,18 @@ const Products = () => {
             </tr>
           </thead>
           <tbody>
-            {products.map(product => (
-              <tr key={product.id}>
+            {processedProducts.map(product => (
+              <tr key={`product-${product.id}`}>
                 <td>
                   <img 
-                    src={product.image} 
+                    src={product.firstImage} 
                     alt={product.product_name} 
                     className="product-thumbnail"
-                    onError={(e) => e.target.src = '/placeholder-image.jpg'}
+                    onError={(e) => {
+                      e.target.onerror = null; // Prevent infinite loop
+                      e.target.src = '/placeholder-image.jpg';
+                    }}
+                    loading="lazy"
                   />
                 </td>
                 <td>{product.product_name}</td>
@@ -349,16 +372,6 @@ const Products = () => {
                 />
               </div>
               <div className="form-group">
-                <label>Cost Price</label>
-                <input
-                  type="number"
-                  name="cost_price"
-                  value={formData.cost_price}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
                 <label>Inventory</label>
                 <input
                   type="number"
@@ -420,7 +433,6 @@ const Products = () => {
                       product_details: '',
                       dimension: '',
                       care_instructions: '',
-                      cost_price: '',
                       inventory: '',
                       mrp: '',
                       discount: '',

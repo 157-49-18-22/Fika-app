@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 import { BsFacebook, BsInstagram } from "react-icons/bs";
 import "./Contact.css";
-import Testimonials from "../Testimonials/Testimonials.jsx";
 import axios from "axios";
 
 const Contact = () => {
@@ -209,7 +208,7 @@ const Contact = () => {
               <motion.div className="contact-details-col" variants={itemVariants}>
                 <FaMapMarkerAlt size={32} />
                 <h3>Office</h3>
-                <p>Corporate Office- B-206, 2nd Floor, Puri High Street, Sec-81,<br />Faridabad, Haryana-121004<br />INDIA</p>
+                <p>Corporate - B-206, 2nd Floor, Puri High Street, Sec-81,<br />Faridabad, Haryana-121004<br />INDIA</p>
               </motion.div>
               <motion.div className="contact-details-col" variants={itemVariants}>
                 <FaPhoneAlt size={32} />
@@ -221,22 +220,13 @@ const Contact = () => {
               <motion.div className="contact-details-col" variants={itemVariants}>
                 <FaEnvelope size={32} />
                 <h3>Mail</h3>
-                <p>email@rdesiigninc.in
+                <p>INFO@FIKA-INDIA.COM
                 <br />
                 wishgenie.shop@gmail.com.</p>
               </motion.div>
             </motion.div>
           </motion.div>
         </motion.div>
-      </motion.div>
-
-      <motion.div 
-        className="testimonials-section-wrapper"
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
-      >
-        <Testimonials />
       </motion.div>
     </motion.div>
   );

@@ -209,7 +209,7 @@ const FeaturedCollection = () => {
             <div 
               key={product.id} 
               className={getCardClass(index)}
-              onClick={() => handleCardClick(index)}
+              onClick={() => navigate(`/product/${product.id}`)}
             >
               <div className="card-inner">
                 <div className="card-image">
@@ -226,12 +226,16 @@ const FeaturedCollection = () => {
                         <span className="price">₹{Number(product.mrp).toFixed(2)}</span>
                       </div>
                     </div>
-                    <button className="shop-btn" onClick={() => navigate(`/product/${product.id}`)}>
+                    <button className="shop-btn" onClick={(e) => {
+                      e.stopPropagation();
+                      toggleAutoPlay();
+                    }}>
                       <svg className="shop-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7.5 7.67V6.7C7.5 4.45 9.31 2.24 11.56 2.03C14.24 1.77 16.5 3.88 16.5 6.51V7.89" stroke="white" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M9.0001 22H15.0001C19.0201 22 19.7401 20.39 19.9501 18.43L20.7001 12.43C20.9701 9.99 20.2701 8 16.0001 8H8.0001C3.7301 8 3.0301 9.99 3.3001 12.43L4.0501 18.43C4.2601 20.39 4.9801 22 9.0001 22Z" stroke="white" strokeWidth="1.5" strokeMiterlimit="10" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M15.4955 12H15.5045" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        <path d="M8.49451 12H8.50349" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        {isAutoPlay ? (
+                          <path d="M10 9V15M14 9V15M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        ) : (
+                          <path d="M10 16.5L16 12L10 7.5V16.5Z" fill="white"/>
+                        )}
                       </svg>
                     </button>
                   </div>

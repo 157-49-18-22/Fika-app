@@ -64,7 +64,6 @@ const productController = {
             product_details,
             dimension,
             care_instructions,
-            cost_price,
             inventory,
             mrp
         } = req.body;
@@ -73,8 +72,8 @@ const productController = {
             INSERT INTO allproducts 
             (image, category, sub_category, product_code, color, product_name, 
             product_description, material, product_details, dimension, 
-            care_instructions, cost_price, inventory, mrp) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            care_instructions, inventory, mrp) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
         const values = [
@@ -89,7 +88,6 @@ const productController = {
             product_details,
             dimension,
             care_instructions,
-            cost_price,
             inventory,
             mrp
         ];
@@ -120,7 +118,6 @@ const productController = {
             product_details,
             dimension,
             care_instructions,
-            cost_price,
             inventory,
             mrp
         } = req.body;
@@ -150,7 +147,6 @@ const productController = {
                     product_details = ?,
                     dimension = ?,
                     care_instructions = ?,
-                    cost_price = ?,
                     inventory = ?,
                     mrp = ?
                 WHERE id = ?
@@ -168,7 +164,6 @@ const productController = {
                 product_details || currentProduct.product_details,
                 dimension || currentProduct.dimension,
                 care_instructions || currentProduct.care_instructions,
-                cost_price || currentProduct.cost_price,
                 inventory || currentProduct.inventory,
                 mrp || currentProduct.mrp,
                 req.params.id

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { FaSearch, FaChevronRight, FaCalendarAlt, FaUserAlt, FaClock, FaHeart, FaComment, FaGlobeAmericas, FaTshirt, FaGem, FaLeaf, FaFeatherAlt } from "react-icons/fa";
+import { FaSearch, FaChevronRight, FaCalendarAlt, FaUserAlt, FaClock, FaHeart, FaComment, FaGlobeAmericas, FaTshirt, FaGem, FaLeaf, FaFeatherAlt, FaStar } from "react-icons/fa";
 import "./FeaturedStories.css";
 import axios from "axios";
+import Testimonials from "../Testimonials/Testimonials.jsx";
+import { motion } from "framer-motion";
 
 const FeaturedStories = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -360,8 +362,92 @@ const FeaturedStories = () => {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section className="testimonials-section">
+        <div className="testimonials-header">
+          <span className="testimonials-subtitle">TESTIMONIALS</span>
+          <h2 className="testimonials-title">What Our Customers Say</h2>
+          <div className="testimonials-divider"></div>
+        </div>
+        <motion.div 
+          className="testimonials-wrapper"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
+        >
+          <div className="testimonials-grid">
+            <div className="testimonial-card featured">
+              <div className="testimonial-content">
+                <div className="quote-icon">"</div>
+                <p className="testimonial-text">
+                  "The quality of their products is exceptional. I've been a loyal customer for years and have never been disappointed. Their attention to detail and customer service is outstanding."
+                </p>
+                <div className="testimonial-author">
+                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop" alt="Sarah Johnson" className="author-image" />
+                  <div className="author-info">
+                    <h4 className="author-name">Sarah Johnson</h4>
+                    <p className="author-title">Loyal Customer</p>
+                    <div className="rating">
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="testimonial-card">
+              <div className="testimonial-content">
+                <div className="quote-icon">"</div>
+                <p className="testimonial-text">
+                  "I love how they combine style with comfort. Their products have transformed my home into a cozy sanctuary. Highly recommend!"
+                </p>
+                <div className="testimonial-author">
+                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop" alt="Michael Chen" className="author-image" />
+                  <div className="author-info">
+                    <h4 className="author-name">Michael Chen</h4>
+                    <p className="author-title">Interior Designer</p>
+                    <div className="rating">
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="testimonial-card">
+              <div className="testimonial-content">
+                <div className="quote-icon">"</div>
+                <p className="testimonial-text">
+                  "The customer service is impeccable. They went above and beyond to help me find the perfect pieces for my home. Will definitely shop again!"
+                </p>
+                <div className="testimonial-author">
+                  <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop" alt="Emma Wilson" className="author-image" />
+                  <div className="author-info">
+                    <h4 className="author-name">Emma Wilson</h4>
+                    <p className="author-title">Home Decor Enthusiast</p>
+                    <div className="rating">
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
       {/* Featured Posts Section */}
-      <section className="featured-blog-section">
+      {/* <section className="featured-blog-section">
         <div className="section-header">
           <h2 className="section-title">FEATURED STORIES</h2>
           <div className="section-divider"></div>
@@ -398,10 +484,10 @@ const FeaturedStories = () => {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* Blog Posts Grid */}
-      <section className="blog-grid-section">
+      {/* <section className="blog-grid-section">
         <div className="blog-grid">
           {filteredPosts.map((post, index) => (
             <div
@@ -436,7 +522,7 @@ const FeaturedStories = () => {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
 
       {/* Newsletter Section */}
       <section className="blog-newsletter">
@@ -467,7 +553,7 @@ const FeaturedStories = () => {
       </section>
       
       {/* Trending Topics */}
-      <section className="trending-topics">
+      {/* <section className="trending-topics">
         <div className="trending-container">
           <h3 className="trending-title">TRENDING TOPICS</h3>
           <div className="trending-tags">
@@ -479,7 +565,7 @@ const FeaturedStories = () => {
             <span className="trending-tag">#ColorTrends</span>
           </div>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };

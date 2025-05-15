@@ -123,6 +123,18 @@
     box-shadow: 0 5px 15px rgba(225, 48, 108, 0.2);
 }
 
+/* .social-link.pinterest {
+    background-color: #E60023;
+    transition: all 0.3s ease;
+} */
+
+.social-link.pinterest:hover {
+    background-color: #E60023;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(225, 48, 108, 0.2);
+}
+
 @media (max-width: 768px) {
     .footer-content {
         flex-direction: column;

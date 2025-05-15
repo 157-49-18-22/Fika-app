@@ -17,7 +17,6 @@
 /* Header Section */
 .hero-heading {
     margin-bottom: 3rem;
-    padding-bottom: 2rem;
 }
 
 .hero-heading-content {
@@ -26,16 +25,15 @@
 }
 
 .hero-main-title {
-    font-size: 3.5rem;
-    line-height: 1.4;
-    font-weight: 500;
-    font-family: 'Montserrat', sans-serif;
-    text-transform: uppercase;
-   
-    color: #000;
     margin: 0;
     width: 100%;
+    line-height: 1.4;
+    text-transform: uppercase;
     text-align: center;
+    font-size: 2.5rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    color: #222;
 }
 
 .icon-wrapper {
