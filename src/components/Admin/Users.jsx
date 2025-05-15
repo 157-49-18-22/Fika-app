@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
+import { getAllUsers, createUser, updateUser, deleteUser } from '../../firebase/firestore';
 import './Users.css';
 
 const Users = () => {
@@ -15,7 +15,8 @@ const Users = () => {
     email: '',
     gender: 'male',
     dateOfBirth: '',
-    contactNumber: ''
+    contactNumber: '',
+    isAdmin: false
   });
 
   useEffect(() => {
@@ -25,8 +26,8 @@ const Users = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://13.202.119.111:5000/api/users');
-      setUsers(response.data);
+      const usersData = await getAllUsers();
+      setUsers(usersData);
       setError(null);
     } catch (err) {
       console.error('Error fetching users:', err);
@@ -37,22 +38,28 @@ const Users = () => {
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: type === 'checkbox' ? checked : value
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const userData = {
+        ...formData,
+        dateOfBirth: formData.dateOfBirth ? new Date(formData.dateOfBirth).toISOString() : null,
+        contactNumber: formData.contactNumber || null
+      };
+
       if (selectedUser) {
         // Update existing user
-        await axios.put(`http://13.202.119.111:5000/api/users/${selectedUser.id}`, formData);
+        await updateUser(selectedUser.id, userData);
       } else {
         // Create new user
-        await axios.post('http://13.202.119.111:5000/api/users', formData);
+        await createUser(userData);
       }
       setShowModal(false);
       setSelectedUser(null);
@@ -62,7 +69,8 @@ const Users = () => {
         email: '',
         gender: 'male',
         dateOfBirth: '',
-        contactNumber: ''
+        contactNumber: '',
+        isAdmin: false
       });
       fetchUsers();
     } catch (err) {
@@ -74,12 +82,13 @@ const Users = () => {
   const handleEdit = (user) => {
     setSelectedUser(user);
     setFormData({
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      gender: user.gender,
-      dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : '',
-      contactNumber: user.contactNumber || ''
+      firstName: user.firstName || '',
+      lastName: user.lastName || '',
+      email: user.email || '',
+      gender: user.gender || 'male',
+      dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth.toDate()).toISOString().split('T')[0] : '',
+      contactNumber: user.contactNumber || '',
+      isAdmin: user.isAdmin || false
     });
     setShowModal(true);
   };
@@ -87,7 +96,7 @@ const Users = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        await axios.delete(`http://13.202.119.111:5000/api/users/${id}`);
+        await deleteUser(id);
         fetchUsers();
       } catch (err) {
         console.error('Error deleting user:', err);
@@ -96,9 +105,12 @@ const Users = () => {
     }
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Not set';
-    return new Date(dateString).toLocaleDateString();
+  const formatDate = (timestamp) => {
+    if (!timestamp) return 'Not set';
+    if (timestamp.toDate) {
+      return timestamp.toDate().toLocaleDateString();
+    }
+    return new Date(timestamp).toLocaleDateString();
   };
 
   if (loading) return <div className="loading">Loading...</div>;
@@ -122,6 +134,7 @@ const Users = () => {
               <th>Gender</th>
               <th>Contact</th>
               <th>Date of Birth</th>
+              <th>Admin</th>
               <th>Joined Date</th>
               <th>Actions</th>
             </tr>
@@ -134,7 +147,8 @@ const Users = () => {
                 <td>{user.gender}</td>
                 <td>{user.contactNumber || 'Not set'}</td>
                 <td>{formatDate(user.dateOfBirth)}</td>
-                <td>{formatDate(user.created_at)}</td>
+                <td>{user.isAdmin ? 'Yes' : 'No'}</td>
+                <td>{formatDate(user.createdAt)}</td>
                 <td className="action-buttons">
                   <button 
                     className="edit-btn"
@@ -223,6 +237,17 @@ const Users = () => {
                   title="Please enter a valid 10-digit phone number"
                 />
               </div>
+              <div className="form-group">
+                <label>
+                  <input
+                    type="checkbox"
+                    name="isAdmin"
+                    checked={formData.isAdmin}
+                    onChange={handleInputChange}
+                  />
+                  Admin User
+                </label>
+              </div>
               <div className="modal-buttons">
                 <button type="submit" className="save-btn">
                   {selectedUser ? 'Update' : 'Save'}
@@ -239,7 +264,8 @@ const Users = () => {
                       email: '',
                       gender: 'male',
                       dateOfBirth: '',
-                      contactNumber: ''
+                      contactNumber: '',
+                      isAdmin: false
                     });
                   }}
                 >

@@ -367,4 +367,87 @@ export const initializeWishGenieCollection = async () => {
     console.error('Error initializing Wish Genie collection:', error);
     throw error;
   }
+};
+
+// ADMIN USERS MANAGEMENT
+
+/**
+ * Get all users
+ * @returns {Promise<Array>} - Array of user objects
+ */
+export const getAllUsers = async () => {
+  try {
+    const usersQuery = query(
+      collection(db, 'users'),
+      orderBy('createdAt', 'desc')
+    );
+    
+    const querySnapshot = await getDocs(usersQuery);
+    const users = [];
+    
+    querySnapshot.forEach((doc) => {
+      users.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    return users;
+  } catch (error) {
+    console.error('Error getting users:', error);
+    throw error;
+  }
+};
+
+/**
+ * Create a new user
+ * @param {Object} userData - User data including all fields
+ * @returns {Promise<string>} - The ID of the created user
+ */
+export const createUser = async (userData) => {
+  try {
+    const usersCollection = collection(db, 'users');
+    const userRef = await addDoc(usersCollection, {
+      ...userData,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    return userRef.id;
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update a user
+ * @param {string} userId - The user ID
+ * @param {Object} userData - The data to update
+ * @returns {Promise<void>}
+ */
+export const updateUser = async (userId, userData) => {
+  try {
+    const userRef = doc(db, 'users', userId);
+    await updateDoc(userRef, {
+      ...userData,
+      updatedAt: serverTimestamp()
+    });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    throw error;
+  }
+};
+
+/**
+ * Delete a user
+ * @param {string} userId - The user ID to delete
+ * @returns {Promise<void>}
+ */
+export const deleteUser = async (userId) => {
+  try {
+    await deleteDoc(doc(db, 'users', userId));
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw error;
+  }
 }; 
