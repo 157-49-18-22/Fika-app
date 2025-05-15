@@ -94,26 +94,26 @@ const UserDashboard = () => {
           </div>
 
           <div className="dashboard-menu">
-            <Link to="/profile" className="menu-item" onClick={() => setIsOpen(false)}>
+            {/* <Link to="/profile" className="menu-item" onClick={() => setIsOpen(false)}>
               <FaUser className="menu-icon" />
               <span>My Profile</span>
-            </Link>
+            </Link> */}
             <Link to="/orders" className="menu-item" onClick={() => setIsOpen(false)}>
               <FaHistory className="menu-icon" />
               <span>My Orders</span>
             </Link>
-            <Link to="/settings" className="menu-item" onClick={() => setIsOpen(false)}>
+            {/* <Link to="/settings" className="menu-item" onClick={() => setIsOpen(false)}>
               <FaCog className="menu-icon" />
               <span>Settings</span>
-            </Link>
+            </Link> */}
             <Link to="/wishlist" className="menu-item" onClick={() => setIsOpen(false)}>
               <img src="https://cdn-icons-png.flaticon.com/512/1077/1077035.png" alt="Wishlist" />
               <span>Wishlist</span>
             </Link>
-            <Link to="/notifications" className="menu-item" onClick={() => setIsOpen(false)}>
+            {/* <Link to="/notifications" className="menu-item" onClick={() => setIsOpen(false)}>
               <img src="https://cdn-icons-png.flaticon.com/512/1827/1827392.png" alt="Notifications" />
               <span>Notifications</span>
-            </Link>
+            </Link> */}
 
             <button className="menu-item logout-btn" onClick={handleLogout}>
               <FaSignOutAlt className="menu-icon" />

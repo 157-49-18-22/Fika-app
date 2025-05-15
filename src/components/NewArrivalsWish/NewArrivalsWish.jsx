@@ -318,10 +318,10 @@ const NewArrivalsWish = () => {
               <FaTag className="wish-feature-icon" />
               <span>Exclusive Designs</span>
             </div>
-            <div className="wish-feature-item">
+            {/* <div className="wish-feature-item">
               <FaGift className="wish-feature-icon" />
               <span>Free Shipping on orders over ₹1499</span>
-            </div>
+            </div> */}
             <div className="wish-feature-item">
               <FaClock className="wish-feature-icon" />
               <span>Limited Time Offers</span>
@@ -457,13 +457,13 @@ const NewArrivalsWish = () => {
 
       {/* Shopping Benefits */}
       <div className="wish-benefits">
-        <div className="wish-benefit-item">
+        {/* <div className="wish-benefit-item">
           <div className="wish-benefit-icon">🚚</div>
           <div className="wish-benefit-content">
             <h3>Free Shipping</h3>
             <p>On all orders over ₹1499</p>
           </div>
-        </div>
+        </div> */}
         <div className="wish-benefit-item">
           <div className="wish-benefit-icon">⭐</div>
           <div className="wish-benefit-content">
@@ -475,7 +475,7 @@ const NewArrivalsWish = () => {
           <div className="wish-benefit-icon">🔄</div>
           <div className="wish-benefit-content">
             <h3>Easy Returns</h3>
-            <p>15-day return policy</p>
+            <p>Easy Return Policy</p>
           </div>
         </div>
         <div className="wish-benefit-item">

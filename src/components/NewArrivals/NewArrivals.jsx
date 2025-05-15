@@ -368,10 +368,6 @@ const NewArrivals = () => {
                 <span>Exclusive Designs</span>
               </div>
               <div className="arrivals-feature-item">
-                <FaGift className="arrivals-feature-icon" />
-                <span>Free Shipping on orders over ₹1499</span>
-              </div>
-              <div className="arrivals-feature-item">
                 <FaClock className="arrivals-feature-icon" />
                 <span>Limited Time Offers</span>
               </div>
@@ -519,13 +515,13 @@ const NewArrivals = () => {
 
         {/* Shopping Benefits */}
         <div className="arrivals-benefits">
-          <div className="arrivals-benefit-item">
+          {/* <div className="arrivals-benefit-item">
             <div className="arrivals-benefit-icon">🚚</div>
             <div className="arrivals-benefit-content">
               <h3>Free Shipping</h3>
               <p>On all orders over ₹1499</p>
             </div>
-          </div>
+          </div> */}
           <div className="arrivals-benefit-item">
             <div className="arrivals-benefit-icon">⭐</div>
             <div className="arrivals-benefit-content">

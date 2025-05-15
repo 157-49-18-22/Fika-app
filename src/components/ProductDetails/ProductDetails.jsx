@@ -19,6 +19,8 @@ import {
   FaFacebook,
   FaUsers,
   FaShoppingBag,
+  FaArrowRight,
+  FaRegHeart,
 } from "react-icons/fa";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
@@ -513,19 +515,19 @@ const ProductDetails = () => {
               </div>
             </div>
             <div className="product-price">
-              <span className="cost-price" style={{fontSize: '18px'}}>Price: ₹{product.cost_price}</span>
-              <span className="current-price" style={{textDecoration: 'line-through'}}>₹{product.mrp}</span>
+              {/* <span className="cost-price" style={{fontSize: '18px'}}>Price: ₹{product.cost_price}</span> */}
+              <span className="current-price" style={{fontSize: '18px'}}>Price:₹{product.mrp}</span>
             </div>
           </div>
 
           <div className="product-features">
-            <div className="feature-item">
+            {/* <div className="feature-item">
               <FaTruck />
               <span>Free Shipping</span>
-            </div>
+            </div> */}
             <div className="feature-item">
               <FaUndo />
-              <span>30 Days Return</span>
+              <span>Easy Return Policy</span>
             </div>
             <div className="feature-item">
               <FaShieldAlt />
@@ -818,18 +820,11 @@ const ProductDetails = () => {
               <div className="shipping-info">
                 <div className="shipping-section">
                   <h4>Shipping Information</h4>
-                  <ul>
-                    <li>Free shipping on orders over $50</li>
-                    <li>Standard delivery: 3-5 business days</li>
-                    <li>Express delivery: 1-2 business days</li>
-                    <li>International shipping available</li>
-                  </ul>
                 </div>
                 <div className="returns-section">
                   <h4>Returns Policy</h4>
                   <ul>
-                    <li>30-day return policy</li>
-                    <li>Free returns for all items</li>
+                    <li>Easy Return Policy</li>
                     <li>Items must be unused and in original packaging</li>
                     <li>Refund will be processed within 5-7 business days</li>
                   </ul>
@@ -842,159 +837,211 @@ const ProductDetails = () => {
 
       <div className="related-products">
         <h2>You May Also Like</h2>
-        <div className="related-products-grid">
-          {relatedProducts.map((relatedProduct) => (
-            <div key={relatedProduct.id} className="related-product-card">
-              <div className="related-product-image">
-                <img src={relatedProduct.image} alt={relatedProduct.name} />
-                <div className="product-actions">
-                  <button
-                    className={`action-btn wishlist-btn ${
-                      isInWishlist(relatedProduct.id) ? "active" : ""
-                    }`}
-                    onClick={(e) => handleRelatedProductAction(e, 'wishlist', relatedProduct)}
-                  >
-                    <FaHeart />
-                  </button>
-                  <button
-                    className="action-btn quick-view-btn"
-                    onClick={(e) => handleQuickView(relatedProduct.id, e)}
-                  >
-                    <FaEye />
-                  </button>
-                  <button
-                    className="action-btn add-to-cart-btn"
-                    onClick={(e) => handleRelatedProductAction(e, 'cart', relatedProduct)}
-                  >
-                    <FaShoppingCart />
-                  </button>
-                </div>
-                {relatedProduct.isNew && (
-                  <div className="new-badge">NEW</div>
-                )}
-                {relatedProduct.discount && (
-                  <div className="discount-badge">
-                    -{relatedProduct.discount}%
+        <div className="products-grid">
+          {relatedProducts.map((product) => {
+            let firstImage = '';
+            if (product.image) {
+              const imagesArr = product.image.split(',').map(img => img.trim()).filter(Boolean);
+              if (imagesArr.length > 0) {
+                firstImage = imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
+              }
+            }
+            return (
+              <div 
+                key={product.id} 
+                className="product-card"
+                onClick={() => navigate(`/product/${product.id}`)}
+              >
+                <div className="product-image-container">
+                  <img 
+                    src={firstImage} 
+                    alt={product.product_name} 
+                    className="product-image" 
+                    loading="lazy" 
+                  />
+                  
+                  <div className="product-actions">
+                    <button 
+                      className="product-action-btn cart-btn"
+                      onClick={(e) => handleRelatedProductAction(e, 'cart', product)}
+                      title="Add to Cart"
+                      disabled={product.inventory <= 0}
+                    >
+                      <FaShoppingCart />
+                    </button>
+                    <button 
+                      className={`product-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
+                      onClick={(e) => handleRelatedProductAction(e, 'wishlist', product)}
+                      title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                    >
+                      {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
+                    </button>
+                    <button 
+                      className="product-action-btn quickview-btn"
+                      onClick={(e) => handleQuickView(product.id, e)}
+                      title="Quick View"
+                    >
+                      <FaEye />
+                    </button>
                   </div>
-                )}
-              </div>
-              <div className="related-product-info">
-                <h3>{relatedProduct.name}</h3>
-                <div className="product-price">
-                  {relatedProduct.discount ? (
-                    <>
-                      <span className="original-price">{formatPrice(relatedProduct.mrp)}</span>
-                      <span className="discounted-price">
-                        {formatPrice(relatedProduct.mrp * (1 - relatedProduct.discount / 100))}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="current-price">{formatPrice(relatedProduct.mrp)}</span>
-                  )}
+                </div>
+                
+                <div className="product-info">
+                  <h3 className="product-name">{product.product_name}</h3>
+                  <p className="product-category">{product.category} - {product.sub_category}</p>
+                  <div className="product-price">
+                    <span className="current-price">
+                      ₹{Number(product.mrp).toFixed(2)}
+                    </span>
+                  </div>
+                  
+                  <button className="shop-now-btn">
+                    Shop Now <FaArrowRight className="" />
+                  </button>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
       <div className="recently-viewed">
         <h2>Recently Viewed</h2>
-        <div className="recently-viewed-grid">
-          {recentlyViewedProducts.map((recentProduct) => (
-            <div key={recentProduct.id} className="recent-product-card">
-              <div className="recent-product-image">
-                <img src={recentProduct.image} alt={recentProduct.name} />
-                <div className="product-actions">
-                  <button
-                    className={`action-btn wishlist-btn ${
-                      isInWishlist(recentProduct.id) ? "active" : ""
-                    }`}
-                    onClick={(e) => handleRelatedProductAction(e, 'wishlist', recentProduct)}
-                  >
-                    <FaHeart />
-                  </button>
-                  <button
-                    className="action-btn quick-view-btn"
-                    onClick={(e) => handleQuickView(recentProduct.id, e)}
-                  >
-                    <FaEye />
+        <div className="products-grid">
+          {recentlyViewedProducts.map((product) => {
+            let firstImage = '';
+            if (product.image) {
+              const imagesArr = product.image.split(',').map(img => img.trim()).filter(Boolean);
+              if (imagesArr.length > 0) {
+                firstImage = imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
+              }
+            }
+            return (
+              <div 
+                key={product.id} 
+                className="product-card"
+                onClick={() => navigate(`/product/${product.id}`)}
+              >
+                <div className="product-image-container">
+                  <img 
+                    src={firstImage} 
+                    alt={product.product_name} 
+                    className="product-image" 
+                    loading="lazy" 
+                  />
+                  
+                  <div className="product-actions">
+                    <button 
+                      className="product-action-btn cart-btn"
+                      onClick={(e) => handleRelatedProductAction(e, 'cart', product)}
+                      title="Add to Cart"
+                      disabled={product.inventory <= 0}
+                    >
+                      <FaShoppingCart />
+                    </button>
+                    <button 
+                      className={`product-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
+                      onClick={(e) => handleRelatedProductAction(e, 'wishlist', product)}
+                      title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                    >
+                      {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
+                    </button>
+                    <button 
+                      className="product-action-btn quickview-btn"
+                      onClick={(e) => handleQuickView(product.id, e)}
+                      title="Quick View"
+                    >
+                      <FaEye />
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="product-info">
+                  <h3 className="product-name">{product.product_name}</h3>
+                  <p className="product-category">{product.category} - {product.sub_category}</p>
+                  <div className="product-price">
+                    <span className="current-price">
+                      ₹{Number(product.mrp).toFixed(2)}
+                    </span>
+                  </div>
+                  
+                  <button className="shop-now-btn">
+                    Shop Now <FaArrowRight className="" />
                   </button>
                 </div>
               </div>
-              <div className="recent-product-info">
-                <h3>{recentProduct.name}</h3>
-                <div className="product-price">
-                  {recentProduct.discount ? (
-                    <>
-                      <span className="original-price">{formatPrice(recentProduct.mrp)}</span>
-                      <span className="discounted-price">
-                        {formatPrice(recentProduct.mrp * (1 - recentProduct.discount / 100))}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="current-price">{formatPrice(recentProduct.mrp)}</span>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
       <div className="trending-products">
         <h2>Trending Now</h2>
-        <div className="trending-products-grid">
-          {trendingProducts.map((trendingProduct) => (
-            <div key={trendingProduct.id} className="trending-product-card">
-              <div className="trending-product-image">
-                <img src={trendingProduct.image} alt={trendingProduct.name} />
-                <div className="product-actions">
-                  <button
-                    className={`action-btn wishlist-btn ${
-                      isInWishlist(trendingProduct.id) ? "active" : ""
-                    }`}
-                    onClick={(e) => handleRelatedProductAction(e, 'wishlist', trendingProduct)}
-                  >
-                    <FaHeart />
-                  </button>
-                  <button
-                    className="action-btn quick-view-btn"
-                    onClick={(e) => handleQuickView(trendingProduct.id, e)}
-                  >
-                    <FaEye />
-                  </button>
-                </div>
-                {trendingProduct.isNew && (
-                  <div className="new-badge">NEW</div>
-                )}
-                {trendingProduct.discount && (
-                  <div className="discount-badge">
-                    -{trendingProduct.discount}%
+        <div className="products-grid">
+          {trendingProducts.map((product) => {
+            let firstImage = '';
+            if (product.image) {
+              const imagesArr = product.image.split(',').map(img => img.trim()).filter(Boolean);
+              if (imagesArr.length > 0) {
+                firstImage = imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
+              }
+            }
+            return (
+              <div 
+                key={product.id} 
+                className="product-card"
+                onClick={() => navigate(`/product/${product.id}`)}
+              >
+                <div className="product-image-container">
+                  <img 
+                    src={firstImage} 
+                    alt={product.product_name} 
+                    className="product-image" 
+                    loading="lazy" 
+                  />
+                  
+                  <div className="product-actions">
+                    <button 
+                      className="product-action-btn cart-btn"
+                      onClick={(e) => handleRelatedProductAction(e, 'cart', product)}
+                      title="Add to Cart"
+                      disabled={product.inventory <= 0}
+                    >
+                      <FaShoppingCart />
+                    </button>
+                    <button 
+                      className={`product-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
+                      onClick={(e) => handleRelatedProductAction(e, 'wishlist', product)}
+                      title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                    >
+                      {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
+                    </button>
+                    <button 
+                      className="product-action-btn quickview-btn"
+                      onClick={(e) => handleQuickView(product.id, e)}
+                      title="Quick View"
+                    >
+                      <FaEye />
+                    </button>
                   </div>
-                )}
-              </div>
-              <div className="trending-product-info">
-                <h3>{trendingProduct.name}</h3>
-                <div className="product-price">
-                  {trendingProduct.discount ? (
-                    <>
-                      <span className="original-price">{formatPrice(trendingProduct.mrp)}</span>
-                      <span className="discounted-price">
-                        {formatPrice(trendingProduct.mrp * (1 - trendingProduct.discount / 100))}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="current-price">{formatPrice(trendingProduct.mrp)}</span>
-                  )}
                 </div>
-                <div className="trending-rating">
-                  {renderStars(trendingProduct.rating)}
-                  <span>({trendingProduct.reviewsCount})</span>
+                
+                <div className="product-info">
+                  <h3 className="product-name">{product.product_name}</h3>
+                  <p className="product-category">{product.category} - {product.sub_category}</p>
+                  <div className="product-price">
+                    <span className="current-price">
+                      ₹{Number(product.mrp).toFixed(2)}
+                    </span>
+                  </div>
+                  
+                  <button className="shop-now-btn">
+                    Shop Now <FaArrowRight className="" />
+                  </button>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -1044,18 +1091,18 @@ const ProductDetails = () => {
       </div>
 
       <div className="brand-features">
-        <div className="feature-item">
+        {/* <div className="feature-item">
           <FaTruck />
           <div className="feature-content">
             <h3>Free Shipping</h3>
             <p>On orders over $50</p>
           </div>
-        </div>
+        </div> */}
         <div className="feature-item">
           <FaUndo />
           <div className="feature-content">
             <h3>Easy Returns</h3>
-            <p>30 days return policy</p>
+            <p>Easy Return Policy</p>
           </div>
         </div>
         <div className="feature-item">

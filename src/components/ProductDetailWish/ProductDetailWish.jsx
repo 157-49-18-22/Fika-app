@@ -284,18 +284,18 @@ const ProductDetailWish = () => {
 
           <div className="product-meta">
             <div className="product-price">
-              <span className="current-price">₹{product.MRP}</span>
+              <span className="current-price">Price: ₹{product.MRP}</span>
             </div>
           </div>
 
           <div className="product-features">
-            <div className="feature-item">
+            {/* <div className="feature-item">
               <FaTruck />
               <span>Free Shipping</span>
-            </div>
+            </div> */}
             <div className="feature-item">
               <FaUndo />
-              <span>30 Days Return</span>
+              <span>Easy Return Policy</span>
             </div>
             <div className="feature-item">
               <FaShieldAlt />
@@ -451,19 +451,19 @@ const ProductDetailWish = () => {
         </div>
       </div>
 
-      <div className="brand-features">
-        <div className="feature-item">
+      <div className="brand-features" style={{textAlign: 'center'}}>
+        {/* <div className="feature-item">
           <FaTruck />
           <div className="feature-content">
             <h3>Free Shipping</h3>
             <p>On orders over ₹1499</p>
           </div>
-        </div>
+        </div> */}
         <div className="feature-item">
           <FaUndo />
           <div className="feature-content">
             <h3>Easy Returns</h3>
-            <p>30 days return policy</p>
+            <p>Easy return policy</p>
           </div>
         </div>
         <div className="feature-item">
