@@ -5,16 +5,18 @@ import { FiShoppingBag } from "react-icons/fi";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
-import { getAllProducts } from "../../data/products";
 import UserDashboard from "../UserDashboard/UserDashboard";
 import { useAuthRedirect } from '../../utils/authUtils';
 import LoginPrompt from "../../components/LoginPrompt/LoginPrompt";
+import { db } from '../../firebase/config';
+import { collection, getDocs } from 'firebase/firestore';
 
 function Navbar() {
   const { getCartCount } = useCart();
   const { wishlist } = useWishlist();
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  const [allProducts, setAllProducts] = useState([]);
   const searchRef = useRef(null);
   const navigate = useNavigate();
   const { requireAuth, showLoginPrompt, setShowLoginPrompt } = useAuthRedirect();
@@ -27,15 +29,29 @@ function Navbar() {
   const [promptMsg, setPromptMsg] = useState("");
   const [showPrompt, setShowPrompt] = useState(false);
 
-  // Get all products for search
-  const allProducts = getAllProducts();
+  // Fetch products from Firestore
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'products'));
+        const products = [];
+        querySnapshot.forEach((doc) => {
+          products.push({ id: doc.id, ...doc.data() });
+        });
+        setAllProducts(products);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   // Filter products based on search query
   const filteredProducts = allProducts.filter(
     (product) =>
       searchQuery &&
-      (product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-       product.category.toLowerCase().includes(searchQuery.toLowerCase()))
+      (product.product_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+       product.category?.toLowerCase().includes(searchQuery.toLowerCase()))
   ).slice(0, 5); // Limit to 5 results
 
   const words = ["Search Products","Explore Collections"];
