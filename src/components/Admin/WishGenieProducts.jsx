@@ -14,6 +14,8 @@ const WishGenieProducts = () => {
   const [error, setError] = useState(null);
   const [editingProduct, setEditingProduct] = useState(null);
   const [showForm, setShowForm] = useState(false);
+  const [showBulkForm, setShowBulkForm] = useState(false);
+  const [bulkJson, setBulkJson] = useState('');
   const [formData, setFormData] = useState({
     'Sticker Content Main': '',
     'Sticker Content Sub': '',
@@ -27,6 +29,11 @@ const WishGenieProducts = () => {
     'Height Dimensions': '',
     'Jar type': '',
     'Product Description': '',
+    'Storage': '',
+    'Type of wax': '',
+    'Wax color': '',
+    'Weight': '',
+    'warning': '',
     image: null
   });
 
@@ -66,13 +73,38 @@ const WishGenieProducts = () => {
     }
   };
 
+  const handleEdit = (product) => {
+    setEditingProduct(product);
+    setFormData({
+      'Sticker Content Main': product['Sticker Content Main'] || '',
+      'Sticker Content Sub': product['Sticker Content Sub'] || '',
+      'Category': product['Category'] || '',
+      'MRP': product['MRP'] || '',
+      'Product code': product['Product code'] || '',
+      'Burn Time': product['Burn Time'] || '',
+      'Burning Instructions': product['Burning Instructions'] || '',
+      'Diameter': product['Diameter'] || '',
+      'Fragrances': product['Fragrances'] || '',
+      'Height Dimensions': product['Height Dimensions'] || '',
+      'Jar type': product['Jar type'] || '',
+      'Product Description': product['Product Description'] || '',
+      'Storage': product['Storage'] || '',
+      'Type of wax': product['Type of wax'] || '',
+      'Wax color': product['Wax color'] || '',
+      'Weight': product['Weight'] || '',
+      'warning': product['warning'] || '',
+      image: product.image || ''
+    });
+    setShowForm(true);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
-      let imageUrl = '';
+      let imageUrl = formData.image;
 
-      if (formData.image) {
+      if (formData.image && formData.image instanceof File) {
         const timestamp = new Date().getTime();
         const path = `wish_genie/${formData['Product code']}/${timestamp}`;
         imageUrl = await uploadFile(formData.image, path);
@@ -105,6 +137,11 @@ const WishGenieProducts = () => {
         'Height Dimensions': '',
         'Jar type': '',
         'Product Description': '',
+        'Storage': '',
+        'Type of wax': '',
+        'Wax color': '',
+        'Weight': '',
+        'warning': '',
         image: null
       });
       fetchProducts();
@@ -114,26 +151,6 @@ const WishGenieProducts = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleEdit = (product) => {
-    setEditingProduct(product);
-    setFormData({
-      'Sticker Content Main': product['Sticker Content Main'] || '',
-      'Sticker Content Sub': product['Sticker Content Sub'] || '',
-      'Category': product['Category'] || '',
-      'MRP': product['MRP'] || '',
-      'Product code': product['Product code'] || '',
-      'Burn Time': product['Burn Time'] || '',
-      'Burning Instructions': product['Burning Instructions'] || '',
-      'Diameter': product['Diameter'] || '',
-      'Fragrances': product['Fragrances'] || '',
-      'Height Dimensions': product['Height Dimensions'] || '',
-      'Jar type': product['Jar type'] || '',
-      'Product Description': product['Product Description'] || '',
-      image: null
-    });
-    setShowForm(true);
   };
 
   const handleDelete = async (productId) => {
@@ -151,6 +168,40 @@ const WishGenieProducts = () => {
     }
   };
 
+  const handleBulkAdd = async () => {
+    try {
+      setLoading(true);
+      let productsToAdd;
+      try {
+        productsToAdd = JSON.parse(bulkJson);
+        if (!Array.isArray(productsToAdd)) {
+          throw new Error('Input must be an array of products');
+        }
+      } catch (err) {
+        setError('Invalid JSON format. Please check your input.');
+        return;
+      }
+
+      // Add each product to the database
+      for (const product of productsToAdd) {
+        const productData = {
+          ...product,
+          updatedAt: new Date()
+        };
+        await createWishGenieProduct(productData);
+      }
+
+      setShowBulkForm(false);
+      setBulkJson('');
+      fetchProducts();
+    } catch (err) {
+      setError('Failed to add products');
+      console.error('Error adding products:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) return <div className="loading">Loading...</div>;
   if (error) return <div className="error">{error}</div>;
 
@@ -158,38 +209,88 @@ const WishGenieProducts = () => {
     <div className="wish-genie-admin">
       <div className="admin-header">
         <h2>Wish Genie Products Management</h2>
-        <button 
-          className="add-product-btn"
-          onClick={() => {
-            setEditingProduct(null);
-            setFormData({
-              'Sticker Content Main': '',
-              'Sticker Content Sub': '',
-              'Category': '',
-              'MRP': '',
-              'Product code': '',
-              'Burn Time': '',
-              'Burning Instructions': '',
-              'Diameter': '',
-              'Fragrances': '',
-              'Height Dimensions': '',
-              'Jar type': '',
-              'Product Description': '',
-              image: null
-            });
-            setShowForm(true);
-          }}
-        >
-          Add New Product
-        </button>
+        <div className="header-buttons">
+          <button 
+            className="add-product-btn"
+            onClick={() => {
+              if (showForm) {
+                setShowForm(false);
+                setEditingProduct(null);
+              } else {
+                setEditingProduct(null);
+                setFormData({
+                  'Sticker Content Main': '',
+                  'Sticker Content Sub': '',
+                  'Category': '',
+                  'MRP': '',
+                  'Product code': '',
+                  'Burn Time': '',
+                  'Burning Instructions': '',
+                  'Diameter': '',
+                  'Fragrances': '',
+                  'Height Dimensions': '',
+                  'Jar type': '',
+                  'Product Description': '',
+                  'Storage': '',
+                  'Type of wax': '',
+                  'Wax color': '',
+                  'Weight': '',
+                  'warning': '',
+                  image: null
+                });
+                setShowForm(true);
+              }
+            }}
+          >
+            {showForm ? 'Hide Form' : 'Add New Product'}
+          </button>
+          <button 
+            className="bulk-add-btn"
+            onClick={() => setShowBulkForm(!showBulkForm)}
+          >
+            Bulk Add Products
+          </button>
+        </div>
       </div>
+
+      {showBulkForm && (
+        <div className="bulk-form">
+          <h3>Bulk Add Products</h3>
+          <div className="form-group">
+            <label>Enter Products JSON:</label>
+            <textarea
+              value={bulkJson}
+              onChange={(e) => setBulkJson(e.target.value)}
+              placeholder="Enter products in JSON format. Example: [{'Sticker Content Main': 'Product 1', 'Category': 'Luxury/Crystal Candles', ...}, ...]"
+              rows="10"
+            />
+          </div>
+          <div className="form-actions">
+            <button 
+              className="save-btn"
+              onClick={handleBulkAdd}
+            >
+              Add Products
+            </button>
+            <button 
+              className="cancel-btn"
+              onClick={() => {
+                setShowBulkForm(false);
+                setBulkJson('');
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       {showForm && (
         <div className="product-form">
           <h3>{editingProduct ? 'Edit Product' : 'Add New Product'}</h3>
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>Product Name:</label>
+              <label>Sticker Content Main:</label>
               <input
                 type="text"
                 name="Sticker Content Main"
@@ -323,11 +424,66 @@ const WishGenieProducts = () => {
             </div>
 
             <div className="form-group">
+              <label>Storage Instructions:</label>
+              <textarea
+                name="Storage"
+                value={formData['Storage']}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Type of Wax:</label>
+              <input
+                type="text"
+                name="Type of wax"
+                value={formData['Type of wax']}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Wax Color:</label>
+              <input
+                type="text"
+                name="Wax color"
+                value={formData['Wax color']}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Weight:</label>
+              <input
+                type="text"
+                name="Weight"
+                value={formData['Weight']}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Warning:</label>
+              <textarea
+                name="warning"
+                value={formData['warning']}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+
+            <div className="form-group">
               <label>Product Image:</label>
               <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
+                type="text"
+                name="image"
+                value={formData.image || ''}
+                onChange={handleInputChange}
+                placeholder="Enter image filename"
                 required={!editingProduct}
               />
             </div>
@@ -356,7 +512,7 @@ const WishGenieProducts = () => {
           <thead>
             <tr>
               <th>Image</th>
-              <th>Product Name</th>
+              <th>Sticker Content Main</th>
               <th>Category</th>
               <th>MRP</th>
               <th>Product Code</th>

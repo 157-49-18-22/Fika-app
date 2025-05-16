@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { FaEye, FaTrash } from 'react-icons/fa';
 import './Orders.css';
-import config from '../../config';
+import { getOrders, updateOrderStatus, deleteOrder } from '../../firebase/firestore';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -18,8 +17,8 @@ const Orders = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${config.API_URL}/api/orders`);
-      setOrders(response.data);
+      const ordersData = await getOrders();
+      setOrders(ordersData);
       setError(null);
     } catch (err) {
       console.error('Error fetching orders:', err);
@@ -37,7 +36,7 @@ const Orders = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this order?')) {
       try {
-        await axios.delete(`${config.API_URL}/api/orders/${id}`);
+        await deleteOrder(id);
         fetchOrders();
       } catch (err) {
         console.error('Error deleting order:', err);
@@ -48,9 +47,7 @@ const Orders = () => {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      await axios.put(`${config.API_URL}/api/orders/${orderId}`, {
-        status: newStatus
-      });
+      await updateOrderStatus(orderId, newStatus);
       fetchOrders();
     } catch (err) {
       console.error('Error updating order status:', err);
@@ -84,7 +81,7 @@ const Orders = () => {
               <tr key={order.id}>
                 <td>#{order.id}</td>
                 <td>{order.customer_name}</td>
-                <td>{new Date(order.created_at).toLocaleDateString()}</td>
+                <td>{order.created_at?.toDate().toLocaleDateString()}</td>
                 <td>₹{order.total_amount}</td>
                 <td>
                   <select
@@ -146,7 +143,7 @@ const Orders = () => {
               </div>
               <div className="detail-group">
                 <label>Order Date:</label>
-                <span>{new Date(selectedOrder.created_at).toLocaleString()}</span>
+                <span>{selectedOrder.created_at?.toDate().toLocaleString()}</span>
               </div>
               <div className="detail-group">
                 <label>Status:</label>

@@ -217,7 +217,7 @@ const NewArrivalsWish = () => {
         onClick={() => navigate(`/product-wish/${product.id}`)}
       >
         <div className="wish-product-image">
-          <img src={getFirstImage(product.image)} alt={product['Sticker Content Main']} />
+          <img src={getFirstImage(product.image)} alt="" />
           <div className="wish-product-actions">
             <button 
               className="wish-action-btn cart-btn" 
@@ -243,8 +243,8 @@ const NewArrivalsWish = () => {
           </div>
         </div>
         <div className="wish-product-info">
-          <h3>{product['Sticker Content Main']}</h3>
-          <p className="wish-product-subtitle">{product['Sticker Content Sub']}</p>
+          {/* <h3>{product['Sticker Content Main']}</h3> */}
+          {/* <p className="wish-product-subtitle">{product['Sticker Content Sub']}</p> */}
           <div className="wish-product-price">
             <span className="wish-current-price">₹{getOriginalPrice(product.MRP)}</span>
           </div>

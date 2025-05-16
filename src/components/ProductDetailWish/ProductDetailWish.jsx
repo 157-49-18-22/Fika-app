@@ -401,6 +401,17 @@ const ProductDetailWish = () => {
                     <li><strong>Diameter:</strong> {product.Diameter}</li>
                     <li><strong>Fragrances:</strong> {product.Fragrances}</li>
                     <li><strong>Jar Type:</strong> {product['Jar type']}</li>
+                    <li><strong>Type of Wax:</strong> {product['Type of wax']}</li>
+                    <li><strong>Wax Color:</strong> {product['Wax color']}</li>
+                    <li><strong>Weight:</strong> {product['Weight']}</li>
+                    <li><strong>Storage:</strong> {product['Storage']}</li>
+                  </ul>
+                </div>
+                <div className="details-section">
+                  <h4>Important Information</h4>
+                  <ul>
+                    <li><strong>Warning:</strong> {product['warning']}</li>
+                    <li><strong>Burning Instructions:</strong> {product['Burning Instructions']}</li>
                   </ul>
                 </div>
               </div>

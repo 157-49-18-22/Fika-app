@@ -40,7 +40,8 @@ const FeaturedCollection = () => {
             productsArr.push({ ...data, firstImage });
           }
         });
-        setProducts(productsArr);
+        // Limit to first 8 products
+        setProducts(productsArr.slice(0, 7));
         setError(null);
       } catch (err) {
         setError('Error fetching products. Please try again later.');

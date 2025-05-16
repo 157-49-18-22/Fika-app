@@ -201,13 +201,29 @@ const Products = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
-        const productRef = doc(db, 'products', id);
-        await deleteDoc(productRef);
-        console.log('Product deleted from Firebase:', id);
+        if (typeof id === 'number') {
+          // If ID is a number, find the document by query
+          const productsRef = collection(db, 'products');
+          const q = query(productsRef, where('id', '==', id));
+          const querySnapshot = await getDocs(q);
+          
+          if (!querySnapshot.empty) {
+            const docRef = querySnapshot.docs[0].ref;
+            await deleteDoc(docRef);
+            console.log('Product deleted from Firebase by numeric ID:', id);
+          } else {
+            throw new Error(`Product with numeric ID ${id} not found`);
+          }
+        } else {
+          // If ID is a string (document ID), delete directly
+          const productRef = doc(db, 'products', id);
+          await deleteDoc(productRef);
+          console.log('Product deleted from Firebase by document ID:', id);
+        }
         fetchProducts();
       } catch (err) {
         console.error('Error deleting product from Firebase:', err);
-        setError('Failed to delete product');
+        setError('Failed to delete product: ' + err.message);
       }
     }
   };

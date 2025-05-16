@@ -533,7 +533,7 @@ const NewArrivals = () => {
             <div className="arrivals-benefit-icon">🔄</div>
             <div className="arrivals-benefit-content">
               <h3>Easy Returns</h3>
-              <p>15-day return policy</p>
+              <p>Easy return policy</p>
             </div>
           </div>
           <div className="arrivals-benefit-item">

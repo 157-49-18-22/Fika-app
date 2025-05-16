@@ -90,10 +90,10 @@ const AdminDashboard = () => {
             <span className="nav-icon"><AiOutlineUser /></span>
             <span className="nav-text">Users</span>
           </NavLink>
-          <NavLink to="/admin/categories" className={({ isActive }) => 'nav-item' + (isActive ? ' active' : '')}>
+          {/* <NavLink to="/admin/categories" className={({ isActive }) => 'nav-item' + (isActive ? ' active' : '')}>
             <span className="nav-icon"><AiOutlineTags /></span>
             <span className="nav-text">Categories</span>
-          </NavLink>
+          </NavLink> */}
           <NavLink to="/admin/analytics" className={({ isActive }) => 'nav-item' + (isActive ? ' active' : '')}>
             <span className="nav-icon"><AiOutlineBarChart /></span>
             <span className="nav-text">Analytics</span>

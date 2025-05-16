@@ -356,6 +356,11 @@ export const initializeWishGenieCollection = async () => {
       'Sticker Content Main': 'Reiki Energised Love Ritual Crystal Candle',
       'Sticker Content Sub': 'Infused with Rose quartz',
       'Product Description': 'Experience the power of love and manifestation with our Reiki Energised Love Ritual Crystal Candle. This beautiful candle is infused with Rose Quartz, known as the stone of universal love. Perfect for creating a romantic atmosphere and enhancing your manifestation practices.',
+      'Storage': 'Store In cool and dry place away from sunlight',
+      'Type of wax': 'Soy',
+      'Wax color': 'white',
+      'Weight': '516gms (with lid)',
+      'warning': 'Do not leave a burning candle unattended.',
       'createdAt': serverTimestamp(),
       'updatedAt': serverTimestamp()
     };
@@ -518,6 +523,69 @@ export const getDashboardStats = async () => {
     };
   } catch (error) {
     console.error('Error getting dashboard stats:', error);
+    throw error;
+  }
+};
+
+// ORDERS MANAGEMENT
+
+/**
+ * Get all orders
+ * @returns {Promise<Array>} - Array of order objects
+ */
+export const getOrders = async () => {
+  try {
+    const ordersQuery = query(
+      collection(db, 'orders'),
+      orderBy('created_at', 'desc')
+    );
+    
+    const querySnapshot = await getDocs(ordersQuery);
+    const orders = [];
+    
+    querySnapshot.forEach((doc) => {
+      orders.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    return orders;
+  } catch (error) {
+    console.error('Error getting orders:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update order status
+ * @param {string} orderId - The order ID
+ * @param {string} newStatus - The new status
+ * @returns {Promise<void>}
+ */
+export const updateOrderStatus = async (orderId, newStatus) => {
+  try {
+    const orderRef = doc(db, 'orders', orderId);
+    await updateDoc(orderRef, {
+      status: newStatus,
+      updated_at: serverTimestamp()
+    });
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    throw error;
+  }
+};
+
+/**
+ * Delete an order
+ * @param {string} orderId - The order ID to delete
+ * @returns {Promise<void>}
+ */
+export const deleteOrder = async (orderId) => {
+  try {
+    await deleteDoc(doc(db, 'orders', orderId));
+  } catch (error) {
+    console.error('Error deleting order:', error);
     throw error;
   }
 }; 

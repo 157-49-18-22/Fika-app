@@ -16,7 +16,11 @@
   color: #333;
 }
 
-.add-product-btn {
+.bulk-add-btn{
+  margin-top: 5px;
+}
+
+.add-product-btn, .bulk-add-btn{
   background-color: #4CAF50;
   color: white;
   padding: 10px 20px;
