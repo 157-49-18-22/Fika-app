@@ -17,6 +17,8 @@ const AdminDashboard = () => {
     femaleUsers: 0,
     totalOrders: 0,
     totalProducts: 0,
+    totalRegularProducts: 0,
+    totalWishGenieProducts: 0,
     totalCategories: 0,
     totalRevenue: 0,
     pendingOrders: 0,
@@ -129,7 +131,7 @@ const AdminDashboard = () => {
                     <h3>Total Users</h3>
                     <p className="stat-value">{stats.totalUsers}</p>
                     <div className="stat-details">
-                      <span>Male: {stats.maleUsers}</span>
+                      <span>Male: {stats.maleUsers}</span> <br />
                       <span>Female: {stats.femaleUsers}</span>
                     </div>
                   </div>
@@ -155,6 +157,10 @@ const AdminDashboard = () => {
                   <div className="stat-info">
                     <h3>Total Products</h3>
                     <p className="stat-value">{stats.totalProducts}</p>
+                    <div className="stat-details">
+                      <span>Regular: {stats.totalRegularProducts}</span> <br />
+                      <span>Wish Genie: {stats.totalWishGenieProducts}</span>
+                    </div>
                   </div>
                 </div>
 

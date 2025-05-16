@@ -475,17 +475,28 @@ export const getDashboardStats = async () => {
     const maleUsers = users.filter(user => user.gender === 'male').length;
     const femaleUsers = users.filter(user => user.gender === 'female').length;
 
-    // Get products
-    const productsQuery = query(collection(db, 'wish_genie'));
-    const productsSnapshot = await getDocs(productsQuery);
-    const products = [];
-    productsSnapshot.forEach(doc => products.push({ id: doc.id, ...doc.data() }));
+    // Get regular products
+    const regularProductsQuery = query(collection(db, 'products'));
+    const regularProductsSnapshot = await getDocs(regularProductsQuery);
+    const regularProducts = [];
+    regularProductsSnapshot.forEach(doc => regularProducts.push({ id: doc.id, ...doc.data() }));
     
-    const totalProducts = products.length;
-    const categories = new Set(products.map(product => product.Category));
-    const totalCategories = categories.size;
+    // Get wish genie products
+    const wishGenieQuery = query(collection(db, 'wish_genie'));
+    const wishGenieSnapshot = await getDocs(wishGenieQuery);
+    const wishGenieProducts = [];
+    wishGenieSnapshot.forEach(doc => wishGenieProducts.push({ id: doc.id, ...doc.data() }));
+    
+    const totalRegularProducts = regularProducts.length;
+    const totalWishGenieProducts = wishGenieProducts.length;
+    const totalProducts = totalRegularProducts + totalWishGenieProducts;
+    
+    // Combine categories from both product types
+    const regularCategories = new Set(regularProducts.map(product => product.Category));
+    const wishGenieCategories = new Set(wishGenieProducts.map(product => product.Category));
+    const totalCategories = new Set([...regularCategories, ...wishGenieCategories]).size;
 
-    // Get orders (if you have an orders collection)
+    // Get orders
     let totalOrders = 0;
     let pendingOrders = 0;
     let totalRevenue = 0;
@@ -516,6 +527,8 @@ export const getDashboardStats = async () => {
       femaleUsers,
       totalOrders,
       totalProducts,
+      totalRegularProducts,
+      totalWishGenieProducts,
       totalCategories,
       totalRevenue,
       pendingOrders,
