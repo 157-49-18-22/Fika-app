@@ -244,6 +244,17 @@ export const getComments = async (postId) => {
  */
 export const createWishGenieProduct = async (productData) => {
   try {
+    // Check if product code already exists
+    const productsQuery = query(
+      collection(db, 'wish_genie'),
+      where('Product code', '==', productData['Product code'])
+    );
+    const querySnapshot = await getDocs(productsQuery);
+    
+    if (!querySnapshot.empty) {
+      throw new Error('A product with this product code already exists');
+    }
+
     const productsCollection = collection(db, 'wish_genie');
     const productRef = await addDoc(productsCollection, {
       ...productData,
@@ -312,6 +323,19 @@ export const getWishGenieProduct = async (productId) => {
  */
 export const updateWishGenieProduct = async (productId, productData) => {
   try {
+    // Check if product code already exists in other products
+    const productsQuery = query(
+      collection(db, 'wish_genie'),
+      where('Product code', '==', productData['Product code'])
+    );
+    const querySnapshot = await getDocs(productsQuery);
+    
+    // Check if any product other than the current one has the same product code
+    const duplicateExists = querySnapshot.docs.some(doc => doc.id !== productId);
+    if (duplicateExists) {
+      throw new Error('A product with this product code already exists');
+    }
+
     const productRef = doc(db, 'wish_genie', productId);
     await updateDoc(productRef, {
       ...productData,

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 import { BsFacebook, BsInstagram } from "react-icons/bs";
 import { db } from "../../firebase/config";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, where, getDocs } from "firebase/firestore";
 import "./Contact.css";
 
 const Contact = () => {
@@ -20,6 +20,17 @@ const Contact = () => {
     setLoading(true);
     
     try {
+      // Check if email already exists
+      const contactsQuery = query(
+        collection(db, "contacts"),
+        where("email", "==", form.email)
+      );
+      const querySnapshot = await getDocs(contactsQuery);
+      
+      if (!querySnapshot.empty) {
+        throw new Error('A contact with this email address already exists');
+      }
+
       // Add document to 'contacts' collection in Firestore
       await addDoc(collection(db, "contacts"), {
         ...form,
