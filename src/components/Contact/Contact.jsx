@@ -2,27 +2,37 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
 import { BsFacebook, BsInstagram } from "react-icons/bs";
+import { db } from "../../firebase/config";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import "./Contact.css";
-import axios from "axios";
 
 const Contact = () => {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post("http://13.202.119.111:5000/api/contact", form)
-      .then(() => {
-        setSuccess(true);
-        setForm({ name: "", email: "", message: "" });
-      })
-      .catch(err => {
-        alert("Error: " + (err.response?.data?.error || err.message));
+    setLoading(true);
+    
+    try {
+      // Add document to 'contacts' collection in Firestore
+      await addDoc(collection(db, "contacts"), {
+        ...form,
+        timestamp: serverTimestamp(),
       });
+      
+      setSuccess(true);
+      setForm({ name: "", email: "", message: "" });
+    } catch (err) {
+      alert("Error: " + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const containerVariants = {
@@ -183,8 +193,9 @@ const Contact = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 300 }}
+                disabled={loading}
               >
-                Send Message
+                {loading ? "Sending..." : "Send Message"}
               </motion.button>
               {success && (
                 <motion.div 
@@ -220,7 +231,7 @@ const Contact = () => {
               <motion.div className="contact-details-col" variants={itemVariants}>
                 <FaEnvelope size={32} />
                 <h3>Mail</h3>
-                <p>INFO@FIKA-INDIA.COM
+                <p >info@fika-india.com
                 <br />
                 wishgenie.shop@gmail.com.</p>
               </motion.div>

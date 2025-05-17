@@ -21,7 +21,8 @@ const NewArrivals = () => {
   const [categoryProducts, setCategoryProducts] = useState({
     cushions: [],
     bedsets: [],
-    doharsAndQuilts: []
+    doharsAndQuilts: [],
+    wishGenie: []
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -72,7 +73,8 @@ const NewArrivals = () => {
         const categorizedProducts = {
           cushions: products.filter(p => p.category?.toLowerCase() === "cushions"),
           bedsets: products.filter(p => p.category?.toLowerCase() === "bedsets"),
-          doharsAndQuilts: products.filter(p => p.category?.toLowerCase() === "dohars & quilts")
+          doharsAndQuilts: products.filter(p => p.category?.toLowerCase() === "dohars & quilts"),
+          wishGenie: products.filter(p => p.category?.toLowerCase() === "wish genie")
         };
         setCategoryProducts(categorizedProducts);
         setLoading(false);
@@ -126,7 +128,7 @@ const NewArrivals = () => {
   // Dynamically generate categories from newArrivals
   const categories = React.useMemo(() => {
     const uniqueCategories = Array.from(new Set(newArrivals.map(p => p.category).filter(Boolean)));
-    return ['all', ...uniqueCategories];
+    return ['all', ...uniqueCategories, 'wish genie'];
   }, [newArrivals]);
 
   const filteredProducts = activeTab === "all" 
@@ -342,6 +344,14 @@ const NewArrivals = () => {
     );
   };
 
+  const handleCategoryClick = (category) => {
+    if (category === 'wish genie') {
+      navigate('/new-arrivals-wish');
+    } else {
+      setActiveTab(category);
+    }
+  };
+
   if (loading) {
     console.log('Loading state:', loading);
     return <div className="loading">Loading...</div>;
@@ -466,7 +476,7 @@ const NewArrivals = () => {
             <button 
               key={category} 
               className={`arrivals-category-tab ${activeTab === category ? 'active' : ''}`}
-              onClick={() => setActiveTab(category)}
+              onClick={() => handleCategoryClick(category)}
             >
               {category.charAt(0).toUpperCase() + category.slice(1)}
             </button>
@@ -482,6 +492,8 @@ const NewArrivals = () => {
               ? "Discover our newest cushions, from elegant designs to casual essentials, all crafted with premium fabrics." 
               : activeTab === "bedsets" 
               ? "Complete your look with our just-arrived bedsets, including covers, sheets, and more." 
+              : activeTab === "wish genie"
+              ? "Explore our magical collection of Wish Genie products, designed to make your wishes come true."
               : "Explore our collection of dohars and quilts, perfect for every season and crafted with premium materials for ultimate comfort."}
           </p>
         </div>
