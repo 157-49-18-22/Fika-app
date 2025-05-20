@@ -59,7 +59,8 @@ const NewArrivals = () => {
         const newProducts = products.filter(product => {
           if (!product.created_at) return true;
           const productDate = new Date(product.created_at);
-          return productDate >= thirtyDaysAgo;
+          const hasImage = product.image && product.image.trim() !== '';
+          return productDate >= thirtyDaysAgo && hasImage;
         });
         setNewArrivals(newProducts);
         // Set featured product (first item with discount or first new arrival)
@@ -71,10 +72,10 @@ const NewArrivals = () => {
         }
         // Organize products by categories
         const categorizedProducts = {
-          cushions: products.filter(p => p.category?.toLowerCase() === "cushions"),
-          bedsets: products.filter(p => p.category?.toLowerCase() === "bedsets"),
-          doharsAndQuilts: products.filter(p => p.category?.toLowerCase() === "dohars & quilts"),
-          wishGenie: products.filter(p => p.category?.toLowerCase() === "wish genie")
+          cushions: products.filter(p => p.category?.toLowerCase() === "cushions" && p.image && p.image.trim() !== ''),
+          bedsets: products.filter(p => p.category?.toLowerCase() === "bedsets" && p.image && p.image.trim() !== ''),
+          doharsAndQuilts: products.filter(p => p.category?.toLowerCase() === "dohars & quilts" && p.image && p.image.trim() !== ''),
+          wishGenie: products.filter(p => p.category?.toLowerCase() === "wish genie" && p.image && p.image.trim() !== '')
         };
         setCategoryProducts(categorizedProducts);
         setLoading(false);
@@ -128,12 +129,23 @@ const NewArrivals = () => {
   // Dynamically generate categories from newArrivals
   const categories = React.useMemo(() => {
     const uniqueCategories = Array.from(new Set(newArrivals.map(p => p.category).filter(Boolean)));
-    return ['all', ...uniqueCategories, 'wish genie'];
+    // Filter out categories that have no products with images
+    const categoriesWithProducts = uniqueCategories.filter(category => 
+      newArrivals.some(product => 
+        product.category === category && 
+        product.image && 
+        product.image.trim() !== ''
+      )
+    );
+    return ['all', ...categoriesWithProducts, 'wish genie'];
   }, [newArrivals]);
 
   const filteredProducts = activeTab === "all" 
     ? newArrivals 
-    : newArrivals.filter(product => product.category === activeTab);
+    : newArrivals.filter(product => {
+        const hasImage = product.image && product.image.trim() !== '';
+        return product.category === activeTab && hasImage;
+      });
   
   console.log('Filtered Products:', filteredProducts);
   console.log('Active Tab:', activeTab);

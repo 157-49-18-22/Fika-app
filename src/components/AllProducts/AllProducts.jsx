@@ -79,7 +79,8 @@ const AllProducts = () => {
     const matchSubCategory = !selectedSubCategory || product.sub_category === selectedSubCategory;
     const matchPrice = Number(product.mrp) >= priceRange[0] && Number(product.mrp) <= priceRange[1];
     const matchStock = !inStockOnly || Number(product.inventory) > 0;
-    return matchCategory && matchSubCategory && matchPrice && matchStock;
+    const hasImage = product.image && product.image.trim() !== '';
+    return matchCategory && matchSubCategory && matchPrice && matchStock && hasImage;
   });
 
   useEffect(() => {
@@ -122,7 +123,10 @@ const AllProducts = () => {
   // Count products per category
   const categoryCounts = categories.reduce((acc, cat) => {
     acc[cat.id] = products.filter(
-      (product) => cat.id === 'all' || product.category.toLowerCase() === cat.id.toLowerCase()
+      (product) => {
+        const hasImage = product.image && product.image.trim() !== '';
+        return (cat.id === 'all' || product.category.toLowerCase() === cat.id.toLowerCase()) && hasImage;
+      }
     ).length;
     return acc;
   }, {});

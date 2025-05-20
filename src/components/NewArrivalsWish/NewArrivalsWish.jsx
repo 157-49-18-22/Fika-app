@@ -58,17 +58,24 @@ const NewArrivalsWish = () => {
         console.log('Fetched products:', products);
         
         // Extract unique categories from products
-        const categories = [...new Set(products.map(p => p.Category))].filter(Boolean);
+        const categories = [...new Set(products
+          .filter(p => p.image && p.image.trim() !== '')
+          .map(p => p.Category))]
+          .filter(Boolean);
         setAvailableCategories(categories);
         
         // Categorize products based on their actual categories
         const categorizedProducts = {};
         categories.forEach(category => {
-          categorizedProducts[category] = products.filter(p => p.Category === category);
+          categorizedProducts[category] = products.filter(p => 
+            p.Category === category && 
+            p.image && 
+            p.image.trim() !== ''
+          );
         });
         
         setCategoryProducts(categorizedProducts);
-        setWishGenieProducts(products);
+        setWishGenieProducts(products.filter(p => p.image && p.image.trim() !== ''));
         
         // Set featured product - prioritize products with discounts or select the first product
         const featuredProduct = products.find(p => p.discount > 0) || products[0];
@@ -102,7 +109,10 @@ const NewArrivalsWish = () => {
 
   const filteredProducts = activeTab === "all" 
     ? wishGenieProducts 
-    : wishGenieProducts.filter(product => product.Category === activeTab);
+    : wishGenieProducts.filter(product => {
+        const hasImage = product.image && product.image.trim() !== '';
+        return product.Category === activeTab && hasImage;
+      });
 
   const handleAddToCart = (product, e) => {
     if (e) e.stopPropagation();
