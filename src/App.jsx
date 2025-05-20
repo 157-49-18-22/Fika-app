@@ -29,6 +29,7 @@ import NewArrivalsWish from './components/NewArrivalsWish/NewArrivalsWish.jsx';
 import ScrollToTop from './components/ScrollToTop';
 import TermsAndConditions from './components/Login/TermsAndConditions';
 import PrivacyPolicy from './components/Login/PrivacyPolicy';
+import OrderTracking from './pages/OrderTracking.jsx';
 
 import AdminDashboard from './components/Admin/AdminDashboard.jsx';
 import DashboardOverview from './components/Admin/DashboardOverview.jsx';
@@ -99,7 +100,7 @@ function App() {
                 <Route path="/category/:categoryName" element={<PageLayout><CategoryProducts /></PageLayout>} />
                 <Route path="/terms" element={<PageLayout><TermsAndConditions /></PageLayout>} />
                 <Route path="/privacy-policy" element={<PageLayout><PrivacyPolicy /></PageLayout>} />
-            
+                <Route path="/track-order" element={<PageLayout><OrderTracking /></PageLayout>} />
                 <Route path="/new-arrivals-wish" element={<PageLayout><NewArrivalsWish /></PageLayout>} />
                 <Route path="/returns-exchange" element={<PageLayout><ReturnsExchange /></PageLayout>} />
 

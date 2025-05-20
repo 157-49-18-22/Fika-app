@@ -199,13 +199,18 @@ function Navbar() {
                         setSearchQuery("");
                       }}
                     >
-                      <img src={product.image} alt={product.name} className="search-result-image" />
+                      <img 
+                        src={product.image ? '/' + product.image.split(',')[0].trim() : ''} 
+                        alt={product.name} 
+                        className="search-result-image" 
+                      />
                       <div className="search-result-info">
-                        <div className="search-result-name">{product.name}</div>
-                        <div className="search-result-price">₹{product.price.toFixed(2)}</div>
+                        <div className="search-result-name">{product.product_name}</div>
+                        <div className="search-result-price">₹{product.mrp}</div>
                       </div>
                     </div>
                   ))}
+                  
                   {filteredProducts.length === 0 && (
                     <div className="no-results">No products found</div>
                   )}

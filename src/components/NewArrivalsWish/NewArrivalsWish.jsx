@@ -26,6 +26,7 @@ const NewArrivalsWish = () => {
   const [wishGenieProducts, setWishGenieProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [availableCategories, setAvailableCategories] = useState([]);
   
   const productsRowRef = useRef(null);
   const categoryRowRefs = {
@@ -56,19 +57,33 @@ const NewArrivalsWish = () => {
         
         console.log('Fetched products:', products);
         
-        // Categorize products
-        const categorizedProducts = {
-          scentedCandles: products.filter(p => p.Category?.toLowerCase().includes('candle')),
-          crystalJewellery: products.filter(p => p.Category?.toLowerCase().includes('crystal')),
-          journals: products.filter(p => p.Category?.toLowerCase().includes('journal'))
-        };
+        // Extract unique categories from products
+        const categories = [...new Set(products.map(p => p.Category))].filter(Boolean);
+        setAvailableCategories(categories);
+        
+        // Categorize products based on their actual categories
+        const categorizedProducts = {};
+        categories.forEach(category => {
+          categorizedProducts[category] = products.filter(p => p.Category === category);
+        });
         
         setCategoryProducts(categorizedProducts);
         setWishGenieProducts(products);
         
-        // Set featured product (first item with discount or first product)
-        if (products.length > 0) {
-          setFeaturedProduct(products[0]);
+        // Set featured product - prioritize products with discounts or select the first product
+        const featuredProduct = products.find(p => p.discount > 0) || products[0];
+        
+        if (featuredProduct) {
+          // Ensure all required fields are present
+          const enhancedFeaturedProduct = {
+            ...featuredProduct,
+            name: featuredProduct['Sticker Content Main'] || featuredProduct.name || 'Featured Product',
+            description: featuredProduct['Product Description'] || 'Experience premium quality and exceptional design with this must-have piece from our latest collection.',
+            price: featuredProduct.MRP || featuredProduct.price || 0,
+            discount: featuredProduct.discount || 0,
+            image: featuredProduct.image || '/placeholder-image.jpg'
+          };
+          setFeaturedProduct(enhancedFeaturedProduct);
         }
         
         setError(null);
@@ -83,16 +98,11 @@ const NewArrivalsWish = () => {
     fetchWishGenieProducts();
   }, []);
 
-  const categories = [
-    "all",
-    "scented candles",
-    "crystal jewellery",
-    "journals"
-  ];
+  const categories = ["all", ...availableCategories];
 
   const filteredProducts = activeTab === "all" 
     ? wishGenieProducts 
-    : wishGenieProducts.filter(product => product.Category?.toLowerCase() === activeTab);
+    : wishGenieProducts.filter(product => product.Category === activeTab);
 
   const handleAddToCart = (product, e) => {
     if (e) e.stopPropagation();
@@ -300,6 +310,22 @@ const NewArrivalsWish = () => {
     );
   };
 
+  // Category Description
+  const getCategoryDescription = (category) => {
+    switch (category) {
+      case "all":
+        return "Discover our newest products, from elegant designs to casual essentials, all crafted with premium materials. Each item is designed to bring warmth and ambiance to your space, perfect for relaxation and creating a cozy atmosphere.";
+      case "Luxury/Crystal Candles":
+        return "Explore our collection of luxury crystal candles, each one crafted with care to provide a unique and soothing experience. From calming lavender to invigorating citrus, our candles are made with premium materials to ensure a long-lasting and delightful fragrance.";
+      case "Crystal Jewellery":
+        return "Discover our stunning crystal jewellery collection, featuring unique pieces that combine elegance with natural beauty. Each item is carefully crafted to bring positive energy and style to your everyday look.";
+      case "Journals":
+        return "Explore our selection of beautifully designed journals, perfect for capturing your thoughts and dreams. Each journal is crafted with high-quality materials to inspire creativity and mindfulness.";
+      default:
+        return `Explore our collection of ${category}, each one crafted with care to provide a unique and soothing experience.`;
+    }
+  };
+
   return (
     <div className="wish-section">
       {/* Wish Genie Logo */}
@@ -413,26 +439,7 @@ const NewArrivalsWish = () => {
 
       {/* Category Description */}
       <div className="wish-category-description">
-        {activeTab === "all" && (
-          <p>
-            Discover our newest scented candles, from elegant designs to casual essentials, all crafted with premium fabrics. Each candle is designed to bring warmth and ambiance to your space, perfect for relaxation and creating a cozy atmosphere.
-          </p>
-        )}
-        {activeTab === "scented candles" && (
-          <p>
-            Explore our collection of scented candles, each one crafted with care to provide a unique and soothing experience. From calming lavender to invigorating citrus, our candles are made with premium materials to ensure a long-lasting and delightful fragrance.
-          </p>
-        )}
-        {activeTab === "crystal jewellery" && (
-          <p>
-            Discover our stunning crystal jewellery collection, featuring unique pieces that combine elegance with natural beauty. Each item is carefully crafted to bring positive energy and style to your everyday look.
-          </p>
-        )}
-        {activeTab === "journals" && (
-          <p>
-            Explore our selection of beautifully designed journals, perfect for capturing your thoughts and dreams. Each journal is crafted with high-quality materials to inspire creativity and mindfulness.
-          </p>
-        )}
+        <p>{getCategoryDescription(activeTab)}</p>
       </div>
 
       {/* Main Horizontal Product Row */}
@@ -450,9 +457,9 @@ const NewArrivalsWish = () => {
 
       {/* Category-specific product sections */}
       <div className="wish-sections-container">
-        {renderProductsContainer("Scented Candles", categoryProducts.scentedCandles, "scentedCandles")}
-        {renderProductsContainer("Crystal Jewellery", categoryProducts.crystalJewellery, "crystalJewellery")}
-        {renderProductsContainer("Journals", categoryProducts.journals, "journals")}
+        {availableCategories.map(category => (
+          renderProductsContainer(category, categoryProducts[category], category.toLowerCase().replace(/\s+/g, ''))
+        ))}
       </div>
 
       {/* Shopping Benefits */}

@@ -50,8 +50,8 @@ const Footer = () => {
           <h3 className="footer-heading">MORE DETAILS</h3>
           <div className="footer-links">
             <Link to="/about" className="footer-link">About Us</Link>
-            <Link to="/career" className="footer-link">Career</Link>
-            <Link to="/business" className="footer-link">Our Business</Link>
+            <Link to="" className="footer-link">Career</Link>
+            <Link to="" className="footer-link">Our Business</Link>
             <Link to="/privacy-policy" className="footer-link">Privacy Policy</Link>
             <Link to="/terms" className="footer-link">Terms & Conditions</Link>
           </div>

@@ -46,8 +46,8 @@ const Cart = () => {
     removeFromCart(productId);
   };
 
-  const shipping = 0; // Free shipping
   const subtotal = getCartTotal();
+  const shipping = subtotal >= 2999 ? 0 : 200; 
   const total = subtotal + shipping;
 
   if (cart.length === 0) {
@@ -77,7 +77,7 @@ const Cart = () => {
           {cart.map((item) => (
             <div key={item.id} className="cart-item">
               <div className="cart-item-image">
-                <img src={item.image} alt={item.name || item.product_name || 'Product'} />
+                <img src={item.image ? '/' + item.image.split(',')[0].trim() : ''} alt={item.name || item.product_name || 'Product'} />
               </div>
 
               <div className="cart-item-details">
@@ -155,6 +155,9 @@ const Cart = () => {
             <span className="free-shipping">
               {shipping === 0 ? "Free" : `₹${shipping.toFixed(2)}`}
             </span>
+          </div>
+          <div className="summary-row shipping-note">
+            <span className="shipping-info">Free shipping on orders above ₹2999</span>
           </div>
           <div className="summary-row total">
             <span>Total</span>
