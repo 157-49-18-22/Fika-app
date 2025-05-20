@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import "./Payment.css";
-import axios from "axios";
+import { createRazorpayOrder, verifyPayment } from "../../firebase/functions";
 
 const Payment = ({ onClose }) => {
   const navigate = useNavigate();
@@ -61,46 +61,35 @@ const Payment = ({ onClose }) => {
     setError("");
 
     try {
-      const amount = Math.round(getCartTotal() * 100); // Convert to paise
-      console.log('Creating order with amount:', amount);
-
-      // Create order on backend
-      const orderResponse = await axios.post('http://13.202.119.111:5000/api/payment/create-order', {
-        amount: amount,
-        currency: "INR"
-      });
-
-      console.log('Order created:', orderResponse.data);
+      const amount = Number(getCartTotal()); // Ensure amount is a number
+      // Create order using Firebase callable function
+      const orderResponse = await createRazorpayOrder(amount);
 
       const options = {
-        key: "rzp_test_2LKLmubQ5uu0M4",
-        amount: orderResponse.data.amount,
-        currency: orderResponse.data.currency,
+        key: "rzp_test_05BxV9TnB6Qc7g", // Updated to match Firebase config
+        amount: orderResponse.amount,
+        currency: orderResponse.currency,
         name: "Fika App",
         description: "Test Payment",
-        order_id: orderResponse.data.id,
+        order_id: orderResponse.id,
         handler: async function(response) {
           try {
-            console.log('Payment response:', response);
-            // Verify payment on backend
-            const verifyResponse = await axios.post('http://13.202.119.111:5000/api/payment/verify-payment', {
+            // Verify payment using Firebase callable function
+            const verifyResponse = await verifyPayment({
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature
             });
 
-            console.log('Verification response:', verifyResponse.data);
-
-            if (verifyResponse.data.success) {
+            if (verifyResponse.verified) {
               alert('Payment Successful');
               clearCart();
               navigate('/');
             } else {
-              setError("Payment verification failed: " + (verifyResponse.data.message || 'Unknown error'));
+              setError("Payment verification failed.");
             }
           } catch (err) {
-            console.error('Verification error:', err.response?.data || err.message);
-            setError("Error verifying payment: " + (err.response?.data?.details || err.message));
+            setError("Error verifying payment: " + (err.message || err));
           }
         },
         modal: {
@@ -119,8 +108,7 @@ const Payment = ({ onClose }) => {
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
     } catch (err) {
-      console.error('Payment error:', err.response?.data || err);
-      setError("Error in payment processing: " + (err.response?.data?.details || err.message));
+      setError("Error in payment processing: " + (err.message || err));
     } finally {
       setLoading(false);
     }
@@ -205,7 +193,7 @@ const Payment = ({ onClose }) => {
               <input
                 type="text"
                 name="landmark"
-                placeholder="Landmark (e.g. near park, mall)"
+                placeholder="Landmark"
                 value={codForm.landmark}
                 onChange={handleCODChange}
                 required
@@ -229,12 +217,10 @@ const Payment = ({ onClose }) => {
               <input
                 type="text"
                 name="pincode"
-                placeholder="Pin Code"
+                placeholder="Pincode"
                 value={codForm.pincode}
                 onChange={handleCODChange}
                 required
-                pattern="[0-9]{6}"
-                maxLength={6}
               />
               <input
                 type="text"
@@ -244,25 +230,15 @@ const Payment = ({ onClose }) => {
                 onChange={handleCODChange}
                 required
               />
-              <div className="date-field-group">
-                <label htmlFor="deliveryTime" className="date-label">Time of Delivery</label>
-                <div className="date-input-wrapper">
-                  <input
-                    type="time"
-                    id="deliveryTime"
-                    name="deliveryTime"
-                    value={codForm.deliveryTime}
-                    onChange={handleCODChange}
-                    required
-                    className="date-input"
-                  />
-             
-                </div>
-              </div>
-              <div className="button-row">
-                <button type="submit" className="save-btn">Save</button>
-                <button type="button" className="close-btn" onClick={() => setShowCODForm(false)}>Cancel</button>
-              </div>
+              <input
+                type="text"
+                name="deliveryTime"
+                placeholder="Preferred Delivery Time"
+                value={codForm.deliveryTime}
+                onChange={handleCODChange}
+                required
+              />
+              <button type="submit">Place Order</button>
             </form>
           </div>
         )}
