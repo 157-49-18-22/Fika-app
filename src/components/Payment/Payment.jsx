@@ -81,7 +81,7 @@ const Payment = ({ onClose }) => {
 
       // Initialize Razorpay options - Following documentation more closely
       const options = {
-        key: "rzp_test_05BxV9TnB6Qc7g", // Updated to match Firebase config
+        key: "rzp_live_oR04gue1fn6wcY", // Updated to production key
         amount: orderResponse.amount,
         currency: orderResponse.currency,
         name: "Fika App",
@@ -205,7 +205,7 @@ const Payment = ({ onClose }) => {
         
         // Create a simple test options object
         const options = {
-          key: "rzp_test_05BxV9TnB6Qc7g",
+          key: "rzp_live_oR04gue1fn6wcY", // Updated to production key
           amount: "10000", // 100 INR
           currency: "INR",
           name: "Fika Test",
