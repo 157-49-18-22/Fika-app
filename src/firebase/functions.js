@@ -11,21 +11,41 @@ const db = getFirestore(app);
 // Create Razorpay order
 export const createRazorpayOrder = async (amount) => {
   try {
-    const createOrder = httpsCallable(functions, 'createRazorpayOrder');
-    const result = await createOrder({ amount });
+    console.log('Creating order with amount:', amount, 'Type:', typeof amount);
     
-    // Store order in Firestore
-    await addDoc(collection(db, 'orders'), {
-      orderId: result.data.id,
-      amount: amount,
-      currency: 'INR',
-      status: 'created',
-      createdAt: new Date()
-    });
-
+    if (!amount || isNaN(amount) || amount <= 0) {
+      throw new Error(`Invalid amount: ${amount}`);
+    }
+    
+    const createOrder = httpsCallable(functions, 'createRazorpayOrder');
+    console.log('Calling Cloud Function with:', { amount });
+    
+    const result = await createOrder({ amount });
+    console.log('Cloud Function returned:', result);
+    
+    if (!result.data) {
+      throw new Error('No data returned from order creation');
+    }
+    
     return result.data;
   } catch (error) {
     console.error('Error creating order:', error);
+    if (error.code === 'unauthenticated') {
+      throw new Error('You must be signed in to create an order');
+    }
+    throw error;
+  }
+};
+
+// Test Razorpay Connection
+export const testRazorpayConnection = async () => {
+  try {
+    const testConnection = httpsCallable(functions, 'testRazorpayConnection');
+    const result = await testConnection();
+    console.log('Razorpay test result:', result.data);
+    return result.data;
+  } catch (error) {
+    console.error('Error testing Razorpay connection:', error);
     throw error;
   }
 };
@@ -49,6 +69,20 @@ export const verifyPayment = async (paymentData) => {
     return result.data;
   } catch (error) {
     console.error('Error verifying payment:', error);
+    throw error;
+  }
+};
+
+// Test Order Creation
+export const createTestOrder = async () => {
+  try {
+    console.log('Calling test order creation function');
+    const testOrder = httpsCallable(functions, 'createTestOrder');
+    const result = await testOrder();
+    console.log('Test order result:', result.data);
+    return result.data;
+  } catch (error) {
+    console.error('Error creating test order:', error);
     throw error;
   }
 }; 
