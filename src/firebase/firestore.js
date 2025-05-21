@@ -625,4 +625,85 @@ export const deleteOrder = async (orderId) => {
     console.error('Error deleting order:', error);
     throw error;
   }
+};
+
+// FEATURED PRODUCTS
+
+/**
+ * Get featured products
+ * @returns {Promise<Array>} - Array of featured product objects
+ */
+export const getFeaturedProducts = async () => {
+  try {
+    const productsQuery = query(
+      collection(db, 'products'),
+      where('featured', '==', true),
+      orderBy('createdAt', 'desc')
+    );
+    
+    const querySnapshot = await getDocs(productsQuery);
+    const products = [];
+    
+    querySnapshot.forEach((doc) => {
+      products.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+    
+    return products;
+  } catch (error) {
+    console.error('Error getting featured products:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update product featured status
+ * @param {string} productId - The product ID
+ * @param {boolean} featured - The new featured status
+ * @returns {Promise<void>}
+ */
+export const updateProductFeaturedStatus = async (productId, featured) => {
+  try {
+    const productRef = doc(db, 'products', productId);
+    await updateDoc(productRef, {
+      featured,
+      updatedAt: serverTimestamp()
+    });
+  } catch (error) {
+    console.error('Error updating product featured status:', error);
+    throw error;
+  }
+};
+
+/**
+ * Initialize featured field for existing products
+ * @returns {Promise<void>}
+ */
+export const initializeFeaturedField = async () => {
+  try {
+    const productsRef = collection(db, 'products');
+    const querySnapshot = await getDocs(productsRef);
+    
+    const updatePromises = querySnapshot.docs.map(async (doc) => {
+      const productRef = doc.ref;
+      const productData = doc.data();
+      
+      // Only update if featured field doesn't exist
+      if (productData.featured === undefined) {
+        await updateDoc(productRef, {
+          featured: false, // Set default value to false
+          updatedAt: serverTimestamp()
+        });
+        console.log(`Updated product ${doc.id} with featured field`);
+      }
+    });
+    
+    await Promise.all(updatePromises);
+    console.log('Successfully initialized featured field for all products');
+  } catch (error) {
+    console.error('Error initializing featured field:', error);
+    throw error;
+  }
 }; 

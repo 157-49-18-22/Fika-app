@@ -34,17 +34,18 @@ const Products = () => {
     inventory: '',
     mrp: '',
     discount: '',
-    image: ''
+    image: '',
+    featured: false
   });
 
   // Helper function to get first image from comma-separated string
   const getFirstImage = (imageField) => {
-    if (!imageField) return '/placeholder-image.jpg';
+    if (!imageField) return null;
     const imagesArr = imageField.split(',').map(img => img.trim()).filter(Boolean);
     if (imagesArr.length > 0) {
       return imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
     }
-    return '/placeholder-image.jpg';
+    return null;
   };
 
   // Process products once with useMemo to avoid reprocessing on every render
@@ -166,7 +167,8 @@ const Products = () => {
         inventory: '',
         mrp: '',
         discount: '',
-        image: ''
+        image: '',
+        featured: false
       });
       
       // Refresh the products list
@@ -193,7 +195,8 @@ const Products = () => {
       inventory: product.inventory || '',
       mrp: product.mrp || '',
       discount: product.discount || '',
-      image: product.image || ''
+      image: product.image || '',
+      featured: product.featured || false
     });
     setShowModal(true);
   };
@@ -256,16 +259,21 @@ const Products = () => {
             {processedProducts.map(product => (
               <tr key={`product-${product.id}`}>
                 <td>
-                  <img 
-                    src={product.firstImage} 
-                    alt={product.product_name} 
-                    className="product-thumbnail"
-                    onError={(e) => {
-                      e.target.onerror = null; // Prevent infinite loop
-                      e.target.src = '/placeholder-image.jpg';
-                    }}
-                    loading="lazy"
-                  />
+                  {product.firstImage ? (
+                    <img 
+                      src={product.firstImage} 
+                      alt="Product Image"
+                      className="product-thumbnail"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.style.display = 'none';
+                        e.target.parentElement.textContent = 'No Image Available';
+                      }}
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="no-image">No Image Available</div>
+                  )}
                 </td>
                 <td>{product.product_name}</td>
                 <td>{product.category}</td>
@@ -428,6 +436,17 @@ const Products = () => {
                   required
                 />
               </div>
+              <div className="form-group">
+                <label>Featured Product</label>
+                <select
+                  name="featured"
+                  value={formData.featured}
+                  onChange={handleInputChange}
+                >
+                  <option value={false}>No</option>
+                  <option value={true}>Yes</option>
+                </select>
+              </div>
               <div className="modal-buttons">
                 <button type="submit" className="save-btn">
                   {selectedProduct ? 'Update' : 'Save'}
@@ -452,7 +471,8 @@ const Products = () => {
                       inventory: '',
                       mrp: '',
                       discount: '',
-                      image: ''
+                      image: '',
+                      featured: false
                     });
                   }}
                 >
