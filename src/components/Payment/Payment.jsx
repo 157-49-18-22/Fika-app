@@ -280,12 +280,12 @@ const Payment = ({ onClose }) => {
           >
             {loading ? "Processing..." : `Pay Now ₹${getCartTotal().toFixed(2)}`}
           </button>
-          <button
+          {/* <button
             className="submit-payment-btn"
             onClick={() => setShowCODForm(true)}
           >
             Cash on Delivery (COD)
-          </button>
+          </button> */}
           {/* <button 
             className="test-payment-btn"
             onClick={handleTestOrder}
