@@ -8,7 +8,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
+  z-index: 99999;
 }
 
 .login-prompt-wrapper {
@@ -19,22 +19,16 @@
   max-width: 400px;
   position: relative;
   animation: slideIn 0.3s ease-out;
- 
+  z-index: 100000;
 }
 
 .login-prompt-container {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   background: white;
   padding: 40px;
   text-align: center;
   border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  width: 90%;
-  max-width: 400px;
-  z-index: 9999;
+  width: 100%;
 }
 
 .login-prompt-icon {
