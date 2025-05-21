@@ -27,17 +27,20 @@ const FeaturedCollection = () => {
         thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
         querySnapshot.forEach((doc) => {
           const data = { id: doc.id, ...doc.data() };
-          // Only include products created in the last 30 days
+          // Only include products created in the last 30 days and have valid images
           if (!data.created_at || new Date(data.created_at) >= thirtyDaysAgo) {
             // Parse the image field for the first image
-            let firstImage = '/placeholder-image.jpg';
+            let firstImage = null;
             if (data.image) {
               const imagesArr = data.image.split(',').map(img => img.trim()).filter(Boolean);
               if (imagesArr.length > 0) {
                 firstImage = imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
               }
             }
-            productsArr.push({ ...data, firstImage });
+            // Only add products that have a valid image
+            if (firstImage) {
+              productsArr.push({ ...data, firstImage });
+            }
           }
         });
         // Limit to first 8 products
