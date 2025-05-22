@@ -82,7 +82,7 @@ const FashionShowcase = () => {
                     gap: "10px",
                   }}
                 >
-                  "showcase your style through thoughtfully curated, stylish accent for every space"
+                  "showcase your style through thoughtfully curated, stylish accents for every space"
                   <svg
                     xmlns="http://www.w3.org/2000/svg"  
                     width="60"

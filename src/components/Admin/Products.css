@@ -329,4 +329,92 @@
     width: 98vw;
     padding: 18px 6px 12px 6px;
   }
+}
+
+.header-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.bulk-add-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.bulk-add-btn:hover {
+  background-color: #45a049;
+}
+
+.bulk-form {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 1rem 0;
+}
+
+.bulk-form h3 {
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.bulk-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.bulk-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #666;
+}
+
+.bulk-form textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.bulk-form .form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.bulk-form .save-btn,
+.bulk-form .cancel-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.bulk-form .save-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.bulk-form .save-btn:hover {
+  background-color: #45a049;
+}
+
+.bulk-form .cancel-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.bulk-form .cancel-btn:hover {
+  background-color: #da190b;
 } 

@@ -20,6 +20,8 @@ const Products = () => {
   const [error, setError] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showBulkForm, setShowBulkForm] = useState(false);
+  const [bulkJson, setBulkJson] = useState('');
   const [formData, setFormData] = useState({
     product_name: '',
     category: '',
@@ -231,6 +233,107 @@ const Products = () => {
     }
   };
 
+  const handleBulkAdd = async () => {
+    try {
+      setLoading(true);
+      let productsToAdd;
+      try {
+        productsToAdd = JSON.parse(bulkJson);
+        if (!Array.isArray(productsToAdd)) {
+          throw new Error('Input must be an array of products');
+        }
+      } catch (err) {
+        setError('Invalid JSON format. Please check your input.');
+        return;
+      }
+
+      // Check for duplicate product codes in the input array
+      const productCodes = new Set();
+      const duplicateCodes = new Set();
+      const uniqueProducts = [];
+      
+      // Filter out duplicates from input array
+      productsToAdd.forEach(product => {
+        if (product.product_code) {
+          if (productCodes.has(product.product_code)) {
+            duplicateCodes.add(product.product_code);
+          } else {
+            productCodes.add(product.product_code);
+            uniqueProducts.push(product);
+          }
+        }
+      });
+
+      // Check for duplicates in Firebase database
+      const productsRef = collection(db, 'products');
+      const productCodesToCheck = Array.from(productCodes);
+      const duplicateCodesInDB = new Set();
+      const validProducts = [];
+
+      // Check each product code against the database
+      for (const product of uniqueProducts) {
+        const q = query(productsRef, where('product_code', '==', product.product_code));
+        const querySnapshot = await getDocs(q);
+        
+        if (querySnapshot.empty) {
+          validProducts.push(product);
+        } else {
+          duplicateCodesInDB.add(product.product_code);
+        }
+      }
+
+      // If no valid products to add, show error and return
+      if (validProducts.length === 0) {
+        setError('No valid products to add. All product codes either duplicate in input or already exist in database.');
+        return;
+      }
+
+      // Show warning if some products were skipped
+      if (duplicateCodes.size > 0 || duplicateCodesInDB.size > 0) {
+        let warningMessage = 'Some products were skipped:';
+        if (duplicateCodes.size > 0) {
+          warningMessage += `\n- Duplicate in input: ${Array.from(duplicateCodes).join(', ')}`;
+        }
+        if (duplicateCodesInDB.size > 0) {
+          warningMessage += `\n- Already exist in database: ${Array.from(duplicateCodesInDB).join(', ')}`;
+        }
+        setError(warningMessage);
+      }
+
+      // Get the highest existing ID
+      const highestId = products.reduce((max, product) => 
+        (product.id && typeof product.id === 'number' && product.id > max) ? product.id : max, 0);
+
+      // Add valid products to the database
+      for (let i = 0; i < validProducts.length; i++) {
+        const product = validProducts[i];
+        const newProductRef = doc(collection(db, 'products'));
+        
+        // Convert numeric fields
+        const numericProduct = {
+          ...product,
+          inventory: Number(product.inventory) || 0,
+          mrp: Number(product.mrp) || 0,
+          discount: product.discount ? Number(product.discount) : 0,
+          id: highestId + i + 1,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        };
+
+        await setDoc(newProductRef, numericProduct);
+      }
+
+      setShowBulkForm(false);
+      setBulkJson('');
+      fetchProducts();
+    } catch (err) {
+      setError('Failed to add products: ' + err.message);
+      console.error('Error adding products:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) return <div className="loading">Loading...</div>;
   if (error) return <div className="error">{error}</div>;
 
@@ -238,10 +341,69 @@ const Products = () => {
     <div className="products-container">
       <div className="products-header">
         <h2>Products Management</h2>
-        <button className="add-product-btn" onClick={() => setShowModal(true)}>
-          <FaPlus /> Add New Product
-        </button>
+        <div className="header-buttons">
+          <button className="add-product-btn" onClick={() => setShowModal(true)}>
+            <FaPlus /> Add New Product
+          </button>
+          <button 
+            className="bulk-add-btn"
+            onClick={() => setShowBulkForm(!showBulkForm)}
+          >
+            Bulk Add Products
+          </button>
+        </div>
       </div>
+
+      {showBulkForm && (
+        <div className="bulk-form">
+          <h3>Bulk Add Products</h3>
+          <div className="form-group">
+            <label>Enter Products JSON:</label>
+            <textarea
+              value={bulkJson}
+              onChange={(e) => setBulkJson(e.target.value)}
+              placeholder={`Enter products in JSON format. Example:
+[
+  {
+    "product_name": "Product 1",
+    "category": "Category 1",
+    "sub_category": "Sub Category 1",
+    "product_code": "P001",
+    "color": "Red",
+    "product_description": "Description 1",
+    "material": "Material 1",
+    "product_details": "Details 1",
+    "dimension": "10x10x10",
+    "care_instructions": "Care 1",
+    "inventory": 100,
+    "mrp": 999,
+    "discount": 10,
+    "image": "image1.jpg",
+    "featured": false
+  }
+]`}
+              rows="10"
+            />
+          </div>
+          <div className="form-actions">
+            <button 
+              className="save-btn"
+              onClick={handleBulkAdd}
+            >
+              Add Products
+            </button>
+            <button 
+              className="cancel-btn"
+              onClick={() => {
+                setShowBulkForm(false);
+                setBulkJson('');
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="products-table-container">
         <table className="products-table">

@@ -419,17 +419,28 @@ const ProductDetails = () => {
   };
 
   const ProductGallery = ({ images }) => {
-    const [magnifierPosition, setMagnifierPosition] = useState({ x: 0, y: 0 });
-    const containerRef = useRef(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-    const handleMouseMove = (e) => {
-      if (containerRef.current) {
-        const { left, top, width, height } =
-          containerRef.current.getBoundingClientRect();
-        const x = ((e.pageX - left) / width) * 100;
-        const y = ((e.pageY - top) / height) * 100;
-        setMagnifierPosition({ x, y });
-      }
+    const openModal = (index) => {
+      setCurrentImageIndex(index);
+      setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+      setIsModalOpen(false);
+    };
+
+    const nextImage = () => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === images.length - 1 ? 0 : prevIndex + 1
+      );
+    };
+
+    const prevImage = () => {
+      setCurrentImageIndex((prevIndex) => 
+        prevIndex === 0 ? images.length - 1 : prevIndex - 1
+      );
     };
 
     return (
@@ -446,30 +457,45 @@ const ProductDetails = () => {
           ))}
         </div>
 
-        <div className="main-image-container" ref={containerRef}>
+        <div className="main-image-container">
           <img
             src={images[selectedImage]}
             alt="Selected product"
             className="main-image"
+            onClick={() => openModal(selectedImage)}
+            style={{ cursor: 'pointer' }}
           />
-          <div className="magnifier-container" onMouseMove={handleMouseMove}>
-            <div
-              className="magnified-view"
-              style={{
-                left: `${magnifierPosition.x}%`,
-                top: `${magnifierPosition.y}%`,
-                transform: "translate(-50%, -50%)",
-                backgroundImage: `url(${images[selectedImage]})`,
-                backgroundPosition: `${magnifierPosition.x}% ${magnifierPosition.y}%`,
-                backgroundSize: "400%",
-              }}
-            />
-          </div>
           {product.isNew && <div className="new-badge">NEW</div>}
           {product.discount && (
             <div className="discount-badge">-{product.discount}%</div>
           )}
         </div>
+
+        {isModalOpen && (
+          <div className="image-modal-overlay" onClick={closeModal}>
+            <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+              <button className="modal-close-btn" onClick={closeModal}>×</button>
+              <button className="modal-nav-btn prev" onClick={prevImage}>❮</button>
+              <img
+                src={images[currentImageIndex]}
+                alt={`Product image ${currentImageIndex + 1}`}
+                className="modal-image"
+              />
+              <button className="modal-nav-btn next" onClick={nextImage}>❯</button>
+              <div className="modal-thumbnails">
+                {images.map((img, index) => (
+                  <img
+                    key={index}
+                    src={img}
+                    alt={`Thumbnail ${index + 1}`}
+                    className={`modal-thumbnail ${currentImageIndex === index ? 'active' : ''}`}
+                    onClick={() => setCurrentImageIndex(index)}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
