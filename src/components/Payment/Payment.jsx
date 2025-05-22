@@ -4,7 +4,7 @@ import { useCart } from "../../context/CartContext";
 import "./Payment.css";
 import { createRazorpayOrder, verifyPayment, testRazorpayConnection, createTestOrder } from "../../firebase/functions";
 
-const Payment = ({ onClose }) => {
+const Payment = ({ onClose, total }) => {
   const navigate = useNavigate();
   const { cart, getCartTotal, clearCart } = useCart();
   const [loading, setLoading] = useState(false);
@@ -61,7 +61,7 @@ const Payment = ({ onClose }) => {
     setError("");
 
     try {
-      const amount = Number(getCartTotal()); // Ensure amount is a number
+      const amount = Number(total); // Use the total prop which includes shipping
       console.log('Attempting payment with amount:', amount);
       
       if (amount <= 0) {
@@ -266,7 +266,7 @@ const Payment = ({ onClose }) => {
             <p>
               Total Items: {cart.reduce((sum, item) => sum + item.quantity, 0)}
             </p>
-            <p>Total Amount: ₹{getCartTotal().toFixed(2)}</p>
+            <p>Total Amount: ₹{total.toFixed(2)}</p>
           </div>
         </div>
 
@@ -278,7 +278,7 @@ const Payment = ({ onClose }) => {
             onClick={handleSubmit}
             disabled={loading}
           >
-            {loading ? "Processing..." : `Pay Now ₹${getCartTotal().toFixed(2)}`}
+            {loading ? "Processing..." : `Pay Now ₹${total.toFixed(2)}`}
           </button>
           {/* <button
             className="submit-payment-btn"

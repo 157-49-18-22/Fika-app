@@ -245,6 +245,18 @@ const ProductDetails = () => {
     }
   }, [product]);
 
+  useEffect(() => {
+    if (showLoginPrompt) {
+      document.body.classList.add('login-prompt-active');
+    } else {
+      document.body.classList.remove('login-prompt-active');
+    }
+
+    return () => {
+      document.body.classList.remove('login-prompt-active');
+    };
+  }, [showLoginPrompt]);
+
   if (loading) {
     return <div className="loading">Loading...</div>;
   }

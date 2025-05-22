@@ -1386,7 +1386,20 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 9999;
+    /* width: 100vw; */
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Add this new class to handle body scroll lock */
+body.login-prompt-active {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
 }
 
 .login-prompt-wrapper {
@@ -1397,6 +1410,9 @@
     border-radius: 12px;
     padding: 20px;
     animation: slideIn 0.3s ease-out;
+    z-index: 10000;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .close-prompt-btn {

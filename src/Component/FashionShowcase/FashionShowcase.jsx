@@ -62,29 +62,31 @@ const FashionShowcase = () => {
                 <p
                   style={{
                     borderBottom: "2px solid #1D1D1D",
-                    fontSize: "33px",
+                    fontSize: "22px",
                     fontWeight: "500",
                     textTransform: "capitalize",
                     paddingBottom: "20px",
                   }}
                 >
-                  express your through style
+                  one cushion at a time
                 </p>
                 <p
                   style={{
                     padding: "10px",
                     fontWeight: "500",
+                    fontSize: "14px",
                     paddingBottom: "0px",
                     display: "flex",
                     alignItems: "center",
+                    textTransform: "capitalize",
                     gap: "10px",
                   }}
                 >
-                  Elevete your style with our fashion finds
+                  "showcase your style through thoughtfully curated, stylish accent for every space"
                   <svg
                     xmlns="http://www.w3.org/2000/svg"  
-                    width="24"
-                    height="24"
+                    width="60"
+                    height="60"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="black"
@@ -170,17 +172,17 @@ const FashionShowcase = () => {
                   </div>
                   <h2
                     style={{
-                      fontSize: "28px",
+                      fontSize: "22px",
                       fontWeight: "500",
                       lineHeight: "1.1",
                       color: "#1D1D1D",
                     }}
                   >
-                    Unlock Your
+                    Let Your Cushions
                     <br />
-                    Fashion
+                    Do The Talking
                     <br />
-                    Potential!!!
+                    Style That's All You
                   </h2>
                 </div>
               </div>
