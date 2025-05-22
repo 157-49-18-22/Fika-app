@@ -30,6 +30,7 @@ import ScrollToTop from './components/ScrollToTop';
 import TermsAndConditions from './components/Login/TermsAndConditions';
 import PrivacyPolicy from './components/Login/PrivacyPolicy';
 import OrderTracking from './pages/OrderTracking.jsx';
+import CookieConsent from './components/CookieConsent/CookieConsent.jsx';
 
 import AdminDashboard from './components/Admin/AdminDashboard.jsx';
 import DashboardOverview from './components/Admin/DashboardOverview.jsx';
@@ -50,6 +51,7 @@ const PageLayout = ({ children }) => {
       <Navbar />
       {children}
       <Footer />
+      <CookieConsent />
     </div>
   );
 };
