@@ -465,10 +465,10 @@ const ProductDetails = () => {
             onClick={() => openModal(selectedImage)}
             style={{ cursor: 'pointer' }}
           />
-          {product.isNew && <div className="new-badge">NEW</div>}
+          {/* {product.isNew && <div className="new-badge">NEW</div>}
           {product.discount && (
             <div className="discount-badge">-{product.discount}%</div>
-          )}
+          )} */}
         </div>
 
         {isModalOpen && (
@@ -865,6 +865,7 @@ const ProductDetails = () => {
                     <li>Easy Return Policy</li>
                     <li>Items must be unused and in original packaging</li>
                     <li>Refund will be processed within 5-7 business days</li>
+                    <li>Products must be returned within 2 days of delivery</li>
                   </ul>
                 </div>
               </div>

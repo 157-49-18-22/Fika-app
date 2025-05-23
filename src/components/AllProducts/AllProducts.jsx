@@ -572,7 +572,7 @@ const AllProducts = () => {
             {visibleItems < sortedProducts.length && (
               <div className="load-more-container">
                 <button className="load-more-btn" onClick={handleLoadMore}>
-                  Load More Products
+                  Load More Products...
                 </button>
               </div>
             )}

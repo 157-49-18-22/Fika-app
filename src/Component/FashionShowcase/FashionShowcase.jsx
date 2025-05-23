@@ -1,7 +1,14 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "./FashionShowcase.css";
 
 const FashionShowcase = () => {
+  const navigate = useNavigate();
+
+  const handleShopNow = () => {
+    navigate('/all-products');
+  };
+
   return (
     <div className="fashion-section">
       <h1 className="sectiontitle">
@@ -20,7 +27,7 @@ const FashionShowcase = () => {
             Transform your space with a collection that speaks style and soul. Explore pieces crafted to inspire and elevate everyday living.
             </p>
           </div>
-          <div className="shop-nowbtn">
+          <div className="shop-nowbtn" onClick={handleShopNow} style={{ cursor: 'pointer' }}>
             <span>Shop Now</span>
             <div className="arrow-icon">
               <svg
@@ -68,7 +75,7 @@ const FashionShowcase = () => {
                     paddingBottom: "20px",
                   }}
                 >
-                  one cushion at a time
+                  Express Your Style, one cushion at a time
                 </p>
                 <p
                   style={{
@@ -80,9 +87,10 @@ const FashionShowcase = () => {
                     alignItems: "center",
                     textTransform: "capitalize",
                     gap: "10px",
+                    lineHeight: "1.5",
                   }}
                 >
-                  "showcase your style through thoughtfully curated, stylish accents for every space"
+                  showcase your style through thoughtfully curated, stylish accents for every space
                   <svg
                     xmlns="http://www.w3.org/2000/svg"  
                     width="60"

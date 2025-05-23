@@ -12,6 +12,7 @@ const WishGenieProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
   const [editingProduct, setEditingProduct] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [showBulkForm, setShowBulkForm] = useState(false);
@@ -146,7 +147,11 @@ const WishGenieProducts = () => {
       });
       fetchProducts();
     } catch (err) {
-      setError('Failed to save product');
+      if (err.message.includes('product code already exists')) {
+        setError(`Product with code ${formData['Product code']} already exists`);
+      } else {
+        setError('Failed to save product');
+      }
       console.error('Error saving product:', err);
     } finally {
       setLoading(false);
@@ -182,14 +187,43 @@ const WishGenieProducts = () => {
         return;
       }
 
+      const results = {
+        added: [],
+        skipped: []
+      };
+
       // Add each product to the database
       for (const product of productsToAdd) {
-        const productData = {
-          ...product,
-          updatedAt: new Date()
-        };
-        await createWishGenieProduct(productData);
+        try {
+          const productData = {
+            ...product,
+            updatedAt: new Date()
+          };
+          await createWishGenieProduct(productData);
+          results.added.push(product['Product code']);
+        } catch (err) {
+          if (err.message.includes('product code already exists')) {
+            results.skipped.push(product['Product code']);
+          } else {
+            throw err;
+          }
+        }
       }
+
+      // Show summary message
+      let message = '';
+      if (results.added.length > 0) {
+        message += `Successfully added ${results.added.length} products. `;
+      }
+      if (results.skipped.length > 0) {
+        message += `Skipped ${results.skipped.length} duplicate products (codes: ${results.skipped.join(', ')}).`;
+      }
+      setSuccessMessage(message);
+
+      // Clear success message after 5 seconds
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 5000);
 
       setShowBulkForm(false);
       setBulkJson('');
@@ -207,6 +241,11 @@ const WishGenieProducts = () => {
 
   return (
     <div className="wish-genie-admin">
+      {successMessage && (
+        <div className="success-message">
+          {successMessage}
+        </div>
+      )}
       <div className="admin-header">
         <h2>Wish Genie Products Management</h2>
         <div className="header-buttons">

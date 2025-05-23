@@ -8,7 +8,7 @@ const FashionGrid = () => {
         {/* Left section - Large image */}
         <div className="grid-item main-image">
           {/* <div className="exclusive-badge">EXCLUSIVE DESIGN</div> */}
-          <img src="./FK-BS-003 Full.jpg" alt="Decorative cushion on sofa" />
+          <img src="./FK-CC-039 & FK-CC-001b..jpg" alt="Decorative cushion on sofa" />
           <div className="content-overlay">
             <div className="action-button-container">
               {/* <button className="action-button">
@@ -41,7 +41,7 @@ const FashionGrid = () => {
         <div className="grid-item image-duo">
           <div className="duo-image-container">
             <div className="duo-image">
-              <img src="./FK-CC-019.jpg" alt="Stylish room design" />
+              <img src="./FK-CC-038 & FK-CC-001a.jpg" alt="Stylish room design" />
               <div className="image-overlay">
                 {/* <button className="image-action-button">
                   GOOD STYLE BOOSTS CONFIDENCE
@@ -54,7 +54,7 @@ const FashionGrid = () => {
               </div>
             </div>
             <div className="duo-image">
-              <img src="./FK-CC-020.jpg" alt="Interior design" />
+              <img src="./FK-CC-038 Close Up.jpg" alt="Interior design" />
               <div className="image-overlay">
                 {/* <button className="image-action-button">
                   GOOD STYLE BOOSTS CONFIDENCE
