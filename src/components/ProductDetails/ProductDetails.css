@@ -1471,4 +1471,31 @@ body.login-prompt-active {
 .viewer-count svg,
 .purchase-count svg {
     color: #666;
+}
+
+/* Remove all modal-related styles */
+.image-modal-overlay,
+.image-modal-content,
+.modal-image-container,
+.modal-image,
+.modal-close-btn,
+.modal-nav-btn,
+.modal-nav-btn:hover,
+.modal-nav-btn.prev,
+.modal-nav-btn.next,
+.modal-dots,
+.dot,
+.dot.active,
+.dot:hover {
+    display: none;
+}
+
+/* Responsive adjustments for modal */
+@media (max-width: 768px) {
+    .modal-nav-btn,
+    .modal-nav-btn.prev,
+    .modal-nav-btn.next,
+    .dot {
+        display: none;
+    }
 } 

@@ -419,30 +419,6 @@ const ProductDetails = () => {
   };
 
   const ProductGallery = ({ images }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-    const openModal = (index) => {
-      setCurrentImageIndex(index);
-      setIsModalOpen(true);
-    };
-
-    const closeModal = () => {
-      setIsModalOpen(false);
-    };
-
-    const nextImage = () => {
-      setCurrentImageIndex((prevIndex) => 
-        prevIndex === images.length - 1 ? 0 : prevIndex + 1
-      );
-    };
-
-    const prevImage = () => {
-      setCurrentImageIndex((prevIndex) => 
-        prevIndex === 0 ? images.length - 1 : prevIndex - 1
-      );
-    };
-
     return (
       <div className="product-gallery">
         <div className="thumbnail-column">
@@ -462,40 +438,8 @@ const ProductDetails = () => {
             src={images[selectedImage]}
             alt="Selected product"
             className="main-image"
-            onClick={() => openModal(selectedImage)}
-            style={{ cursor: 'pointer' }}
           />
-          {/* {product.isNew && <div className="new-badge">NEW</div>}
-          {product.discount && (
-            <div className="discount-badge">-{product.discount}%</div>
-          )} */}
         </div>
-
-        {isModalOpen && (
-          <div className="image-modal-overlay" onClick={closeModal}>
-            <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
-              <button className="modal-close-btn" onClick={closeModal}>×</button>
-              <button className="modal-nav-btn prev" onClick={prevImage}>❮</button>
-              <img
-                src={images[currentImageIndex]}
-                alt={`Product image ${currentImageIndex + 1}`}
-                className="modal-image"
-              />
-              <button className="modal-nav-btn next" onClick={nextImage}>❯</button>
-              <div className="modal-thumbnails">
-                {images.map((img, index) => (
-                  <img
-                    key={index}
-                    src={img}
-                    alt={`Thumbnail ${index + 1}`}
-                    className={`modal-thumbnail ${currentImageIndex === index ? 'active' : ''}`}
-                    onClick={() => setCurrentImageIndex(index)}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     );
   };

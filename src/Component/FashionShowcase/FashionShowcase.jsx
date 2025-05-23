@@ -29,7 +29,7 @@ const FashionShowcase = () => {
           </div>
           <div className="shop-nowbtn" onClick={handleShopNow} style={{ cursor: 'pointer' }}>
             <span>Shop Now</span>
-            <div className="arrow-icon">
+            <div className="arrow-icon" >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -92,6 +92,7 @@ const FashionShowcase = () => {
                 >
                   showcase your style through thoughtfully curated, stylish accents for every space
                   <svg
+                    onClick={handleShopNow}
                     xmlns="http://www.w3.org/2000/svg"  
                     width="60"
                     height="60"
@@ -101,7 +102,8 @@ const FashionShowcase = () => {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    style={{ transform: "rotate(-45deg)" }}
+                    style={{ transform: "rotate(-45deg)", cursor: 'pointer' }
+                    }
                   >
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
@@ -128,6 +130,7 @@ const FashionShowcase = () => {
                 }}
               >
                 <svg
+                  onClick={handleShopNow}
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
                   height="24"
@@ -137,7 +140,7 @@ const FashionShowcase = () => {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  style={{ transform: "rotate(-45deg)" }}
+                  style={{ transform: "rotate(-45deg)", cursor: 'pointer' }}
                 >
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
