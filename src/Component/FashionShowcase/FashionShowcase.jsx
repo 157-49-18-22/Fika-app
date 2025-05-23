@@ -1,7 +1,14 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "./FashionShowcase.css";
 
 const FashionShowcase = () => {
+  const navigate = useNavigate();
+
+  const handleShopNow = () => {
+    navigate('/all-products');
+  };
+
   return (
     <div className="fashion-section">
       <h1 className="sectiontitle">
@@ -20,9 +27,9 @@ const FashionShowcase = () => {
             Transform your space with a collection that speaks style and soul. Explore pieces crafted to inspire and elevate everyday living.
             </p>
           </div>
-          <div className="shop-nowbtn">
+          <div className="shop-nowbtn" onClick={handleShopNow} style={{ cursor: 'pointer' }}>
             <span>Shop Now</span>
-            <div className="arrow-icon">
+            <div className="arrow-icon" >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -68,7 +75,7 @@ const FashionShowcase = () => {
                     paddingBottom: "20px",
                   }}
                 >
-                  one cushion at a time
+                  Express Your Style, one cushion at a time
                 </p>
                 <p
                   style={{
@@ -80,10 +87,12 @@ const FashionShowcase = () => {
                     alignItems: "center",
                     textTransform: "capitalize",
                     gap: "10px",
+                    lineHeight: "1.5",
                   }}
                 >
-                  "showcase your style through thoughtfully curated, stylish accents for every space"
+                  showcase your style through thoughtfully curated, stylish accents for every space
                   <svg
+                    onClick={handleShopNow}
                     xmlns="http://www.w3.org/2000/svg"  
                     width="60"
                     height="60"
@@ -93,7 +102,8 @@ const FashionShowcase = () => {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    style={{ transform: "rotate(-45deg)" }}
+                    style={{ transform: "rotate(-45deg)", cursor: 'pointer' }
+                    }
                   >
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
@@ -120,6 +130,7 @@ const FashionShowcase = () => {
                 }}
               >
                 <svg
+                  onClick={handleShopNow}
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
                   height="24"
@@ -129,7 +140,7 @@ const FashionShowcase = () => {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  style={{ transform: "rotate(-45deg)" }}
+                  style={{ transform: "rotate(-45deg)", cursor: 'pointer' }}
                 >
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>

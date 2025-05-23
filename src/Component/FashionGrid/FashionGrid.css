@@ -145,6 +145,7 @@
 /* Duo image section */
 .image-duo {
     height: 100%;
+    max-height: 382px;
 }
 
 .duo-image-container {
