@@ -498,6 +498,13 @@ export const getDashboardStats = async () => {
     const totalUsers = users.length;
     const maleUsers = users.filter(user => user.gender === 'male').length;
     const femaleUsers = users.filter(user => user.gender === 'female').length;
+    const newUsersThisMonth = users.filter(user => {
+      if (!user.createdAt) return false;
+      const createdDate = user.createdAt.toDate ? user.createdAt.toDate() : new Date(user.createdAt);
+      const now = new Date();
+      return createdDate.getMonth() === now.getMonth() && 
+             createdDate.getFullYear() === now.getFullYear();
+    }).length;
 
     // Get regular products
     const regularProductsQuery = query(collection(db, 'products'));
@@ -520,43 +527,147 @@ export const getDashboardStats = async () => {
     const wishGenieCategories = new Set(wishGenieProducts.map(product => product.Category));
     const totalCategories = new Set([...regularCategories, ...wishGenieCategories]).size;
 
-    // Get orders
-    let totalOrders = 0;
+    // Get all orders from both collections using the existing function
+    const allOrders = await getAllOrdersForAdmin();
+    
+    // Calculate order statistics
+    const totalOrders = allOrders.length;
+    
+    // Process orders for various statistics
     let pendingOrders = 0;
+    let processingOrders = 0;
+    let shippedOrders = 0;
+    let deliveredOrders = 0;
+    let completedOrders = 0;
+    let cancelledOrders = 0;
     let totalRevenue = 0;
-    let averageRating = 0;
-
-    try {
-      const ordersQuery = query(collection(db, 'orders'));
-      const ordersSnapshot = await getDocs(ordersQuery);
-      const orders = [];
-      ordersSnapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
+    let totalRatingSum = 0;
+    let totalRatingCount = 0;
+    let paymentMethods = {
+      card: 0,
+      netbanking: 0,
+      upi: 0,
+      wallet: 0,
+      cash: 0,
+      other: 0
+    };
+    
+    // Order trend data (last 6 months)
+    const months = 6;
+    const now = new Date();
+    const orderTrend = Array(months).fill(0);
+    const revenueTrend = Array(months).fill(0);
+    
+    allOrders.forEach(order => {
+      // Status counts
+      const status = order.status || 'pending';
+      if (status === 'pending') pendingOrders++;
+      else if (status === 'processing') processingOrders++;
+      else if (status === 'shipped') shippedOrders++;
+      else if (status === 'delivered') deliveredOrders++;
+      else if (status === 'completed') completedOrders++;
+      else if (status === 'cancelled') cancelledOrders++;
       
-      totalOrders = orders.length;
-      pendingOrders = orders.filter(order => order.status === 'pending').length;
-      totalRevenue = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
-      
-      // Calculate average rating if you have ratings
-      const ratings = orders.filter(order => order.rating).map(order => order.rating);
-      if (ratings.length > 0) {
-        averageRating = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
+      // Skip cancelled orders in revenue calculation
+      if (status !== 'cancelled') {
+        // Calculate total revenue
+        let orderTotal = 0;
+        
+        // Handle different amount formats
+        if (order.amount) {
+          // Razorpay stores amounts in paise (100 paise = 1 rupee)
+          orderTotal = order.amount / 100;
+        } else if (order.total_amount) {
+          orderTotal = order.total_amount;
+        } else if (order.orderTotal) {
+          orderTotal = order.orderTotal;
+        }
+        
+        totalRevenue += orderTotal;
+        
+        // Track payment methods
+        const method = order.payment_method || (order.razorpay_payment_id ? 'online' : 'other');
+        if (method.includes('card')) paymentMethods.card++;
+        else if (method.includes('netbanking')) paymentMethods.netbanking++;
+        else if (method.includes('upi')) paymentMethods.upi++;
+        else if (method.includes('wallet')) paymentMethods.wallet++;
+        else if (method.includes('cash')) paymentMethods.cash++;
+        else paymentMethods.other++;
       }
-    } catch (error) {
-      console.log('Orders collection not found or error:', error);
+      
+      // Handle ratings
+      if (order.rating) {
+        totalRatingSum += order.rating;
+        totalRatingCount++;
+      }
+      
+      // Calculate order trend (last 6 months)
+      const orderDate = order.created_at?.toDate?.() || 
+                        new Date(order.created_at || order.orderDate || Date.now());
+      
+      for (let i = 0; i < months; i++) {
+        const trendMonth = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        if (orderDate.getMonth() === trendMonth.getMonth() && 
+            orderDate.getFullYear() === trendMonth.getFullYear()) {
+          orderTrend[i]++;
+          
+          // Only add to revenue trend if not cancelled
+          if (status !== 'cancelled') {
+            let orderAmount = 0;
+            if (order.amount) orderAmount = order.amount / 100;
+            else if (order.total_amount) orderAmount = order.total_amount;
+            else if (order.orderTotal) orderAmount = order.orderTotal;
+            
+            revenueTrend[i] += orderAmount;
+          }
+          break;
+        }
+      }
+    });
+    
+    // Calculate average order value (AOV)
+    const nonCancelledOrders = allOrders.filter(order => order.status !== 'cancelled').length;
+    const averageOrderValue = nonCancelledOrders > 0 ? totalRevenue / nonCancelledOrders : 0;
+    
+    // Calculate average rating
+    const averageRating = totalRatingCount > 0 ? totalRatingSum / totalRatingCount : 0;
+
+    // Create month labels for trends
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const trendLabels = [];
+    for (let i = 0; i < months; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      trendLabels.unshift(`${monthNames[d.getMonth()]} ${d.getFullYear()}`);
     }
 
     return {
       totalUsers,
       maleUsers,
       femaleUsers,
+      newUsersThisMonth,
       totalOrders,
+      pendingOrders,
+      processingOrders,
+      shippedOrders,
+      deliveredOrders,
+      completedOrders,
+      cancelledOrders,
       totalProducts,
       totalRegularProducts,
       totalWishGenieProducts,
       totalCategories,
       totalRevenue,
-      pendingOrders,
-      averageRating
+      averageOrderValue,
+      averageRating,
+      paymentMethods,
+      orderTrend: {
+        labels: trendLabels,
+        data: orderTrend.slice().reverse() // Reverse to match labels
+      },
+      revenueTrend: {
+        labels: trendLabels,
+        data: revenueTrend.slice().reverse() // Reverse to match labels
+      }
     };
   } catch (error) {
     console.error('Error getting dashboard stats:', error);
