@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaUser, FaSignOutAlt, FaCog, FaHistory } from 'react-icons/fa';
+import { FaUser, FaSignOutAlt, FaCog, FaHistory, FaUserShield } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import './UserDashboard.css';
 
@@ -36,6 +36,9 @@ const UserDashboard = () => {
     if (currentUser?.email) return currentUser.email.split('@')[0];
     return 'User';
   };
+
+  // Check if user is admin
+  const isAdmin = user?.isAdmin || currentUser?.isAdmin;
 
   // Show login dropdown if not logged in
   if (!isAuthenticated) {
@@ -90,10 +93,19 @@ const UserDashboard = () => {
             <div className="user-info">
               <h4>Welcome, {getUserName()}</h4>
               <p>{user?.email || currentUser?.email}</p>
+              {isAdmin && <span className="admin-badge">Admin</span>}
             </div>
           </div>
 
           <div className="dashboard-menu">
+            {/* Admin Dashboard link - only visible for admin users */}
+            {isAdmin && (
+              <Link to="/admin" className="menu-item admin-menu-item" onClick={() => setIsOpen(false)}>
+                <FaUserShield className="menu-icon" />
+                <span>Admin Dashboard</span>
+              </Link>
+            )}
+            
             {/* <Link to="/profile" className="menu-item" onClick={() => setIsOpen(false)}>
               <FaUser className="menu-icon" />
               <span>My Profile</span>

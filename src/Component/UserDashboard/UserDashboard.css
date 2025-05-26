@@ -79,7 +79,7 @@ display: inline-block;
 
 .user-info p {
   margin: 5px 0 0;
-  font-size: 14px;
+  font-size: 12px;
   color: #666;
 }
 
@@ -254,25 +254,25 @@ display: inline-block;
 .signup-prompt {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding-top: 15px;
-  border-top: 1px solid #eee;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #666;
 }
 
 .signup-prompt span {
+  font-size: 13px;
   color: #666;
-  font-size: 14px;
 }
 
 .signup-prompt a {
-  color: black;
+  color: #E91E63;
   text-decoration: none;
   font-weight: 500;
-  font-size: 14px;
+  transition: color 0.2s;
 }
 
 .signup-prompt a:hover {
-  text-decoration: underline;
+  color: #C2185B;
 }
 
 @media (max-width: 768px) {
@@ -295,4 +295,31 @@ display: inline-block;
     font-size: 14px;
   }
 } 
+
+/* Admin Styles */
+.admin-badge {
+  display: inline-block;
+  background-color: #ff6b6b;
+  color: white;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-top: 5px;
+  margin-right: 30px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.admin-menu-item {
+  background-color: #f8f0ff;
+  border-left: 3px solid #9c27b0;
+}
+
+.admin-menu-item .menu-icon {
+  color: #9c27b0;
+}
+
+.admin-menu-item:hover {
+  background-color: #f0e6f6;
+}
 

@@ -26,13 +26,10 @@ const Login = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      if (user && user.isAdmin) {
-        navigate('/admin');
-      } else {
-        navigate('/');
-      }
+      // Always redirect to homepage after login (for both regular users and admins)
+      navigate('/');
     }
-  }, [isAuthenticated, user, navigate]);
+  }, [isAuthenticated, navigate]);
 
   useEffect(() => {
     const timer = setInterval(() => {
