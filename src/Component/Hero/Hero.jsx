@@ -31,10 +31,10 @@ function Hero() {
 
         <div className="hero-content-middle">
           <div className="button-container">
-            <button className="hero-button primary-btn" onClick={handleShopNow}>
+            <button className="hero-button primarybtn" onClick={handleShopNow}>
               SHOP NOW <span className="arrow">→</span>
             </button>
-            <button className="hero-button secondary-btn" onClick={handleExplore}>
+            <button className="hero-button secondarybtn" onClick={handleExplore}>
               EXPLORE MORE PRODUCTS
             </button>
           </div>

@@ -117,23 +117,23 @@
     justify-content: center;
 }
 
-.primary-btn {
+.primarybtn {
     background-color: #1D1D1D;
     color: white;
     border: none;
 }
 
-.primary-btn:hover {
+.primarybtn:hover {
     background-color: #000;
 }
 
-.secondary-btn {
+.secondarybtn {
     background-color: white;
     color: #333;
     border: 1px solid #ddd;
 }
 
-.secondary-btn:hover {
+.secondarybtn:hover {
     background-color: #f5f5f5;
 }
 
