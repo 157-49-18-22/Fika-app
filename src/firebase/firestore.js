@@ -715,6 +715,17 @@ export const getOrder = async (orderId) => {
     const orderSnap = await getDoc(orderRef);
     
     if (!orderSnap.exists()) {
+      // Try to find in the successful payments collection
+      const successPaymentRef = doc(db, 'successfulPayments', orderId);
+      const successPaymentSnap = await getDoc(successPaymentRef);
+      
+      if (successPaymentSnap.exists()) {
+        return {
+          id: successPaymentSnap.id,
+          ...successPaymentSnap.data()
+        };
+      }
+      
       throw new Error('Order not found');
     }
 
@@ -724,6 +735,32 @@ export const getOrder = async (orderId) => {
     };
   } catch (error) {
     console.error('Error fetching order:', error);
+    throw error;
+  }
+};
+
+// Save successful payment details even if order doesn't exist
+export const saveSuccessfulPayment = async (paymentData) => {
+  try {
+    const { orderId, paymentId, signature, ...otherData } = paymentData;
+    
+    // Use the order ID as the document ID
+    const paymentRef = doc(db, 'successfulPayments', orderId);
+    
+    // Save the payment information
+    await setDoc(paymentRef, {
+      razorpay_order_id: orderId,
+      razorpay_payment_id: paymentId,
+      razorpay_signature: signature,
+      status: 'successful',
+      created_at: serverTimestamp(),
+      ...otherData
+    });
+    
+    console.log('Successfully saved payment to backup collection:', orderId);
+    return orderId;
+  } catch (error) {
+    console.error('Error saving successful payment:', error);
     throw error;
   }
 }; 

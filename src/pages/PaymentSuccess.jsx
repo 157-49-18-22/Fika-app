@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { FaCheckCircle, FaArrowRight } from 'react-icons/fa';
+import { FaCheckCircle, FaArrowRight, FaExclamationTriangle } from 'react-icons/fa';
 import { getOrder } from '../firebase/firestore';
 import './PaymentSuccess.css';
 
@@ -18,11 +18,15 @@ const PaymentSuccess = () => {
         if (!orderId) {
           throw new Error('No order ID provided');
         }
-        const orderData = await getOrder(orderId);
-        setOrder(orderData);
-      } catch (err) {
-        console.error('Error fetching order:', err);
-        setError('Failed to fetch order details');
+        
+        try {
+          const orderData = await getOrder(orderId);
+          setOrder(orderData);
+        } catch (err) {
+          console.error('Error fetching order:', err);
+          // We still consider the payment successful, just couldn't fetch details
+          setError('Could not fetch complete order details, but your payment has been received.');
+        }
       } finally {
         setLoading(false);
       }
@@ -42,20 +46,8 @@ const PaymentSuccess = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="payment-status-container">
-        <div className="payment-status-content error">
-          <h2>Error</h2>
-          <p>{error}</p>
-          <button onClick={() => navigate('/')} className="home-button">
-            Return to Home
-          </button>
-        </div>
-      </div>
-    );
-  }
-
+  // Even if there's an error, we'll show success since payment went through
+  // We'll just show a simplified view without order details
   return (
     <div className="payment-status-container">
       <div className="payment-status-content success">
@@ -66,6 +58,19 @@ const PaymentSuccess = () => {
         <p className="success-message">
           Thank you for your purchase. Your order has been confirmed.
         </p>
+
+        {error && (
+          <div className="order-warning">
+            <FaExclamationTriangle />
+            <p>{error}</p>
+          </div>
+        )}
+
+        {orderId && (
+          <div className="basic-order-info">
+            <p>Order ID: {orderId}</p>
+          </div>
+        )}
 
         {order && (
           <div className="order-details">
@@ -81,26 +86,28 @@ const PaymentSuccess = () => {
               </div>
               <div className="info-row">
                 <span>Status:</span>
-                <span className="status-badge success">{order.status}</span>
+                <span className="status-badge success">{order.status || 'Successful'}</span>
               </div>
               <div className="info-row">
                 <span>Date:</span>
-                <span>{order.created_at?.toDate().toLocaleString()}</span>
+                <span>{order.created_at?.toDate?.() ? order.created_at.toDate().toLocaleString() : new Date().toLocaleString()}</span>
               </div>
             </div>
 
-            <div className="order-items">
-              <h3>Order Items</h3>
-              <div className="items-list">
-                {order.items?.map((item, index) => (
-                  <div key={index} className="item">
-                    <span className="item-name">{item.name}</span>
-                    <span className="item-quantity">x{item.quantity}</span>
-                    <span className="item-price">₹{item.price}</span>
-                  </div>
-                ))}
+            {order.items && order.items.length > 0 && (
+              <div className="order-items">
+                <h3>Order Items</h3>
+                <div className="items-list">
+                  {order.items.map((item, index) => (
+                    <div key={index} className="item">
+                      <span className="item-name">{item.name}</span>
+                      <span className="item-quantity">x{item.quantity}</span>
+                      <span className="item-price">₹{item.price}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         )}
 

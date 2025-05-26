@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import "./Payment.css";
 import { createRazorpayOrder, verifyPayment, testRazorpayConnection, createTestOrder } from "../../firebase/functions";
+import { saveSuccessfulPayment } from "../../firebase/firestore";
 
 const Payment = ({ onClose, total }) => {
   const navigate = useNavigate();
@@ -120,6 +121,28 @@ const Payment = ({ onClose, total }) => {
               console.error('[PAYMENT] Invalid payment response - missing required fields');
               setError("Invalid payment response");
               return;
+            }
+            
+            // Save successful payment to backup collection first
+            console.log('[PAYMENT] Saving payment details to backup collection...');
+            try {
+              await saveSuccessfulPayment({
+                orderId: response.razorpay_order_id,
+                paymentId: response.razorpay_payment_id,
+                signature: response.razorpay_signature,
+                amount: options.amount,
+                currency: options.currency,
+                items: cart.map(item => ({
+                  name: item.name,
+                  quantity: item.quantity,
+                  price: item.price,
+                  image: item.image
+                }))
+              });
+              console.log('[PAYMENT] Successfully saved payment to backup collection');
+            } catch (backupError) {
+              console.error('[PAYMENT] Error saving to backup collection:', backupError);
+              // Continue despite backup error
             }
             
             // Verify payment using Firebase callable function
