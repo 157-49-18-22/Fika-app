@@ -1,15 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
+import { useAuth } from "../../context/AuthContext";
 import "./Payment.css";
 import { createRazorpayOrder, verifyPayment, testRazorpayConnection, createTestOrder } from "../../firebase/functions";
-import { saveSuccessfulPayment } from "../../firebase/firestore";
+import { saveSuccessfulPayment, getUser } from "../../firebase/firestore";
 
 const Payment = ({ onClose, total }) => {
   const navigate = useNavigate();
   const { cart, getCartTotal, clearCart } = useCart();
+  const { currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [userDetails, setUserDetails] = useState(null);
+
+  // Fetch user details if logged in
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      if (currentUser && currentUser.uid) {
+        try {
+          const userData = await getUser(currentUser.uid);
+          setUserDetails(userData);
+        } catch (err) {
+          console.error('[PAYMENT] Error fetching user details:', err);
+        }
+      }
+    };
+    
+    fetchUserDetails();
+  }, [currentUser]);
 
   // COD state
   const [showCODForm, setShowCODForm] = useState(false);
@@ -136,8 +155,19 @@ const Payment = ({ onClose, total }) => {
                   name: item.name,
                   quantity: item.quantity,
                   price: item.price,
-                  image: item.image
-                }))
+                  image: item.image,
+                  id: item.id || item._id || `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+                })),
+                userId: currentUser?.uid || null,
+                userDetails: userDetails || {
+                  name: options.prefill?.name || 'Guest Customer',
+                  email: options.prefill?.email || '',
+                  phone: options.prefill?.contact || '',
+                  address: options.notes?.address || ''
+                },
+                shippingAddress: options.notes?.address || '',
+                orderDate: new Date().toISOString(),
+                orderTotal: total
               });
               console.log('[PAYMENT] Successfully saved payment to backup collection');
             } catch (backupError) {

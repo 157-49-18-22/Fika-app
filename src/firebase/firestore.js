@@ -742,25 +742,167 @@ export const getOrder = async (orderId) => {
 // Save successful payment details even if order doesn't exist
 export const saveSuccessfulPayment = async (paymentData) => {
   try {
-    const { orderId, paymentId, signature, ...otherData } = paymentData;
+    const { 
+      orderId, 
+      paymentId, 
+      signature, 
+      amount,
+      currency,
+      items,
+      userId,
+      userDetails,
+      ...otherData 
+    } = paymentData;
     
     // Use the order ID as the document ID
     const paymentRef = doc(db, 'successfulPayments', orderId);
     
-    // Save the payment information
+    // Get current timestamp
+    const timestamp = serverTimestamp();
+    
+    // Save the payment information with comprehensive details
     await setDoc(paymentRef, {
+      // Payment identifiers
       razorpay_order_id: orderId,
       razorpay_payment_id: paymentId,
       razorpay_signature: signature,
-      status: 'successful',
-      created_at: serverTimestamp(),
+      
+      // Order details
+      amount: amount,
+      currency: currency || 'INR',
+      items: items || [],
+      total_items: items ? items.reduce((sum, item) => sum + (item.quantity || 1), 0) : 0,
+      total_amount: amount,
+      
+      // User information
+      userId: userId || null,
+      userDetails: userDetails || {},
+      
+      // Order status
+      status: 'completed',
+      payment_status: 'successful',
+      fulfillment_status: 'pending',
+      
+      // Timestamps
+      created_at: timestamp,
+      updated_at: timestamp,
+      payment_date: timestamp,
+      
+      // Additional metadata
+      payment_method: 'razorpay',
+      payment_mode: 'online',
       ...otherData
     });
+    
+    // If we have a userId, also save a reference in the user's orders collection
+    if (userId) {
+      try {
+        const userOrderRef = doc(db, 'users', userId, 'orders', orderId);
+        await setDoc(userOrderRef, {
+          orderId: orderId,
+          created_at: timestamp,
+          amount: amount,
+          status: 'completed',
+          items: items || []
+        });
+        console.log('Also saved order reference to user\'s orders collection');
+      } catch (userOrderError) {
+        console.error('Error saving to user orders collection:', userOrderError);
+      }
+    }
     
     console.log('Successfully saved payment to backup collection:', orderId);
     return orderId;
   } catch (error) {
     console.error('Error saving successful payment:', error);
+    throw error;
+  }
+};
+
+// Get a user's orders from both orders and successfulPayments collections
+export const getUserOrders = async (userId) => {
+  if (!userId) {
+    throw new Error('User ID is required');
+  }
+  
+  try {
+    const orders = [];
+    
+    // Check the main orders collection
+    try {
+      const ordersQuery = query(
+        collection(db, 'orders'),
+        where('userId', '==', userId),
+        orderBy('created_at', 'desc')
+      );
+      
+      const ordersSnapshot = await getDocs(ordersQuery);
+      ordersSnapshot.forEach((doc) => {
+        orders.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+    } catch (error) {
+      console.error('Error fetching from orders collection:', error);
+    }
+    
+    // Check the user's orders subcollection
+    try {
+      const userOrdersQuery = query(
+        collection(db, 'users', userId, 'orders'),
+        orderBy('created_at', 'desc')
+      );
+      
+      const userOrdersSnapshot = await getDocs(userOrdersQuery);
+      const userOrderIds = new Set(orders.map(order => order.id || order.orderId));
+      
+      userOrdersSnapshot.forEach((doc) => {
+        // Avoid duplicates
+        if (!userOrderIds.has(doc.id)) {
+          orders.push({
+            id: doc.id,
+            ...doc.data()
+          });
+          userOrderIds.add(doc.id);
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching from user orders subcollection:', error);
+    }
+    
+    // Check the successfulPayments collection
+    try {
+      const successfulPaymentsQuery = query(
+        collection(db, 'successfulPayments'),
+        where('userId', '==', userId),
+        orderBy('created_at', 'desc')
+      );
+      
+      const successfulPaymentsSnapshot = await getDocs(successfulPaymentsQuery);
+      const existingOrderIds = new Set(orders.map(order => order.id || order.orderId || order.razorpay_order_id));
+      
+      successfulPaymentsSnapshot.forEach((doc) => {
+        // Avoid duplicates
+        if (!existingOrderIds.has(doc.id) && !existingOrderIds.has(doc.data().razorpay_order_id)) {
+          orders.push({
+            id: doc.id,
+            ...doc.data()
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching from successfulPayments collection:', error);
+    }
+    
+    // Sort by creation date
+    return orders.sort((a, b) => {
+      const dateA = a.created_at?.toDate?.() || new Date(a.created_at || a.orderDate || 0);
+      const dateB = b.created_at?.toDate?.() || new Date(b.created_at || b.orderDate || 0);
+      return dateB - dateA; // Most recent first
+    });
+  } catch (error) {
+    console.error('Error getting user orders:', error);
     throw error;
   }
 }; 
