@@ -598,17 +598,35 @@ export const getOrders = async () => {
  * Update order status
  * @param {string} orderId - The order ID
  * @param {string} newStatus - The new status
+ * @param {string} source - The collection source ('orders' or 'successfulPayments')
  * @returns {Promise<void>}
  */
-export const updateOrderStatus = async (orderId, newStatus) => {
+export const updateOrderStatus = async (orderId, newStatus, source = 'orders') => {
   try {
-    const orderRef = doc(db, 'orders', orderId);
-    await updateDoc(orderRef, {
-      status: newStatus,
-      updated_at: serverTimestamp()
-    });
+    // Determine which collection to update based on source
+    const collectionName = source === 'successfulPayments' ? 'successfulPayments' : 'orders';
+    
+    console.log(`Updating order status in ${collectionName} collection for order ${orderId} to ${newStatus}`);
+    
+    const orderRef = doc(db, collectionName, orderId);
+    
+    // Update fields based on the collection
+    if (collectionName === 'successfulPayments') {
+      await updateDoc(orderRef, {
+        status: newStatus,
+        payment_status: newStatus,
+        updated_at: serverTimestamp()
+      });
+    } else {
+      await updateDoc(orderRef, {
+        status: newStatus,
+        updated_at: serverTimestamp()
+      });
+    }
+    
+    console.log(`Successfully updated order ${orderId} status to ${newStatus}`);
   } catch (error) {
-    console.error('Error updating order status:', error);
+    console.error(`Error updating order status in ${source} collection:`, error);
     throw error;
   }
 };
@@ -616,13 +634,39 @@ export const updateOrderStatus = async (orderId, newStatus) => {
 /**
  * Delete an order
  * @param {string} orderId - The order ID to delete
+ * @param {string} source - The collection source ('orders' or 'successfulPayments')
  * @returns {Promise<void>}
  */
-export const deleteOrder = async (orderId) => {
+export const deleteOrder = async (orderId, source = 'orders') => {
   try {
-    await deleteDoc(doc(db, 'orders', orderId));
+    // Determine which collection to delete from based on source
+    const collectionName = source === 'successfulPayments' ? 'successfulPayments' : 'orders';
+    console.log(`Deleting order from ${collectionName} collection: ${orderId}`);
+    
+    await deleteDoc(doc(db, collectionName, orderId));
+    
+    // Also try to delete from user's orders subcollection if userId is known
+    try {
+      // First, get the order to find the userId
+      const orderSnapshot = await getDoc(doc(db, collectionName, orderId));
+      if (orderSnapshot.exists()) {
+        const orderData = orderSnapshot.data();
+        const userId = orderData.userId;
+        
+        if (userId) {
+          // Delete from user's orders subcollection
+          await deleteDoc(doc(db, 'users', userId, 'orders', orderId));
+          console.log(`Also deleted from user's orders subcollection`);
+        }
+      }
+    } catch (userOrderError) {
+      console.log('Could not delete from user orders subcollection:', userOrderError);
+      // Continue with the main function even if this fails
+    }
+    
+    console.log(`Successfully deleted order ${orderId}`);
   } catch (error) {
-    console.error('Error deleting order:', error);
+    console.error(`Error deleting order from ${source} collection:`, error);
     throw error;
   }
 };
@@ -903,6 +947,67 @@ export const getUserOrders = async (userId) => {
     });
   } catch (error) {
     console.error('Error getting user orders:', error);
+    throw error;
+  }
+};
+
+// Get all orders from both orders and successfulPayments collections for admin
+export const getAllOrdersForAdmin = async () => {
+  try {
+    const allOrders = [];
+    
+    // Get orders from the main orders collection
+    try {
+      const ordersQuery = query(
+        collection(db, 'orders'),
+        orderBy('created_at', 'desc')
+      );
+      
+      const ordersSnapshot = await getDocs(ordersQuery);
+      ordersSnapshot.forEach((doc) => {
+        allOrders.push({
+          id: doc.id,
+          source: 'orders',
+          ...doc.data()
+        });
+      });
+    } catch (error) {
+      console.error('Error fetching from orders collection:', error);
+    }
+    
+    // Get orders from the successfulPayments collection
+    try {
+      const successfulPaymentsQuery = query(
+        collection(db, 'successfulPayments'),
+        orderBy('created_at', 'desc')
+      );
+      
+      const successfulPaymentsSnapshot = await getDocs(successfulPaymentsQuery);
+      const existingOrderIds = new Set(allOrders.map(order => order.razorpay_order_id || order.id));
+      
+      successfulPaymentsSnapshot.forEach((doc) => {
+        const data = doc.data();
+        // Avoid duplicates
+        if (!existingOrderIds.has(doc.id) && !existingOrderIds.has(data.razorpay_order_id)) {
+          allOrders.push({
+            id: doc.id,
+            source: 'successfulPayments',
+            ...data
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching from successfulPayments collection:', error);
+    }
+    
+    // Sort all orders by creation date
+    return allOrders.sort((a, b) => {
+      const dateA = a.created_at?.toDate?.() || new Date(a.created_at || a.orderDate || 0);
+      const dateB = b.created_at?.toDate?.() || new Date(b.created_at || b.orderDate || 0);
+      return dateB - dateA; // Most recent first
+    });
+  } catch (error) {
+    console.error('Error getting all orders for admin:', error);
     throw error;
   }
 }; 
