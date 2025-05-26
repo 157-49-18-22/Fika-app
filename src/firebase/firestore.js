@@ -706,4 +706,24 @@ export const initializeFeaturedField = async () => {
     console.error('Error initializing featured field:', error);
     throw error;
   }
+};
+
+// Get a single order by ID
+export const getOrder = async (orderId) => {
+  try {
+    const orderRef = doc(db, 'orders', orderId);
+    const orderSnap = await getDoc(orderRef);
+    
+    if (!orderSnap.exists()) {
+      throw new Error('Order not found');
+    }
+
+    return {
+      id: orderSnap.id,
+      ...orderSnap.data()
+    };
+  } catch (error) {
+    console.error('Error fetching order:', error);
+    throw error;
+  }
 }; 

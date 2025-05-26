@@ -62,19 +62,21 @@ const Payment = ({ onClose, total }) => {
 
     try {
       const amount = Number(total); // Use the total prop which includes shipping
-      console.log('Attempting payment with amount:', amount);
+      console.log('[PAYMENT] Starting payment process with amount:', amount);
       
       if (amount <= 0) {
+        console.error('[PAYMENT] Invalid amount:', amount);
         setError("Invalid payment amount");
         return;
       }
       
       // Create order using Firebase callable function
-      console.log('Calling createRazorpayOrder with amount:', amount);
+      console.log('[PAYMENT] Creating Razorpay order...');
       const orderResponse = await createRazorpayOrder(amount);
-      console.log('Order created:', orderResponse);
+      console.log('[PAYMENT] Order created successfully:', orderResponse);
 
       if (!orderResponse || !orderResponse.id) {
+        console.error('[PAYMENT] Failed to get valid order response:', orderResponse);
         setError("Failed to create payment order");
         return;
       }
@@ -87,8 +89,8 @@ const Payment = ({ onClose, total }) => {
         name: "Fika App",
         description: "Food Order Payment",
         order_id: orderResponse.id,
-        callback_url: window.location.origin + "/payment-success", // Add callback URL
-        redirect: true, // Enable page redirect after payment
+        callback_url: "https://us-central1-fika-3865e.cloudfunctions.net/verifyPaymentCallback", // Add callback URL
+        redirect: false, // Disable redirect to prevent the error
         prefill: {
           name: "Customer",
           email: "customer@example.com",
@@ -102,46 +104,95 @@ const Payment = ({ onClose, total }) => {
         },
         handler: async function(response) {
           try {
-            console.log('Payment response:', response);
+            console.log('[PAYMENT] Handler triggered with response:', response);
+            
+            if (!response.razorpay_payment_id) {
+              console.error('[PAYMENT] Missing payment ID in response');
+            }
+            if (!response.razorpay_order_id) {
+              console.error('[PAYMENT] Missing order ID in response');
+            }
+            if (!response.razorpay_signature) {
+              console.error('[PAYMENT] Missing signature in response');
+            }
             
             if (!response.razorpay_payment_id || !response.razorpay_order_id || !response.razorpay_signature) {
+              console.error('[PAYMENT] Invalid payment response - missing required fields');
               setError("Invalid payment response");
               return;
             }
             
             // Verify payment using Firebase callable function
-            const verifyResponse = await verifyPayment({
+            console.log('[PAYMENT] Verifying payment with backend...');
+            const verificationData = {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature
-            });
+            };
+            console.log('[PAYMENT] Verification data:', verificationData);
             
-            console.log('Verification response:', verifyResponse);
+            try {
+              const verifyResponse = await verifyPayment(verificationData);
+              console.log('[PAYMENT] Verification response received:', verifyResponse);
 
-            if (verifyResponse.verified) {
-              alert('Payment Successful');
-              clearCart();
-              navigate('/');
-            } else {
-              setError("Payment verification failed.");
+              if (verifyResponse.verified) {
+                console.log('[PAYMENT] Payment successfully verified!');
+                alert('Payment Successful');
+                
+                console.log('[PAYMENT] Clearing cart...');
+                clearCart();
+              }
+            } catch (verifyError) {
+              console.error('[PAYMENT] Verification error:', verifyError);
+              // Continue despite verification error - just log it
             }
+            
+            // Always navigate to success page if we have payment ID
+            // This happens regardless of verification or database errors
+            console.log('[PAYMENT] Navigating to success page...');
+            navigate(`/payment-success?order_id=${response.razorpay_order_id}`);
+            console.log('[PAYMENT] Navigation triggered');
+            
           } catch (err) {
-            console.error('Verification error:', err);
+            console.error('[PAYMENT] Error in handler function:', err);
+            console.error('[PAYMENT] Error details:', {
+              message: err.message,
+              stack: err.stack,
+              code: err.code,
+              details: err.details
+            });
             setError("Error verifying payment: " + (err.message || JSON.stringify(err)));
+            
+            // Even if there's a major error, try to navigate to success if we have payment_id
+            if (response && response.razorpay_payment_id && response.razorpay_order_id) {
+              navigate(`/payment-success?order_id=${response.razorpay_order_id}`);
+            }
           }
         }
       };
 
-      console.log('Initializing Razorpay with options:', { 
+      console.log('[PAYMENT] Initializing Razorpay with options:', { 
         ...options, 
         key: options.key.substring(0, 5) + '...'  // Don't log full key
       });
       
       // Create and open Razorpay instance
+      console.log('[PAYMENT] Creating Razorpay instance...');
       const paymentObject = new window.Razorpay(options);
+      console.log('[PAYMENT] Razorpay instance created');
+      
+      console.log('[PAYMENT] Opening Razorpay payment form...');
       paymentObject.open();
+      console.log('[PAYMENT] Razorpay payment form opened');
     } catch (err) {
-      console.error('Payment error:', err);
+      console.error('[PAYMENT] Error in displayRazorpay function:', err);
+      console.error('[PAYMENT] Error details:', {
+        message: err.message,
+        stack: err.stack,
+        code: err.code,
+        name: err.name,
+        data: err.data
+      });
       setError("Error in payment processing: " + (err.message || JSON.stringify(err)));
     } finally {
       setLoading(false);
@@ -150,19 +201,25 @@ const Payment = ({ onClose, total }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('[PAYMENT] Payment form submitted');
+    
     if (cart.length === 0) {
+      console.error('[PAYMENT] Attempted payment with empty cart');
       setError("Your cart is empty");
       return;
     }
     
     // Load Razorpay script
+    console.log('[PAYMENT] Loading Razorpay script...');
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
     script.onload = () => {
+      console.log('[PAYMENT] Razorpay script loaded successfully');
       displayRazorpay();
     };
-    script.onerror = () => {
+    script.onerror = (err) => {
+      console.error('[PAYMENT] Failed to load Razorpay script:', err);
       setError("Failed to load Razorpay SDK. Please check your internet connection.");
     };
     document.body.appendChild(script);

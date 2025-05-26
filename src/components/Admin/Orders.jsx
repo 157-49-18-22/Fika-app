@@ -18,7 +18,19 @@ const Orders = () => {
     try {
       setLoading(true);
       const ordersData = await getOrders();
-      setOrders(ordersData);
+      // Transform the data to match your component's needs
+      const transformedOrders = ordersData.map(order => ({
+        ...order,
+        customer_name: order.customer?.name || 'N/A',
+        customer_email: order.customer?.email || 'N/A',
+        customer_phone: order.customer?.phone || 'N/A',
+        shipping_address: order.shipping?.address || 'N/A',
+        total_amount: order.amount / 100, // Convert from paise to rupees
+        items: order.items || [],
+        created_at: order.created_at || new Date(),
+        status: order.status || 'pending'
+      }));
+      setOrders(transformedOrders);
       setError(null);
     } catch (err) {
       console.error('Error fetching orders:', err);
@@ -37,7 +49,7 @@ const Orders = () => {
     if (window.confirm('Are you sure you want to delete this order?')) {
       try {
         await deleteOrder(id);
-        fetchOrders();
+        await fetchOrders(); // Refresh the orders list
       } catch (err) {
         console.error('Error deleting order:', err);
         setError('Failed to delete order');
@@ -48,7 +60,7 @@ const Orders = () => {
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       await updateOrderStatus(orderId, newStatus);
-      fetchOrders();
+      await fetchOrders(); // Refresh the orders list
     } catch (err) {
       console.error('Error updating order status:', err);
       setError('Failed to update order status');
@@ -79,7 +91,7 @@ const Orders = () => {
           <tbody>
             {orders.map(order => (
               <tr key={order.id}>
-                <td>#{order.id}</td>
+                <td>#{order.razorpay_order_id || order.id}</td>
                 <td>{order.customer_name}</td>
                 <td>{order.created_at?.toDate().toLocaleDateString()}</td>
                 <td>₹{order.total_amount}</td>
@@ -123,7 +135,7 @@ const Orders = () => {
             <div className="order-details">
               <div className="detail-group">
                 <label>Order ID:</label>
-                <span>#{selectedOrder.id}</span>
+                <span>#{selectedOrder.razorpay_order_id || selectedOrder.id}</span>
               </div>
               <div className="detail-group">
                 <label>Customer Name:</label>
@@ -171,7 +183,7 @@ const Orders = () => {
                 <tbody>
                   {selectedOrder.items.map((item, index) => (
                     <tr key={index}>
-                      <td>{item.product_name}</td>
+                      <td>{item.name}</td>
                       <td>{item.quantity}</td>
                       <td>₹{item.price}</td>
                       <td>₹{item.quantity * item.price}</td>

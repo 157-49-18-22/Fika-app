@@ -43,6 +43,8 @@ import Products from './components/Admin/Products.jsx';
 import ReturnsExchange from './pages/ReturnsExchange.jsx';
 import WishGenieProducts from './components/Admin/WishGenieProducts.jsx';
 import ProductDetailWish from './components/ProductDetailWish/ProductDetailWish';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentFailed from './pages/PaymentFailed';
 
 // Layout component with navbar and footer
 const PageLayout = ({ children }) => {
@@ -109,6 +111,10 @@ function App() {
                 {/* Auth Routes */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
+
+                {/* Payment Status Routes */}
+                <Route path="/payment-success" element={<PaymentSuccess />} />
+                <Route path="/payment-failed" element={<PaymentFailed />} />
 
                 {/* Protected Routes - Require Login */}
                 <Route path="/cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />

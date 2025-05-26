@@ -178,10 +178,36 @@ exports.createRazorpayOrder = functions.https.onCall(async (data, context) => {
 
 // Verify Razorpay payment
 exports.verifyRazorpayPayment = functions.https.onCall(async (data, context) => {
+  console.log('=== Starting verifyRazorpayPayment function ===');
+  console.log('Received verification data:', data);
+  
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = data;
     
+    // Log user context if available
+    if (context.auth) {
+      console.log('User context:', { 
+        uid: context.auth.uid,
+        email: context.auth.token.email
+      });
+    } else {
+      console.log('No user context available');
+    }
+    
+    // Validate required parameters
+    console.log('Validating payment parameters...');
+    if (!razorpay_order_id) {
+      console.error('Missing order ID');
+    }
+    if (!razorpay_payment_id) {
+      console.error('Missing payment ID');
+    }
+    if (!razorpay_signature) {
+      console.error('Missing signature');
+    }
+    
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+      console.error('Missing required payment parameters');
       throw new functions.https.HttpsError(
         "invalid-argument",
         "Missing required payment verification parameters"
@@ -189,17 +215,53 @@ exports.verifyRazorpayPayment = functions.https.onCall(async (data, context) => 
     }
 
     // Verify signature using Razorpay key secret
+    console.log('Generating signature for verification...');
+    console.log('Using key_secret:', razorpay.key_secret ? '[SECRET PRESENT]' : '[SECRET MISSING]');
+    
+    const textToHash = razorpay_order_id + "|" + razorpay_payment_id;
+    console.log('Text to hash:', textToHash);
+    
     const generated_signature = crypto
       .createHmac("sha256", razorpay.key_secret)
-      .update(razorpay_order_id + "|" + razorpay_payment_id)
+      .update(textToHash)
       .digest("hex");
+    
+    console.log('Generated signature:', generated_signature);
+    console.log('Received signature:', razorpay_signature);
+    
+    const isVerified = generated_signature === razorpay_signature;
+    console.log('Signature verification result:', isVerified ? 'VERIFIED' : 'FAILED');
+    
+    // Store payment information in Firestore (regardless of verification)
+    try {
+      console.log('Storing payment information in Firestore...');
+      const orderRef = admin.firestore().collection('orders').doc(razorpay_order_id);
+      await orderRef.set({
+        razorpay_order_id,
+        razorpay_payment_id,
+        verified: isVerified,
+        verification_timestamp: admin.firestore.FieldValue.serverTimestamp(),
+        updated_at: admin.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+      console.log('Payment information stored successfully');
+    } catch (dbError) {
+      console.error('Error storing payment information:', dbError);
+      // Continue with verification result even if storage fails
+    }
 
+    console.log('=== Completed verifyRazorpayPayment function ===');
     return {
       success: true,
-      verified: generated_signature === razorpay_signature,
+      verified: isVerified,
     };
   } catch (error) {
     console.error("Error verifying payment:", error);
+    console.error("Error details:", {
+      message: error.message,
+      stack: error.stack,
+      code: error.code,
+      details: error.details
+    });
     throw new functions.https.HttpsError(
       "internal",
       error.message || "Error verifying payment"
@@ -257,37 +319,138 @@ exports.createTestOrder = functions.https.onCall(async (data, context) => {
 // HTTP endpoint for payment verification via callback URL
 exports.verifyPaymentCallback = functions.https.onRequest(async (req, res) => {
   console.log('=== Payment callback received ===');
+  console.log('Request headers:', req.headers);
   console.log('Request body:', req.body);
+  console.log('Request origin:', req.headers.origin || 'No origin in headers');
   
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    // Get webhook secret from environment
+    const webhookSecret = razorpay.webhook_secret;
+    console.log('Webhook secret available:', webhookSecret ? 'Yes' : 'No');
     
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
-      console.error('Missing payment verification parameters');
+    // Verify webhook signature
+    const razorpaySignature = req.headers['x-razorpay-signature'];
+    console.log('Razorpay signature in headers:', razorpaySignature ? 'Present' : 'Missing');
+    
+    if (!razorpaySignature) {
+      console.error('No Razorpay signature found in headers');
       return res.status(400).json({ 
         success: false, 
-        message: 'Missing payment verification parameters' 
+        message: 'No Razorpay signature found' 
       });
     }
 
+    // Create HMAC SHA256 hash
+    console.log('Generating signature for webhook verification...');
+    const bodyString = JSON.stringify(req.body);
+    console.log('Body string length:', bodyString.length);
+    
+    const generatedSignature = crypto
+      .createHmac('sha256', webhookSecret)
+      .update(bodyString)
+      .digest('hex');
+      
+    console.log('Generated signature:', generatedSignature);
+    console.log('Received signature:', razorpaySignature);
+    
     // Verify signature
-    const generated_signature = crypto
-      .createHmac("sha256", razorpay.key_secret)
-      .update(razorpay_order_id + "|" + razorpay_payment_id)
-      .digest("hex");
+    const isSignatureValid = generatedSignature === razorpaySignature;
+    console.log('Webhook signature verification result:', isSignatureValid ? 'VALID' : 'INVALID');
     
-    const isVerified = generated_signature === razorpay_signature;
+    if (!isSignatureValid) {
+      console.error('Invalid webhook signature');
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Invalid webhook signature' 
+      });
+    }
+
+    console.log('Extracting payment information from webhook payload...');
+    const { payload } = req.body;
     
-    if (isVerified) {
-      console.log('Payment verified successfully');
-      // Redirect to success page
-      res.redirect(302, `${req.headers.origin || '/'}/payment-success?order_id=${razorpay_order_id}`);
-    } else {
-      console.error('Payment verification failed');
-      res.redirect(302, `${req.headers.origin || '/'}/payment-failed`);
+    if (!payload) {
+      console.error('No payload in webhook body');
+      return res.status(400).json({
+        success: false,
+        message: 'No payload in webhook body'
+      });
+    }
+    
+    const { payment, order } = payload;
+    
+    if (!payment) {
+      console.error('No payment in webhook payload');
+    }
+    if (!order) {
+      console.error('No order in webhook payload');
+    }
+    
+    if (!payment || !order) {
+      console.error('Missing payment or order information in webhook payload');
+      return res.status(400).json({
+        success: false,
+        message: 'Missing payment or order information'
+      });
+    }
+    
+    console.log('Payment details:', {
+      id: payment.id,
+      amount: payment.amount,
+      status: payment.status,
+      method: payment.method
+    });
+    console.log('Order details:', {
+      id: order.id,
+      amount: order.amount,
+      status: order.status
+    });
+
+    // Store payment information in Firestore
+    console.log('Storing payment information in Firestore...');
+    const orderRef = admin.firestore().collection('orders').doc(order.id);
+    await orderRef.set({
+      razorpay_order_id: order.id,
+      razorpay_payment_id: payment.id,
+      amount: payment.amount,
+      currency: payment.currency,
+      status: payment.status,
+      payment_method: payment.method,
+      created_at: admin.firestore.FieldValue.serverTimestamp(),
+      updated_at: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+    console.log('Payment information stored in Firestore successfully');
+
+    // Handle different payment statuses
+    console.log('Processing based on payment status:', payment.status);
+    switch (payment.status) {
+      case 'captured':
+        console.log('Payment captured successfully');
+        const successUrl = `${req.headers.origin || '/'}/payment-success?order_id=${order.id}`;
+        console.log('Redirecting to success URL:', successUrl);
+        res.redirect(302, successUrl);
+        break;
+      case 'failed':
+        console.log('Payment failed');
+        const failureUrl = `${req.headers.origin || '/'}/payment-failed?order_id=${order.id}`;
+        console.log('Redirecting to failure URL:', failureUrl);
+        res.redirect(302, failureUrl);
+        break;
+      default:
+        console.log('Payment status:', payment.status);
+        console.log('Sending success response without redirect');
+        res.status(200).json({ 
+          success: true, 
+          message: 'Webhook processed successfully' 
+        });
     }
   } catch (error) {
     console.error('Error in payment callback:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      code: error.code,
+      details: error.details
+    });
     res.status(500).json({ 
       success: false, 
       message: 'Error processing payment verification' 
