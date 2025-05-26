@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FaClock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Login.css';
-import { GoogleLogin } from '@react-oauth/google';
 import fikaLogo from '/fika_logo1.png';
 
 
@@ -16,19 +15,24 @@ const sliderImages = [
 
 const Login = () => {
   const navigate = useNavigate();
-  const auth = useAuth();
+  const { login, loginWithGoogle, isAuthenticated, user } = useAuth();
   const [formData, setFormData] = useState({ emailOrPhone: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [sliderIndex, setSliderIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (auth.isAuthenticated) {
-      navigate('/');
+    if (isAuthenticated) {
+      if (user && user.isAdmin) {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     }
-  }, [auth.isAuthenticated, navigate]);
+  }, [isAuthenticated, user, navigate]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -61,22 +65,38 @@ const Login = () => {
       return;
     }
 
+    setIsLoading(true);
     try {
-      await auth.login({ email: formData.emailOrPhone, password: formData.password });
+      await login({ email: formData.emailOrPhone, password: formData.password });
     } catch (error) {
-      setError(error.message || 'Login failed. Please try again.');
+      let errorMessage = error.message || 'Login failed. Please try again.';
+      
+      // Handle Firebase auth errors with more user-friendly messages
+      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+        errorMessage = 'Invalid email or password. Please try again.';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Please enter a valid email address.';
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'Too many unsuccessful login attempts. Please try again later.';
+      }
+      
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    if (auth.isAuthenticated) {
-      if (auth.user && auth.user.isAdmin) {
-        navigate('/admin');
-      } else {
-        navigate('/');
-      }
+  const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    try {
+      await loginWithGoogle();
+      // Navigation is handled by the useEffect that watches isAuthenticated
+    } catch (error) {
+      setError(error.message || 'Google login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-  }, [auth.isAuthenticated, auth.user, navigate]);
+  };
 
   // Slider auto-play
   useEffect(() => {
@@ -175,37 +195,24 @@ const Login = () => {
               <input type="checkbox" id="terms" required />
               <label htmlFor="terms">I agree to the <Link to="/terms">Terms & Conditions</Link></label>
             </div>
-            <button className="login-form-btn" type="submit">Login</button>
+            <button 
+              className="login-form-btn" 
+              type="submit"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Logging in...' : 'Login'}
+            </button>
           </form>
           <div className="login-form-or">or Login with</div>
-          <div className="login-form-socials google-login-center">
-            <GoogleLogin
-              onSuccess={credentialResponse => {
-                fetch('http://localhost:5000/api/auth/google', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ token: credentialResponse.credential })
-                })
-                .then(res => res.json())
-                .then(data => {
-                  if (data.success) {
-                    if (auth && auth.setIsAuthenticated && auth.setCurrentUser) {
-                      auth.setIsAuthenticated(true);
-                      auth.setCurrentUser(data.user);
-                      localStorage.setItem('isAuthenticated', 'true');
-                      localStorage.setItem('currentUser', JSON.stringify(data.user));
-                    }
-                    window.location.href = '/';
-                  } else {
-                    alert('Google Login Failed: ' + data.message);
-                  }
-                });
-              }}
-              onError={() => {
-                alert('Google Login Failed');
-              }}
-              className="custom-google-login-btn"
-            />
+          <div className="login-form-socials">
+            <button 
+              className="social-btn google" 
+              type="button"
+              onClick={handleGoogleLogin}
+              disabled={isLoading}
+            >
+              Google
+            </button>
           </div>
         </div>
       </div>
