@@ -86,6 +86,7 @@
 .analytics-controls {
   display: flex;
   gap: 1rem;
+  align-items: center;
 }
 
 .time-range-selector {
@@ -96,6 +97,61 @@
   font-size: 0.9rem;
   cursor: pointer;
   color: #2b2d42;
+}
+
+/* Export button styling */
+.export-all-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #6c47ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.export-all-btn:hover {
+  background-color: #5333d1;
+  transform: translateY(-2px);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.section-header h3 {
+  font-size: 1.3rem;
+  color: #2b2d42;
+  font-weight: 600;
+  margin: 0;
+}
+
+.export-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 38px;
+  height: 38px;
+  background-color: #f0eaff;
+  color: #6c47ff;
+  border: none;
+  border-radius: 50%;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.export-btn:hover {
+  background-color: #e6dfff;
+  transform: translateY(-2px);
 }
 
 /* Section styling */
@@ -245,6 +301,19 @@
   .analytics-chart {
     min-height: 300px;
   }
+  
+  .analytics-controls {
+    width: 100%;
+  }
+  
+  .export-all-btn {
+    margin-top: 0.5rem;
+  }
+  
+  .section-header {
+    flex-direction: row;
+    align-items: center;
+  }
 }
 
 @media (max-width: 480px) {
@@ -257,7 +326,13 @@
   }
   
   .analytics-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .export-all-btn {
     width: 100%;
+    justify-content: center;
   }
   
   .time-range-selector {

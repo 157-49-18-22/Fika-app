@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Bar, Doughnut, Line, Pie } from 'react-chartjs-2';
 import { Chart, CategoryScale, LinearScale, BarElement, ArcElement, PointElement, LineElement, Tooltip, Legend, Title } from 'chart.js';
 import './Analytics.css';
-import { FaShoppingCart, FaUsers, FaRupeeSign, FaChartLine, FaBoxOpen, FaGlobe, FaExchangeAlt, FaShoppingBag, FaSpinner } from 'react-icons/fa';
+import { FaShoppingCart, FaUsers, FaRupeeSign, FaChartLine, FaBoxOpen, FaGlobe, FaExchangeAlt, FaShoppingBag, FaSpinner, FaDownload, FaFileCsv } from 'react-icons/fa';
 import { collection, query, where, getDocs, orderBy, limit, Timestamp } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 
@@ -735,6 +735,140 @@ const Analytics = () => {
     },
   ];
 
+  // Function to convert data to CSV format
+  const convertToCSV = (data) => {
+    if (!data || data.length === 0) return '';
+    
+    // Get headers
+    const headers = Object.keys(data[0]).join(',');
+    
+    // Get rows
+    const rows = data.map(item => 
+      Object.values(item)
+        .map(value => {
+          // Handle strings with commas by wrapping in quotes
+          if (typeof value === 'string' && value.includes(',')) {
+            return `"${value}"`;
+          }
+          return value;
+        })
+        .join(',')
+    ).join('\n');
+    
+    return `${headers}\n${rows}`;
+  };
+
+  // Function to download CSV
+  const downloadCSV = (csvData, filename) => {
+    const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Export revenue and orders data
+  const exportRevenueOrdersData = () => {
+    const data = monthlyData.labels.map((label, index) => ({
+      Month: label,
+      Revenue: monthlyData.revenue[index] || 0,
+      Orders: monthlyData.orders[index] || 0,
+      AverageOrderValue: monthlyData.aov[index] || 0
+    }));
+    
+    const csv = convertToCSV(data);
+    downloadCSV(csv, `revenue_orders_${timeRange}_${new Date().toISOString().split('T')[0]}.csv`);
+  };
+
+  // Export customer insights data
+  const exportCustomerData = () => {
+    const data = monthlyData.labels.map((label, index) => ({
+      Month: label,
+      NewUsers: monthlyData.newUsers[index] || 0,
+      ReturningUsers: monthlyData.returningUsers[index] || 0,
+      ConversionRate: monthlyData.conversionRate[index] || 0,
+      CartAbandonment: monthlyData.abandonmentRate[index] || 0
+    }));
+    
+    const csv = convertToCSV(data);
+    downloadCSV(csv, `customer_insights_${timeRange}_${new Date().toISOString().split('T')[0]}.csv`);
+  };
+
+  // Export product performance data
+  const exportProductData = () => {
+    // Categories data
+    const categoriesData = productData.categories.labels.map((label, index) => ({
+      Category: label,
+      Count: productData.categories.values[index] || 0
+    }));
+    
+    // Top products data
+    const productsData = productData.topProducts.labels.map((label, index) => ({
+      Product: label,
+      UnitsSold: productData.topProducts.values[index] || 0
+    }));
+    
+    const categoriesCsv = convertToCSV(categoriesData);
+    const productsCsv = convertToCSV(productsData);
+    
+    downloadCSV(categoriesCsv, `product_categories_${timeRange}_${new Date().toISOString().split('T')[0]}.csv`);
+    setTimeout(() => {
+      downloadCSV(productsCsv, `top_products_${timeRange}_${new Date().toISOString().split('T')[0]}.csv`);
+    }, 100);
+  };
+
+  // Export order status data
+  const exportOrderStatusData = () => {
+    const statusData = [
+      { Status: 'Completed', Count: orderStatusData.completed },
+      { Status: 'Processing', Count: orderStatusData.processing },
+      { Status: 'Shipped', Count: orderStatusData.shipped },
+      { Status: 'Pending', Count: orderStatusData.pending },
+      { Status: 'Cancelled', Count: orderStatusData.cancelled }
+    ];
+    
+    const paymentData = [
+      { Method: 'Credit Card', Count: paymentMethodsData.card },
+      { Method: 'UPI', Count: paymentMethodsData.upi },
+      { Method: 'Net Banking', Count: paymentMethodsData.netbanking },
+      { Method: 'Wallet', Count: paymentMethodsData.wallet },
+      { Method: 'COD', Count: paymentMethodsData.cod },
+      { Method: 'Other', Count: paymentMethodsData.other }
+    ];
+    
+    const statusCsv = convertToCSV(statusData);
+    const paymentCsv = convertToCSV(paymentData);
+    
+    downloadCSV(statusCsv, `order_status_${timeRange}_${new Date().toISOString().split('T')[0]}.csv`);
+    setTimeout(() => {
+      downloadCSV(paymentCsv, `payment_methods_${timeRange}_${new Date().toISOString().split('T')[0]}.csv`);
+    }, 100);
+  };
+
+  // Export geographic data
+  const exportGeographicData = () => {
+    const data = geographicData.labels.map((label, index) => ({
+      State: label,
+      Orders: geographicData.values[index] || 0
+    }));
+    
+    const csv = convertToCSV(data);
+    downloadCSV(csv, `geographic_data_${timeRange}_${new Date().toISOString().split('T')[0]}.csv`);
+  };
+
+  // Export all data
+  const exportAllData = () => {
+    exportRevenueOrdersData();
+    setTimeout(() => exportCustomerData(), 200);
+    setTimeout(() => exportProductData(), 400);
+    setTimeout(() => exportOrderStatusData(), 600);
+    setTimeout(() => exportGeographicData(), 800);
+  };
+
   if (loading) {
     return (
       <div className="analytics-loading">
@@ -765,6 +899,9 @@ const Analytics = () => {
             <option value="6months">Last 6 Months</option>
             <option value="1year">Last Year</option>
           </select>
+          <button className="export-all-btn" onClick={exportAllData} title="Export all analytics data">
+            <FaDownload /> Export All
+          </button>
         </div>
       </div>
 
@@ -786,7 +923,12 @@ const Analytics = () => {
 
       {/* Revenue & Orders Section */}
       <div className="analytics-section">
-        <h3>Revenue & Orders</h3>
+        <div className="section-header">
+          <h3>Revenue & Orders</h3>
+          <button className="export-btn" onClick={exportRevenueOrdersData} title="Export revenue and orders data">
+            <FaFileCsv />
+          </button>
+        </div>
         <div className="analytics-charts-row">
           <div className="analytics-chart analytics-double-y-chart">
             <Bar 
@@ -842,7 +984,12 @@ const Analytics = () => {
 
       {/* Customer Insights Section */}
       <div className="analytics-section">
-        <h3>Customer Insights</h3>
+        <div className="section-header">
+          <h3>Customer Insights</h3>
+          <button className="export-btn" onClick={exportCustomerData} title="Export customer insights data">
+            <FaFileCsv />
+          </button>
+        </div>
         <div className="analytics-charts-row">
           <div className="analytics-chart analytics-bar-chart">
             <h4>User Growth</h4>
@@ -887,7 +1034,12 @@ const Analytics = () => {
 
       {/* Product Performance Section */}
       <div className="analytics-section">
-        <h3>Product Performance</h3>
+        <div className="section-header">
+          <h3>Product Performance</h3>
+          <button className="export-btn" onClick={exportProductData} title="Export product performance data">
+            <FaFileCsv />
+          </button>
+        </div>
         <div className="analytics-charts-row">
           <div className="analytics-chart analytics-pie-chart">
             <h4>Sales by Category</h4>
@@ -927,7 +1079,12 @@ const Analytics = () => {
 
       {/* Order Status Section */}
       <div className="analytics-section">
-        <h3>Order Analytics</h3>
+        <div className="section-header">
+          <h3>Order Analytics</h3>
+          <button className="export-btn" onClick={exportOrderStatusData} title="Export order analytics data">
+            <FaFileCsv />
+          </button>
+        </div>
         <div className="analytics-charts-row">
           <div className="analytics-chart analytics-donut-chart">
             <h4>Order Status</h4>
@@ -968,7 +1125,12 @@ const Analytics = () => {
 
       {/* Traffic & Geographic Section */}
       <div className="analytics-section">
-        <h3>Traffic & Geographic Insights</h3>
+        <div className="section-header">
+          <h3>Traffic & Geographic Insights</h3>
+          <button className="export-btn" onClick={exportGeographicData} title="Export geographic data">
+            <FaFileCsv />
+          </button>
+        </div>
         <div className="analytics-charts-row">
           <div className="analytics-chart analytics-pie-chart">
             <h4>Traffic Sources</h4>
