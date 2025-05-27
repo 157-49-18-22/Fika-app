@@ -134,7 +134,7 @@ exports.createRazorpayOrder = functions.https.onCall(async (data, context) => {
     
     // Simplified options with only essential fields
     options = {
-      amount: amountInPaise,
+      amount: amount,
       currency: "INR"
       // Optional fields removed
     };
