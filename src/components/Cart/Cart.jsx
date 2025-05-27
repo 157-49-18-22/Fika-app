@@ -47,8 +47,13 @@ const Cart = () => {
   };
 
   const subtotal = getCartTotal();
-  const shipping = subtotal >= 2999 ? 0 : 200; 
+  const shipping = subtotal >= 2999 ? 0 : 0; 
   const total = subtotal + shipping;
+
+  const handleCheckout = () => {
+    // Show payment component
+    setShowPayment(true);
+  };
 
   if (cart.length === 0) {
     return (
@@ -163,7 +168,7 @@ const Cart = () => {
             <span>Total</span>
             <span>₹{total.toFixed(2)}</span>
           </div>
-          <button className="checkout-btn" onClick={() => setShowPayment(true)}>
+          <button className="checkout-btn" onClick={handleCheckout}>
             Proceed to Checkout
           </button>
           <Link to="/all-products" className="continue-shopping-link">

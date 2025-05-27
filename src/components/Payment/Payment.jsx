@@ -5,21 +5,41 @@ import { useAuth } from "../../context/AuthContext";
 import "./Payment.css";
 import { createRazorpayOrder, verifyPayment, testRazorpayConnection, createTestOrder } from "../../firebase/functions";
 import { saveSuccessfulPayment, getUser } from "../../firebase/firestore";
+import { collection, addDoc, getDocs, query, where, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { db } from "../../firebase/config";
+import AddressForm from "../../Component/AddressManagement/AddressForm";
+
+// Custom simple icons to avoid SVG path errors
+const SimpleLocationIcon = () => (
+  <span className="simple-icon location-icon">📍</span>
+);
+
+const SimplePlusIcon = () => (
+  <span className="simple-icon plus-icon">+</span>
+);
 
 const Payment = ({ onClose, total }) => {
   const navigate = useNavigate();
   const { cart, getCartTotal, clearCart } = useCart();
-  const { currentUser } = useAuth();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [userDetails, setUserDetails] = useState(null);
+  
+  // Address selection state
+  const [showAddressSelection, setShowAddressSelection] = useState(true);
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [addressesLoading, setAddressesLoading] = useState(true);
 
   // Fetch user details if logged in
   useEffect(() => {
     const fetchUserDetails = async () => {
-      if (currentUser && currentUser.uid) {
+      if (user && user.uid) {
         try {
-          const userData = await getUser(currentUser.uid);
+          const userData = await getUser(user.uid);
           setUserDetails(userData);
         } catch (err) {
           console.error('[PAYMENT] Error fetching user details:', err);
@@ -28,7 +48,186 @@ const Payment = ({ onClose, total }) => {
     };
     
     fetchUserDetails();
-  }, [currentUser]);
+  }, [user]);
+  
+  // Fetch user addresses
+  useEffect(() => {
+    if (user && user.uid) {
+      fetchAddresses();
+    } else {
+      setAddressesLoading(false);
+      setAddresses([]);
+    }
+  }, [user]);
+  
+  const fetchAddresses = async () => {
+    setAddressesLoading(true);
+    setError("");
+    
+    try {
+      // Check if user exists and has uid
+      if (!user || !user.uid) {
+        console.error('No user ID available to fetch addresses');
+        setAddresses([]);
+        setAddressesLoading(false);
+        return;
+      }
+      
+      console.log("Fetching addresses for user:", user.uid);
+      
+      // Use Firebase directly to fetch addresses
+      const addressesQuery = query(
+        collection(db, "addresses"), 
+        where("userId", "==", user.uid)
+      );
+      
+      console.log("Executing Firestore query...");
+      const querySnapshot = await getDocs(addressesQuery);
+      console.log(`Found ${querySnapshot.size} addresses`);
+      
+      const addressList = [];
+      
+      querySnapshot.forEach((doc) => {
+        addressList.push({
+          id: doc.id,
+          ...doc.data()
+        });
+      });
+      
+      console.log("Processed address list:", addressList);
+      setAddresses(addressList);
+      
+      // Select default address if exists
+      const defaultAddress = addressList.find(addr => addr.isDefault);
+      if (defaultAddress) {
+        console.log("Setting default address:", defaultAddress.id);
+        setSelectedAddressId(defaultAddress.id);
+        setSelectedAddress(defaultAddress);
+      } else if (addressList.length > 0) {
+        console.log("No default address found, using first address");
+        setSelectedAddressId(addressList[0].id);
+        setSelectedAddress(addressList[0]);
+      } else {
+        console.log("No addresses found for user");
+      }
+    } catch (error) {
+      console.error('Error fetching addresses:', error);
+      console.error('Error details:', error.code, error.message);
+      setAddresses([]);
+      setError("Failed to load addresses: " + error.message);
+    } finally {
+      setAddressesLoading(false);
+    }
+  };
+  
+  const handleSaveAddress = async (formData) => {
+    try {
+      // Check if user exists and has uid
+      if (!user || !user.uid) {
+        setError("You must be logged in to save an address");
+        return;
+      }
+      
+      setLoading(true);
+      
+      // Add user ID and other metadata to the form data
+      const addressData = {
+        ...formData,
+        userId: user.uid,
+        userEmail: user.email || "",
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      console.log("Saving address data:", addressData);
+      
+      try {
+        // Use Firebase directly to save the address
+        const docRef = await addDoc(collection(db, "addresses"), addressData);
+        console.log("Address saved with ID:", docRef.id);
+        
+        // If this is the first address or marked as default
+        if (addresses.length === 0 || addressData.isDefault) {
+          // Set any previous default address to non-default
+          if (addresses.length > 0) {
+            const prevDefault = addresses.find(addr => addr.isDefault);
+            if (prevDefault) {
+              console.log("Updating previous default address:", prevDefault.id);
+              await updateDoc(doc(db, "addresses", prevDefault.id), {
+                isDefault: false,
+                updatedAt: new Date()
+              });
+            }
+          }
+        }
+        
+        // Add the new address to the local state
+        const newAddress = {
+          id: docRef.id,
+          ...addressData
+        };
+        
+        setAddresses(prev => [...prev, newAddress]);
+        setSelectedAddressId(newAddress.id);
+        setSelectedAddress(newAddress);
+        setShowAddressForm(false);
+        setError("");
+        
+      } catch (firestoreError) {
+        console.error('Firestore error saving address:', firestoreError);
+        setError(`Failed to save address: ${firestoreError.message}`);
+      }
+    } catch (error) {
+      console.error('Error in save address function:', error);
+      setError("Error saving address: " + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleDeleteAddress = async (addressId) => {
+    try {
+      await deleteDoc(doc(db, "addresses", addressId));
+      setAddresses(addresses.filter(addr => addr.id !== addressId));
+      
+      if (selectedAddressId === addressId) {
+        if (addresses.length > 1) {
+          const nextAddress = addresses.find(addr => addr.id !== addressId);
+          if (nextAddress) {
+            setSelectedAddressId(nextAddress.id);
+            setSelectedAddress(nextAddress);
+          } else {
+            setSelectedAddressId(null);
+            setSelectedAddress(null);
+          }
+        } else {
+          setSelectedAddressId(null);
+          setSelectedAddress(null);
+        }
+      }
+    } catch (error) {
+      console.error('Error deleting address:', error);
+      setError("Failed to delete address. Please try again.");
+    }
+  };
+  
+  const handleSelectAddress = (addressId) => {
+    setSelectedAddressId(addressId);
+    const address = addresses.find(addr => addr.id === addressId);
+    setSelectedAddress(address);
+  };
+  
+  const handleContinueToPayment = () => {
+    if (!selectedAddress) {
+      setError("Please select a delivery address");
+      return;
+    }
+    setShowAddressSelection(false);
+  };
+  
+  const handleBackToAddresses = () => {
+    setShowAddressSelection(true);
+  };
 
   // COD state
   const [showCODForm, setShowCODForm] = useState(false);
@@ -101,6 +300,11 @@ const Payment = ({ onClose, total }) => {
         return;
       }
 
+      // Format address for Razorpay
+      const formattedAddress = selectedAddress ? 
+        `${selectedAddress.addressLine1}, ${selectedAddress.addressLine2 || ''}, ${selectedAddress.city}, ${selectedAddress.state}, ${selectedAddress.pincode}` : 
+        "No address provided";
+
       // Initialize Razorpay options - Following documentation more closely
       const options = {
         key: "rzp_live_oR04gue1fn6wcY", // Updated to production key
@@ -112,12 +316,12 @@ const Payment = ({ onClose, total }) => {
         callback_url: "https://us-central1-fika-3865e.cloudfunctions.net/verifyPaymentCallback", // Add callback URL
         redirect: false, // Disable redirect to prevent the error
         prefill: {
-          name: "Customer",
-          email: "customer@example.com",
-          contact: "9999999999"
+          name: selectedAddress ? selectedAddress.fullName : "Customer",
+          email: user?.email || "customer@example.com",
+          contact: selectedAddress ? selectedAddress.mobile : "9999999999"
         },
         notes: {
-          address: "Customer Address"
+          address: formattedAddress
         },
         theme: {
           color: "#000000"
@@ -158,14 +362,14 @@ const Payment = ({ onClose, total }) => {
                   image: item.image,
                   id: item.id || item._id || `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
                 })),
-                userId: currentUser?.uid || null,
+                userId: user?.uid || null,
                 userDetails: userDetails || {
                   name: options.prefill?.name || 'Guest Customer',
                   email: options.prefill?.email || '',
                   phone: options.prefill?.contact || '',
                   address: options.notes?.address || ''
                 },
-                shippingAddress: options.notes?.address || '',
+                shippingAddress: selectedAddress || options.notes?.address || '',
                 orderDate: new Date().toISOString(),
                 orderTotal: total
               });
@@ -259,6 +463,11 @@ const Payment = ({ onClose, total }) => {
     if (cart.length === 0) {
       console.error('[PAYMENT] Attempted payment with empty cart');
       setError("Your cart is empty");
+      return;
+    }
+    
+    if (!selectedAddress) {
+      setError("Please select a delivery address");
       return;
     }
     
@@ -368,122 +577,146 @@ const Payment = ({ onClose, total }) => {
         <button className="close-button" onClick={onClose}>
           ×
         </button>
-        <h2>Checkout</h2>
+        
+        {showAddressSelection ? (
+          <>
+            <h2><SimpleLocationIcon /> Select Delivery Address</h2>
+            
+            {addressesLoading ? (
+              <div className="address-loading">Loading addresses...</div>
+            ) : (
+              <>
+                {addresses.length === 0 ? (
+                  <div className="no-addresses-message">
+                    <p>You don't have any saved addresses. Please add a new address to continue.</p>
+                    <button 
+                      className="add-address-btn" 
+                      onClick={() => setShowAddressForm(true)}
+                    >
+                      <SimplePlusIcon /> Add New Address
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    {!showAddressForm && (
+                      <>
+                        <div className="addresses-list">
+                          {addresses.map((address) => (
+                            <div 
+                              key={address.id} 
+                              className={`address-card ${selectedAddressId === address.id ? 'selected' : ''}`}
+                              onClick={() => handleSelectAddress(address.id)}
+                            >
+                              <div className="address-selection">
+                                <input 
+                                  type="radio" 
+                                  name="selectedAddress"
+                                  checked={selectedAddressId === address.id} 
+                                  onChange={() => handleSelectAddress(address.id)}
+                                />
+                              </div>
+                              <div className="address-content">
+                                {address.isDefault && <span className="default-badge">Default</span>}
+                                <div className="address-name">{address.fullName}</div>
+                                <div className="address-mobile">{address.mobile}</div>
+                                <div className="address-details">
+                                  {address.addressLine1},
+                                  {address.addressLine2 && <> {address.addressLine2},</>}
+                                  <br />
+                                  {address.city}, {address.state} {address.pincode}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <button 
+                          className="add-another-address-btn" 
+                          onClick={() => setShowAddressForm(true)}
+                        >
+                          <SimplePlusIcon /> Add New Address
+                        </button>
+                      </>
+                    )}
 
-        <div className="order-overview">
-          <h3>Order Summary</h3>
-          <div className="summary-details">
-            <p>
-              Total Items: {cart.reduce((sum, item) => sum + item.quantity, 0)}
-            </p>
-            <p>Total Amount: ₹{total.toFixed(2)}</p>
-          </div>
-        </div>
+                    {showAddressForm ? (
+                      <AddressForm 
+                        onSave={handleSaveAddress} 
+                        onCancel={() => setShowAddressForm(false)}
+                      />
+                    ) : (
+                      <div className="address-selection-actions">
+                        <button 
+                          className="cancel-btn" 
+                          onClick={onClose}
+                        >
+                          Cancel
+                        </button>
+                        <button 
+                          className="continue-btn" 
+                          onClick={handleContinueToPayment}
+                          disabled={!selectedAddressId}
+                        >
+                          Deliver to this Address
+                        </button>
+                      </div>
+                    )}
+                  </>
+                )}
 
-        {error && <div className="payment-error">{error}</div>}
+                {addresses.length === 0 && showAddressForm && (
+                  <AddressForm 
+                    onSave={handleSaveAddress} 
+                    onCancel={() => setShowAddressForm(false)}
+                  />
+                )}
+              </>
+            )}
+          </>
+        ) : (
+          <>
+            <h2>Checkout</h2>
+            
+            <div className="selected-address-summary">
+              <div className="address-header">
+                <h3><SimpleLocationIcon /> Delivery Address</h3>
+                <button className="change-address-btn" onClick={handleBackToAddresses}>
+                  Change
+                </button>
+              </div>
+              <div className="address-details">
+                <div className="address-name">{selectedAddress.fullName}</div>
+                <div className="address-mobile">{selectedAddress.mobile}</div>
+                <div>
+                  {selectedAddress.addressLine1},
+                  {selectedAddress.addressLine2 && <> {selectedAddress.addressLine2},</>}
+                  <br />
+                  {selectedAddress.city}, {selectedAddress.state} {selectedAddress.pincode}
+                </div>
+              </div>
+            </div>
 
-        <div className="payment-actions">
-          <button
-            className="submit-payment-btn"
-            onClick={handleSubmit}
-            disabled={loading}
-          >
-            {loading ? "Processing..." : `Pay Now ₹${total.toFixed(2)}`}
-          </button>
-          {/* <button
-            className="submit-payment-btn"
-            onClick={() => setShowCODForm(true)}
-          >
-            Cash on Delivery (COD)
-          </button> */}
-          {/* <button 
-            className="test-payment-btn"
-            onClick={handleTestOrder}
-            disabled={loading}
-          >
-            Test Razorpay
-          </button>
-          <button 
-            className="test-payment-btn"
-            onClick={testDirectRazorpay}
-            disabled={loading}
-            style={{marginTop: '10px'}}
-          >
-            Test Direct Razorpay
-          </button> */}
-        </div>
+            <div className="order-overview">
+              <h3>Order Summary</h3>
+              <div className="summary-details">
+                <p>
+                  Total Items: {cart.reduce((sum, item) => sum + item.quantity, 0)}
+                </p>
+                <p>Total Amount: ₹{total.toFixed(2)}</p>
+              </div>
+            </div>
 
-        {showCODForm && (
-          <div className="cod-form-overlay">
-            <form className="cod-form" onSubmit={handleCODSubmit}>
-              <h3>Enter Delivery Address</h3>
-              <input
-                type="text"
-                name="name"
-                placeholder="Full Name"
-                value={codForm.name}
-                onChange={handleCODChange}
-                required
-              />
-              <input
-                type="text"
-                name="address"
-                placeholder="Address"
-                value={codForm.address}
-                onChange={handleCODChange}
-                required
-              />
-              <input
-                type="text"
-                name="landmark"
-                placeholder="Landmark"
-                value={codForm.landmark}
-                onChange={handleCODChange}
-                required
-              />
-              <input
-                type="text"
-                name="city"
-                placeholder="City"
-                value={codForm.city}
-                onChange={handleCODChange}
-                required
-              />
-              <input
-                type="text"
-                name="state"
-                placeholder="State"
-                value={codForm.state}
-                onChange={handleCODChange}
-                required
-              />
-              <input
-                type="text"
-                name="pincode"
-                placeholder="Pincode"
-                value={codForm.pincode}
-                onChange={handleCODChange}
-                required
-              />
-              <input
-                type="text"
-                name="phone"
-                placeholder="Phone Number"
-                value={codForm.phone}
-                onChange={handleCODChange}
-                required
-              />
-              <input
-                type="text"
-                name="deliveryTime"
-                placeholder="Preferred Delivery Time"
-                value={codForm.deliveryTime}
-                onChange={handleCODChange}
-                required
-              />
-              <button type="submit">Place Order</button>
-            </form>
-          </div>
+            {error && <div className="payment-error">{error}</div>}
+
+            <div className="payment-actions">
+              <button
+                className="submit-payment-btn"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {loading ? "Processing..." : `Pay Now ₹${total.toFixed(2)}`}
+              </button>
+            </div>
+          </>
         )}
 
         {codSuccess && (

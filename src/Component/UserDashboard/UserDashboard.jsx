@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaUser, FaSignOutAlt, FaCog, FaHistory, FaUserShield } from 'react-icons/fa';
+import { FaUser, FaSignOutAlt, FaCog, FaHistory, FaUserShield, FaMapMarkerAlt } from 'react-icons/fa';
 import { useAuth } from '../../context/AuthContext';
 import './UserDashboard.css';
 
@@ -113,6 +113,10 @@ const UserDashboard = () => {
             <Link to="/orders" className="menu-item" onClick={() => setIsOpen(false)}>
               <FaHistory className="menu-icon" />
               <span>My Orders</span>
+            </Link>
+            <Link to="/addresses" className="menu-item" onClick={() => setIsOpen(false)}>
+              <FaMapMarkerAlt className="menu-icon" />
+              <span>My Addresses</span>
             </Link>
             {/* <Link to="/settings" className="menu-item" onClick={() => setIsOpen(false)}>
               <FaCog className="menu-icon" />

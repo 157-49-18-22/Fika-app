@@ -90,7 +90,7 @@
 }
 
 .delete-btn {
-  background-color: #f44336;
+  background-color: #000000;
   color: white;
 }
 
@@ -205,7 +205,7 @@
 .error {
   padding: 16px;
   background-color: #ffebee;
-  color: #c62828;
+  color: #000000;
   border-radius: 4px;
   margin-bottom: 16px;
 }
@@ -411,10 +411,10 @@
 }
 
 .bulk-form .cancel-btn {
-  background-color: #f44336;
+  background-color: #000000;
   color: white;
 }
 
 .bulk-form .cancel-btn:hover {
-  background-color: #da190b;
+  background-color: #000000;
 } 

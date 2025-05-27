@@ -45,6 +45,7 @@ import WishGenieProducts from './components/Admin/WishGenieProducts.jsx';
 import ProductDetailWish from './components/ProductDetailWish/ProductDetailWish';
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentFailed from './pages/PaymentFailed';
+import AddressManagement from './Component/AddressManagement/AddressManagement.jsx';
 
 // Layout component with navbar and footer
 const PageLayout = ({ children }) => {
@@ -122,6 +123,7 @@ function App() {
                 <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                 <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
                 <Route path="/orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+                <Route path="/addresses" element={<ProtectedRoute><AddressManagement /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
                 <Route path="/change-password" element={<PageLayout><ChangePassword /></PageLayout>} />
