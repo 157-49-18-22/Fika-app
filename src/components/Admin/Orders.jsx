@@ -16,6 +16,35 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
+  // Helper function to format address object to string
+  const formatAddress = (address) => {
+    if (!address) return 'N/A';
+    
+    // If address is already a string, return it
+    if (typeof address === 'string') return address;
+    
+    // If address is an object, format it
+    if (typeof address === 'object') {
+      try {
+        const parts = [];
+        if (address.fullName) parts.push(address.fullName);
+        if (address.addressLine1) parts.push(address.addressLine1);
+        if (address.addressLine2) parts.push(address.addressLine2);
+        if (address.city) parts.push(address.city);
+        if (address.state) parts.push(address.state);
+        if (address.pincode) parts.push(address.pincode);
+        if (address.mobile) parts.push(`Phone: ${address.mobile}`);
+        
+        return parts.length > 0 ? parts.join(', ') : 'N/A';
+      } catch (err) {
+        console.error('Error formatting address:', err);
+        return 'Address formatting error';
+      }
+    }
+    
+    return 'N/A';
+  };
+
   const fetchOrders = async () => {
     try {
       setLoading(true);
@@ -34,13 +63,13 @@ const Orders = () => {
           customerName = order.customer?.name || 'N/A';
           customerEmail = order.customer?.email || 'N/A';
           customerPhone = order.customer?.phone || 'N/A';
-          shippingAddress = order.shipping?.address || 'N/A';
+          shippingAddress = formatAddress(order.shipping?.address);
         } else {
           // successfulPayments collection format
           customerName = order.userDetails?.name || 'N/A';
           customerEmail = order.userDetails?.email || 'N/A';
           customerPhone = order.userDetails?.phone || 'N/A';
-          shippingAddress = order.shippingAddress || order.userDetails?.address || 'N/A';
+          shippingAddress = formatAddress(order.shippingAddress || order.userDetails?.address);
         }
         
         // Handle different date formats
@@ -59,7 +88,7 @@ const Orders = () => {
         let totalAmount;
         if (order.amount) {
           // Razorpay stores amounts in paise (100 paise = 1 rupee)
-          totalAmount = order.amount / 100;
+          totalAmount = order.amount ;
         } else if (order.total_amount) {
           totalAmount = order.total_amount;
         } else if (order.orderTotal) {
@@ -94,7 +123,37 @@ const Orders = () => {
   };
 
   const handleViewOrder = (order) => {
-    setSelectedOrder(order);
+    // Create a serializable version of the order object
+    const serializableOrder = {
+      ...order,
+      // Convert Date object to ISO string
+      created_at: order.created_at ? new Date(order.created_at) : new Date(),
+      // Ensure items are properly serialized
+      items: order.items ? order.items.map(item => ({
+        ...item,
+        price: parseFloat(item.price || 0),
+        quantity: parseInt(item.quantity || 1, 10)
+      })) : [],
+      // Ensure all properties are serializable
+      total_amount: parseFloat(order.total_amount || 0),
+      // Add other needed properties
+      customer_name: order.customer_name || 'N/A',
+      customer_email: order.customer_email || 'N/A',
+      customer_phone: order.customer_phone || 'N/A',
+      shipping_address: typeof order.shipping_address === 'object' 
+        ? formatAddress(order.shipping_address) 
+        : (order.shipping_address || 'N/A'),
+      id: order.id || '',
+      source: order.source || 'orders',
+      status: order.status || 'pending',
+      razorpay_order_id: order.razorpay_order_id || '',
+      razorpay_payment_id: order.razorpay_payment_id || '',
+      payment_method: order.payment_method || '',
+      payment_status: order.payment_status || '',
+      notes: order.notes || ''
+    };
+    
+    setSelectedOrder(serializableOrder);
     setShowModal(true);
   };
 
@@ -305,15 +364,15 @@ const Orders = () => {
                 <div className="order-details">
                   <div className="detail-group">
                     <label>Name:</label>
-                    <span>{selectedOrder.customer_name}</span>
+                    <span>{selectedOrder.shippingAddress.fullName}</span>
                   </div>
                   <div className="detail-group">
                     <label>Email:</label>
-                    <span>{selectedOrder.customer_email}</span>
+                    <span>{selectedOrder.shippingAddress.userEmail}</span>
                   </div>
                   <div className="detail-group">
                     <label>Phone:</label>
-                    <span>{selectedOrder.customer_phone}</span>
+                    <span>{selectedOrder.shippingAddress.mobile}</span>
                   </div>
                 </div>
               </div>
@@ -333,7 +392,7 @@ const Orders = () => {
                 <div className="order-details">
                   <div className="detail-group">
                     <label>Order Date:</label>
-                    <span>{selectedOrder.created_at.toLocaleString()}</span>
+                    <span>{new Date(selectedOrder.created_at).toLocaleString()}</span>
                   </div>
                   <div className="detail-group">
                     <label>Total Amount:</label>

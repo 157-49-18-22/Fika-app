@@ -575,8 +575,7 @@ export const getDashboardStats = async () => {
         
         // Handle different amount formats
         if (order.amount) {
-          // Razorpay stores amounts in paise (100 paise = 1 rupee)
-          orderTotal = order.amount / 100;
+          orderTotal = order.amount;
         } else if (order.total_amount) {
           orderTotal = order.total_amount;
         } else if (order.orderTotal) {
@@ -614,7 +613,7 @@ export const getDashboardStats = async () => {
           // Only add to revenue trend if not cancelled
           if (status !== 'cancelled') {
             let orderAmount = 0;
-            if (order.amount) orderAmount = order.amount / 100;
+            if (order.amount) orderAmount = order.amount ;
             else if (order.total_amount) orderAmount = order.total_amount;
             else if (order.orderTotal) orderAmount = order.orderTotal;
             
