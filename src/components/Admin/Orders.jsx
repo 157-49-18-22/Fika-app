@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaEye, FaTrash, FaSearch, FaFilter, FaDownload, FaExclamationCircle } from 'react-icons/fa';
+import { FaEye, FaTrash, FaSearch, FaFilter, FaDownload, FaExclamationCircle, FaTimes } from 'react-icons/fa';
 import './Orders.css';
 import { getAllOrdersForAdmin, updateOrderStatus, deleteOrder } from '../../firebase/firestore';
 
@@ -423,6 +423,34 @@ const Orders = () => {
       {showModal && selectedOrder && (
         <div className="modal-overlay">
           <div className="modal-content">
+            <button 
+              className="modal-close-x"
+              onClick={() => {
+                setShowModal(false);
+                setSelectedOrder(null);
+              }}
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                background: '#f44336',
+                color: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '30px',
+                height: '30px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                zIndex: 1000,
+                boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+              }}
+              title="Close"
+            >
+              <FaTimes />
+            </button>
+            
             <h3>Order Details</h3>
             
             <div className="order-id-section">
