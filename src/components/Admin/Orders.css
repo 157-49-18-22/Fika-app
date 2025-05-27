@@ -157,6 +157,14 @@
   margin-bottom: 24px;
 }
 
+.order-details {
+  background: #f8f9fa;
+  border-radius: 0.8rem;
+  padding: 0.5rem !important;
+  margin: 0rem 0 !important;
+  text-align: left;
+}
+
 .detail-group {
   display: flex;
   flex-direction: column;

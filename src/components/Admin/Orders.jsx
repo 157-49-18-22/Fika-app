@@ -16,6 +16,22 @@ const Orders = () => {
     fetchOrders();
   }, []);
 
+  // Helper function to get the first image from a comma-separated list
+  const getFirstImage = (imageField) => {
+    if (!imageField) return null;
+    const imagesArr = imageField.split(',').map(img => img.trim()).filter(Boolean);
+    if (imagesArr.length > 0) {
+      return imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
+    }
+    return null;
+  };
+
+  // Function to count images in a comma-separated string
+  const countImages = (imageUrl) => {
+    if (!imageUrl) return 0;
+    return imageUrl.includes(',') ? imageUrl.split(',').length : 1;
+  };
+  
   // Helper function to format address object to string
   const formatAddress = (address) => {
     if (!address) return 'N/A';
@@ -50,6 +66,8 @@ const Orders = () => {
       setLoading(true);
       const ordersData = await getAllOrdersForAdmin();
       
+      console.log("Raw orders data from Firebase:", ordersData);
+      
       // Transform the data to handle different formats from both collections
       const transformedOrders = ordersData.map(order => {
         // Extract customer info based on the source
@@ -66,9 +84,9 @@ const Orders = () => {
           shippingAddress = formatAddress(order.shipping?.address);
         } else {
           // successfulPayments collection format
-          customerName = order.userDetails?.name || 'N/A';
+          customerName = order.userDetails?.name || order.userDetails?.firstName || 'N/A';
           customerEmail = order.userDetails?.email || 'N/A';
-          customerPhone = order.userDetails?.phone || 'N/A';
+          customerPhone = order.userDetails?.phone || order.userDetails?.mobile || 'N/A';
           shippingAddress = formatAddress(order.shippingAddress || order.userDetails?.address);
         }
         
@@ -88,7 +106,7 @@ const Orders = () => {
         let totalAmount;
         if (order.amount) {
           // Razorpay stores amounts in paise (100 paise = 1 rupee)
-          totalAmount = order.amount ;
+          totalAmount = order.amount;
         } else if (order.total_amount) {
           totalAmount = order.total_amount;
         } else if (order.orderTotal) {
@@ -96,6 +114,31 @@ const Orders = () => {
         } else {
           totalAmount = 0;
         }
+        
+        // Log all possible status fields for debugging
+        console.log(`Order ${order.id || order.razorpay_order_id} status fields:`, {
+          fulfillment_status: order.fulfillment_status,
+          status: order.status,
+          payment_status: order.payment_status,
+          orderStatus: order.orderStatus,
+          all_order_keys: Object.keys(order)
+        });
+        
+        // Determine the status - try all possible status fields
+        let orderStatus = 'pending';
+        
+        // Check all possible status fields in order of priority
+        if (order.status) {
+          orderStatus = order.status;
+        } else if (order.payment_status) {
+          orderStatus = order.payment_status;
+        } else if (order.fulfillment_status) {
+          orderStatus = order.fulfillment_status;
+        } else if (order.orderStatus) {
+          orderStatus = order.orderStatus;
+        }
+        
+        console.log(`Final status for order ${order.id}: ${orderStatus}`);
         
         return {
           ...order,
@@ -108,7 +151,8 @@ const Orders = () => {
           created_at: createdDate,
           formatted_date: createdDate.toLocaleDateString(),
           formatted_time: createdDate.toLocaleTimeString(),
-          status: order.status || order.payment_status || 'pending'
+          status: orderStatus,
+          fulfillment_status: orderStatus
         };
       });
       
@@ -132,7 +176,10 @@ const Orders = () => {
       items: order.items ? order.items.map(item => ({
         ...item,
         price: parseFloat(item.price || 0),
-        quantity: parseInt(item.quantity || 1, 10)
+        quantity: parseInt(item.quantity || 1, 10),
+        // Process image field if it exists
+        processedImage: item.image ? getFirstImage(item.image) : null,
+        imageCount: item.image ? countImages(item.image) : 0
       })) : [],
       // Ensure all properties are serializable
       total_amount: parseFloat(order.total_amount || 0),
@@ -143,6 +190,7 @@ const Orders = () => {
       shipping_address: typeof order.shipping_address === 'object' 
         ? formatAddress(order.shipping_address) 
         : (order.shipping_address || 'N/A'),
+      shippingAddress: order.shippingAddress || {},
       id: order.id || '',
       source: order.source || 'orders',
       status: order.status || 'pending',
@@ -173,11 +221,37 @@ const Orders = () => {
   const handleStatusChange = async (orderId, newStatus, source) => {
     try {
       console.log(`Updating order ${orderId} from ${source} to status: ${newStatus}`);
+      
+      // Update the UI immediately first for responsiveness
+      setOrders(prevOrders => 
+        prevOrders.map(order => {
+          if (order.id === orderId) {
+            console.log(`Updating local state for order ${orderId} to ${newStatus}`);
+            return {
+              ...order,
+              status: newStatus,
+              fulfillment_status: newStatus
+            };
+          }
+          return order;
+        })
+      );
+      
+      // Then update the database
       await updateOrderStatus(orderId, newStatus, source);
-      await fetchOrders(); // Refresh the orders list
+      console.log(`Status update sent to database for order ${orderId}`);
+      
+      // Refresh the orders from the server to ensure we have the latest data
+      setTimeout(() => {
+        console.log("Refreshing orders after status update");
+        fetchOrders();
+      }, 500); // Small delay to ensure the database has time to update
     } catch (err) {
       console.error('Error updating order status:', err);
       setError('Failed to update order status: ' + err.message);
+      
+      // Refresh orders anyway to ensure UI is in sync with the database
+      fetchOrders();
     }
   };
 
@@ -281,12 +355,12 @@ const Orders = () => {
           <thead>
             <tr>
               <th>Order ID</th>
-              <th>Source</th>
+              <th>Payment</th>
               <th>Customer</th>
               <th>Date</th>
               <th>Total</th>
-              <th>Status</th>
-              <th>Actions</th>
+              <th style={{ position: 'sticky', right: '100px', backgroundColor: 'white', zIndex: 1, minWidth: '140px' }}>Delivery Status</th>
+              <th style={{ position: 'sticky', right: 0, backgroundColor: 'white', zIndex: 2, width: '100px', minWidth: '100px' }}>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -303,14 +377,15 @@ const Orders = () => {
                       {order.source || 'orders'}
                     </span>
                   </td>
-                  <td>{order.customer_name}</td>
+                  <td>{order.userDetails?.firstName || order.customer_name}</td>
                   <td>{order.formatted_date}</td>
                   <td>₹{order.total_amount.toFixed(2)}</td>
-                  <td>
+                  <td style={{ position: 'sticky', right: '100px', backgroundColor: 'white', zIndex: 1, minWidth: '140px' }}>
                     <select
-                      value={order.status}
+                      value={order.status || order.payment_status || order.fulfillment_status || 'pending'}
                       onChange={(e) => handleStatusChange(order.id, e.target.value, order.source)}
-                      className={`status-select ${order.status}`}
+                      className={`status-select ${order.status || order.payment_status || order.fulfillment_status || 'pending'}`}
+                      style={{ width: '100%' }}
                     >
                       <option value="pending">Pending</option>
                       <option value="processing">Processing</option>
@@ -320,19 +395,23 @@ const Orders = () => {
                       <option value="cancelled">Cancelled</option>
                     </select>
                   </td>
-                  <td className="action-buttons">
-                    <button 
-                      className="view-btn"
-                      onClick={() => handleViewOrder(order)}
-                    >
-                      <FaEye />
-                    </button>
-                    <button 
-                      className="delete-btn"
-                      onClick={() => handleDelete(order.id, order.source)}
-                    >
-                      <FaTrash />
-                    </button>
+                  <td className="action-buttons" style={{ position: 'sticky', right: 0, backgroundColor: 'white', zIndex: 2, width: '100px', minWidth: '100px',marginTop: '0rem', boxShadow: '-2px 0 5px rgba(0,0,0,0.1)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '5px' }}>
+                      <button 
+                        className="view-btn"
+                        onClick={() => handleViewOrder(order)}
+                        title="View Order Details"
+                      >
+                        <FaEye />
+                      </button>
+                      <button 
+                        className="delete-btn"
+                        onClick={() => handleDelete(order.id, order.source)}
+                        title="Delete Order"
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -364,15 +443,15 @@ const Orders = () => {
                 <div className="order-details">
                   <div className="detail-group">
                     <label>Name:</label>
-                    <span>{selectedOrder.shippingAddress.fullName}</span>
+                    <span>{selectedOrder.shippingAddress?.fullName || selectedOrder.customer_name}</span>
                   </div>
                   <div className="detail-group">
                     <label>Email:</label>
-                    <span>{selectedOrder.shippingAddress.userEmail}</span>
+                    <span>{selectedOrder.shippingAddress?.userEmail || selectedOrder.customer_email}</span>
                   </div>
                   <div className="detail-group">
                     <label>Phone:</label>
-                    <span>{selectedOrder.shippingAddress.mobile}</span>
+                    <span>{selectedOrder.shippingAddress?.mobile || selectedOrder.customer_phone}</span>
                   </div>
                 </div>
               </div>
@@ -401,9 +480,9 @@ const Orders = () => {
                   <div className="detail-group">
                     <label>Status:</label>
                     <select
-                      value={selectedOrder.status}
+                      value={selectedOrder.status || selectedOrder.payment_status || selectedOrder.fulfillment_status || 'pending'}
                       onChange={(e) => handleStatusChange(selectedOrder.id, e.target.value, selectedOrder.source)}
-                      className={`status-select ${selectedOrder.status}`}
+                      className={`status-select ${selectedOrder.status || selectedOrder.payment_status || selectedOrder.fulfillment_status || 'pending'}`}
                     >
                       <option value="pending">Pending</option>
                       <option value="processing">Processing</option>
@@ -461,10 +540,15 @@ const Orders = () => {
                     {selectedOrder.items.map((item, index) => (
                       <tr key={index}>
                         <td>
-                          {item.image && (
+                          {item.processedImage ? (
+                            <img src={item.processedImage} alt={item.name} className="item-image" />
+                          ) : item.image ? (
                             <img src={item.image} alt={item.name} className="item-image" />
-                          )}
+                          ) : null}
                           <span>{item.name}</span>
+                          {/* {item.imageCount > 1 && (
+                            <small className="image-count">+{item.imageCount - 1} more</small>
+                          )} */}
                         </td>
                         <td>{item.quantity}</td>
                         <td>₹{parseFloat(item.price).toFixed(2)}</td>
@@ -505,6 +589,28 @@ const Orders = () => {
           </div>
         </div>
       )}
+
+      <style jsx="true">{`
+        .orders-table-container {
+          overflow-x: auto;
+          position: relative;
+        }
+        
+        .view-btn, .delete-btn {
+          padding: 6px 10px;
+          min-width: 36px;
+        }
+        
+        .orders-table th, .orders-table td {
+          padding: 10px;
+          white-space: nowrap;
+        }
+        
+        .orders-table th:not(:last-child),
+        .orders-table td:not(:last-child) {
+          border-right: 1px solid #eee;
+        }
+      `}</style>
     </div>
   );
 };
