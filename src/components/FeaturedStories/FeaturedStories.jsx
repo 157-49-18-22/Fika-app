@@ -380,13 +380,13 @@ const FeaturedStories = () => {
               <div className="testimonial-content">
                 <div className="quote-icon">"</div>
                 <p className="testimonial-text">
-                  "The quality of their products is exceptional. I've been a loyal customer for years and have never been disappointed. Their attention to detail and customer service is outstanding."
+                  "I was looking for quality bedsheets that would last, and Fika delivered beyond my expectations! The cotton feels so soft against my skin, and even after multiple washes, the colors stay vibrant. My family loves them too!"
                 </p>
                 <div className="testimonial-author">
-                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop" alt="Sarah Johnson" className="author-image" />
+                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop" alt="Priya Sharma" className="author-image" />
                   <div className="author-info">
-                    <h4 className="author-name">Sarah Johnson</h4>
-                    <p className="author-title">Loyal Customer</p>
+                    <h4 className="author-name">Priya Sharma</h4>
+                    <p className="author-title">Delhi</p>
                     <div className="rating">
                       <FaStar className="star" />
                       <FaStar className="star" />
@@ -402,13 +402,13 @@ const FeaturedStories = () => {
               <div className="testimonial-content">
                 <div className="quote-icon">"</div>
                 <p className="testimonial-text">
-                  "I love how they combine style with comfort. Their products have transformed my home into a cozy sanctuary. Highly recommend!"
+                  "The cushion covers I ordered match perfectly with my living room decor! The fabric quality is excellent, and the zippers are sturdy. Delivery was quick too - ordered on Monday and received by Thursday!"
                 </p>
                 <div className="testimonial-author">
-                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop" alt="Michael Chen" className="author-image" />
+                  <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop" alt="Arjun Patel" className="author-image" />
                   <div className="author-info">
-                    <h4 className="author-name">Michael Chen</h4>
-                    <p className="author-title">Interior Designer</p>
+                    <h4 className="author-name">Arjun Patel</h4>
+                    <p className="author-title">Mumbai</p>
                     <div className="rating">
                       <FaStar className="star" />
                       <FaStar className="star" />
@@ -424,13 +424,13 @@ const FeaturedStories = () => {
               <div className="testimonial-content">
                 <div className="quote-icon">"</div>
                 <p className="testimonial-text">
-                  "The customer service is impeccable. They went above and beyond to help me find the perfect pieces for my home. Will definitely shop again!"
+                  "During the monsoon season, I needed quick-drying bedsheets, and a friend recommended Fika. Not only do they dry fast, but they're also so comfortable! Customer service helped me choose the right material over WhatsApp. Truly amazing!"
                 </p>
                 <div className="testimonial-author">
-                  <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop" alt="Emma Wilson" className="author-image" />
+                  <img src="https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?w=150&h=150&fit=crop" alt="Kavita Reddy" className="author-image" />
                   <div className="author-info">
-                    <h4 className="author-name">Emma Wilson</h4>
-                    <p className="author-title">Home Decor Enthusiast</p>
+                    <h4 className="author-name">Kavita Reddy</h4>
+                    <p className="author-title">Bangalore</p>
                     <div className="rating">
                       <FaStar className="star" />
                       <FaStar className="star" />
