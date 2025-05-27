@@ -353,7 +353,7 @@ const Payment = ({ onClose, total }) => {
                 orderId: response.razorpay_order_id,
                 paymentId: response.razorpay_payment_id,
                 signature: response.razorpay_signature,
-                amount: options.amount,
+                amount: options.amount / 100, // Convert from paisa to rupees
                 currency: options.currency,
                 items: cart.map(item => ({
                   name: item.name,
