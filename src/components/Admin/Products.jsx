@@ -462,7 +462,7 @@ const Products = () => {
       </div>
 
       {showModal && (
-        <div className="modal-overlay">
+        <div className="modaloverlay">
           <div className="modal-content">
             <h3>{selectedProduct ? 'Edit Product' : 'Add New Product'}</h3>
             <form onSubmit={handleSubmit}>

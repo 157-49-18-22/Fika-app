@@ -103,16 +103,19 @@
 }
 
 /* Modal Styles */
-.modal-overlay {
+.modaloverlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   z-index: 1000;
+  padding-top: 50px;
+  overflow-y: auto;
 }
 
 .modal-content {
@@ -121,8 +124,11 @@
   border-radius: 8px;
   width: 90%;
   max-width: 775px;
-  max-height: 90vh;
+  max-height: 80vh;
   overflow-y: auto;
+  position: relative;
+  margin-bottom: 50px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .modal-content h3 {
