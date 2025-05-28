@@ -324,7 +324,7 @@
   /* Main Content Area */
   .admin-content {
     flex: 1;
-    margin-left: var(--sidebar-width) + 20px;
+    margin-left: 80px;
     padding: 24px;
     transition: margin-left var(--transition-speed) var(--transition-easing);
     width: calc(100% - var(--sidebar-width) + 15px);
