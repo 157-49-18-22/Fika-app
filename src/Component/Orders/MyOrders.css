@@ -460,4 +460,58 @@
     .myorders-items {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     }
+}
+
+.myorders-tracking {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.myorders-tracking-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.myorders-tracking-header svg {
+  color: #1D1D1D;
+}
+
+.myorders-tracking-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.myorders-tracking-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.myorders-tracking-item svg {
+  color: #1D1D1D;
+  font-size: 1.1rem;
+}
+
+.myorders-tracking-label {
+  font-weight: 500;
+  color: #666;
+  margin-right: 5px;
+}
+
+@media screen and (max-width: 768px) {
+  .myorders-tracking-content {
+    grid-template-columns: 1fr;
+  }
 } 

@@ -19,7 +19,11 @@ import {
   FaPhone,
   FaEnvelope,
   FaCreditCard,
-  FaRegClock
+  FaRegClock,
+  FaBarcode,
+  FaShuttleVan,
+  FaCalendarPlus,
+  FaInfoCircle
 } from 'react-icons/fa';
 
 const MyOrders = () => {
@@ -158,14 +162,15 @@ const MyOrders = () => {
     return item.image;
   };
 
-  // Get delivery status and steps
+  // Get delivery steps
   const getDeliverySteps = (order) => {
     const status = getOrderStatus(order).toLowerCase();
     const steps = [
       { id: 'ordered', label: 'Order Placed', date: order.payment_date || order.created_at || order.orderDate },
-      { id: 'processing', label: 'Processing', date: null },
-      { id: 'shipped', label: 'Shipped', date: null },
-      { id: 'delivered', label: 'Delivered', date: null }
+      { id: 'processing', label: 'Processing', date: order.processing_date || null },
+      { id: 'shipped', label: 'Shipped', date: order.shipping_date || null },
+      { id: 'outForDelivery', label: 'Out for Delivery', date: order.out_for_delivery_date || null },
+      { id: 'delivered', label: 'Delivered', date: order.delivery_date || null }
     ];
 
     // Set completion based on status
@@ -176,12 +181,18 @@ const MyOrders = () => {
       steps[0].completed = true;
       steps[1].completed = true;
       steps[2].active = true;
+    } else if (status.includes('out for delivery')) {
+      steps[0].completed = true;
+      steps[1].completed = true;
+      steps[2].completed = true;
+      steps[3].active = true;
     } else if (status.includes('deliver') || status.includes('complete') || status.includes('success')) {
       steps[0].completed = true;
       steps[1].completed = true;
       steps[2].completed = true;
       steps[3].completed = true;
-      steps[3].active = true;
+      steps[4].completed = true;
+      steps[4].active = true;
     } else {
       steps[0].active = true;
     }
@@ -191,7 +202,22 @@ const MyOrders = () => {
 
   // Get estimated delivery date
   const getEstimatedDelivery = (order) => {
-    // Mock function - in real app, this would calculate based on shipping info
+    if (order.estimatedDeliveryDate) {
+      if (order.estimatedDeliveryDate.toDate) {
+        return order.estimatedDeliveryDate.toDate().toLocaleDateString('en-IN', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+      }
+      return new Date(order.estimatedDeliveryDate).toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+    
+    // Fallback to default calculation if no estimated date is set
     if (!order.payment_date && !order.created_at && !order.orderDate) {
       return 'N/A';
     }
@@ -205,7 +231,6 @@ const MyOrders = () => {
       orderDate = new Date(order.orderDate || Date.now());
     }
     
-    // Add 5 days for delivery estimate
     const estimatedDate = new Date(orderDate);
     estimatedDate.setDate(orderDate.getDate() + 5);
     
@@ -400,6 +425,7 @@ const MyOrders = () => {
                         {step.id === 'ordered' && <FaClipboardCheck />}
                         {step.id === 'processing' && <FaClock />}
                         {step.id === 'shipped' && <FaTruck />}
+                        {step.id === 'outForDelivery' && <FaTruck />}
                         {step.id === 'delivered' && <FaHome />}
                       </div>
                       <div className="myorders-step-label">{step.label}</div>
@@ -410,6 +436,41 @@ const MyOrders = () => {
                   ))}
                 </div>
               </div>
+
+              {(order.trackingNumber || order.carrier || order.estimatedDeliveryDate || order.additionalNotes) && (
+                <div className="myorders-tracking">
+                  <div className="myorders-tracking-header">
+                    <FaBarcode />
+                    <span>Tracking Information</span>
+                  </div>
+                  <div className="myorders-tracking-content">
+                    {order.trackingNumber && (
+                      <div className="myorders-tracking-item">
+                        <FaBarcode />
+                        <span><span className="myorders-tracking-label">Tracking Number:</span> {order.trackingNumber}</span>
+                      </div>
+                    )}
+                    {order.carrier && (
+                      <div className="myorders-tracking-item">
+                        <FaShuttleVan />
+                        <span><span className="myorders-tracking-label">Carrier:</span> {order.carrier}</span>
+                      </div>
+                    )}
+                    {order.estimatedDeliveryDate && (
+                      <div className="myorders-tracking-item">
+                        <FaCalendarPlus />
+                        <span><span className="myorders-tracking-label">Estimated Delivery:</span> {getEstimatedDelivery(order)}</span>
+                      </div>
+                    )}
+                    {order.additionalNotes && (
+                      <div className="myorders-tracking-item">
+                        <FaInfoCircle />
+                        <span><span className="myorders-tracking-label">Additional Notes:</span> {order.additionalNotes}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         ))}

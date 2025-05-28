@@ -46,6 +46,7 @@ import ProductDetailWish from './components/ProductDetailWish/ProductDetailWish'
 import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentFailed from './pages/PaymentFailed';
 import AddressManagement from './Component/AddressManagement/AddressManagement.jsx';
+import OrderDeliveryManagement from './components/Admin/OrderDeliveryManagement.jsx';
 
 // Layout component with navbar and footer
 const PageLayout = ({ children }) => {
@@ -137,6 +138,7 @@ function App() {
                 }>
                   <Route index element={<DashboardOverview />} />
                   <Route path="orders" element={<Orders />} />
+                  <Route path="delivery-management" element={<OrderDeliveryManagement />} />
                   <Route path="analytics" element={<Analytics />} />
                   <Route path="notifications" element={<NotificationsAdmin />} />
                   <Route path="users" element={<Users />} />
