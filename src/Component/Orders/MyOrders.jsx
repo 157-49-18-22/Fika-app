@@ -3,7 +3,24 @@ import { useAuth } from '../../context/AuthContext';
 import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 import './MyOrders.css';
-import { FaSpinner, FaShoppingBag, FaMapMarkerAlt, FaCalendarAlt, FaMoneyBillWave, FaCheckCircle } from 'react-icons/fa';
+import { 
+  FaSpinner, 
+  FaShoppingBag, 
+  FaMapMarkerAlt, 
+  FaCalendarAlt, 
+  FaMoneyBillWave, 
+  FaCheckCircle, 
+  FaBox, 
+  FaTruck, 
+  FaClipboardCheck, 
+  FaHome, 
+  FaClock,
+  FaUser,
+  FaPhone,
+  FaEnvelope,
+  FaCreditCard,
+  FaRegClock
+} from 'react-icons/fa';
 
 const MyOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -78,6 +95,29 @@ const MyOrders = () => {
     }
   };
 
+  // Format time function
+  const formatTime = (timestamp) => {
+    if (!timestamp) return 'N/A';
+    
+    // Handle Firestore timestamp
+    if (timestamp && timestamp.toDate) {
+      return timestamp.toDate().toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+    
+    // Handle ISO string or other date formats
+    try {
+      return new Date(timestamp).toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch (e) {
+      return 'N/A';
+    }
+  };
+
   // Get order status with proper formatting
   const getOrderStatus = (order) => {
     const status = order.status || order.payment_status || order.fulfillment_status || 'Processing';
@@ -108,7 +148,7 @@ const MyOrders = () => {
 
   // Get order images
   const getItemImages = (item) => {
-    if (!item.image) return ['https://placehold.co/100x100?text=Product'];
+    if (!item.image) return 'https://placehold.co/100x100?text=Product';
     
     // Handle comma-separated image URLs
     if (typeof item.image === 'string' && item.image.includes(',')) {
@@ -118,16 +158,78 @@ const MyOrders = () => {
     return item.image;
   };
 
+  // Get delivery status and steps
+  const getDeliverySteps = (order) => {
+    const status = getOrderStatus(order).toLowerCase();
+    const steps = [
+      { id: 'ordered', label: 'Order Placed', date: order.payment_date || order.created_at || order.orderDate },
+      { id: 'processing', label: 'Processing', date: null },
+      { id: 'shipped', label: 'Shipped', date: null },
+      { id: 'delivered', label: 'Delivered', date: null }
+    ];
+
+    // Set completion based on status
+    if (status.includes('process')) {
+      steps[0].completed = true;
+      steps[1].active = true;
+    } else if (status.includes('ship')) {
+      steps[0].completed = true;
+      steps[1].completed = true;
+      steps[2].active = true;
+    } else if (status.includes('deliver') || status.includes('complete') || status.includes('success')) {
+      steps[0].completed = true;
+      steps[1].completed = true;
+      steps[2].completed = true;
+      steps[3].completed = true;
+      steps[3].active = true;
+    } else {
+      steps[0].active = true;
+    }
+
+    return steps;
+  };
+
+  // Get estimated delivery date
+  const getEstimatedDelivery = (order) => {
+    // Mock function - in real app, this would calculate based on shipping info
+    if (!order.payment_date && !order.created_at && !order.orderDate) {
+      return 'N/A';
+    }
+    
+    let orderDate;
+    if (order.payment_date && order.payment_date.toDate) {
+      orderDate = order.payment_date.toDate();
+    } else if (order.created_at && order.created_at.toDate) {
+      orderDate = order.created_at.toDate();
+    } else {
+      orderDate = new Date(order.orderDate || Date.now());
+    }
+    
+    // Add 5 days for delivery estimate
+    const estimatedDate = new Date(orderDate);
+    estimatedDate.setDate(orderDate.getDate() + 5);
+    
+    return estimatedDate.toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   if (loading) {
     return (
-      <div className="orders-container">
-        <div className="orders-header">
-          <h2><FaShoppingBag /> My Orders</h2>
+      <div className="myorders">
+        <div className="myorders-heading">
+          <div className="myorders-heading-content">
+            <h1 className="myorders-main-title">
+              <FaShoppingBag /> My Orders
+            </h1>
+          </div>
         </div>
-        <hr className="divider" />
-        <div className="loading-container">
-          <FaSpinner className="spinner" />
-          <p>Loading your orders...</p>
+        <div className="myorders-divider"></div>
+        <div className="myorders-loading">
+          <FaSpinner className="myorders-spinner" />
+          <p className="myorders-loading-text">Loading your orders...</p>
         </div>
       </div>
     );
@@ -135,12 +237,16 @@ const MyOrders = () => {
 
   if (error) {
     return (
-      <div className="orders-container">
-        <div className="orders-header">
-          <h2><FaShoppingBag /> My Orders</h2>
+      <div className="myorders">
+        <div className="myorders-heading">
+          <div className="myorders-heading-content">
+            <h1 className="myorders-main-title">
+              <FaShoppingBag /> My Orders
+            </h1>
+          </div>
         </div>
-        <hr className="divider" />
-        <div className="error-container">
+        <div className="myorders-divider"></div>
+        <div className="myorders-error">
           <p>{error}</p>
         </div>
       </div>
@@ -148,85 +254,163 @@ const MyOrders = () => {
   }
 
   return (
-    <div className="orders-container">
-      <div className="orders-header">
-        <h2><FaShoppingBag /> My Orders</h2>
+    <div className="myorders">
+      <div className="myorders-heading">
+        <div className="myorders-heading-content">
+          <h1 className="myorders-main-title">
+            <FaShoppingBag /> My Orders
+          </h1>
+        </div>
       </div>
-      <hr className="divider" />
+      <div className="myorders-divider"></div>
       
       {orders.length === 0 ? (
-        <div className="no-orders">
+        <div className="myorders-no-orders">
           <p>You haven't placed any orders yet.</p>
         </div>
       ) : (
-        <div className="orders-count">
-          {orders.length} order{orders.length !== 1 ? 's' : ''}
+        <div className="myorders-count">
+          {orders.length} order{orders.length !== 1 ? 's' : ''} placed
         </div>
       )}
       
-      <div className="orders-list">
+      <div className="myorders-list">
         {orders.map(order => (
-          <div key={order.id} className="order-card">
-            <div className="order-header">
-              <div className="order-id">
-                <strong>Order ID:</strong> {order.razorpay_order_id || order.id}
+          <div key={order.id} className="myorders-card">
+            <div className="myorders-card-header">
+              <div className="myorders-id">
+                Order: #{order.razorpay_order_id || order.id.substring(0, 8)}
               </div>
-              <div className={`order-status status-${getStatusColor(getOrderStatus(order))}`}>
+              <div className={`myorders-status myorders-status-${getStatusColor(getOrderStatus(order))}`}>
                 <FaCheckCircle /> {getOrderStatus(order)}
               </div>
             </div>
             
-            <div className="order-info">
-              <div className="order-date">
-                <FaCalendarAlt className="icon" />
-                <span>{formatDate(order.payment_date || order.created_at || order.orderDate)}</span>
-              </div>
-              <div className="order-total">
-                <FaMoneyBillWave className="icon" />
-                <span>{formatCurrency(order.amount || order.total_amount || order.orderTotal || 0)}</span>
-              </div>
-            </div>
-            
-            <div className="order-items">
-              {(order.items || []).map((item, index) => (
-                <div key={index} className="order-item">
-                  <div className="item-image">
-                    <img 
-                      src={getItemImages(item)} 
-                      alt={item.name} 
-                      onError={(e) => { e.target.src = 'https://placehold.co/100x100?text=Product' }}
-                    />
+            <div className="myorders-content">
+              <div className="myorders-info">
+                <div className="myorders-info-left">
+                  <div className="myorders-info-item">
+                    <FaCalendarAlt />
+                    <span><span className="myorders-info-label">Order Date:</span> {formatDate(order.payment_date || order.created_at || order.orderDate)}</span>
                   </div>
-                  <div className="item-details">
-                    <div className="item-name">{item.name}</div>
-                    <div className="item-price-qty">
-                      <span>{formatCurrency(item.price || 0)}</span>
-                      <span>×</span>
-                      <span>{item.quantity || item.qty || 1}</span>
+                  <div className="myorders-info-item">
+                    <FaRegClock />
+                    <span><span className="myorders-info-label">Order Time:</span> {formatTime(order.payment_date || order.created_at || order.orderDate)}</span>
+                  </div>
+                  <div className="myorders-info-item">
+                    <FaMoneyBillWave />
+                    <span><span className="myorders-info-label">Total Amount:</span> {formatCurrency(order.amount || order.total_amount || order.orderTotal || 0)}</span>
+                  </div>
+                </div>
+                <div className="myorders-info-right">
+                  <div className="myorders-info-item">
+                    <FaCreditCard />
+                    <span><span className="myorders-info-label">Payment Method:</span> {order.payment_method || 'Online Payment'}</span>
+                  </div>
+                  <div className="myorders-info-item">
+                    <FaBox />
+                    <span><span className="myorders-info-label">Items:</span> {(order.items || []).length} item(s)</span>
+                  </div>
+                  <div className="myorders-info-item">
+                    <FaTruck />
+                    <span><span className="myorders-info-label">Expected Delivery:</span> {getEstimatedDelivery(order)}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="myorders-items-container">
+                <div className="myorders-items-title">
+                  <FaBox /> Order Items
+                </div>
+                <div className="myorders-items">
+                  {(order.items || []).map((item, index) => (
+                    <div key={index} className="myorders-item">
+                      <div className="myorders-item-image">
+                        <img 
+                          src={getItemImages(item)} 
+                          alt={item.name} 
+                          onError={(e) => { e.target.src = 'https://placehold.co/100x100?text=Product' }}
+                        />
+                      </div>
+                      <div className="myorders-item-details">
+                        <div className="myorders-item-name">{item.name}</div>
+                        <div className="myorders-item-price-qty">
+                          <span className="myorders-item-price">{formatCurrency(item.price || 0)}</span>
+                          <span className="myorders-item-qty">x{item.quantity || item.qty || 1}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {order.shippingAddress && (
+                <div className="myorders-address">
+                  <div className="myorders-address-header">
+                    <FaMapMarkerAlt />
+                    <span>Delivery Information</span>
+                  </div>
+                  <div className="myorders-address-content">
+                    <div className="myorders-address-details">
+                      <div className="myorders-address-name">
+                        <FaUser /> {order.shippingAddress.fullName}
+                      </div>
+                      <div className="myorders-address-text">
+                        <FaHome /> {order.shippingAddress.addressLine1},
+                        {order.shippingAddress.addressLine2 && ` ${order.shippingAddress.addressLine2},`}<br />
+                        {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.pincode}
+                      </div>
+                      <div className="myorders-address-phone">
+                        <FaPhone /> {order.shippingAddress.mobile}
+                      </div>
+                    </div>
+                    <div className="myorders-address-details">
+                      {order.email && (
+                        <div className="myorders-address-text">
+                          <FaEnvelope /> {order.email}
+                        </div>
+                      )}
+                      {order.shippingMethod && (
+                        <div className="myorders-address-text">
+                          <FaTruck /> Shipping: {order.shippingMethod}
+                        </div>
+                      )}
+                      {order.special_instructions && (
+                        <div className="myorders-address-text">
+                          <FaClipboardCheck /> Notes: {order.special_instructions}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
-            
-            {order.shippingAddress && (
-              <div className="order-address">
-                <div className="address-header">
-                  <FaMapMarkerAlt className="icon" />
-                  <span>Delivery Address</span>
+              )}
+              
+              <div className="myorders-delivery">
+                <div className="myorders-delivery-header">
+                  <FaTruck />
+                  <span>Delivery Status</span>
                 </div>
-                <div className="address-details">
-                  <div className="address-name">{order.shippingAddress.fullName}</div>
-                  <div className="address-content">
-                    {order.shippingAddress.addressLine1},
-                    {order.shippingAddress.addressLine2 && ` ${order.shippingAddress.addressLine2},`}
-                    <br />
-                    {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.pincode}
-                  </div>
-                  <div className="address-phone">{order.shippingAddress.mobile}</div>
+                <div className="myorders-delivery-tracker">
+                  {getDeliverySteps(order).map((step) => (
+                    <div 
+                      key={step.id} 
+                      className={`myorders-delivery-step ${step.active ? 'myorders-step-active' : ''} ${step.completed ? 'myorders-step-completed' : ''}`}
+                    >
+                      <div className="myorders-step-icon">
+                        {step.id === 'ordered' && <FaClipboardCheck />}
+                        {step.id === 'processing' && <FaClock />}
+                        {step.id === 'shipped' && <FaTruck />}
+                        {step.id === 'delivered' && <FaHome />}
+                      </div>
+                      <div className="myorders-step-label">{step.label}</div>
+                      {step.date && (
+                        <div className="myorders-step-date">{formatDate(step.date)}</div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
-            )}
+            </div>
           </div>
         ))}
       </div>

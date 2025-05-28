@@ -47,7 +47,7 @@ const Cart = () => {
   };
 
   const subtotal = getCartTotal();
-  const shipping = subtotal >= 2999 ? 0 : 200; 
+  const shipping = subtotal >= 2999 ? 0 : 0; 
   const total = subtotal + shipping;
 
   const handleCheckout = () => {
