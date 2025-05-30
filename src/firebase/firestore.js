@@ -119,10 +119,17 @@ export const updateCart = async (cartId, items) => {
       throw new Error('Cart ID is required');
     }
     
+    // Add timestamp to new items
+    const itemsWithHistory = items.map(item => ({
+      ...item,
+      addedAt: item.addedAt || serverTimestamp()
+    }));
+    
     const cartRef = doc(db, 'userCarts', cartId);
     await updateDoc(cartRef, {
-      items: items,
-      updatedAt: serverTimestamp()
+      items: itemsWithHistory,
+      updatedAt: serverTimestamp(),
+      lastModified: serverTimestamp()
     });
   } catch (error) {
     console.error('Error updating cart:', error);
@@ -142,13 +149,20 @@ export const saveCartHistory = async (userId, items) => {
       throw new Error('User ID is required');
     }
     
+    // Add timestamp to each item to track when it was added
+    const itemsWithHistory = items.map(item => ({
+      ...item,
+      addedAt: item.addedAt || serverTimestamp()
+    }));
+    
     const savedCartRef = collection(db, 'userCarts');
     const savedCartDoc = await addDoc(savedCartRef, {
       userId: userId,
-      items: items,
+      items: itemsWithHistory,
       status: 'saved',
       createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
+      updatedAt: serverTimestamp(),
+      lastModified: serverTimestamp()
     });
     
     return savedCartDoc.id;
@@ -168,11 +182,12 @@ export const getSavedCarts = async (userEmail) => {
     console.log('Getting saved carts for:', userEmail);
     const userCartsRef = collection(db, 'userCarts');
     
-    // Simplified query that doesn't require a composite index
+    // Get saved carts ordered by last modified date
     const q = query(
       userCartsRef,
       where('userId', '==', userEmail),
-      where('status', '==', 'saved')
+      where('status', '==', 'saved'),
+      orderBy('lastModified', 'desc')
     );
     
     const querySnapshot = await getDocs(q);
@@ -185,8 +200,26 @@ export const getSavedCarts = async (userEmail) => {
     return savedCarts;
   } catch (error) {
     console.error('Error getting saved carts:', error);
-    // Return empty array instead of throwing error
     return [];
+  }
+};
+
+/**
+ * Remove a saved cart history
+ * @param {string} cartId - The cart ID to remove
+ * @returns {Promise<void>}
+ */
+export const removeCartHistory = async (cartId) => {
+  try {
+    if (!cartId) {
+      throw new Error('Cart ID is required');
+    }
+    
+    const cartRef = doc(db, 'userCarts', cartId);
+    await deleteDoc(cartRef);
+  } catch (error) {
+    console.error('Error removing cart history:', error);
+    throw error;
   }
 };
 

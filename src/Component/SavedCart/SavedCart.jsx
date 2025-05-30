@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
-import { getSavedCarts, getActiveCart } from '../../firebase/firestore';
+import { getSavedCarts, getActiveCart, removeCartHistory } from '../../firebase/firestore';
 import { FaShoppingCart, FaTrash, FaPlus, FaArrowLeft, FaSpinner } from 'react-icons/fa';
 import { auth } from '../../firebase/config';
 import './SavedCart.css';
@@ -46,6 +46,24 @@ const SavedCart = () => {
       setError('Failed to load saved items. Please try again later.');
     } finally {
       setLoading(false);
+    }
+  };
+  
+  // Function to remove a cart history
+  const handleRemoveHistory = async (cartId) => {
+    try {
+      if (!cartId) return;
+      
+      await removeCartHistory(cartId);
+      
+      // Update local state
+      setSavedCarts(prevCarts => prevCarts.filter(cart => cart.id !== cartId));
+      
+      // Show success message
+      alert('Cart history removed successfully');
+    } catch (error) {
+      console.error('Error removing cart history:', error);
+      alert('Failed to remove cart history. Please try again.');
     }
   };
   
@@ -240,20 +258,30 @@ const SavedCart = () => {
           <div className="saved-cart-box-header">
             <div className="saved-cart-box-info">
               <h3>
-                {cart.isActive ? 'Current Cart' : `Cart from ${getFormattedDate(cart.updatedAt)}`}
+                {cart.isActive ? 'Current Cart' : `Cart from ${getFormattedDate(cart.lastModified || cart.updatedAt)}`}
               </h3>
               <p>{cart.items?.length || 0} item{(cart.items?.length || 0) !== 1 ? 's' : ''}</p>
             </div>
             
-            {!cart.isActive && (
-              <button 
-                className="add-all-to-cart-button"
-                onClick={() => handleAddAllToCart(cart.items)}
-                disabled={!cart.items || cart.items.length === 0}
-              >
-                <FaPlus /> Add All to Cart
-              </button>
-            )}
+            <div className="saved-cart-box-actions">
+              {!cart.isActive && (
+                <>
+                  <button 
+                    className="add-all-to-cart-button"
+                    onClick={() => handleAddAllToCart(cart.items)}
+                    disabled={!cart.items || cart.items.length === 0}
+                  >
+                    <FaPlus /> Add All to Cart
+                  </button>
+                  <button 
+                    className="remove-history-button"
+                    onClick={() => handleRemoveHistory(cart.id)}
+                  >
+                    <FaTrash /> Remove History
+                  </button>
+                </>
+              )}
+            </div>
           </div>
           
           <div className="saved-cart-items">
@@ -271,9 +299,16 @@ const SavedCart = () => {
                 </div>
                 
                 <div className="saved-cart-item-details">
-                  <Link to={`/product/${item.id}`} className="saved-cart-item-name">
-                    {item.name}
-                  </Link>
+                  <div className="saved-cart-item-header">
+                    <Link to={`/product/${item.id}`} className="saved-cart-item-name">
+                      {item.name}
+                    </Link>
+                    {item.addedAt && (
+                      <span className="saved-cart-item-date">
+                        Added on {getFormattedDate(item.addedAt)}
+                      </span>
+                    )}
+                  </div>
                   
                   <div className="saved-cart-item-meta">
                     {item.size && item.size !== 'default' && (
