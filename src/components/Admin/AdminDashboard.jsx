@@ -188,6 +188,10 @@ const AdminDashboard = () => {
             <span className="nav-icon"><AiOutlineHome /></span>
             <span className="nav-text">Dashboard</span>
           </NavLink>
+          <NavLink to="/admin/cart-management" className={({ isActive }) => 'nav-item' + (isActive ? ' active' : '')}>
+            <span className="nav-icon"><FaShoppingCart /></span>
+            <span className="nav-text">Cart Management</span>
+          </NavLink>
           <NavLink to="/admin/products" className={({ isActive }) => 'nav-item' + (isActive ? ' active' : '')}>
             <span className="nav-icon"><AiOutlineShopping /></span>
             <span className="nav-text">Products</span>
