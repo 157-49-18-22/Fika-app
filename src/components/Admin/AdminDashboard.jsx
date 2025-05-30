@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { FaUsers, FaShoppingCart, FaBox, FaList, FaChartLine, FaMoneyBillWave, FaTruck, FaStar, FaCalendarAlt, FaCreditCard, FaWallet, FaPaypal } from 'react-icons/fa';
+import { FaUsers, FaShoppingCart, FaBox, FaList, FaChartLine, FaMoneyBillWave, FaTruck, FaStar, FaCalendarAlt, FaCreditCard, FaWallet, FaPaypal, FaHeart } from 'react-icons/fa';
 import { getDashboardStats } from '../../firebase/firestore';
 import './AdminDashboard.css';
 // Modern icons
@@ -191,6 +191,10 @@ const AdminDashboard = () => {
           <NavLink to="/admin/cart-management" className={({ isActive }) => 'nav-item' + (isActive ? ' active' : '')}>
             <span className="nav-icon"><FaShoppingCart /></span>
             <span className="nav-text">Cart Management</span>
+          </NavLink>
+          <NavLink to="wishlist-management" className={({ isActive }) => 'nav-item' + (isActive ? ' active' : '')}>
+            <span className="nav-icon"><FaHeart /></span>
+            <span className="nav-text">Wishlist Management</span>
           </NavLink>
           <NavLink to="/admin/products" className={({ isActive }) => 'nav-item' + (isActive ? ' active' : '')}>
             <span className="nav-icon"><AiOutlineShopping /></span>

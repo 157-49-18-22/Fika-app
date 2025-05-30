@@ -49,8 +49,8 @@
 .user-info {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 15px;
+  gap: 0px;
+  padding: 0px;
   background: #f8f9fa;
   border-bottom: 1px solid #eee;
 }

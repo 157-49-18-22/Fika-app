@@ -49,6 +49,7 @@ import AddressManagement from './Component/AddressManagement/AddressManagement.j
 import OrderDeliveryManagement from './components/Admin/OrderDeliveryManagement.jsx';
 import SavedCart from './Component/SavedCart/SavedCart.jsx';
 import CartManagement from './components/Admin/CartManagement';
+import WishlistManagement from './components/Admin/WishlistManagement.jsx';
 
 // Layout component with navbar and footer
 const PageLayout = ({ children }) => {
@@ -149,6 +150,7 @@ function App() {
                   <Route path="products" element={<Products />} />
                   <Route path="wish-genie" element={<WishGenieProducts />} />
                   <Route path="cart-management" element={<CartManagement />} />
+                  <Route path="wishlist-management" element={<WishlistManagement />} />
                 </Route>
 
                 <Route path="/product-wish/:id" element={<PageLayout><ProductDetailWish /></PageLayout>} />
