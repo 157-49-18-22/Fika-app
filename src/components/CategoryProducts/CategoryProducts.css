@@ -804,7 +804,7 @@
 .add-to-cart-btn {
   width: 100%;
   padding: 12px;
-  background: #2874f0;
+  background: #030304;
   color: white;
   border: none;
   border-radius: 4px;
@@ -816,15 +816,15 @@
 }
 
 .add-to-cart-btn:hover {
-  background: #1c5dba;
+  background: #000000;
 }
 
 .view-details-btn {
   width: 100%;
   padding: 12px;
   background: white;
-  color: #2874f0;
-  border: 1px solid #2874f0;
+  color: #090a0b;
+  border: 1px solid #0a0a0b;
   border-radius: 4px;
   font-size: 14px;
   font-weight: 500;
@@ -837,7 +837,7 @@
 }
 
 .view-details-btn:hover {
-  background: #2874f0;
+  background: #060607;
   color: white;
 }
 

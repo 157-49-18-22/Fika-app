@@ -1329,4 +1329,130 @@ export const getAllOrdersForAdmin = async () => {
     console.error('Error getting all orders for admin:', error);
     throw error;
   }
+};
+
+// WISHLIST OPERATIONS
+
+/**
+ * Add a product to user's wishlist
+ * @param {string} userEmail - The user's email
+ * @param {Object} product - The product to add
+ * @returns {Promise<Object>} - The added wishlist item
+ */
+export const addToWishlist = async (userEmail, product) => {
+  try {
+    console.log('Adding to wishlist:', { userEmail, product });
+    const wishlistRef = collection(db, 'wishlist');
+    const wishlistItem = {
+      userEmail,
+      productId: product.id,
+      productName: product.product_name,
+      price: product.mrp,
+      image: product.image,
+      category: product.category,
+      addedAt: serverTimestamp()
+    };
+    
+    const docRef = await addDoc(wishlistRef, wishlistItem);
+    console.log('Added to wishlist successfully:', docRef.id);
+    return { id: docRef.id, ...wishlistItem };
+  } catch (error) {
+    console.error('Error adding to wishlist:', error);
+    throw error;
+  }
+};
+
+/**
+ * Remove a product from user's wishlist
+ * @param {string} userEmail - The user's email
+ * @param {string} productId - The product ID to remove
+ * @returns {Promise<void>}
+ */
+export const removeFromWishlist = async (userEmail, productId) => {
+  try {
+    console.log('Removing from wishlist:', { userEmail, productId });
+    const wishlistRef = collection(db, 'wishlist');
+    const q = query(
+      wishlistRef,
+      where('userEmail', '==', userEmail),
+      where('productId', '==', productId)
+    );
+    
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      await deleteDoc(querySnapshot.docs[0].ref);
+      console.log('Removed from wishlist successfully');
+    }
+  } catch (error) {
+    console.error('Error removing from wishlist:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get user's wishlist
+ * @param {string} userEmail - The user's email
+ * @returns {Promise<Array>} - Array of wishlist items
+ */
+export const getUserWishlist = async (userEmail) => {
+  try {
+    console.log('[Firestore] Getting wishlist for:', userEmail);
+    const wishlistRef = collection(db, 'wishlist');
+    
+    // First try a simple query without ordering
+    const q = query(
+      wishlistRef,
+      where('userEmail', '==', userEmail)
+    );
+    
+    console.log('[Firestore] Executing wishlist query...');
+    const querySnapshot = await getDocs(q);
+    console.log('[Firestore] Query snapshot size:', querySnapshot.size);
+    
+    const wishlistItems = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      console.log('[Firestore] Wishlist item data:', { id: doc.id, ...data });
+      return {
+        id: doc.id,
+        ...data
+      };
+    });
+    
+    console.log('[Firestore] Found wishlist items:', wishlistItems);
+    return wishlistItems;
+  } catch (error) {
+    console.error('[Firestore] Error getting wishlist:', error);
+    console.error('[Firestore] Error details:', {
+      code: error.code,
+      message: error.message,
+      stack: error.stack
+    });
+    return [];
+  }
+};
+
+/**
+ * Check if a product is in user's wishlist
+ * @param {string} userEmail - The user's email
+ * @param {string} productId - The product ID to check
+ * @returns {Promise<boolean>} - Whether the product is in wishlist
+ */
+export const isInWishlist = async (userEmail, productId) => {
+  try {
+    console.log('Checking wishlist status:', { userEmail, productId });
+    const wishlistRef = collection(db, 'wishlist');
+    const q = query(
+      wishlistRef,
+      where('userEmail', '==', userEmail),
+      where('productId', '==', productId)
+    );
+    
+    const querySnapshot = await getDocs(q);
+    const isInList = !querySnapshot.empty;
+    console.log('Wishlist status:', isInList);
+    return isInList;
+  } catch (error) {
+    console.error('Error checking wishlist status:', error);
+    return false;
+  }
 }; 

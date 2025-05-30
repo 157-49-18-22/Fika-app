@@ -56,7 +56,7 @@ const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { addToCart } = useCart();
-  const { addToWishlist, isInWishlist } = useWishlist();
+  const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
   const { isAuthenticated } = useAuth();
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -393,7 +393,17 @@ const ProductDetails = () => {
       setShowLoginPrompt(true);
       return;
     }
-    addToWishlist(product);
+
+    // Check if product is already in wishlist
+    if (isInWishlist(product.id)) {
+      // If already in wishlist, remove it
+      console.log('[ProductDetails] Removing from wishlist:', product);
+      removeFromWishlist(product.id);
+    } else {
+      // If not in wishlist, add it
+      console.log('[ProductDetails] Adding to wishlist:', product);
+      addToWishlist(product);
+    }
   };
 
   const handleQuickView = (productId, e) => {
@@ -440,7 +450,7 @@ const ProductDetails = () => {
         });
         window.dispatchEvent(cartUpdateEvent);
       } else if (action === 'wishlist') {
-        addToWishlist(product);
+        handleAddToWishlist(e);
       }
     } catch (error) {
       console.error(`Error performing ${action} action:`, error);
@@ -710,8 +720,9 @@ const ProductDetails = () => {
               <button
                 className={`main-wishlist-btn ${isInWishlist(product.id) ? "in-wishlist" : ""}`}
                 onClick={handleAddToWishlist}
+                title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
               >
-                <FaHeart />
+                {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
               </button>
             </div>
 

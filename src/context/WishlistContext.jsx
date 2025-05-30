@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext";
-import { useAuthRedirect } from "../utils/authUtils";
+import { getUserWishlist, addToWishlist as addToWishlistFirestore, removeFromWishlist as removeFromWishlistFirestore, isInWishlist as checkWishlistStatusFirestore } from "../firebase/firestore";
 
 const WishlistContext = createContext();
 
@@ -9,74 +9,82 @@ export const useWishlist = () => {
 };
 
 export const WishlistProvider = ({ children }) => {
-  const { currentUser } = useAuth();
-  const { requireAuth } = useAuthRedirect();
-
-  // Initialize wishlist as empty array
+  const { user } = useAuth();
   const [wishlist, setWishlist] = useState([]);
 
-  // Load user's wishlist when they log in or change
+  // Load wishlist when user changes
   useEffect(() => {
-    if (currentUser?.email) {
-      const savedWishlist = localStorage.getItem(`wishlist_${currentUser.email}`);
-      try {
-        const parsedWishlist = savedWishlist ? JSON.parse(savedWishlist) : [];
-        setWishlist(parsedWishlist);
-      } catch (error) {
-        console.error('Error loading wishlist:', error);
+    const fetchWishlist = async () => {
+      if (user?.email) {
+        try {
+          console.log('[WishlistContext] Fetching wishlist for:', user.email);
+          const wishlistItems = await getUserWishlist(user.email);
+          console.log('[WishlistContext] Fetched wishlist items:', wishlistItems);
+          setWishlist(wishlistItems);
+        } catch (error) {
+          console.error('[WishlistContext] Error fetching wishlist:', error);
+          setWishlist([]);
+        }
+      } else {
         setWishlist([]);
       }
-    } else {
-      setWishlist([]);
+    };
+
+    fetchWishlist();
+  }, [user]);
+
+  const addToWishlist = async (product) => {
+    if (!user?.email) {
+      console.log('[WishlistContext] No user logged in, cannot add to wishlist');
+      return;
     }
-  }, [currentUser]);
 
-  // Save wishlist to localStorage whenever it changes
-  useEffect(() => {
-    if (currentUser?.email) {
-      localStorage.setItem(`wishlist_${currentUser.email}`, JSON.stringify(wishlist));
+    try {
+      console.log('[WishlistContext] Adding product to wishlist:', {
+        userEmail: user.email,
+        productId: product.id,
+        productName: product.product_name
+      });
+
+      const wishlistItem = await addToWishlistFirestore(user.email, product);
+      console.log('[WishlistContext] Added to wishlist:', wishlistItem);
+      setWishlist(prev => [...prev, wishlistItem]);
+    } catch (error) {
+      console.error('[WishlistContext] Error adding to wishlist:', error);
+      throw error;
     }
-  }, [wishlist, currentUser]);
-
-  const addToWishlist = (product, navigate) => {
-    if (!requireAuth('add items to wishlist', navigate)) return;
-
-    setWishlist((prevWishlist) => {
-      const existingItemIndex = prevWishlist.findIndex(
-        (item) => item.id === product.id
-      );
-
-      if (existingItemIndex >= 0) {
-        return prevWishlist.filter((item) => item.id !== product.id);
-      } else {
-        return [...prevWishlist, product];
-      }
-    });
   };
 
-  const removeFromWishlist = (productId, navigate) => {
-    if (!requireAuth('remove items from wishlist', navigate)) return;
-    setWishlist((prevWishlist) =>
-      prevWishlist.filter((item) => item.id !== productId)
-    );
+  const removeFromWishlist = async (productId) => {
+    if (!user?.email) {
+      console.log('[WishlistContext] No user logged in, cannot remove from wishlist');
+      return;
+    }
+
+    try {
+      console.log('[WishlistContext] Removing from wishlist:', {
+        userEmail: user.email,
+        productId
+      });
+
+      await removeFromWishlistFirestore(user.email, productId);
+      console.log('[WishlistContext] Removed from wishlist successfully');
+      setWishlist(prev => prev.filter(item => item.productId !== productId));
+    } catch (error) {
+      console.error('[WishlistContext] Error removing from wishlist:', error);
+      throw error;
+    }
   };
 
   const isInWishlist = (productId) => {
-    return wishlist.some((item) => item.id === productId);
-  };
-
-  const clearWishlist = (navigate) => {
-    if (!requireAuth('clear wishlist', navigate)) return;
-    setWishlist([]);
-    localStorage.removeItem(`wishlist_${currentUser.email}`);
+    return wishlist.some(item => item.productId === productId);
   };
 
   const value = {
     wishlist,
     addToWishlist,
     removeFromWishlist,
-    isInWishlist,
-    clearWishlist
+    isInWishlist
   };
 
   return (

@@ -520,21 +520,22 @@
     background: white;
     display: flex;
     align-items: center;
+    border-radius: 50%;
     justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .main-wishlist-btn:hover {
-    transform: translateY(-2px);
-    border-color: #1D1D1D;
+    color: #e74c3c;
+    transform: scale(1.1);
 }
 
 .main-wishlist-btn.in-wishlist {
-    background: #ff4444;
-    color: white;
-    border-color: #ff4444;
+    color: #e74c3c;
+}
+
+.main-wishlist-btn.in-wishlist:hover {
+    color: #c0392b;
 }
 
 /* Social Share */
@@ -1498,4 +1499,38 @@ body.login-prompt-active {
     .dot {
         display: none;
     }
+}
+
+.product-action-btn.wishlist-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #666;
+    transition: all 0.3s ease;
+    opacity: 0;
+}
+
+.product-action-btn.wishlist-btn:hover {
+    background: #e74c3c;
+    color: white;
+}
+
+.product-action-btn.wishlist-btn.active {
+    color: #e74c3c;
+    opacity: 1;
+}
+
+.product-action-btn.wishlist-btn.active:hover {
+    background: #e74c3c;
+    color: white;
+}
+
+.product-card:hover .product-action-btn.wishlist-btn {
+    opacity: 1;
 } 
