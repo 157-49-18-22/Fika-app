@@ -47,6 +47,7 @@ import PaymentSuccess from './pages/PaymentSuccess';
 import PaymentFailed from './pages/PaymentFailed';
 import AddressManagement from './Component/AddressManagement/AddressManagement.jsx';
 import OrderDeliveryManagement from './components/Admin/OrderDeliveryManagement.jsx';
+import SavedCart from './Component/SavedCart/SavedCart.jsx';
 
 // Layout component with navbar and footer
 const PageLayout = ({ children }) => {
@@ -125,6 +126,7 @@ function App() {
                 <Route path="/my-orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
                 <Route path="/orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
                 <Route path="/addresses" element={<ProtectedRoute><AddressManagement /></ProtectedRoute>} />
+                <Route path="/saved-cart" element={<ProtectedRoute><SavedCart /></ProtectedRoute>} />
                 <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
                 <Route path="/change-password" element={<PageLayout><ChangePassword /></PageLayout>} />

@@ -390,3 +390,152 @@
 .shipping-info {
   font-style: italic;
 }
+
+/* Add these new styles at the appropriate places in your existing CSS */
+
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.cart-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.select-mode-btn {
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.select-mode-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.select-mode-btn.active {
+  background-color: #1D1D1D;
+  color: white;
+  border-color: #1D1D1D;
+}
+
+.selection-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.selection-actions button {
+  background: none;
+  border: none;
+  color: #1D1D1D;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: underline;
+  padding: 5px;
+}
+
+.selection-actions button:hover {
+  color: #555;
+}
+
+.cart-item-select {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+.select-icon {
+  font-size: 20px;
+  color: #aaa;
+  transition: all 0.2s ease;
+}
+
+.select-icon.selected {
+  color: #1D1D1D;
+}
+
+.cart-item.selected {
+  background-color: #f7f7f7;
+  border-left: 3px solid #1D1D1D;
+}
+
+.selection-summary {
+  background-color: #f7f7f7;
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin-bottom: 15px;
+}
+
+.selected-items-info {
+  margin-top: 15px;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+}
+
+.selected-items-info h4 {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.selected-items-list {
+  max-height: 200px;
+  overflow-y: auto;
+  font-size: 13px;
+}
+
+.selected-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  border-bottom: 1px dashed #eee;
+}
+
+.selected-item:last-child {
+  border-bottom: none;
+}
+
+/* Make the checkout button disabled state visually clear */
+.checkout-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments for selection mode */
+@media screen and (max-width: 768px) {
+  .cart-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .cart-header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .selection-actions {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .cart-item {
+    position: relative;
+  }
+  
+  .cart-item-select {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+  }
+}

@@ -36,8 +36,184 @@ export const getUser = async (userId) => {
   }
 };
 
+// CART OPERATIONS
+
 /**
- * Update a user's profile
+ * Get the active cart for a user
+ * @param {string} userId - The user's ID (email)
+ * @returns {Promise<Object|null>} - The cart object or null if not found
+ */
+export const getActiveCart = async (userEmail) => {
+  try {
+    console.log('Getting active cart for:', userEmail);
+    const userCartsRef = collection(db, 'userCarts');
+    
+    // Simplified query that doesn't require a composite index
+    const q = query(
+      userCartsRef,
+      where('userId', '==', userEmail),
+      where('status', '==', 'active')
+    );
+    
+    const querySnapshot = await getDocs(q);
+    if (querySnapshot.empty) {
+      console.log('No active cart found');
+      return null;
+    }
+    
+    const activeCart = {
+      id: querySnapshot.docs[0].id,
+      ...querySnapshot.docs[0].data()
+    };
+    
+    console.log('Found active cart:', activeCart);
+    return activeCart;
+  } catch (error) {
+    console.error('Error getting active cart:', error);
+    return null;
+  }
+};
+
+/**
+ * Create a new active cart for a user
+ * @param {string} userId - The user's ID (email)
+ * @returns {Promise<Object>} - The created cart object
+ */
+export const createActiveCart = async (userId) => {
+  try {
+    if (!userId) {
+      throw new Error('User ID is required');
+    }
+    
+    const newCartRef = doc(collection(db, 'userCarts'));
+    const cartData = {
+      userId: userId,
+      items: [],
+      status: 'active',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    };
+    
+    await setDoc(newCartRef, cartData);
+    
+    return { 
+      id: newCartRef.id, 
+      ...cartData,
+      items: []
+    };
+  } catch (error) {
+    console.error('Error creating active cart:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update a user's cart with new items
+ * @param {string} cartId - The cart ID
+ * @param {Array} items - The updated array of cart items
+ * @returns {Promise<void>}
+ */
+export const updateCart = async (cartId, items) => {
+  try {
+    if (!cartId) {
+      throw new Error('Cart ID is required');
+    }
+    
+    const cartRef = doc(db, 'userCarts', cartId);
+    await updateDoc(cartRef, {
+      items: items,
+      updatedAt: serverTimestamp()
+    });
+  } catch (error) {
+    console.error('Error updating cart:', error);
+    throw error;
+  }
+};
+
+/**
+ * Save a copy of the cart as a historical saved cart
+ * @param {string} userId - The user's ID (email)
+ * @param {Array} items - The cart items to save
+ * @returns {Promise<string>} - The ID of the saved cart
+ */
+export const saveCartHistory = async (userId, items) => {
+  try {
+    if (!userId) {
+      throw new Error('User ID is required');
+    }
+    
+    const savedCartRef = collection(db, 'userCarts');
+    const savedCartDoc = await addDoc(savedCartRef, {
+      userId: userId,
+      items: items,
+      status: 'saved',
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    
+    return savedCartDoc.id;
+  } catch (error) {
+    console.error('Error saving cart history:', error);
+    throw error;
+  }
+};
+
+/**
+ * Get all saved carts for a user
+ * @param {string} userId - The user's ID (email)
+ * @returns {Promise<Array>} - Array of saved cart objects
+ */
+export const getSavedCarts = async (userEmail) => {
+  try {
+    console.log('Getting saved carts for:', userEmail);
+    const userCartsRef = collection(db, 'userCarts');
+    
+    // Simplified query that doesn't require a composite index
+    const q = query(
+      userCartsRef,
+      where('userId', '==', userEmail),
+      where('status', '==', 'saved')
+    );
+    
+    const querySnapshot = await getDocs(q);
+    const savedCarts = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
+    
+    console.log('Found saved carts:', savedCarts);
+    return savedCarts;
+  } catch (error) {
+    console.error('Error getting saved carts:', error);
+    // Return empty array instead of throwing error
+    return [];
+  }
+};
+
+/**
+ * Clear a user's active cart
+ * @param {string} cartId - The cart ID
+ * @returns {Promise<void>}
+ */
+export const clearCart = async (cartId) => {
+  try {
+    if (!cartId) {
+      throw new Error('Cart ID is required');
+    }
+    
+    const cartRef = doc(db, 'userCarts', cartId);
+    await updateDoc(cartRef, {
+      items: [],
+      updatedAt: serverTimestamp()
+    });
+  } catch (error) {
+    console.error('Error clearing cart:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update user profile
  * @param {string} userId - The user's ID
  * @param {Object} userData - The data to update
  * @returns {Promise<void>}

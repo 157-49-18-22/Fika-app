@@ -30,6 +30,7 @@ import LoginPrompt from '../LoginPrompt/LoginPrompt';
 import config from '../../config';
 import { db } from '../../firebase/config';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { auth } from '../../firebase/config';
 
 const getAllProducts = async () => {
   try {
@@ -304,16 +305,31 @@ const ProductDetails = () => {
     setSizeError("");
   };
 
-  const handleAddToCart = (e) => {
+  const handleAddToCart = async (e) => {
     console.log('Add to cart button clicked');
     e.preventDefault();
     e.stopPropagation();
     
+    // First check if user is authenticated
     if (!isAuthenticated) {
       console.log('User not authenticated, showing login prompt');
       setShowLoginPrompt(true);
       return;
     }
+
+    // Get current user details
+    const user = auth.currentUser;
+    if (!user) {
+      console.log('No user found, showing login prompt');
+      setShowLoginPrompt(true);
+      return;
+    }
+    
+    // Log user details for debugging
+    console.log('Current user:', {
+      email: user.email,
+      uid: user.uid
+    });
     
     // Log product data for debugging
     console.log('Product data:', {
@@ -324,7 +340,7 @@ const ProductDetails = () => {
       color: product.color
     });
     
-    // Create the product object to add to cart
+    // Create the product object to add to cart with all necessary fields
     const productToAdd = {
       id: product.id,
       name: product.product_name,
@@ -335,17 +351,38 @@ const ProductDetails = () => {
       size: selectedSize || 'Standard',
       quantity: quantity,
       color: product.color || 'Default',
-      product_code: product.product_code
+      product_code: product.product_code,
+      selected: true,
+      addedAt: new Date().toISOString()
     };
     
-    console.log('Adding to cart:', productToAdd);
+    console.log('Adding to cart:', {
+      product: productToAdd,
+      size: selectedSize || 'Standard',
+      quantity: quantity,
+      userEmail: user.email
+    });
     
-    // Add to cart - no need for async/await
-    addToCart(productToAdd);
-    
-    // Show success message
-    setShowSuccessMessage(true);
-    setTimeout(() => setShowSuccessMessage(false), 3000);
+    try {
+      // Add to cart - pass the navigate function
+      await addToCart(productToAdd, selectedSize || 'Standard', quantity, navigate);
+      
+      // Show success message
+      setShowSuccessMessage(true);
+      setTimeout(() => setShowSuccessMessage(false), 3000);
+
+      // Emit a custom event that can be listened for in other components
+      const cartUpdateEvent = new CustomEvent('cartUpdated', { 
+        detail: { item: productToAdd, action: 'add' } 
+      });
+      window.dispatchEvent(cartUpdateEvent);
+
+      // Navigate to cart page after successful addition
+      navigate('/cart');
+    } catch (error) {
+      console.error('Error adding product to cart:', error);
+      alert('Failed to add product to cart. Please try again.');
+    }
   };
 
   const handleAddToWishlist = (e) => {
@@ -373,10 +410,40 @@ const ProductDetails = () => {
       return;
     }
     
-    if (action === 'cart') {
-      addToCart(product);
-    } else if (action === 'wishlist') {
-      addToWishlist(product);
+    try {
+      if (action === 'cart') {
+        // Format the product data consistently for Cart and SavedCart
+        const productToAdd = {
+          id: product.id,
+          name: product.product_name || product.name,
+          price: product.mrp || product.price,
+          discount: product.discount || 0,
+          image: product.image || '/placeholder-image.jpg',
+          category: product.category || '',
+          size: product.size || 'Standard',
+          quantity: 1,
+          color: product.color || 'Default',
+          product_code: product.product_code || '',
+          selected: true,
+          addedAt: new Date().toISOString()
+        };
+        
+        // Add to cart
+        addToCart(productToAdd, productToAdd.size, 1, navigate);
+        
+        // Show a brief success message
+        alert('Product added to cart!');
+        
+        // Emit cart update event
+        const cartUpdateEvent = new CustomEvent('cartUpdated', { 
+          detail: { item: productToAdd, action: 'add' } 
+        });
+        window.dispatchEvent(cartUpdateEvent);
+      } else if (action === 'wishlist') {
+        addToWishlist(product);
+      }
+    } catch (error) {
+      console.error(`Error performing ${action} action:`, error);
     }
   };
 
