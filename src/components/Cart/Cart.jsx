@@ -114,7 +114,7 @@ const Cart = () => {
 
   const subtotal = getCartTotal();
   const selectedTotal = getSelectedItemsTotal();
-  const shipping = selectedTotal >= 2999 ? 0 : 0; 
+  const shipping = selectedTotal >= 2999 ? 0 : 200; 
   const total = selectedTotal + shipping;
 
   const handleCheckout = () => {
