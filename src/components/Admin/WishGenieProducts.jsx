@@ -60,6 +60,7 @@ const WishGenieProducts = () => {
     try {
       setLoading(true);
       const data = await getWishGenieProducts();
+      console.log('Fetched Wish Genie products:', data);
       setProducts(data);
       setError(null);
     } catch (err) {
@@ -813,6 +814,7 @@ const WishGenieProducts = () => {
                   <th>Category</th>
                   <th>MRP</th>
                   <th>Product Code</th>
+                  <th>Views</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -836,6 +838,7 @@ const WishGenieProducts = () => {
                     <td>{product['Category']}</td>
                     <td>₹{product['MRP']}</td>
                     <td>{product['Product code']}</td>
+                    <td>{product.views || 0}</td>
                     <td>
                       <div className="action-buttons">
                         <button 

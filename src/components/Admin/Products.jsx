@@ -58,7 +58,8 @@ const Products = () => {
       product_name: product.product_name || 'Unnamed Product',
       category: product.category || 'Uncategorized',
       mrp: product.mrp || 0,
-      inventory: product.inventory || 0
+      inventory: product.inventory || 0,
+      views: product.views || 0
     }));
   }, [products]);
 
@@ -414,6 +415,7 @@ const Products = () => {
               <th>Category</th>
               <th>Price</th>
               <th>Inventory</th>
+              <th>Views</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -441,6 +443,7 @@ const Products = () => {
                 <td>{product.category}</td>
                 <td>₹{product.mrp}</td>
                 <td>{product.inventory}</td>
+                <td>{product.views || 0}</td>
                 <td className="action-buttons">
                   <button
                     className="edit-btn"

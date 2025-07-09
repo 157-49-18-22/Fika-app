@@ -1455,4 +1455,133 @@ export const isInWishlist = async (userEmail, productId) => {
     console.error('Error checking wishlist status:', error);
     return false;
   }
+};
+
+// PRODUCT VIEW COUNTER
+
+/**
+ * Increment the view count for a product
+ * @param {string|number} productId - The product ID
+ * @returns {Promise<void>}
+ */
+export const incrementProductViews = async (productId) => {
+  try {
+    const productsRef = collection(db, 'products');
+    
+    // Try to find the product by numeric ID first
+    let q = query(productsRef, where('id', '==', parseInt(productId)));
+    let querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      // If not found by numeric ID, try by document ID
+      const productRef = doc(db, 'products', productId);
+      const productDoc = await getDoc(productRef);
+      
+      if (productDoc.exists()) {
+        // Update the document directly
+        await updateDoc(productRef, {
+          views: (productDoc.data().views || 0) + 1,
+          lastViewed: serverTimestamp()
+        });
+      }
+    } else {
+      // Update the document found by numeric ID
+      const docRef = querySnapshot.docs[0].ref;
+      const productData = querySnapshot.docs[0].data();
+      
+      await updateDoc(docRef, {
+        views: (productData.views || 0) + 1,
+        lastViewed: serverTimestamp()
+      });
+    }
+  } catch (error) {
+    console.error('Error incrementing product views:', error);
+    // Don't throw error to avoid breaking the product page
+  }
+};
+
+/**
+ * Get the view count for a product
+ * @param {string|number} productId - The product ID
+ * @returns {Promise<number>} - The view count
+ */
+export const getProductViews = async (productId) => {
+  try {
+    const productsRef = collection(db, 'products');
+    
+    // Try to find the product by numeric ID first
+    let q = query(productsRef, where('id', '==', parseInt(productId)));
+    let querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      // If not found by numeric ID, try by document ID
+      const productRef = doc(db, 'products', productId);
+      const productDoc = await getDoc(productRef);
+      
+      if (productDoc.exists()) {
+        return productDoc.data().views || 0;
+      }
+      return 0;
+    } else {
+      // Return the view count from the document found by numeric ID
+      return querySnapshot.docs[0].data().views || 0;
+    }
+  } catch (error) {
+    console.error('Error getting product views:', error);
+    return 0;
+  }
+};
+
+// WISH GENIE PRODUCT VIEW COUNTER
+
+/**
+ * Increment the view count for a Wish Genie product
+ * @param {string} productId - The Wish Genie product ID
+ * @returns {Promise<void>}
+ */
+export const incrementWishGenieViews = async (productId) => {
+  try {
+    console.log('Incrementing Wish Genie views for product ID:', productId);
+    const wishGenieRef = collection(db, 'wish_genie');
+    const productRef = doc(wishGenieRef, productId);
+    const productDoc = await getDoc(productRef);
+    
+    if (productDoc.exists()) {
+      const currentViews = productDoc.data().views || 0;
+      const newViews = currentViews + 1;
+      console.log('Current views:', currentViews, 'New views:', newViews);
+      
+      await updateDoc(productRef, {
+        views: newViews,
+        lastViewed: serverTimestamp()
+      });
+      console.log('Successfully updated Wish Genie product views');
+    } else {
+      console.log('Wish Genie product not found with ID:', productId);
+    }
+  } catch (error) {
+    console.error('Error incrementing Wish Genie product views:', error);
+    // Don't throw error to avoid breaking the product page
+  }
+};
+
+/**
+ * Get the view count for a Wish Genie product
+ * @param {string} productId - The Wish Genie product ID
+ * @returns {Promise<number>} - The view count
+ */
+export const getWishGenieViews = async (productId) => {
+  try {
+    const wishGenieRef = collection(db, 'wish_genie');
+    const productRef = doc(wishGenieRef, productId);
+    const productDoc = await getDoc(productRef);
+    
+    if (productDoc.exists()) {
+      return productDoc.data().views || 0;
+    }
+    return 0;
+  } catch (error) {
+    console.error('Error getting Wish Genie product views:', error);
+    return 0;
+  }
 }; 

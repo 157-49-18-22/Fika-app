@@ -1309,6 +1309,14 @@
   align-items: flex-start;
 }
 
+.rating-checkbox input[type="radio"] {
+  width: fit-content;
+}
+
+.filter-checkbox-label input[type="checkbox"] {
+  width: fit-content;
+}
+
 .subcategory-checkbox,
 .filter-checkbox-label {
   display: flex;

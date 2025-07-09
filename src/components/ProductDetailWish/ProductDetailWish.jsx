@@ -24,7 +24,7 @@ import { useWishlist } from "../../context/WishlistContext.jsx";
 import "./ProductDetailWish.css";
 import { useAuth } from '../../context/AuthContext';
 import LoginPrompt from '../LoginPrompt/LoginPrompt';
-import { getWishGenieProduct, getWishGenieProducts } from '../../firebase/firestore';
+import { getWishGenieProduct, getWishGenieProducts, incrementWishGenieViews } from '../../firebase/firestore';
 
 const formatPrice = (price) => {
   const numPrice = Number(price);
@@ -65,6 +65,15 @@ const ProductDetailWish = () => {
         }
 
         setProduct(productData);
+
+        // Increment view count for this Wish Genie product
+        console.log('Incrementing views for Wish Genie product:', id);
+        try {
+          await incrementWishGenieViews(id);
+          console.log('Successfully incremented views for Wish Genie product:', id);
+        } catch (error) {
+          console.error('Error incrementing Wish Genie views:', error);
+        }
 
         // Fetch related products
         const allProducts = await getWishGenieProducts();

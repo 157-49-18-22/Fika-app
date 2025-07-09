@@ -31,6 +31,7 @@ import config from '../../config';
 import { db } from '../../firebase/config';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { auth } from '../../firebase/config';
+import { incrementProductViews } from '../../firebase/firestore';
 
 const getAllProducts = async () => {
   try {
@@ -145,6 +146,9 @@ const ProductDetails = () => {
         };
         console.log('Normalized product data:', normalized); // Debug log
         setProduct(normalized);
+
+        // Increment view count for this product
+        await incrementProductViews(id);
 
         // Fetch related products from Firestore
         const relatedQuery = query(
