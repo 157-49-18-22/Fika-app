@@ -1,5 +1,20 @@
 .homepage {
-    width: 1200px;
+    width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
     font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
 }
+
+/* @media (max-width: 1200px) {
+    .homepage {
+        width: 95%;
+    }
+}
+
+@media (max-width: 768px) {
+    .homepage {
+        width: 100%;
+        padding: 0 15px;
+    }
+} */

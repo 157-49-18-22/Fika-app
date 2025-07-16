@@ -294,3 +294,199 @@
 .shop-icon {
     font-size: 1.2rem;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 480px) {
+    .featured-collection {
+        padding: 2rem 0;
+        overflow: hidden;
+    }
+
+    .collection-title {
+        font-size: 1.5rem;
+        margin-bottom: 0px;
+        letter-spacing: 0.1em;
+        padding: 0 1rem;
+    }
+
+    .collection-header {
+        margin-bottom: 2rem;
+        padding: 0 1rem;
+    }
+
+    .carousel-control {
+        right: 1rem;
+        padding: 6px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .carousel-control svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .card-carousel {
+        height: 350px;
+        padding: 0 1rem;
+        perspective: 800px;
+    }
+
+    .card {
+        width: 180px;
+        height: 260px;
+        border-radius: 8px;
+    }
+
+    /* Mobile card positioning - simplified for better mobile experience */
+    .card-active {
+        width: 240px;
+        height: 320px;
+        transform: translateZ(50px) scale(1);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-left1 {
+        transform: translateX(-180px) translateZ(-30px) rotateY(15deg);
+        opacity: 0.8;
+    }
+
+    .card-left2 {
+        transform: translateX(-320px) translateZ(-60px) rotateY(25deg);
+        opacity: 0.6;
+    }
+
+    .card-left3 {
+        transform: translateX(-420px) translateZ(-90px) rotateY(35deg);
+        opacity: 0.4;
+    }
+
+    .card-right1 {
+        transform: translateX(180px) translateZ(-30px) rotateY(-15deg);
+        opacity: 0.8;
+    }
+
+    .card-right2 {
+        transform: translateX(320px) translateZ(-60px) rotateY(-25deg);
+        opacity: 0.6;
+    }
+
+    .card-right3 {
+        transform: translateX(420px) translateZ(-90px) rotateY(-35deg);
+        opacity: 0.4;
+    }
+
+    .new-label {
+        top: 10px;
+        left: 10px;
+        padding: 4px 8px;
+        font-size: 0.6rem;
+    }
+
+    .card-info {
+        padding: 0 15px 15px;
+    }
+
+    .price-badge {
+        padding: 8px 12px;
+        border-radius: 8px;
+    }
+
+    .price-info .start-from {
+        font-size: 0.6rem;
+        margin-bottom: 1px;
+    }
+
+    .price-info .price {
+        font-size: 0.8rem;
+    }
+
+    .shop-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .shop-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .carousel-indicators {
+        margin-top: 1.5rem;
+        gap: 6px;
+    }
+
+    .indicator {
+        width: 8px;
+        height: 8px;
+    }
+
+    /* Loading and error states for mobile */
+    .loading,
+    .error,
+    .no-products {
+        padding: 2rem 1rem;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    /* Touch-friendly interactions */
+    .card {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .shop-btn:active {
+        transform: scale(0.95);
+    }
+
+    .indicator:active {
+        transform: scale(1.1);
+    }
+
+    /* Ensure smooth scrolling on mobile */
+    .featured-collection {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Additional breakpoint for very small screens */
+@media (max-width: 360px) {
+    .featured-collection {
+        padding: 1.5rem 0;
+    }
+
+    .collection-title {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+    }
+
+    .card-carousel {
+        height: 300px;
+    }
+
+    .card-active {
+        width: 200px;
+        height: 280px;
+    }
+
+    .card {
+        width: 150px;
+        height: 220px;
+    }
+
+    .card-left1 {
+        transform: translateX(-150px) translateZ(-25px) rotateY(15deg);
+    }
+
+    .card-left2 {
+        transform: translateX(-260px) translateZ(-50px) rotateY(25deg);
+    }
+
+    .card-right1 {
+        transform: translateX(150px) translateZ(-25px) rotateY(-15deg);
+    }
+
+    .card-right2 {
+        transform: translateX(260px) translateZ(-50px) rotateY(-25deg);
+    }
+}

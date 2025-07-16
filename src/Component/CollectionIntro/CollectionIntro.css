@@ -166,3 +166,25 @@
     align-items: center;
     transform: rotate(-45deg);
 }
+
+@media screen and (max-width: 480px) {
+
+    .mint-container{
+        padding: 1rem;
+        padding-top: 2rem;
+        height: 300px;
+    }
+
+    .main-heading{
+        font-size: 20px;
+    }
+
+    .collection-intro{
+        max-height: 400px;
+    }
+
+    .collection-intro-container{
+        top: -200px;
+    }
+    
+}
