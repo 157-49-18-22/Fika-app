@@ -170,7 +170,7 @@
 @media screen and (max-width: 480px) {
 
     .mint-container{
-        padding: 1rem;
+        padding: 0.5rem;
         padding-top: 2rem;
         height: 300px;
     }

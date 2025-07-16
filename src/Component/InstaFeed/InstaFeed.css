@@ -90,4 +90,32 @@
     z-index: 4;
 }
 
-/* Responsive styling */
+@media screen and (max-width: 480px) {
+
+    .insta-feed-gallery{
+        height: 200px;
+    }
+
+    .insta-feed-container{
+        padding-top: 20px;
+    }
+
+    .insta-feed-title{
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .gallery-image{
+        width: 85px;
+        height: 100%;
+    }
+
+    .gallery-image img{
+        width: 100%;
+        height: auto;
+    }
+
+    .image5{
+        z-index: 2;
+    }
+}
