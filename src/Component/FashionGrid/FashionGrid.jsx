@@ -5,7 +5,7 @@ const FashionGrid = () => {
   return (
     <div className="fashion-grid-container">
       <div className="fashion-grid">
-      <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
+      <div className='fashion-grid-left'>
       <div className="grid-item info-box">
           <div className="info-content">
             <h2 className="info-title">
