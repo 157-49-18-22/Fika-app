@@ -435,7 +435,7 @@
     }
     .hero-button{
         padding: 8px 10px;
-        font-size: 9px;
+        font-size: 8px;
     }
     .arrow{
         font-size: 10px;
@@ -463,9 +463,9 @@
     .product-grid-item img{
         height: 100%;
     }
-    .hero-content-left img{
+    /* .hero-content-left img{
         min-height: 175px;
-    }
+    } */
 }
 
 /* Magic Orb Loader Styles */
