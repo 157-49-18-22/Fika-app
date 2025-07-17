@@ -24,10 +24,10 @@ const FashionShowcase = () => {
             </h1>
             <h2 className="main-subtitle">Collection of Inspired Living</h2>
             <p className="main-description">
-            Transform your space with a collection that speaks style and soul. Explore pieces crafted to inspire and elevate everyday living.
+            Transform your space with a collection that speaks style and soul. <span className="mobile-hidden">Explore pieces crafted to inspire and elevate everyday living.</span>
             </p>
           </div>
-          <div className="shop-nowbtn" onClick={handleShopNow} style={{ cursor: 'pointer' }}>
+          <div className="shop-nowbtn" onClick={handleShopNow}>
             <span>Shop Now</span>
             <div className="arrow-icon" >
               <svg
@@ -48,48 +48,22 @@ const FashionShowcase = () => {
         </div>
 
         <div className="showcase-side-container">
-          <div style={{ width: "50%" }}>
+          <div className="showcase-side-item">
             <div>
               <img src="./side_image2.png" alt="img" />
             </div>
             <div className="showcase-info-card">
               <div className="info-card-header">
                 <img src="./image-icon.png" alt="img" />
-                <span
-                  style={{
-                    paddingRight: "10px",
-                    textTransform: "capitalize",
-                    fontWeight: "500",
-                  }}
-                >
+                <span>
                   cushion collection
                 </span>
               </div>
               <div className="info-card-content">
-                <p
-                  style={{
-                    borderBottom: "2px solid #1D1D1D",
-                    fontSize: "22px",
-                    fontWeight: "500",
-                    textTransform: "capitalize",
-                    paddingBottom: "20px",
-                  }}
-                >
+                <p>
                   Express Your Style, one cushion at a time
                 </p>
-                <p
-                  style={{
-                    padding: "10px",
-                    fontWeight: "500",
-                    fontSize: "14px",
-                    paddingBottom: "0px",
-                    display: "flex",
-                    alignItems: "center",
-                    textTransform: "capitalize",
-                    gap: "10px",
-                    lineHeight: "1.5",
-                  }}
-                >
+                <p>
                   showcase your style through thoughtfully curated, stylish accents for every space
                   <svg
                     onClick={handleShopNow}
@@ -102,8 +76,6 @@ const FashionShowcase = () => {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    style={{ transform: "rotate(-45deg)", cursor: 'pointer' }
-                    }
                   >
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
@@ -111,24 +83,10 @@ const FashionShowcase = () => {
               </div>
             </div>
           </div>
-          <div style={{ width: "50%" }}>
-            <div style={{ position: "relative" }}>
+          <div className="showcase-side-item">
+            <div className="showcase-side-image-container">
               <img src="./side_image1.png" alt="img" />
-              <div
-                style={{
-                  position: "absolute",
-                  top: "20px",
-                  right: "20px",
-                  background: "white",
-                  borderRadius: "50%",
-                  width: "40px",
-                  height: "40px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
-                }}
-              >
+              <div className="showcase-side-image-overlay">
                 <svg
                   onClick={handleShopNow}
                   xmlns="http://www.w3.org/2000/svg"
@@ -140,55 +98,16 @@ const FashionShowcase = () => {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  style={{ transform: "rotate(-45deg)", cursor: 'pointer' }}
                 >
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </div>
-              <div
-                style={{
-                  position: "absolute",
-                  bottom: 0,
-                  left: 0,
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  padding: "20px",
-                }}
-              >
-                <div
-                  style={{
-                    background: "rgba(255, 255, 255, 0.7)",
-                    borderRadius: "20px",
-                    padding: "30px 20px",
-                    position: "relative",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "inline-block",
-                      background: "white",
-                      padding: "8px 16px",
-                      borderRadius: "20px",
-                      fontSize: "8px",
-                      fontWeight: "600",
-                      textTransform: "uppercase",
-                      marginBottom: "20px",
-                      position: "relative",
-                      top: "-10px",
-                    }}
-                  >
+              <div className="showcase-side-image-bottom">
+                <div className="showcase-side-image-card">
+                  <div className="showcase-side-image-badge">
                     CUSHION COLLECTION
                   </div>
-                  <h2
-                    style={{
-                      fontSize: "22px",
-                      fontWeight: "500",
-                      lineHeight: "1.1",
-                      color: "#1D1D1D",
-                    }}
-                  >
+                  <h2 className="showcase-side-image-title">
                     Let Your Cushions
                     <br />
                     Do The Talking
