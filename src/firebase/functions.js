@@ -86,3 +86,9 @@ export const createTestOrder = async () => {
     throw error;
   }
 }; 
+
+export const checkPromoEligibility = async (userId, promoCode) => {
+  const checkPromo = httpsCallable(functions, 'checkPromoEligibility');
+  const result = await checkPromo({ userId, promoCode });
+  return result.data;
+}; 

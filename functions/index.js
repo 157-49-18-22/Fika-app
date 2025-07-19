@@ -457,3 +457,67 @@ exports.verifyPaymentCallback = functions.https.onRequest(async (req, res) => {
     });
   }
 });
+
+// exports.checkPromoEligibility = functions.https.onCall(async (data, context) => {
+//   const { userId, promoCode } = data;
+//   if (!userId || !promoCode) {
+//     return { eligible: false, message: "Missing user or promo code." };
+//   }
+//   if (promoCode !== "NEW10OFF") {
+//     return { eligible: false, message: "Invalid promo code." };
+//   }
+
+//   const userRef = admin.firestore().collection("users").doc(userId);
+//   const userSnap = await userRef.get();
+//   if (!userSnap.exists) {
+//     return { eligible: false, message: "User not found." };
+//   }
+//   const userData = userSnap.data();
+//   const usedPromoCodes = userData.usedPromoCodes || [];
+
+//   // Check if promo code already used
+//   if (usedPromoCodes.includes("NEW10OFF")) {
+//     return { eligible: false, message: "Promo code already used." };
+//   }
+
+//   // Check if user has any orders
+//   const ordersSnap = await admin.firestore().collection("orders").where("userId", "==", userId).limit(1).get();
+//   if (!ordersSnap.empty) {
+//     return { eligible: false, message: "Promo code only valid for your first order." };
+//   }
+
+//   return { eligible: true, message: "Promo code applied!" };
+// });
+
+
+exports.checkPromoEligibility = functions.https.onCall(async (data, context) => {
+  const { userId, promoCode } = data;
+  if( !userId || !promoCode) {
+    return { eligible: false, message: "Missing user or Promo code"}
+  }
+  if( promoCode != "NEW10OFF" ) {
+    return { eligible: false, message: "Invalid Promo code"}
+  }
+
+  const userRef = admin.firestore().collection("users").doc(userId);
+  const userSnap = await userRef.get();
+  if( !userSnap.exists ) {
+    return { eligible: false, message: "user not found"}
+  }
+
+  const userData = userSnap.data();
+  const usedPromoCodes = userData.usedPromoCodes || [];
+
+  if(usedPromoCodes.includes("NEW10OFF")) {
+    return { eligible: false, message: "Promo code already used"}
+  }
+
+  const ordersSnap = await admin.firestore().collection("orders").where("userId", "==", userId).limit(1).get();
+
+  if(!ordersSnap.empty) {
+    return { eligible: false, message: "promo code only valid for your first order"}
+  }
+  return { eligible: true, message: "promo code applied!"}
+
+
+});

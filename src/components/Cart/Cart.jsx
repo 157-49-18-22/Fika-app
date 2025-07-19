@@ -16,6 +16,7 @@ import "./Cart.css";
 import Payment from "../Payment/Payment";
 import { useAuth } from "../../context/AuthContext";
 import LoginPrompt from "../LoginPrompt/LoginPrompt";
+import { checkPromoEligibility } from '../../firebase/functions';
 
 const Cart = () => {
   const { 
@@ -34,8 +35,12 @@ const Cart = () => {
   const { isAuthenticated, user } = useAuth();
   const [showPayment, setShowPayment] = useState(false);
   const [promoCode, setPromoCode] = useState("");
+  const [promoApplied, setPromoApplied] = useState(false);
+  const [promoError, setPromoError] = useState("");
+  const [discount, setDiscount] = useState(0);
   const navigate = useNavigate();
   const [selectMode, setSelectMode] = useState(false);
+  const [promoLoading, setPromoLoading] = useState(false);
 
   // Listen for payment success
   useEffect(() => {
@@ -117,6 +122,45 @@ const Cart = () => {
   const shipping = selectedTotal >= 2999 ? 0 : 200; 
   const total = selectedTotal + shipping;
 
+
+  // Promo code validation (simulate backend check for now)
+  const handleApplyPromo = async () => {
+    setPromoError("");
+    if (promoApplied) {
+      // Remove promo code
+      setPromoApplied(false);
+      setPromoCode("");
+      setDiscount(0);
+      setPromoError("");
+      return;
+    }
+    if (promoCode.trim().toUpperCase() !== "NEW10OFF") {
+      setPromoError("Invalid promo code.");
+      setPromoApplied(false);
+      setDiscount(0);
+      return;
+    }
+    setPromoLoading(true);
+    try {
+      const data = await checkPromoEligibility(user?.uid, promoCode.trim().toUpperCase());
+      if (data.eligible) {
+        setPromoApplied(true);
+        setDiscount(selectedTotal * 0.1);
+        setPromoError("");
+      } else {
+        setPromoApplied(false);
+        setDiscount(0);
+        setPromoError(data.message || "Promo code not eligible.");
+      }
+    } catch (err) {
+      setPromoApplied(false);
+      setDiscount(0);
+      setPromoError("Error checking promo code. Try again.");
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
   const handleCheckout = () => {
     if (selectedItems.length === 0) {
       alert("Please select at least one item for checkout.");
@@ -126,6 +170,8 @@ const Cart = () => {
     // Show payment component
     setShowPayment(true);
   };
+
+  const totalAfterDiscount = promoApplied ? selectedTotal - discount + shipping : selectedTotal + shipping;
 
   if (cart.length === 0) {
     return (
@@ -257,6 +303,7 @@ const Cart = () => {
         </div>
 
         <div className="order-summary">
+          <div className="promo-info-banner">10% off on your first order! Use code <b>NEW10OFF</b></div>
           <h3 className="summary-header">Order Summary</h3>
           
           {selectMode && (
@@ -268,24 +315,42 @@ const Cart = () => {
             </div>
           )}
           
-          <div className="summary-row">
-            <span>
-              {selectMode ? 'Selected Subtotal' : 'Subtotal'} ({selectMode ? selectedItems.length : cart.length} {(selectMode ? selectedItems.length : cart.length) === 1 ? "item" : "items"})
-            </span>
-            <span>₹{(selectMode ? selectedTotal : subtotal).toFixed(2)}</span>
+          <div className="promo-code-section">
+            <input
+              type="text"
+              placeholder="Enter promo code"
+              value={promoCode}
+              onChange={e => setPromoCode(e.target.value)}
+              disabled={promoApplied}
+              className="promo-input"
+              style={{textTransform:'uppercase'}}
+            />
+            <button onClick={handleApplyPromo} className="apply-promo-btn" disabled={promoLoading}>
+              {promoLoading ? "Please wait..." : promoApplied ? "Remove" : "Apply"}
+            </button>
+            {promoError && <div className="promo-error">{promoError}</div>}
+            {promoApplied && <div className="promo-success">10% off applied!</div>}
           </div>
           <div className="summary-row">
-            <span>Shipping</span>
-            <span className="free-shipping">
-              {shipping === 0 ? "Free" : `₹${shipping.toFixed(2)}`}
-            </span>
+            <span>Subtotal:</span>
+            <span>₹{selectedTotal.toFixed(2)}</span>
+          </div>
+          {promoApplied && (
+            <div className="summary-row promo-discount">
+              <span>Promo Discount:</span>
+              <span>-₹{discount.toFixed(2)}</span>
+            </div>
+          )}
+          <div className="summary-row">
+            <span>Shipping:</span>
+            <span>₹{shipping.toFixed(2)}</span>
           </div>
           <div className="summary-row shipping-note">
-            <span className="shipping-info">Free shipping on orders above ₹2999</span>
+            <span className="shipping-info-animated" style={{margin:'auto'}}>Free shipping on orders above ₹2999</span>
           </div>
-          <div className="summary-row total">
-            <span>Total</span>
-            <span>₹{(selectMode ? total : subtotal + shipping).toFixed(2)}</span>
+          <div className="summary-row total-row">
+            <span>Total:</span>
+            <span>₹{totalAfterDiscount.toFixed(2)}</span>
           </div>
           <button 
             className="checkout-btn" 
@@ -300,15 +365,12 @@ const Cart = () => {
         </div>
       </div>
       {showPayment && (
-        <Payment 
-          onClose={() => setShowPayment(false)} 
-          total={total} 
+        <Payment
           selectedItems={selectedItems}
-          onSuccess={() => {
-            removeSelectedItems();
-            setShowPayment(false);
-            navigate('/my-orders');
-          }}
+          total={totalAfterDiscount}
+          promoCode={promoApplied ? promoCode.trim().toUpperCase() : null}
+          discount={promoApplied ? discount : 0}
+          onClose={() => setShowPayment(false)}
         />
       )}
     </div>

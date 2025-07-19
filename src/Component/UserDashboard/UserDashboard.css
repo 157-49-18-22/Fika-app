@@ -153,7 +153,6 @@ display: inline-block;
   color: white;
 }
 
-/* Remove the underline effect */
 .auth-btn::after {
   display: none;
 }
@@ -323,3 +322,8 @@ display: inline-block;
   background-color: #f0e6f6;
 }
 
+@media (max-width: 480px) {
+  .login-text{
+    display: none;
+  }
+}

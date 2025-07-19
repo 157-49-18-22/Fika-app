@@ -49,7 +49,7 @@ const UserDashboard = () => {
           onClick={() => setIsOpen(!isOpen)}
         >
           <FaUser className="login-icon" />
-          Login
+          <span className="login-text">Login</span>
         </button>
 
         {isOpen && (

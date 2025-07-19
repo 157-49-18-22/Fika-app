@@ -208,12 +208,62 @@
   font-size: 0.875rem;
 }
 
+.promo-code-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  background: none;
+  padding: 0;
+  border: none;
+}
+
+.promo-input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  background: #fafafa;
+  outline: none;
+}
+
+.apply-promo-btn {
+  padding: 6px 16px;
+  border: 1px solid #888;
+  background: #fff;
+  color: #222;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, border 0.2s;
+}
+.apply-promo-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.promo-error {
+  color: #d32f2f;
+  font-size: 0.95rem;
+  margin-left: 0.5rem;
+}
+.promo-success {
+  color: #388e3c;
+  font-size: 0.95rem;
+  margin-left: 0.5rem;
+}
+
 .summary-row {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.75rem;
-  color: var(--text-medium);
-  font-size: 0.875rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.summary-row.promo-discount {
+  color: #388e3c;
+  font-weight: 500;
 }
 
 .free-shipping {
@@ -391,6 +441,28 @@
   font-style: italic;
 }
 
+.shipping-info-animated {
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #388e3c;
+  background: linear-gradient(90deg, #388e3c 20%, #b2ffb2 50%, #388e3c 80%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 2.5s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
+
 /* Add these new styles at the appropriate places in your existing CSS */
 
 .cart-header {
@@ -538,4 +610,48 @@
     right: 10px;
     z-index: 2;
   }
+}
+
+.cart-summary, .order-summary {
+  background: white;
+  padding: 2rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  height: fit-content;
+  margin-top: 1.5rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+  font-size: 1.08rem;
+}
+
+.summary-row.total-row {
+  font-size: 1.18rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.promo-code-section {
+  margin-bottom: 1.5rem;
+}
+
+.shipping-note {
+  margin-bottom: 1.2rem;
+}
+
+.promo-info-banner {
+  background: #e8f5e9;
+  color: #388e3c;
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  margin-bottom: 1.2rem;
+  font-size: 1.05rem;
+  text-align: center;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }

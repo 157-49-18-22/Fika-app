@@ -1,4 +1,4 @@
-import { collection, addDoc, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, doc, getDoc, arrayUnion } from 'firebase/firestore';
 import { db } from '../../firebase/config';
 
 export const createOrder = async (orderData) => {
@@ -8,9 +8,18 @@ export const createOrder = async (orderData) => {
       ...orderData,
       status: 'created',
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
+      promoCode: orderData.promoCode || null
     });
 
+    // If a promo code is used, update the user's usedPromoCodes array
+    if (orderData.promoCode && orderData.userId) {
+      const userRef = doc(db, 'users', orderData.userId);
+      await updateDoc(userRef, {
+        usedPromoCodes: arrayUnion(orderData.promoCode)
+      });
+    }
+    
     return {
       orderId: orderRef.id,
       ...orderData
