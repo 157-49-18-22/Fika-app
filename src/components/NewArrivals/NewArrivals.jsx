@@ -441,11 +441,11 @@ const NewArrivals = () => {
           <div className="arrivals-featured-product">
             <div className="arrivals-featured-image">
               <img src={getFirstImage(featuredProduct.image)} alt={featuredProduct.product_name} />
-              {featuredProduct.discount && (
+              {/* {featuredProduct.discount && (
                 <div className="arrivals-featured-discount">
                   <span>{featuredProduct.discount}% OFF</span>
                 </div>
-              )}
+              )} */}
             </div>
             <div className="arrivals-featured-info">
               <div className="arrivals-limited-offer">

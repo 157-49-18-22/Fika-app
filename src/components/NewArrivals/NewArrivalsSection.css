@@ -954,25 +954,32 @@
     .arrivals-description {
         font-size: 0.9rem;
     }
-
-    .arrivals-features {
-        flex-direction: column;
-    }
     
     .arrivals-feature-item {
         flex-direction: column;
+        font-size: 14px;
     }
 
     .arrivals-feature-icon {
         font-size: 1.2rem;
     }
 
+    /* .arrivals-featured-image img{
+        width: 80%;
+    } */
+
     .arrivals-featured-product {
         flex-direction: column;
+        gap: 0px;
     }
 
     .arrivals-featured-image {
         min-height: 300px;
+        padding: 0 50px;
+    }
+
+    .arrivals-featured-image img{
+        border-radius: 10px;
     }
     
     .arrivals-featured-info {
@@ -984,11 +991,11 @@
     }
 
     .arrivals-limited-offer h3 {
-        font-size: 1rem;
+        font-size: 16px;
     }
 
     .arrivals-featured-title {
-        font-size: 1.3rem;
+        font-size: 16px;
     }
 
     .arrivals-featured-description {
@@ -1078,6 +1085,29 @@
     .arrivals-products-row{
         padding: 0px;
         gap: 0px;
+    }
+
+    .arrivals-featured-pricing{
+        justify-content: center;
+    }
+
+    .arrivals-cart-btn{
+        flex: 1;
+        font-size: 14px;
+        padding: 0px;
+    }
+
+    .arrivals-section-title{
+        font-size: 20px;
+        margin-bottom: 0px;
+    }
+
+    .arrivals-category-tabs{
+        gap: 0px;
+    }
+
+    .arrivals-category-description{
+        margin-bottom: 10px;
     }
     
 }

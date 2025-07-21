@@ -834,3 +834,15 @@
   color: #2874f0;
   margin-bottom: 16px;
 } 
+
+@media (max-width: 480px){
+  .product-info h3{
+    font-size: 14px;
+  }
+
+  .product-info .brand{
+    font-size: 12px;
+  }
+
+  .product-info .price{}
+}
