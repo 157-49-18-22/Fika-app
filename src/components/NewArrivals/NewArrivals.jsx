@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { FaShoppingCart, FaHeart, FaEye, FaChevronLeft, FaChevronRight, FaClock, FaTag, FaGift, FaRegHeart, FaArrowRight } from "react-icons/fa";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
@@ -26,20 +29,53 @@ const NewArrivals = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   const productsRowRef = useRef(null);
-  const categoryRowRefs = {
+  const sliderRefs = {
     cushions: useRef(null),
     bedsets: useRef(null),
-    doharsAndQuilts: useRef(null)
+    doharsAndQuilts: useRef(null),
+    main: useRef(null)
   };
-  
+
   const autoScrollTimer = useRef(null);
   const { addToCart } = useCart();
   const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
   const navigate = useNavigate();
   const [newsletterEmail, setNewsletterEmail] = useState("");
   const [newsletterSuccess, setNewsletterSuccess] = useState(false);
+
+  const sliderSettings = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    arrows: false,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+        }
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+        }
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          centerMode: true,
+          centerPadding: '40px'
+        }
+      }
+    ]
+  };
 
   // Fetch products from Firestore
   useEffect(() => {
@@ -95,12 +131,12 @@ const NewArrivals = () => {
   // Countdown timer for featured product
   useEffect(() => {
     let timerInterval;
-    
+
     const startCountdown = () => {
       timerInterval = setInterval(() => {
         setTimeLeft(prevTime => {
           const { days, hours, minutes, seconds } = prevTime;
-          
+
           if (seconds > 0) {
             return { ...prevTime, seconds: seconds - 1 };
           } else if (minutes > 0) {
@@ -110,7 +146,7 @@ const NewArrivals = () => {
           } else if (days > 0) {
             return { ...prevTime, days: days - 1, hours: 23, minutes: 59, seconds: 59 };
           }
-          
+
           // Reset when countdown reaches zero
           return { days: 3, hours: 11, minutes: 23, seconds: 45 };
         });
@@ -118,7 +154,7 @@ const NewArrivals = () => {
     };
 
     startCountdown();
-    
+
     return () => {
       if (timerInterval) {
         clearInterval(timerInterval);
@@ -130,23 +166,23 @@ const NewArrivals = () => {
   const categories = React.useMemo(() => {
     const uniqueCategories = Array.from(new Set(newArrivals.map(p => p.category).filter(Boolean)));
     // Filter out categories that have no products with images
-    const categoriesWithProducts = uniqueCategories.filter(category => 
-      newArrivals.some(product => 
-        product.category === category && 
-        product.image && 
+    const categoriesWithProducts = uniqueCategories.filter(category =>
+      newArrivals.some(product =>
+        product.category === category &&
+        product.image &&
         product.image.trim() !== ''
       )
     );
     return ['all', ...categoriesWithProducts, 'wish genie'];
   }, [newArrivals]);
 
-  const filteredProducts = activeTab === "all" 
-    ? newArrivals 
+  const filteredProducts = activeTab === "all"
+    ? newArrivals
     : newArrivals.filter(product => {
         const hasImage = product.image && product.image.trim() !== '';
         return product.category === activeTab && hasImage;
       });
-  
+
   console.log('Filtered Products:', filteredProducts);
   console.log('Active Tab:', activeTab);
 
@@ -177,10 +213,13 @@ const NewArrivals = () => {
     navigate(`/product/${id}`);
   };
 
-  const scrollProducts = (direction, ref) => {
-    if (ref && ref.current) {
-      const scrollAmount = direction === 'left' ? -400 : 400;
-      ref.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  const scrollProducts = (direction, refKey) => {
+    if (sliderRefs[refKey] && sliderRefs[refKey].current) {
+      if (direction === 'left') {
+        sliderRefs[refKey].current.slickPrev();
+      } else {
+        sliderRefs[refKey].current.slickNext();
+      }
     }
   };
 
@@ -191,18 +230,18 @@ const NewArrivals = () => {
   // Auto scroll functionality
   useEffect(() => {
     let scrollInterval;
-    
-    if (isAutoPlay && productsRowRef.current) {
+
+    if (isAutoPlay && sliderRefs.main.current) {
       scrollInterval = setInterval(() => {
-        const container = productsRowRef.current;
+        const container = sliderRefs.main.current;
         if (!container) return;
-        
-        const isAtEnd = container.scrollLeft >= (container.scrollWidth - container.clientWidth - 10);
-        
+
+        const isAtEnd = container.slickCurrentSlide() >= (container.slickGetTotalSlides() - 1);
+
         if (isAtEnd) {
-          container.scrollTo({ left: 0, behavior: 'smooth' });
+          container.slickGoTo(0);
         } else {
-          container.scrollBy({ left: 400, behavior: 'smooth' });
+          container.slickNext();
         }
       }, 5000);
     }
@@ -262,22 +301,22 @@ const NewArrivals = () => {
   // Render product card with optimized image loading
   const renderProductCard = (product) => {
     return (
-      <div 
-        key={product.id} 
+      <div
+        key={product.id}
         className="product-card"
         onClick={() => navigate(`/product/${product.id}`)}
       >
         <div className="product-image-container">
-          <img 
-            src={getFirstImage(product.image)} 
-            alt={product.product_name} 
-            className="product-image" 
+          <img
+            src={getFirstImage(product.image)}
+            alt={product.product_name}
+            className="product-image"
             loading="lazy"
-            onError={(e) => handleImageError(e)} 
+            onError={(e) => handleImageError(e)}
           />
-          
+
           <div className="product-actions">
-            <button 
+            <button
               className="product-action-btn cart-btn"
               onClick={(e) => handleAddToCart(product, e)}
               title="Add to Cart"
@@ -285,14 +324,14 @@ const NewArrivals = () => {
             >
               <FaShoppingCart />
             </button>
-            <button 
+            <button
               className={`product-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
               onClick={(e) => handleAddToWishlist(product, e)}
               title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
             >
               {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
             </button>
-            <button 
+            <button
               className="product-action-btn quickview-btn"
               onClick={(e) => handleQuickView(product.id, e)}
               title="Quick View"
@@ -301,7 +340,7 @@ const NewArrivals = () => {
             </button>
           </div>
         </div>
-        
+
         <div className="product-info">
           <h3 className="product-name">{product.product_name}</h3>
           <p className="product-category">{product.category} - {product.sub_category}</p>
@@ -310,7 +349,7 @@ const NewArrivals = () => {
               ₹{Number(product.mrp).toFixed(2)}
             </span>
           </div>
-          
+
           <button className="shop-now-btn">
             Shop Now <FaArrowRight className="" />
           </button>
@@ -323,31 +362,31 @@ const NewArrivals = () => {
   const renderProductsContainer = (title, products, refKey) => {
     // If no products, don't render the section
     if (!products || products.length === 0) return null;
-    
+
     return (
       <div className="arrivals-category-section">
         <div className="arrivals-category-header">
           <h2 className="arrivals-category-title">{title}</h2>
-          <Link to={`/all-products?category=₹{title.toLowerCase().replace(/\s+/g, '-')}`} className="arrivals-view-category">
+          <Link to={`/all-products?category=${title.toLowerCase().replace(/\s+/g, '-')}`} className="arrivals-view-category">
             View All <span className="arrivals-arrow-circle">&#8599;</span>
           </Link>
         </div>
-        
+
         <div className="arrivals-products-container">
-          <button 
-            className="arrivals-scroll-button left" 
-            onClick={() => scrollProducts('left', categoryRowRefs[refKey])}
+          <button
+            className="arrivals-scroll-button left"
+            onClick={() => scrollProducts('left', refKey)}
           >
             <FaChevronLeft />
           </button>
-          
-          <div className="arrivals-products-row" ref={categoryRowRefs[refKey]}>
+
+          <Slider ref={sliderRefs[refKey]} {...sliderSettings} className="arrivals-products-row">
             {products.map(product => renderProductCard(product))}
-          </div>
-          
-          <button 
-            className="arrivals-scroll-button right" 
-            onClick={() => scrollProducts('right', categoryRowRefs[refKey])}
+          </Slider>
+
+          <button
+            className="arrivals-scroll-button right"
+            onClick={() => scrollProducts('right', refKey)}
           >
             <FaChevronRight />
           </button>
@@ -448,13 +487,13 @@ const NewArrivals = () => {
                 )}
               </div>
               <div className="arrivals-featured-actions">
-                <button 
+                <button
                   className="arrivals-cart-btn"
                   onClick={() => addToCart(featuredProduct)}
                 >
                   Add to Cart
                 </button>
-                <button 
+                <button
                   className={`arrivals-wishlist-btn ${isInWishlist(featuredProduct.id) ? 'active' : ''}`}
                   onClick={() => isInWishlist(featuredProduct.id) ? removeFromWishlist(featuredProduct.id) : addToWishlist(featuredProduct)}
                 >
@@ -485,8 +524,8 @@ const NewArrivals = () => {
         {/* Category Selection */}
         <div className="arrivals-category-tabs">
           {categories.map(category => (
-            <button 
-              key={category} 
+            <button
+              key={category}
               className={`arrivals-category-tab ${activeTab === category ? 'active' : ''}`}
               onClick={() => handleCategoryClick(category)}
             >
@@ -498,12 +537,12 @@ const NewArrivals = () => {
         {/* Category Description */}
         <div className="arrivals-category-description">
           <p>
-            {activeTab === "all" 
-              ? "Browse our complete selection of new arrivals, featuring the latest trends and must-have pieces for the season." 
-              : activeTab === "cushions" 
-              ? "Discover our newest cushions, from elegant designs to casual essentials, all crafted with premium fabrics." 
-              : activeTab === "bedsets" 
-              ? "Complete your look with our just-arrived bedsets, including covers, sheets, and more." 
+            {activeTab === "all"
+              ? "Browse our complete selection of new arrivals, featuring the latest trends and must-have pieces for the season."
+              : activeTab === "cushions"
+              ? "Discover our newest cushions, from elegant designs to casual essentials, all crafted with premium fabrics."
+              : activeTab === "bedsets"
+              ? "Complete your look with our just-arrived bedsets, including covers, sheets, and more."
               : activeTab === "wish genie"
               ? "Explore our magical collection of Wish Genie products, designed to make your wishes come true."
               : "Explore our collection of dohars and quilts, perfect for every season and crafted with premium materials for ultimate comfort."}
@@ -512,15 +551,15 @@ const NewArrivals = () => {
 
         {/* New Arrivals Products Container */}
         <div className="arrivals-products-container">
-          <button className="arrivals-scroll-button left" onClick={() => scrollProducts('left', productsRowRef)}>
+          <button className="arrivals-scroll-button left" onClick={() => scrollProducts('left', 'main')}>
             <FaChevronLeft />
           </button>
-          
-          <div className="arrivals-products-row" ref={productsRowRef}>
+
+          <Slider ref={sliderRefs.main} {...sliderSettings} className="arrivals-products-row">
             {filteredProducts.map(product => renderProductCard(product))}
-          </div>
-          
-          <button className="arrivals-scroll-button right" onClick={() => scrollProducts('right', productsRowRef)}>
+          </Slider>
+
+          <button className="arrivals-scroll-button right" onClick={() => scrollProducts('right', 'main')}>
             <FaChevronRight />
           </button>
         </div>
@@ -529,10 +568,10 @@ const NewArrivals = () => {
         <div className="arrivals-sections-container">
           {/* Cushions */}
           {renderProductsContainer("Cushions", categoryProducts.cushions, "cushions")}
-          
+
           {/* Bedsets */}
           {renderProductsContainer("Bedsets", categoryProducts.bedsets, "bedsets")}
-          
+
           {/* Dohars and Quilts */}
           {renderProductsContainer("Dohars & Quilts", categoryProducts.doharsAndQuilts, "doharsAndQuilts")}
         </div>
@@ -596,7 +635,7 @@ const NewArrivals = () => {
           </div>
         </div>
       </div>
-      
+
       {showLoginPrompt && (
         <div className="login-prompt-overlay" onClick={() => setShowLoginPrompt(false)}>
           <div className="login-prompt-wrapper" onClick={(e) => e.stopPropagation()}>

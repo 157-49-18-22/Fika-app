@@ -382,15 +382,15 @@
 .arrivals-products-row {
     display: flex;
     gap: 2rem;
-    overflow-x: auto;
-    scroll-behavior: smooth;
     padding: 1rem 0;
-    -ms-overflow-style: none;
-    scrollbar-width: none;
 }
 
-.arrivals-products-row::-webkit-scrollbar {
-    display: none;
+.slick-slider .slick-list {
+    margin: 0 -1rem;
+}
+
+.slick-slider .slick-slide > div {
+    padding: 0 1rem;
 }
 
 /* Product Card */
@@ -711,6 +711,7 @@
     align-items: center;
     margin-bottom: 2rem;
     position: relative;
+    padding: 1rem;
 }
 
 .arrivals-category-title {
@@ -903,142 +904,7 @@
 .arrivals-category-section:nth-child(5) { animation-delay: 0.5s; }
 
 /* Responsive styles */
-@media (max-width: 1200px) {
-    .arrivals-section {
-        padding: 4rem 2rem;
-    }
-    
-    .arrivals-featured-product {
-        flex-direction: column;
-    }
-    
-    .arrivals-features {
-        flex-direction: column;
-        align-items: center;
-        gap: 1.5rem;
-    }
-    
-    .arrivals-benefits {
-        flex-wrap: wrap;
-        gap: 2rem;
-    }
-    
-    .arrivals-benefit-item {
-        width: calc(50% - 2rem);
-    }
-}
 
-@media (max-width: 768px) {
-    .arrivals-section {
-        padding: 3rem 1.5rem;
-    }
-    
-    .arrivals-section-title, .arrivals-title {
-        font-size: 2rem;
-    }
-    
-    .arrivals-featured-title {
-        font-size: 1.5rem;
-    }
-    
-    .arrivals-product-card {
-        min-width: 220px;
-    }
-    
-    .arrivals-product-image {
-        height: 280px;
-    }
-    
-    .arrivals-category-tabs {
-        gap: 1rem;
-    }
-    
-    .arrivals-category-tab {
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
-    }
-    
-    .arrivals-featured-info {
-        padding: 2rem;
-    }
-    
-    .arrivals-time-block {
-        min-width: 50px;
-        padding: 0.6rem 0.8rem;
-    }
-    
-    .arrivals-time-value {
-        font-size: 1.2rem;
-    }
-    
-    .arrivals-time-label {
-        font-size: 0.7rem;
-    }
-    
-    .arrivals-benefits {
-        flex-direction: column;
-        gap: 2rem;
-    }
-    
-    .arrivals-benefit-item {
-        width: 100%;
-    }
-    
-    .arrivals-newsletter-form {
-        flex-direction: column;
-    }
-    
-    .arrivals-newsletter-form button {
-        margin-top: 1rem;
-    }
-    
-    .arrivals-category-title {
-        font-size: 1.5rem;
-    }
-    
-    .arrivals-category-section {
-        margin: 3rem 0;
-        padding-bottom: 2rem;
-    }
-}
-
-@media (max-width: 576px) {
-    .arrivals-section {
-        padding: 2rem 1rem;
-    }
-    
-    .arrivals-section-title, .arrivals-title {
-        font-size: 1.8rem;
-    }
-    
-    .arrivals-product-card {
-        min-width: 180px;
-    }
-    
-    .arrivals-product-image {
-        height: 240px;
-    }
-    
-    .arrivals-product-info h3 {
-        font-size: 0.9rem;
-    }
-    
-    .arrivals-current-price {
-        font-size: 1rem;
-    }
-    
-    .arrivals-category-tabs {
-        flex-wrap: wrap;
-    }
-    
-    .arrivals-featured-actions {
-        flex-direction: column;
-    }
-    
-    .arrivals-wishlist-btn {
-        margin-top: 1rem;
-    }
-}
 
 .login-prompt-overlay {
     position: fixed;
@@ -1074,3 +940,76 @@
         opacity: 1;
     }
 } 
+
+@media screen and (max-width: 480px) {
+
+    .arrivals-section {
+        padding: 2rem 0;
+    }
+
+    .arrivals-title {
+        font-size: 2rem;
+    }
+
+    .arrivals-description {
+        font-size: 1rem;
+    }
+
+    /* .arrivals-features {
+        flex-direction: column;
+    } */
+    
+    .arrivals-feature-item {
+        flex-direction: column;
+    }
+
+    .arrivals-feature-icon {
+        font-size: 1.2rem;
+    }
+
+    .arrivals-featured-product {
+        flex-direction: column;
+    }
+
+    .arrivals-featured-image {
+        min-height: 300px;
+    }
+    
+    .arrivals-featured-info {
+        padding: 2rem;
+    }
+
+    .arrivals-limited-offer {
+        margin-bottom: 1rem;
+    }
+
+    .arrivals-category-tabs {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .arrivals-category-tab {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .arrivals-products-row{
+        padding: 0px;
+        gap: 0px;
+    }
+
+    .arrivals-benefits {
+        flex-direction: column;
+        gap: 2rem;
+        padding: 2rem 1rem;
+        margin: 0px;
+    }
+
+    .arrivals-benefit-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+}

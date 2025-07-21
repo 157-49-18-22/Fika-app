@@ -440,11 +440,11 @@
   box-shadow: var(--shadow-lg);
 }
 
-.product-image-container {
+/* .product-image-container {
   position: relative;
   height: 280px;
   overflow: hidden;
-}
+} */
 
 .product-image {
   width: 100%;
@@ -1049,9 +1049,9 @@
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
   
-  .product-image-container {
+  /* .product-image-container {
     height: 250px;
-  }
+  } */
   
   .quickview-grid {
     grid-template-columns: 1fr;
@@ -1094,9 +1094,9 @@
     gap: 15px;
   }
   
-  .product-image-container {
+  /* .product-image-container {
     height: 180px;
-  }
+  } */
   
   .product-info {
     padding: 15px;
