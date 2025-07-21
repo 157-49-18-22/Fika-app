@@ -328,6 +328,8 @@ const Cart = () => {
             <button onClick={handleApplyPromo} className="apply-promo-btn" disabled={promoLoading}>
               {promoLoading ? "Please wait..." : promoApplied ? "Remove" : "Apply"}
             </button>
+          </div>
+          <div className="summary-row">
             {promoError && <div className="promo-error">{promoError}</div>}
             {promoApplied && <div className="promo-success">10% off applied!</div>}
           </div>
