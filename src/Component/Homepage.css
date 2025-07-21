@@ -4,17 +4,12 @@
     margin: 0 auto;
     font-family: 'Montserrat', sans-serif;
     overflow-x: hidden;
+    padding-top: 80px;
 }
 
-/* @media (max-width: 1200px) {
-    .homepage {
-        width: 95%;
+@media (max-width:480px){
+
+    .homepage{
+        padding-top: 50px;
     }
 }
-
-@media (max-width: 768px) {
-    .homepage {
-        width: 100%;
-        padding: 0 15px;
-    }
-} */
