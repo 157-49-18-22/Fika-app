@@ -948,16 +948,16 @@
     }
 
     .arrivals-title {
-        font-size: 2rem;
+        font-size: 1.5rem;
     }
 
     .arrivals-description {
-        font-size: 1rem;
+        font-size: 0.9rem;
     }
 
-    /* .arrivals-features {
+    .arrivals-features {
         flex-direction: column;
-    } */
+    }
     
     .arrivals-feature-item {
         flex-direction: column;
@@ -983,6 +983,30 @@
         margin-bottom: 1rem;
     }
 
+    .arrivals-limited-offer h3 {
+        font-size: 1rem;
+    }
+
+    .arrivals-featured-title {
+        font-size: 1.3rem;
+    }
+
+    .arrivals-featured-description {
+        font-size: 0.9rem;
+    }
+
+    .arrivals-current-price {
+        font-size: 1.2rem;
+    }
+
+    .arrivals-original-price {
+        font-size: 1rem;
+    }
+
+    .arrivals-section-title {
+        font-size: 1.8rem;
+    }
+
     .arrivals-category-tabs {
         flex-wrap: wrap;
         gap: 0.5rem;
@@ -990,13 +1014,28 @@
     }
 
     .arrivals-category-tab {
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         padding: 0.5rem 1rem;
     }
 
-    .arrivals-products-row{
-        padding: 0px;
-        gap: 0px;
+    .arrivals-category-description p {
+        font-size: 0.9rem;
+    }
+
+    .arrivals-category-title {
+        font-size: 1.4rem;
+    }
+
+    .arrivals-product-info h3 {
+        font-size: 0.9rem;
+    }
+
+    .arrivals-current-price {
+        font-size: 1rem;
+    }
+
+    .arrivals-original-price {
+        font-size: 0.8rem;
     }
 
     .arrivals-benefits {
@@ -1010,6 +1049,35 @@
         flex-direction: column;
         text-align: center;
         gap: 0.5rem;
+    }
+
+    .arrivals-benefit-content h3 {
+        font-size: 1rem;
+    }
+
+    .arrivals-benefit-content p {
+        font-size: 0.8rem;
+    }
+
+    .arrivals-newsletter-content h3 {
+        font-size: 1.2rem;
+    }
+
+    .arrivals-newsletter-content p {
+        font-size: 0.9rem;
+    }
+
+    .arrivals-view-all-btn {
+        font-size: 0.9rem;
+    }
+
+    .arrivals-view-category {
+        font-size: 0.9rem;
+    }
+
+    .arrivals-products-row{
+        padding: 0px;
+        gap: 0px;
     }
     
 }

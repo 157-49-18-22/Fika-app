@@ -176,7 +176,7 @@
     }
 
     .main-heading{
-        font-size: 20px;
+        font-size: 1rem;
     }
 
     .collection-intro{
@@ -184,7 +184,10 @@
     }
 
     .collection-intro-container{
-        top: -200px;
+        top: -230px;
     }
     
+    .wish-btn{
+        font-size: 10px;
+    }
 }

@@ -261,7 +261,8 @@
     }
 
     .sectiontitle{
-        font-size: 20px;
+        margin-bottom: 0px;
+        font-size: 1rem;
     }
 
     .showcase-main-title{

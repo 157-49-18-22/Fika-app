@@ -303,14 +303,14 @@
     }
 
     .collection-title {
-        font-size: 1.5rem;
+        font-size: 0.8rem;
         margin-bottom: 0px;
         letter-spacing: 0.1em;
         padding: 0 1rem;
     }
 
     .collection-header {
-        margin-bottom: 2rem;
+        margin-bottom: 0rem;
         padding: 0 1rem;
     }
 
@@ -333,46 +333,46 @@
     }
 
     .card {
-        width: 180px;
-        height: 260px;
+        width: 140px;
+        height: 200px;
         border-radius: 8px;
     }
 
     /* Mobile card positioning - simplified for better mobile experience */
     .card-active {
-        width: 240px;
-        height: 320px;
-        transform: translateZ(50px) scale(1);
+        width: 180px;
+        height: 240px;
+        transform: translateZ(40px) scale(1);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
 
     .card-left1 {
-        transform: translateX(-180px) translateZ(-30px) rotateY(15deg);
+        transform: translateX(-120px) translateZ(-20px) rotateY(15deg);
         opacity: 0.8;
     }
 
     .card-left2 {
-        transform: translateX(-320px) translateZ(-60px) rotateY(25deg);
+        transform: translateX(-210px) translateZ(-40px) rotateY(25deg);
         opacity: 0.6;
     }
 
     .card-left3 {
-        transform: translateX(-420px) translateZ(-90px) rotateY(35deg);
+        transform: translateX(-280px) translateZ(-60px) rotateY(35deg);
         opacity: 0.4;
     }
 
     .card-right1 {
-        transform: translateX(180px) translateZ(-30px) rotateY(-15deg);
+        transform: translateX(120px) translateZ(-20px) rotateY(-15deg);
         opacity: 0.8;
     }
 
     .card-right2 {
-        transform: translateX(320px) translateZ(-60px) rotateY(-25deg);
+        transform: translateX(210px) translateZ(-40px) rotateY(-25deg);
         opacity: 0.6;
     }
 
     .card-right3 {
-        transform: translateX(420px) translateZ(-90px) rotateY(-35deg);
+        transform: translateX(280px) translateZ(-60px) rotateY(-35deg);
         opacity: 0.4;
     }
 
@@ -412,7 +412,7 @@
     }
 
     .carousel-indicators {
-        margin-top: 1.5rem;
+        margin-top: 0rem;
         gap: 6px;
     }
 
