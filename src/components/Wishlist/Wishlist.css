@@ -492,7 +492,7 @@
 /* Improve mobile responsiveness */
 @media (max-width: 480px) {
   .wishlist-container {
-    padding-top: 15%;
+    margin-top: 15%;
   }
   
   .wishlist-error {

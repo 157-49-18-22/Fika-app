@@ -3,13 +3,14 @@
   margin: 20px auto;
   padding: 20px;
   background: white;
+  margin-top: 10%;
 }
 
 .address-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 10px;
+  padding-bottom: 10px;   
 }
 
 .address-header h2 {
@@ -198,3 +199,15 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 } 
+
+@media (max-width: 480px){
+
+  .address-management-container{
+    margin-top: 20%;
+  }
+
+  .no-addresses{
+    padding: 0px;
+  }
+
+}
