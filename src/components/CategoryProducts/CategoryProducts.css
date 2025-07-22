@@ -844,5 +844,7 @@
     font-size: 12px;
   }
 
-  .product-info .price{}
+  .product-image{
+    aspect-ratio: 1/1;
+  }
 }
