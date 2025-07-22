@@ -12,6 +12,7 @@
   max-width: 1200px;
   margin: 2rem auto;
   padding: 0 1rem;
+  margin-top: 10%;
 }
 
 .cart-container h2 {
@@ -405,6 +406,10 @@
 }
 
 @media (max-width: 480px) {
+  .cart-section {
+    padding-top: 15%;
+  }
+  
   .cart-container h2 {
     font-size: 1.25rem;
   }
@@ -469,7 +474,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
 }
 
 .cart-header-actions {

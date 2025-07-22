@@ -23,6 +23,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  /* margin-top: 10%; */
 }
 
 .wishlist-header {
@@ -283,7 +284,8 @@
 
 .wishlist-empty {
   text-align: center;
-  padding: 4rem 2rem;
+  padding: 2rem;
+  margin-top: 10%;
 }
 
 .empty-wishlist-icon {
@@ -489,6 +491,10 @@
 
 /* Improve mobile responsiveness */
 @media (max-width: 480px) {
+  .wishlist-container {
+    padding-top: 15%;
+  }
+  
   .wishlist-error {
     flex-direction: column;
     text-align: center;

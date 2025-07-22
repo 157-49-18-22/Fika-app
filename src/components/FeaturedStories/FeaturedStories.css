@@ -8,6 +8,7 @@
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.8s ease, transform 0.8s ease;
+  margin-top: 10%;
 }
 
 .blog-container.fade-in {
@@ -778,6 +779,10 @@
 }
 
 @media (max-width: 480px) {
+  .blog-container {
+    padding-top: 15%;
+  }
+  
   .animated-heading {
     font-size: 2.5rem;
   }

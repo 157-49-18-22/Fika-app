@@ -3,6 +3,7 @@
   background: #fafaff;
   min-height: 100vh;
   padding: 0 0 40px 0;
+  margin-top: 10%;
 }
 
 .order-tracking-hero {
@@ -195,5 +196,31 @@
   .order-tracking-form, .order-tracking-details {
     max-width: 100%;
     min-width: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-tracking-page {
+    padding-top: 15%;
+  }
+  
+  .order-tracking-hero {
+    padding: 24px 0 16px 0;
+  }
+  
+  .order-tracking-hero h1 {
+    font-size: 1.8rem;
+  }
+  
+  .order-tracking-hero p {
+    font-size: 1rem;
+  }
+  
+  .order-tracking-content {
+    padding: 0 12px;
+  }
+  
+  .order-tracking-form, .order-tracking-details {
+    padding: 20px 16px;
   }
 } 

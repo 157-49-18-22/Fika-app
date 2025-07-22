@@ -22,20 +22,36 @@ const mockOrder = {
 
 const faqs = [
   {
-    q: 'How long do returns/exchanges take?',
-    a: 'Returns/exchanges are processed within 5-7 business days after we receive your item.'
+    q: 'What is your return policy timeframe?',
+    a: 'We have a 2 DAYS RETURN POLICY only on fresh articles. For defected/damaged products, complaints should be raised within 24 hours of delivery.'
   },
   {
-    q: 'Can I return a used item?',
-    a: 'Items must be unused, unwashed, and in original packaging to be eligible.'
+    q: 'How do I initiate a return?',
+    a: 'If you are unsatisfied with the product delivered, you need to mail us at info@fika-india.com within 2 days from the date of receiving the parcel or register a return pickup from the "exchange & return" tab on the home page.'
   },
   {
-    q: 'How do I track my return status?',
-    a: 'You will receive email updates at each stage, and can check status on your account.'
+    q: 'What are the refund options available?',
+    a: 'We offer two options: 1) Store Credit - added to your FIKA Account for future purchases, or 2) Bank Refund - after deducting one side shipping charges (requires bank details).'
   },
   {
-    q: 'Are shipping charges refunded?',
-    a: 'Original shipping charges are non-refundable unless the return is due to our error.'
+    q: 'Can I return discounted products?',
+    a: 'Discounted products can only be exchanged and refund cannot be done. New and fresh products can be purchased from the store credit available from the return of discounted product.'
+  },
+  {
+    q: 'Are there any shipping charges for returns?',
+    a: 'One side shipping charges are deducted for all returns. If discounted bill value is below ₹2999, there will be a shipping charge of ₹200 which the customer has to bear while exchanging the product.'
+  },
+  {
+    q: 'What bank details are required for refund?',
+    a: 'For bank refund, we need: Name, A/c no., IFSC Code, Bank, and Branch details to process the refund.'
+  },
+  {
+    q: 'How long does the return process take?',
+    a: 'Store credit is issued only after we receive back the product and validate the return. Bank refunds are processed after deducting shipping charges.'
+  },
+  {
+    q: 'Can I use coupon codes and still get refunds?',
+    a: 'Yes, coupon codes offered by us do not fall under the discounted category and hence are eligible for refunds.'
   },
 ];
 
@@ -332,6 +348,135 @@ const ReturnsExchange = () => {
             </div>
           )}
         </div>
+        {/* Return Policy Section */}
+        <div className="returns-faq">
+          <h2>Return & Exchange Policy</h2>
+          
+          <div className="policy-section">
+            <h3>📋 General Policy</h3>
+            <p>We have a <strong>2 DAYS RETURN POLICY</strong> only on fresh articles. In case of defected/damaged product, complaint should be raised within <strong>24 hours</strong> of delivery of product.</p>
+            
+            <h3>📧 How to Initiate Return</h3>
+            <p>If the customer is unsatisfied with the product delivered then he/she needs to:</p>
+            <ul>
+              <li>Mail us at <strong>info@fika-india.com</strong> within 2 days from the date of receiving the parcel</li>
+              <li>OR register a return pickup from the tab <strong>"exchange & return"</strong> on the home page</li>
+            </ul>
+            <p>FIKA will arrange a pick-up from your place (reverse pick-up may not be available on selected pin-codes).</p>
+          </div>
+
+          <div className="policy-section">
+            <h3>💰 Refund Options</h3>
+            <p>We have two options for processing such returns:</p>
+            
+            <div className="refund-option">
+              <h4>1. Store Credit</h4>
+              <ul>
+                <li>We add amount equal to the product value to your <strong>'FIKA Account'</strong></li>
+                <li>You can use this credit amount when you reach the cart/payment page of the website during your next purchase with us</li>
+                <li>Store Credit will be issued only after we receive back the product and validate the return</li>
+                <li>Store credit once issued cannot be refunded back in Bank/Card/Wallet etc.</li>
+                <li><em>*One side shipping charges are deducted*</em></li>
+              </ul>
+            </div>
+
+            <div className="refund-option">
+              <h4>2. Bank Refund</h4>
+              <ul>
+                <li>We refund the amount after deducting one side shipping charges</li>
+                <li>We need following bank details: <strong>Name, A/c no., IFSC Code, Bank, Branch</strong> to process the refund</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="policy-section">
+            <h3>🏷️ Discounted Products</h3>
+            <p><strong>DISCOUNTED PRODUCT:</strong> Discounted product can only be exchanged and refund cannot be done for the same. New and fresh products can be purchased from the store credit available from the return of discounted product.</p>
+            
+            <div className="important-note">
+              <p><strong>Important:</strong> If discounted bill value is below ₹2999 then there will be a shipping charge of ₹200/- which the customer has to bear while exchanging the product.</p>
+              <p><strong>Note:</strong> However coupon codes which are offered by us do not fall under the discounted category and hence are eligible for refunds.</p>
+            </div>
+          </div>
+
+          <div className="policy-section">
+            <h3>⚠️ Other Cases & Important Terms</h3>
+            
+            <div className="refund-option">
+              <h4>Our Error Cases</h4>
+              <p>If the return is due to an error on our part (incorrect item sent, damaged/defective product), we will replace the product or reimburse the full invoice value as per customer demand.</p>
+            </div>
+
+            <div className="refund-option">
+              <h4>Refund Process</h4>
+              <ul>
+                <li>Refund process will start only after we receive back the product and validate the return</li>
+                <li><strong>*Shipping charges are non refundable.*</strong></li>
+                <li>Post receipt of the return package, we will proceed to inspect the same</li>
+              </ul>
+            </div>
+
+            <div className="refund-option">
+              <h4>Pickup & Package Handling</h4>
+              <ul>
+                <li>In case a reverse pick-up is not done for any reason (due to any reason owing to customer or the courier company's mistake), responsibility lies on the customer to contact Fika to arrange for the pick-up again</li>
+                <li>Failure to contact Fika timely to arrange the reverse pick-up again may lead to rejection for exchange/return request</li>
+                <li>Return requests will only be entertained if the customer has accepted untampered package</li>
+                <li>If the package is tampered, customer should not accept the package and should return the package to the delivery person then and there</li>
+              </ul>
+            </div>
+
+            <div className="refund-option">
+              <h4>Return Processing Timeline</h4>
+              <ul>
+                <li>Once approved as an eligible return, we will issue your refund or store credit (as the case may be) of the appropriate amount within <strong>10 days</strong></li>
+                <li>If however the return is found not eligible for refund, we will courier the same back to you</li>
+                <li>In either scenario your return issue will be closed within <strong>7 days</strong> of our receiving of the return package from you</li>
+                <li><strong>Fika will not be liable for any damage that happens during return shipping</strong></li>
+              </ul>
+            </div>
+
+            <div className="refund-option">
+              <h4>Customer Agreement & Validation</h4>
+              <ul>
+                <li>The customer agrees not to dispute the decision made by Fika and accept decision regarding the return validation that is - if the product is valid to be accepted as return or not</li>
+                <li>Non-Valid return will be sent back to the customer</li>
+                <li>For repeated return of products from a customer i.e. more than 50% of the delivered products, the customer will be intimated that future orders on non-cancellation and non-return basis</li>
+                <li>Afterwards, all future orders will be processed on mentioned conditions</li>
+              </ul>
+            </div>
+
+            <div className="refund-option">
+              <h4>Return Condition Requirements</h4>
+              <p>Items to be returned must be <strong>unused, unworn, unwashed and undamaged</strong>. Return items will only be accepted in their original packaging, including:</p>
+              <ul>
+                <li>Hangers</li>
+                <li>Polyester bags</li>
+                <li>Hang tags on garments</li>
+                <li>Shoe boxes or dust bags</li>
+              </ul>
+              <p>Any items that have been damaged, soiled or altered will not be accepted and will be sent back to the customer.</p>
+            </div>
+
+            <div className="refund-option">
+              <h4>Non-Returnable Items</h4>
+              <p>No returns, refunds or exchanges will be accepted for the following items:</p>
+              <ul>
+                <li>On the products with which it is specifically mentioned that it is not eligible for return/exchange</li>
+              </ul>
+            </div>
+
+            <div className="refund-option">
+              <h4>Refund Methods</h4>
+              <p>Refunds are made as follows:</p>
+              <ol>
+                <li><strong>Cash Payment:</strong> If the payment was made in cash then the refund is made in the form of a bank transfer.</li>
+                <li><strong>Card/Net Banking:</strong> If the payment is made using a credit/debit card (or any form of net banking) then the amount is credited back to the same account/card from which the payment was made or bank transfer as per the situation.</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
         {/* FAQ Section */}
         <div className="returns-faq">
           <h2>Frequently Asked Questions</h2>

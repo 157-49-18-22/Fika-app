@@ -38,9 +38,9 @@
 
 /* Main container */
 .arrivals-section {
-    padding: 5rem 0;
     max-width: 1200px;
     margin: 0 auto;
+    margin-top: 10%;
     font-family: 'Montserrat', sans-serif;
     position: relative;
     animation: fadeIn 0.8s ease-out forwards;
@@ -1143,4 +1143,20 @@
         margin-bottom: 10px;
     }
     
+    .arrivals-time-block{
+        padding: 0.6rem;
+        min-width: 50px;
+    }
+
+    .arrivals-time-value{
+        font-size: 14px;
+    }
+
+    .arrivals-time-label{
+        font-size: 10px;
+    }
+
+    .arrivals-time-separator{
+        font-size: 14px;
+    }
 }

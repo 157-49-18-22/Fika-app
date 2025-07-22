@@ -3,6 +3,7 @@
   background: #fafaff;
   min-height: 100vh;
   padding: 0 0 40px 0;
+  margin-top: 10%;
 }
 
 .returns-hero {
@@ -25,20 +26,19 @@
 
 .returns-content.advanced {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 40px;
   justify-content: center;
   margin: 40px auto 0 auto;
-  max-width: 1200px;
+  max-width: 1100px;
 }
 .returns-main {
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 2px 16px rgba(124,58,237,0.07);
   padding: 32px 28px;
-  min-width: 340px;
-  max-width: 500px;
-  flex: 1 1 340px;
+  width: 100%;
+  max-width: 100%;
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -174,9 +174,8 @@ input[type="file"] {
   border-radius: 18px;
   box-shadow: 0 2px 16px rgba(124,58,237,0.07);
   padding: 32px 28px;
-  min-width: 320px;
-  max-width: 400px;
-  flex: 1 1 320px;
+  width: 100%;
+  max-width: 100%;
   height: fit-content;
   margin-top: 0;
 }
@@ -282,12 +281,145 @@ input[type="file"] {
 
 @media (max-width: 1100px) {
   .returns-content.advanced {
-    flex-direction: column;
     gap: 24px;
     align-items: center;
   }
   .returns-main, .returns-faq {
     max-width: 100%;
     min-width: 0;
+  }
+}
+
+/* Policy Section Styles */
+.policy-section {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #7c3aed;
+}
+
+.policy-section h3 {
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.policy-section h4 {
+  color: #555;
+  margin: 1rem 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.policy-section p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  color: #444;
+}
+
+.policy-section ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.policy-section li {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+  color: #444;
+}
+
+.policy-section ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.policy-section ol li {
+  margin-bottom: 0.8rem;
+  line-height: 1.6;
+  color: #444;
+}
+
+.refund-option {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  border: 1px solid #e0e0e0;
+}
+
+.refund-option h4 {
+  color: #7c3aed;
+  margin-bottom: 0.8rem;
+}
+
+.important-note {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 1rem;
+}
+
+.important-note p {
+  margin-bottom: 0.5rem;
+  color: #856404;
+}
+
+.important-note p:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 480px) {
+  .returns-exchange-page {
+    padding-top: 15%;
+  }
+  
+  .returns-hero {
+    padding: 24px 0 16px 0;
+  }
+  
+  .returns-hero h1 {
+    font-size: 1.8rem;
+  }
+  
+  .returns-hero p {
+    font-size: 1rem;
+  }
+  
+  .returns-content.advanced {
+    padding: 0 12px;
+  }
+  
+  .returns-main, .returns-faq {
+    padding: 20px 16px;
+  }
+  
+  .returns-stepper {
+    gap: 16px;
+  }
+  
+  .stepper-label {
+    min-width: 80px;
+    max-width: 100px;
+    font-size: 0.9rem;
+  }
+  
+  .policy-section {
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .policy-section h3 {
+    font-size: 1.1rem;
+  }
+  
+  .policy-section h4 {
+    font-size: 1rem;
+  }
+  
+  .refund-option {
+    padding: 0.8rem;
   }
 } 

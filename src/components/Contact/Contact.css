@@ -45,6 +45,7 @@
 
 .contact-container {
   padding: 60px 0;
+  margin-top: 10%;
   background-color: #f8f8f8;
   min-height: 100vh;
 }
@@ -324,5 +325,23 @@
   .contact-details-col {
     min-width: unset;
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-container {
+    padding-top: 15%;
+  }
+  
+  .contact-card-content {
+    padding: 20px;
+  }
+  
+  .contact-form-area h1 {
+    font-size: 1.8rem;
+  }
+  
+  .contact-form-area p {
+    font-size: 1rem;
   }
 }

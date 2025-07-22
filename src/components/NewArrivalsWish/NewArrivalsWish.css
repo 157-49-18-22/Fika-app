@@ -51,7 +51,7 @@
 /* Main container */
 .wish-section {
   padding: 5rem 0;
-  max-width: 1200px;
+  padding-top: 15%;
   margin: 0 auto;
   font-family: 'Montserrat', sans-serif;
   position: relative;
@@ -1252,3 +1252,47 @@
   margin-bottom: 50px;
   margin-left: 70px;
 } 
+
+@media (max-width: 480px){
+  .wish-intro{
+    margin: 0px;
+    padding: 1rem;
+  }
+
+  .wish-section{
+    padding-top: 30%;
+  }
+
+  .wish-logo-container img{
+    margin-left: 0px;
+  }
+
+  .wish-title{
+    font-size: 18px;
+  }
+
+  .wish-description{
+    font-size: 12px;
+  }
+
+  .wish-features {
+    flex-direction: row;
+    margin-top: 1rem;
+    flex-wrap: nowrap;
+  }
+
+  .wish-feature-item {
+    flex-direction: row;
+    text-align: center;
+    gap: 0;
+    font-size: 14px;
+  }
+
+  .wish-feature-icon {
+    font-size: 1.2rem;
+  }
+
+  .wish-genie-logo{
+    width: 250px;
+  }
+}

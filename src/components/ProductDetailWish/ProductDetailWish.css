@@ -2,6 +2,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  margin-top: 10%;
 }
 
 .product-details-wrapper {
@@ -531,6 +532,10 @@
 }
 
 @media (max-width: 480px) {
+  .product-details-container {
+    padding-top: 15%;
+  }
+  
   .related-products-grid {
     grid-template-columns: 1fr;
   }
