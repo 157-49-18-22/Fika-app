@@ -491,6 +491,16 @@
 
 /* Improve mobile responsiveness */
 @media (max-width: 480px) {
+
+  .wishlist-empty h2{
+    font-size: 18px;
+  }
+
+  .wishlist-empty p{
+    font-size: 14px;
+    margin-bottom: 1.2rem;
+  }
+
   .wishlist-container {
     margin-top: 15%;
   }
@@ -518,5 +528,10 @@
     transform: none;
     width: 32px;
     height: 32px;
+  }
+
+  .continue-shopping-btn{
+    padding: 0.6rem;
+    font-size: 10px;
   }
 } 

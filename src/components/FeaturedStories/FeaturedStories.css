@@ -742,7 +742,7 @@
 }
 
 /* Media Queries */
-@media (max-width: 1024px) {
+/* @media (max-width: 1024px) {
   .animated-heading {
     font-size: 4rem;
   }
@@ -776,40 +776,8 @@
   .section-title {
     font-size: 2rem;
   }
-}
+} */
 
-@media (max-width: 480px) {
-  .blog-container {
-    padding-top: 15%;
-  }
-  
-  .animated-heading {
-    font-size: 2.5rem;
-  }
-  
-  .blog-hero-description {
-    font-size: 1rem;
-  }
-  
-  .category-filters {
-    gap: 10px;
-  }
-  
-  .category-btn {
-    padding: 8px 15px;
-    font-size: 0.8rem;
-  }
-  
-  .trending-tag {
-    padding: 6px 15px;
-    font-size: 0.8rem;
-  }
-  
-  .blog-card-content,
-  .featured-blog-content {
-    padding: 20px;
-  }
-}
 
 .blog-category-bar {
   display: flex;
@@ -1075,6 +1043,11 @@
     }
 }
 
+/* Hide mobile testimonial on desktop */
+.testimonials-wrapper .mobile-testimonial-container {
+    display: none !important;
+}
+
 @media (max-width: 768px) {
     .testimonials-section {
         padding: 60px 0;
@@ -1100,4 +1073,306 @@
     .testimonial-card {
         padding: 30px;
     }
+}
+
+
+@media (max-width: 480px) {
+
+  .blog-hero{
+    border-radius: 10px;
+  }
+  .blog-container {
+    margin-top: 20%;
+  }
+  
+  .animated-heading {
+    font-size: 2.5rem;
+  }
+  
+  .blog-hero-description {
+    font-size: 1rem;
+  }
+  
+  .category-filters {
+    gap: 10px;
+  }
+  
+  .category-btn {
+    padding: 8px 15px;
+    font-size: 0.8rem;
+  }
+  
+  .trending-tag {
+    padding: 6px 15px;
+    font-size: 0.8rem;
+  }
+  
+  .blog-card-content,
+  .featured-blog-content {
+    padding: 20px;
+  }
+
+  /* Blog Category Bar Mobile Responsive */
+  .blog-category-bar {
+    display: none;
+  }
+
+  .blog-category-btn {
+    /* width: 100%; */
+    /* justify-content: center; */
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    /* margin-top: -900px; */
+  }
+
+  .category-icon {
+    font-size: 0.9rem;
+  }
+
+  /* Testimonials Mobile Responsive */
+  .testimonials-section {
+    padding: 60px 0;
+  }
+
+  .testimonials-subtitle {
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
+
+  .testimonials-title {
+    font-size: 24px;
+  }
+
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    display: none; /* Hide grid on mobile */
+  }
+
+  .testimonial-card {
+    padding: 25px;
+  }
+
+  /* Mobile Single Testimonial Display */
+  .mobile-testimonial-container {
+    display: block;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .mobile-testimonial-card {
+    background: linear-gradient(135deg, #9AD3C2 0%, #7AB9A8 100%);
+    color: white;
+    border-radius: 20px;
+    padding: 40px 30px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .mobile-testimonial-content {
+    position: relative;
+    z-index: 1;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  .mobile-testimonial-content.fade-out {
+    opacity: 0;
+  }
+
+  .mobile-testimonial-card .quote-icon {
+    font-size: 60px;
+    color: rgba(255, 255, 255, 0.2);
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    line-height: 1;
+  }
+
+  .mobile-testimonial-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .mobile-testimonial-text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: white;
+    margin-bottom: 30px;
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  .mobile-testimonial-author {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .mobile-author-image {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .mobile-author-info {
+    text-align: center;
+  }
+
+  .mobile-author-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 5px;
+  }
+
+  .mobile-author-title {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 10px;
+  }
+
+  .mobile-rating {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .mobile-rating .star {
+    color: #FFE5A3;
+    font-size: 16px;
+  }
+
+  /* Testimonial Navigation Dots */
+  .testimonial-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 25px;
+  }
+
+  .testimonial-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .testimonial-dot.active {
+    background: white;
+    transform: scale(1.2);
+  }
+
+  /* Hide desktop testimonials on mobile */
+  .testimonials-wrapper .testimonials-grid {
+    display: none !important;
+  }
+
+  /* Show mobile testimonial on mobile */
+  .testimonials-wrapper .mobile-testimonial-container {
+    display: block !important;
+  }
+
+  .testimonial-text {
+    font-size: 14px;
+  }
+
+  .author-name {
+    font-size: 16px;
+  }
+
+  .author-title {
+    font-size: 12px;
+  }
+
+  .rating .star {
+    font-size: 14px;
+  }
+
+  /* Newsletter Mobile Responsive */
+  .newsletter-title {
+    font-size: 1.8rem;
+  }
+
+  .newsletter-description {
+    font-size: 0.95rem;
+  }
+
+  .newsletter-form {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .newsletter-form input {
+    font-size: 0.9rem;
+    padding: 12px 16px;
+  }
+
+  .subscribe-btn {
+    font-size: 0.85rem;
+    padding: 12px 24px;
+  }
+
+  /* Search Bar Mobile Responsive */
+  .search-bar {
+    max-width: 100%;
+    padding: 8px 16px;
+  }
+
+  .search-input {
+    font-size: 0.9rem;
+  }
+
+  /* Section Titles Mobile Responsive */
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  /* Featured Blog Content Mobile Responsive */
+  .featured-blog-content h3 {
+    font-size: 1.2rem;
+  }
+
+  .blog-meta {
+    font-size: 0.75rem;
+    gap: 10px;
+  }
+
+  .blog-excerpt {
+    font-size: 0.9rem;
+  }
+
+  .blog-stats {
+    font-size: 0.8rem;
+  }
+
+  /* Blog Card Mobile Responsive */
+  .blog-card-title {
+    font-size: 1.1rem;
+  }
+
+  .blog-card-excerpt {
+    font-size: 0.85rem;
+  }
+
+  .blog-card-meta {
+    font-size: 0.7rem;
+  }
+
+  .blog-card-stats {
+    font-size: 0.75rem;
+  }
 }

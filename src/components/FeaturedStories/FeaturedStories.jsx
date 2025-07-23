@@ -12,10 +12,62 @@ const FeaturedStories = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [expandedPost, setExpandedPost] = useState(null);
   const [fadeIn, setFadeIn] = useState(false);
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
   useEffect(() => {
     setFadeIn(true);
   }, []);
+
+  // Auto-cycle testimonials on mobile
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % 3);
+    }, 5000); // Change every 5 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const handleTestimonialChange = (newIndex) => {
+    if (newIndex === currentTestimonial) return;
+    
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setCurrentTestimonial(newIndex);
+      setIsTransitioning(false);
+    }, 250);
+  };
+
+  // Auto-cycle with smooth transition
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleTestimonialChange((currentTestimonial + 1) % 3);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [currentTestimonial]);
+
+  const testimonials = [
+    {
+      text: "I was looking for quality bedsheets that would last, and Fika delivered beyond my expectations! The cotton feels so soft against my skin, and even after multiple washes, the colors stay vibrant. My family loves them too!",
+      author: "Priya Sharma",
+      location: "Delhi",
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop"
+    },
+    {
+      text: "The cushion covers I ordered match perfectly with my living room decor! The fabric quality is excellent, and the zippers are sturdy. Delivery was quick too - ordered on Monday and received by Thursday!",
+      author: "Arjun Patel",
+      location: "Mumbai",
+      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop"
+    },
+    {
+      text: "During the monsoon season, I needed quick-drying bedsheets, and a friend recommended Fika. Not only do they dry fast, but they're also so comfortable! Customer service helped me choose the right material over WhatsApp. Truly amazing!",
+      author: "Kavita Reddy",
+      location: "Bangalore",
+      image: "https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?w=150&h=150&fit=crop"
+    }
+  ];
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
@@ -375,6 +427,7 @@ const FeaturedStories = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
         >
+          {/* Desktop Testimonials Grid */}
           <div className="testimonials-grid">
             <div className="testimonial-card featured">
               <div className="testimonial-content">
@@ -441,6 +494,47 @@ const FeaturedStories = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Mobile Single Testimonial */}
+          <div className="mobile-testimonial-container">
+            <div className="mobile-testimonial-card">
+              <div className="quote-icon">"</div>
+              <div className={`mobile-testimonial-content ${isTransitioning ? 'fade-out' : ''}`}>
+                <p className="mobile-testimonial-text">
+                  "{testimonials[currentTestimonial].text}"
+                </p>
+                <div className="mobile-testimonial-author">
+                  <img 
+                    src={testimonials[currentTestimonial].image} 
+                    alt={testimonials[currentTestimonial].author} 
+                    className="mobile-author-image" 
+                  />
+                  <div className="mobile-author-info">
+                    <h4 className="mobile-author-name">{testimonials[currentTestimonial].author}</h4>
+                    <p className="mobile-author-title">{testimonials[currentTestimonial].location}</p>
+                    <div className="mobile-rating">
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                      <FaStar className="star" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Navigation Dots */}
+            <div className="testimonial-dots">
+              {testimonials.map((_, index) => (
+                <div
+                  key={index}
+                  className={`testimonial-dot ${index === currentTestimonial ? 'active' : ''}`}
+                  onClick={() => handleTestimonialChange(index)}
+                />
+              ))}
             </div>
           </div>
         </motion.div>

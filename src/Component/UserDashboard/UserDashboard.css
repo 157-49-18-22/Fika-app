@@ -12,6 +12,16 @@ display: inline-block;
 
 }
 
+.dropdown-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 999;
+}
+
 .user-btn {
   background: none;
   border: none;
@@ -277,11 +287,23 @@ display: inline-block;
 @media (max-width: 768px) {
   .dashboard-dropdown {
     position: fixed;
-    top: auto;
-    bottom: 70px;
+    top: 80px;
+    left: 16px;
     right: 16px;
-    width: calc(100% - 32px);
-    max-width: 320px;
+    bottom: auto;
+    width: auto;
+    max-width: none;
+    z-index: 1001;
+  }
+  
+  .login-dropdown {
+    position: fixed;
+    top: 80px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    max-width: none;
+    z-index: 1001;
   }
   
   .auth-buttons {
@@ -325,5 +347,69 @@ display: inline-block;
 @media (max-width: 480px) {
   .login-text{
     display: none;
+  }
+
+  .dashboard-dropdown {
+    top: 70px;
+    left: 10px;
+    right: 10px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .login-dropdown {
+    top: 70px;
+    left: 10px;
+    right: 10px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .dashboard-header {
+    padding: 15px;
+    gap: 12px;
+  }
+
+  .user-avatar {
+    width: 35px;
+    height: 35px;
+  }
+
+  .user-avatar svg {
+    font-size: 18px;
+  }
+
+  .user-info h4 {
+    font-size: 0.9rem;
+    max-width: none;
+  }
+
+  .user-info p {
+    font-size: 11px;
+  }
+
+  .dashboard-menu {
+    padding: 8px 0;
+  }
+
+  .menu-item {
+    padding: 12px 15px;
+    font-size: 14px;
+    gap: 12px;
+  }
+
+  .menu-item img {
+    width: 16px;
+    height: 16px;
+  }
+
+  .menu-icon {
+    font-size: 15px;
+  }
+
+  .admin-badge {
+    font-size: 10px;
+    padding: 1px 6px;
+    margin-top: 3px;
   }
 }

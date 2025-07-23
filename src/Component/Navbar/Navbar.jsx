@@ -297,6 +297,17 @@ function Navbar() {
         {/* Mobile Search Bar */}
         {isMobile && isSearchOpen && (
           <div className="mobile-search-container">
+            <button 
+              className="mobile-search-close"
+              onClick={() => {
+                setIsSearchOpen(false);
+                setSearchQuery("");
+                setShowDropdown(false);
+              }}
+              aria-label="Close search"
+            >
+              <FaTimes />
+            </button>
             <div className="search-bar mobile-search" ref={searchRef}>
               <form onSubmit={handleSearch}>
                 <input 
@@ -310,6 +321,7 @@ function Navbar() {
                   onFocus={() => {
                     if (searchQuery) setShowDropdown(true);
                   }}
+                  autoFocus
                 />
                 <button type="submit" className="search-btn">
                   <FaSearch size={14} />
