@@ -21,12 +21,13 @@
 
 .showcase-main-section {
     width: 50%;
-    background-image: url('./Rectangle101.png');
+    /* background-image: url('./Rectangle101.png'); */
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center center;
     border-radius: 25px;
     padding: 40px 50px;
+    background-color: #9AD3C2;
 }
 
 .main-content {
@@ -293,6 +294,7 @@
         font-size: 12px;
         justify-content: flex-end;
         gap: 0px;
+        margin-top: 15px;
     }
 
     .mobile-hidden {
