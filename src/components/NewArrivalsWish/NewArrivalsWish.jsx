@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import { FaShoppingCart, FaHeart, FaEye, FaChevronLeft, FaChevronRight, FaClock, FaTag, FaGift } from "react-icons/fa";
 import { useCart } from "../../context/CartContext.jsx";
 import { useWishlist } from "../../context/WishlistContext.jsx";
@@ -25,17 +28,81 @@ const NewArrivalsWish = () => {
   });
   const [wishGenieProducts, setWishGenieProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [error, setError] = useState(null);
   const [availableCategories, setAvailableCategories] = useState([]);
   
-  const productsRowRef = useRef(null);
-  const categoryRowRefs = {
-    scentedCandles: useRef(null),
-    crystalJewellery: useRef(null),
-    journals: useRef(null)
+  const mainSliderRef = useRef(null);
+  const categorySliderRefs = useRef({});
+  
+  // Create refs for categories dynamically
+  const getSliderRef = (key) => {
+    if (key === 'main') return mainSliderRef;
+    if (!categorySliderRefs.current[key]) {
+      categorySliderRefs.current[key] = React.createRef();
+    }
+    return categorySliderRefs.current[key];
   };
   
   const autoScrollTimer = useRef(null);
+
+  const sliderSettings = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    arrows: false,
+    centerMode: false,
+    centerPadding: '0px',
+    responsive: [
+      {
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+          centerMode: false,
+          centerPadding: '0px'
+        }
+      },
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          centerMode: false,
+          centerPadding: '0px'
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+          centerMode: false,
+          centerPadding: '0px'
+        }
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          centerMode: true,
+          centerPadding: '40px'
+        }
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          centerMode: true,
+          centerPadding: '40px'
+        }
+      }
+    ]
+  };
   const { addToCart } = useCart();
   const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
   const [newsletterEmail, setNewsletterEmail] = useState("");
@@ -44,8 +111,16 @@ const NewArrivalsWish = () => {
   // Fetch Wish Genie products
   useEffect(() => {
     const fetchWishGenieProducts = async () => {
+      // Prevent re-fetching if data is already loaded
+      if (dataLoaded) {
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
+        setError(null);
+        
         let products = await getWishGenieProducts();
         
         // If no products exist, initialize the collection with a test product
@@ -93,17 +168,18 @@ const NewArrivalsWish = () => {
           setFeaturedProduct(enhancedFeaturedProduct);
         }
         
+        setDataLoaded(true);
         setError(null);
       } catch (err) {
         console.error('Error fetching Wish Genie products:', err);
-        setError('Failed to fetch products');
+        setError('Failed to fetch products. Please try refreshing the page.');
       } finally {
         setLoading(false);
       }
     };
 
     fetchWishGenieProducts();
-  }, []);
+  }, [dataLoaded]);
 
   const categories = ["all", ...availableCategories];
 
@@ -111,7 +187,7 @@ const NewArrivalsWish = () => {
     ? wishGenieProducts 
     : wishGenieProducts.filter(product => {
         const hasImage = product.image && product.image.trim() !== '';
-        return product.Category === activeTab && hasImage;
+        return product.Category && product.Category.toLowerCase() === activeTab && hasImage;
       });
 
   const handleAddToCart = (product, e) => {
@@ -153,10 +229,14 @@ const NewArrivalsWish = () => {
     navigate(`/product-wish/${id}`);
   };
 
-  const scrollProducts = (direction, ref) => {
+  const scrollProducts = (direction, refKey) => {
+    const ref = refKey === 'main' ? mainSliderRef : categorySliderRefs.current[refKey];
     if (ref && ref.current) {
-      const scrollAmount = direction === 'left' ? -400 : 400;
-      ref.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+      if (direction === 'left') {
+        ref.current.slickPrev();
+      } else {
+        ref.current.slickNext();
+      }
     }
   };
 
@@ -166,20 +246,26 @@ const NewArrivalsWish = () => {
 
   // Auto scroll functionality
   useEffect(() => {
-    if (isAutoPlay && productsRowRef.current) {
-      autoScrollTimer.current = setInterval(() => {
-        const container = productsRowRef.current;
-        const isAtEnd = container.scrollLeft >= (container.scrollWidth - container.clientWidth - 10);
+    let scrollInterval;
+
+    if (isAutoPlay && mainSliderRef.current) {
+      scrollInterval = setInterval(() => {
+        const container = mainSliderRef.current;
+        if (!container) return;
+
+        const isAtEnd = container.slickCurrentSlide() >= (container.slickGetTotalSlides() - 1);
+
         if (isAtEnd) {
-          container.scrollTo({ left: 0, behavior: 'smooth' });
+          container.slickGoTo(0);
         } else {
-          container.scrollBy({ left: 400, behavior: 'smooth' });
+          container.slickNext();
         }
       }, 5000);
     }
+
     return () => {
-      if (autoScrollTimer.current) {
-        clearInterval(autoScrollTimer.current);
+      if (scrollInterval) {
+        clearInterval(scrollInterval);
       }
     };
   }, [isAutoPlay]);
@@ -302,16 +388,16 @@ const NewArrivalsWish = () => {
         <div className="wish-products-container">
           <button 
             className="wish-scroll-button left" 
-            onClick={() => scrollProducts('left', categoryRowRefs[refKey])}
+            onClick={() => scrollProducts('left', refKey)}
           >
             <FaChevronLeft />
           </button>
-          <div className="wish-products-row" ref={categoryRowRefs[refKey]}>
+          <Slider ref={getSliderRef(refKey)} {...sliderSettings} className="wish-products-row">
             {products.map(product => renderProductCard(product))}
-          </div>
+          </Slider>
           <button 
             className="wish-scroll-button right" 
-            onClick={() => scrollProducts('right', categoryRowRefs[refKey])}
+            onClick={() => scrollProducts('right', refKey)}
           >
             <FaChevronRight />
           </button>
@@ -342,194 +428,210 @@ const NewArrivalsWish = () => {
       <div className="wish-logo-container">
         <img src={WishGenieLogo} alt="Wish Genie Logo" className="wish-genie-logo" />
       </div>
-      {/* Introduction Section */}
-      <div className="wish-intro">
-        <div className="wish-intro-content">
-          <h1 className="wish-title">Explore Our Manifestation Products</h1>
-          <p className="wish-description">
-          Wishgenie specialises in high vibration manifestation tools designed to help you align with your highest potential. Whether you are seeking love, success, health, or peace , our carefully curated collection of products help and guide you towards your dreams.
-          </p>
-          <div className="wish-features">
-            <div className="wish-feature-item">
-              <FaTag className="wish-feature-icon" />
-              <span>Exclusive Designs</span>
-            </div>
-            {/* <div className="wish-feature-item">
-              <FaGift className="wish-feature-icon" />
-              <span>Free Shipping on orders over ₹1499</span>
-            </div> */}
-            <div className="wish-feature-item">
-              <FaClock className="wish-feature-icon" />
-              <span>Limited Time Offers</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Featured Product Section */}
-      {featuredProduct && (
-        <div className="wish-featured-product">
-          <div className="wish-featured-image">
-            <img src={getFirstImage(featuredProduct.image)} alt={featuredProduct.name} />
-            {featuredProduct.discount && (
-              <div className="wish-featured-discount">
-                -{featuredProduct.discount}% OFF
-              </div>
-            )}
-          </div>
-          <div className="wish-featured-info">
-            <div className="wish-limited-offer">
-              <h3>Limited Time Offer</h3>
-              <div className="wish-countdown">
-                <div className="wish-time-block">
-                  <span className="wish-time-value">{timeLeft.days}</span>
-                  <span className="wish-time-label">Days</span>
-                </div>
-                <span className="wish-time-separator">:</span>
-                <div className="wish-time-block">
-                  <span className="wish-time-value">{timeLeft.hours}</span>
-                  <span className="wish-time-label">Hours</span>
-                </div>
-                <span className="wish-time-separator">:</span>
-                <div className="wish-time-block">
-                  <span className="wish-time-value">{timeLeft.minutes}</span>
-                  <span className="wish-time-label">Minutes</span>
-                </div>
-                <span className="wish-time-separator">:</span>
-                <div className="wish-time-block">
-                  <span className="wish-time-value">{timeLeft.seconds}</span>
-                  <span className="wish-time-label">Seconds</span>
-                </div>
-              </div>
-            </div>
-            <h2 className="wish-featured-title">{featuredProduct.name}</h2>
-            <p className="wish-featured-description">
-              {featuredProduct.description || "Experience premium quality and exceptional design with this must-have piece from our latest collection."}
-            </p>
-            <div className="wish-featured-pricing">
-              {featuredProduct.discount ? (
-                <>
-                  <span className="wish-current-price">₹{formatPrice(featuredProduct.price, featuredProduct.discount)}</span>
-                  <span className="wish-original-price">₹{getOriginalPrice(featuredProduct.price)}</span>
-                </>
-              ) : (
-                <span className="wish-current-price">₹{getOriginalPrice(featuredProduct.price)}</span>
-              )}
-            </div>
-            <div className="wish-featured-actions">
-              <button 
-                className="wish-cart-btn"
-                onClick={() => handleAddToCart(featuredProduct)}
-              >
-                Add to Cart
-              </button>
-              <button 
-                className={`wish-wishlist-btn ${isInWishlist(featuredProduct.id) ? 'active' : ''}`}
-                onClick={() => handleAddToWishlist(featuredProduct)}
-              >
-                <FaHeart /> {isInWishlist(featuredProduct.id) ? "Added to Wishlist" : "Add to Wishlist"}
-              </button>
-            </div>
-          </div>
+      
+      {/* Loading State */}
+      {loading && (
+        <div className="wish-loading-container">
+          <div className="wish-loading-spinner"></div>
+          <p className="wish-loading-text">Loading our magical collection...</p>
         </div>
       )}
 
-      {/* TAB NAVIGATION */}
-      <div className="wish-tabs">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            className={`wish-tab-btn${activeTab === cat.toLowerCase() ? ' active' : ''}`}
-            onClick={() => setActiveTab(cat.toLowerCase())}
+      {/* Error State */}
+      {error && !loading && (
+        <div className="wish-error-container">
+          <div className="wish-error-icon">⚠️</div>
+          <h3 className="wish-error-title">Oops! Something went wrong</h3>
+          <p className="wish-error-message">{error}</p>
+          <button 
+            className="wish-error-retry-btn"
+            onClick={() => {
+              setDataLoaded(false);
+              setError(null);
+            }}
           >
-            {cat.toUpperCase()}
+            Try Again
           </button>
-        ))}
-      </div>
-
-      {/* Category Description */}
-      <div className="wish-category-description">
-        <p>{getCategoryDescription(activeTab)}</p>
-      </div>
-
-      {/* Main Horizontal Product Row */}
-      <div className="wish-products-container">
-        <button className="wish-scroll-button left" onClick={() => scrollProducts('left', productsRowRef)}>
-          <FaChevronLeft />
-        </button>
-        <div className="wish-products-row" ref={productsRowRef}>
-          {filteredProducts.map(product => renderProductCard(product))}
         </div>
-        <button className="wish-scroll-button right" onClick={() => scrollProducts('right', productsRowRef)}>
-          <FaChevronRight />
-        </button>
-      </div>
+      )}
 
-      {/* Category-specific product sections */}
-      <div className="wish-sections-container">
-        {availableCategories.map(category => (
-          renderProductsContainer(category, categoryProducts[category], category.toLowerCase().replace(/\s+/g, ''))
-        ))}
-      </div>
-
-      {/* Shopping Benefits */}
-      <div className="wish-benefits">
-        {/* <div className="wish-benefit-item">
-          <div className="wish-benefit-icon">🚚</div>
-          <div className="wish-benefit-content">
-            <h3>Free Shipping</h3>
-            <p>On all orders over ₹1499</p>
+      {/* Main Content - Only show when not loading and no error */}
+      {!loading && !error && (
+        <>
+          {/* Introduction Section */}
+          <div className="wish-intro">
+            <div className="wish-intro-content">
+              <h1 className="wish-title">Explore Our Manifestation Products</h1>
+              <p className="wish-description">
+              Wishgenie specialises in high vibration manifestation tools designed to help you align with your highest potential. Whether you are seeking love, success, health, or peace , our carefully curated collection of products help and guide you towards your dreams.
+              </p>
+              <div className="wish-features">
+                <div className="wish-feature-item">
+                  <FaTag className="wish-feature-icon" />
+                  <span>Exclusive Designs</span>
+                </div>
+                <div className="wish-feature-item">
+                  <FaClock className="wish-feature-icon" />
+                  <span>Limited Time Offers</span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div> */}
-        <div className="wish-benefit-item">
-          <div className="wish-benefit-icon">⭐</div>
-          <div className="wish-benefit-content">
-            <h3>Quality Guarantee</h3>
-            <p>Crafted with premium materials</p>
-          </div>
-        </div>
-        <div className="wish-benefit-item">
-          <div className="wish-benefit-icon">🔄</div>
-          <div className="wish-benefit-content">
-            <h3>Easy Returns</h3>
-            <p>Easy Return Policy</p>
-          </div>
-        </div>
-        <div className="wish-benefit-item">
-          <div className="wish-benefit-icon">💳</div>
-          <div className="wish-benefit-content">
-            <h3>Secure Payment</h3>
-            <p>Multiple payment options</p>
-          </div>
-        </div>
-      </div>
 
-      {/* View All Link */}
-      <div className="wish-view-all">
-        <Link to="/all-products" className="wish-view-all-btn">
-          View All Collections
-          <span className="wish-arrow-circle">&#8599;</span>
-        </Link>
-      </div>
+          {/* Featured Product Section */}
+          {featuredProduct && (
+            <div className="wish-featured-product">
+              <div className="wish-featured-image">
+                <img src={getFirstImage(featuredProduct.image)} alt={featuredProduct.name} />
+              </div>
+              <div className="wish-featured-info">
+                <div className="wish-limited-offer">
+                  <h3>Limited Time Offer</h3>
+                  <div className="wish-countdown">
+                    <div className="wish-time-block">
+                      <span className="wish-time-value">{timeLeft.days}</span>
+                      <span className="wish-time-label">Days</span>
+                    </div>
+                    <span className="wish-time-separator">:</span>
+                    <div className="wish-time-block">
+                      <span className="wish-time-value">{timeLeft.hours}</span>
+                      <span className="wish-time-label">Hours</span>
+                    </div>
+                    <span className="wish-time-separator">:</span>
+                    <div className="wish-time-block">
+                      <span className="wish-time-value">{timeLeft.minutes}</span>
+                      <span className="wish-time-label">Minutes</span>
+                    </div>
+                    <span className="wish-time-separator">:</span>
+                    <div className="wish-time-block">
+                      <span className="wish-time-value">{timeLeft.seconds}</span>
+                      <span className="wish-time-label">Seconds</span>
+                    </div>
+                  </div>
+                </div>
+                <h2 className="wish-featured-title">{featuredProduct.name}</h2>
+                <p className="wish-featured-description">
+                  {featuredProduct.description || "Experience premium quality and exceptional design with this must-have piece from our latest collection."}
+                </p>
+                <div className="wish-featured-pricing">
+                  {featuredProduct.discount ? (
+                    <>
+                      <span className="wish-current-price">₹{formatPrice(featuredProduct.price, featuredProduct.discount)}</span>
+                      <span className="wish-original-price">₹{getOriginalPrice(featuredProduct.price)}</span>
+                    </>
+                  ) : (
+                    <span className="wish-current-price">₹{getOriginalPrice(featuredProduct.price)}</span>
+                  )}
+                </div>
+                <div className="wish-featured-actions">
+                  <button 
+                    className="wish-cart-btn"
+                    onClick={() => handleAddToCart(featuredProduct)}
+                  >
+                    Add to Cart
+                  </button>
+                  <button 
+                    className={`wish-wishlist-btn ${isInWishlist(featuredProduct.id) ? 'active' : ''}`}
+                    onClick={() => handleAddToWishlist(featuredProduct)}
+                  >
+                    <FaHeart /> {isInWishlist(featuredProduct.id) ? "Added to Wishlist" : "Add to Wishlist"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
-      {/* Newsletter Section */}
-      <div className="wish-newsletter">
-        <div className="wish-newsletter-content">
-          <h3>Stay Updated</h3>
-          <p>Subscribe to our newsletter for exclusive offers and early access to new arrivals</p>
-          <form className="wish-newsletter-form" onSubmit={handleNewsletterSubmit}>
-            <input
-              type="email"
-              placeholder="Your email address"
-              value={newsletterEmail}
-              onChange={e => setNewsletterEmail(e.target.value)}
-              required
-            />
-            <button type="submit">Subscribe</button>
-          </form>
-          {newsletterSuccess && <div style={{color: 'green', marginTop: 8}}>Subscribed successfully!</div>}
-        </div>
-      </div>
+          {/* TAB NAVIGATION */}
+          <div className="wish-tabs">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                className={`wish-tab-btn${activeTab === cat.toLowerCase() ? ' active' : ''}`}
+                onClick={() => setActiveTab(cat.toLowerCase())}
+              >
+                {cat.toUpperCase()}
+              </button>
+            ))}
+          </div>
+
+          {/* Category Description */}
+          <div className="wish-category-description">
+            <p>{getCategoryDescription(activeTab)}</p>
+          </div>
+
+          {/* Main Horizontal Product Row */}
+          <div className="wish-products-container">
+            <button className="wish-scroll-button left" onClick={() => scrollProducts('left', 'main')}>
+              <FaChevronLeft />
+            </button>
+            <Slider ref={getSliderRef('main')} {...sliderSettings} className="wish-products-row">
+              {filteredProducts.map(product => renderProductCard(product))}
+            </Slider>
+            <button className="wish-scroll-button right" onClick={() => scrollProducts('right', 'main')}>
+              <FaChevronRight />
+            </button>
+          </div>
+
+          {/* Category-specific product sections */}
+          <div className="wish-sections-container">
+            {availableCategories.map(category => (
+              renderProductsContainer(category, categoryProducts[category], category.toLowerCase().replace(/\s+/g, ''))
+            ))}
+          </div>
+
+          {/* Shopping Benefits */}
+          <div className="wish-benefits">
+            <div className="wish-benefit-item">
+              <div className="wish-benefit-icon">⭐</div>
+              <div className="wish-benefit-content">
+                <h3>Quality Guarantee</h3>
+                <p>Crafted with premium materials</p>
+              </div>
+            </div>
+            <div className="wish-benefit-item">
+              <div className="wish-benefit-icon">🔄</div>
+              <div className="wish-benefit-content">
+                <h3>Easy Returns</h3>
+                <p>Easy Return Policy</p>
+              </div>
+            </div>
+            <div className="wish-benefit-item">
+              <div className="wish-benefit-icon">💳</div>
+              <div className="wish-benefit-content">
+                <h3>Secure Payment</h3>
+                <p>Multiple payment options</p>
+              </div>
+            </div>
+          </div>
+
+          {/* View All Link */}
+          <div className="wish-view-all">
+            <Link to="/all-products" className="wish-view-all-btn">
+              View All Collections
+              <span className="wish-arrow-circle">&#8599;</span>
+            </Link>
+          </div>
+
+          {/* Newsletter Section */}
+          <div className="wish-newsletter">
+            <div className="wish-newsletter-content">
+              <h3>Stay Updated</h3>
+              <p>Subscribe to our newsletter for exclusive offers and early access to new arrivals</p>
+              <form className="wish-newsletter-form" onSubmit={handleNewsletterSubmit}>
+                <input
+                  type="email"
+                  placeholder="Your email address"
+                  value={newsletterEmail}
+                  onChange={e => setNewsletterEmail(e.target.value)}
+                  required
+                />
+                <button type="submit">Subscribe</button>
+              </form>
+              {newsletterSuccess && <div style={{color: 'green', marginTop: 8}}>Subscribed successfully!</div>}
+            </div>
+          </div>
+        </>
+      )}
 
       {showLoginPrompt && (
         <div className="login-prompt-overlay" onClick={() => setShowLoginPrompt(false)}>

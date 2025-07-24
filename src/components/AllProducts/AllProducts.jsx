@@ -38,6 +38,7 @@ const AllProducts = () => {
   const [showDiscounted, setShowDiscounted] = useState(false);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [wishlistProductIds, setWishlistProductIds] = useState([]);
+  const [activeDropdown, setActiveDropdown] = useState(null); // 'category', 'sort', 'price', or null
   
   const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
   const { addToCart } = useCart();
@@ -93,6 +94,11 @@ const AllProducts = () => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowDropdown(false);
+      }
+      
+      // Close filter dropdown when clicking outside
+      if (!event.target.closest('.filter-dropdown')) {
+        setActiveDropdown(null);
       }
     };
 
@@ -244,14 +250,80 @@ const AllProducts = () => {
   return (
     <section className={`products-section ${fadeIn ? 'fade-in' : ''}`}>
       {loading && (
-        <div className="loading-spinner">
-          Loading products...
-        </div>
+        <>
+          <div className="loading-container">
+            {/* <div className="loading-spinner"></div> */}
+            <div className="loading-text">Loading Products...</div>
+            <div className="loading-subtext">Discovering our latest collection for you</div>
+          </div>
+          
+          {/* Skeleton Loading Cards */}
+          <div className="products-container">
+            <div className="products-header" style={{flexDirection:'column'}}>
+              <div className="animated-title">
+                {Array.from("Our Collection").map((letter, index) => (
+                  <span key={index} className={letter === ' ' ? 'space' : ''} style={{ animationDelay: `${0.1 * index}s` }}>
+                    {letter === ' ' ? '\u00A0' : letter}
+                  </span>
+                ))}
+              </div>
+              <div className="products-subtitle">
+                Discover our curated selection of premium fashion items designed for style and comfort
+              </div>
+              <div className="products-divider"></div>
+            </div>
+
+            <div className="products-main-content">
+              <div className="products-content">
+                <div className="products-grid">
+                  {[...Array(8)].map((_, index) => (
+                    <div key={index} className="skeleton-card">
+                      <div className="skeleton skeleton-image"></div>
+                      <div className="skeleton skeleton-title"></div>
+                      <div className="skeleton skeleton-category"></div>
+                      <div className="skeleton skeleton-price"></div>
+                      <div className="skeleton skeleton-button"></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
       )}
 
       {error && (
-        <div className="error-message">
-          {error}
+        <div className="error-container">
+          <div className="error-icon">⚠️</div>
+          <div className="error-text">Oops! Something went wrong</div>
+          <div className="error-subtext">{error}</div>
+          <button 
+            className="retry-button"
+            onClick={() => {
+              setError(null);
+              setLoading(true);
+              // Refetch products
+              const fetchProducts = async () => {
+                try {
+                  const querySnapshot = await getDocs(collection(db, 'products'));
+                  const productsArr = [];
+                  querySnapshot.forEach((doc) => {
+                    productsArr.push({ id: doc.id, ...doc.data() });
+                  });
+                  setProducts(productsArr);
+                  setError(null);
+                } catch (err) {
+                  setError('Error fetching products. Please try again later.');
+                  console.error('Error fetching products:', err);
+                } finally {
+                  setLoading(false);
+                }
+              };
+              fetchProducts();
+            }}
+          >
+            Try Again
+          </button>
         </div>
       )}
 
@@ -278,21 +350,129 @@ const AllProducts = () => {
           <div className="products-divider"></div>
         </div>
 
-        {/* Horizontal Category Bar */}
-        <div className="category-bar-horizontal">
-          {categories.map((category) => (
-            <button
-              key={category.name}
-              className={`category-btn-horizontal ${selectedCategory === category.name ? "active" : ""}`}
-              onClick={() => handleCategoryClick(category)}
+        {/* Single Filter Dropdown */}
+        <div className="filter-container">
+          <div className="filter-dropdown">
+            <button 
+              className="filter-btn"
+              onClick={() => setActiveDropdown(activeDropdown === 'category' ? null : 'category')}
             >
-              <span className="category-icon-horizontal">{category.icon}</span>
-              {category.name} 
-              {category.name !== "Wish Genie" && (
-                <span style={{color:'#888',fontWeight:400}}>({categoryCounts[category.id]})</span>
-              )}
+              <FaFilter className="filter-icon" />
+              <span>{selectedCategory === "All Products" ? "Category" : selectedCategory}</span>
+              <FaChevronRight className={`dropdown-arrow ${activeDropdown === 'category' ? 'rotated' : ''}`} />
             </button>
-          ))}
+            {activeDropdown === 'category' && (
+              <div className="filter-dropdown-content">
+                {categories.map((category) => (
+                  <button
+                    key={category.name}
+                    className={`filter-option ${selectedCategory === category.name ? "active" : ""}`}
+                    onClick={() => {
+                      handleCategoryClick(category);
+                      setActiveDropdown(null);
+                    }}
+                  >
+                    <span className="filter-option-icon">{category.icon}</span>
+                    <span className="filter-option-text">{category.name}</span>
+                    {category.name !== "Wish Genie" && (
+                      <span className="filter-option-count">({categoryCounts[category.id]})</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="filter-dropdown">
+            <button 
+              className="filter-btn"
+              onClick={() => setActiveDropdown(activeDropdown === 'sort' ? null : 'sort')}
+            >
+              <FaSort className="filter-icon" />
+              <span>{sortOptions.find(opt => opt.id === sortOption)?.name || "Sort By"}</span>
+              <FaChevronRight className={`dropdown-arrow ${activeDropdown === 'sort' ? 'rotated' : ''}`} />
+            </button>
+            {activeDropdown === 'sort' && (
+              <div className="filter-dropdown-content">
+                {sortOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    className={`filter-option ${sortOption === option.id ? "active" : ""}`}
+                    onClick={() => {
+                      setSortOption(option.id);
+                      setActiveDropdown(null);
+                    }}
+                  >
+                    <span className="filter-option-text">{option.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="filter-dropdown">
+            <button 
+              className="filter-btn"
+              onClick={() => setActiveDropdown(activeDropdown === 'price' ? null : 'price')}
+            >
+              <FaDollarSign className="filter-icon" />
+              <span>Price Range</span>
+              <FaChevronRight className={`dropdown-arrow ${activeDropdown === 'price' ? 'rotated' : ''}`} />
+            </button>
+            {activeDropdown === 'price' && (
+              <div className="filter-dropdown-content price-filter-content">
+                <div className="price-range-slider">
+                  <input
+                    type="range"
+                    min="0"
+                    max="10000"
+                    value={priceRange[1]}
+                    onChange={e => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                    className="price-slider"
+                  />
+                  <div className="price-range-display">
+                    <span>₹{priceRange[0]}</span>
+                    <span>₹{priceRange[1]}</span>
+                  </div>
+                </div>
+                <div className="filter-checkbox-group">
+                  <label className="filter-checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={showDiscounted}
+                      onChange={() => setShowDiscounted((v) => !v)}
+                    />
+                    <span>On Sale</span>
+                  </label>
+                  <label className="filter-checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={inStockOnly}
+                      onChange={() => setInStockOnly((v) => !v)}
+                    />
+                    <span>In Stock Only</span>
+                  </label>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <button 
+            className="clear-filters-btn"
+            onClick={() => {
+              setSelectedCategory('All Products');
+              setSelectedSubCategory('');
+              setMinRating(0);
+              setShowDiscounted(false);
+              setInStockOnly(false);
+              setPriceRange([0, 10000]);
+              setSortOption('featured');
+              setActiveDropdown(null);
+            }}
+          >
+            <FaTimes className="clear-icon" />
+            <span>Clear All</span>
+          </button>
         </div>
 
         <div className="products-main-content">

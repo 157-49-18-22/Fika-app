@@ -1,6 +1,7 @@
 .notifications-container {
   max-width: 600px;
   margin: 40px auto;
+  margin-top: 10%;
   background: #fff;
   border-radius: 16px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.07);
@@ -49,3 +50,9 @@
   font-size: 0.95rem;
   align-self: flex-end;
 } 
+
+@media (max-width: 480px) {
+  .notifications-container {
+    margin-top: 20%;
+  }
+}
