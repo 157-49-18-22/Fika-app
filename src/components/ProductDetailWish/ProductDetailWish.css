@@ -53,7 +53,6 @@
 
 .main-image {
   width: 100%;
-  height: auto;
   display: block;
 }
 
@@ -532,6 +531,10 @@
 }
 
 @media (max-width: 480px) {
+
+  .main-image{
+    height: 100%;
+  }
   .product-details-container {
     padding: 1rem;
     margin-top: 15%;

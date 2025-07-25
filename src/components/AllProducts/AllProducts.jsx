@@ -96,8 +96,8 @@ const AllProducts = () => {
         setShowDropdown(false);
       }
       
-      // Close filter dropdown when clicking outside
-      if (!event.target.closest('.filter-dropdown')) {
+      // Close dropdowns when clicking outside
+      if (!event.target.closest('.category-dropdown') && !event.target.closest('.filter-dropdown')) {
         setActiveDropdown(null);
       }
     };
@@ -247,6 +247,10 @@ const AllProducts = () => {
     setVisibleItems(12);
   };
 
+  const toggleCategoryDropdown = () => {
+    setActiveDropdown(activeDropdown === 'category' ? null : 'category');
+  };
+
   return (
     <section className={`products-section ${fadeIn ? 'fade-in' : ''}`}>
       {loading && (
@@ -350,129 +354,42 @@ const AllProducts = () => {
           <div className="products-divider"></div>
         </div>
 
-        {/* Single Filter Dropdown */}
-        <div className="filter-container">
-          <div className="filter-dropdown">
-            <button 
-              className="filter-btn"
-              onClick={() => setActiveDropdown(activeDropdown === 'category' ? null : 'category')}
-            >
-              <FaFilter className="filter-icon" />
-              <span>{selectedCategory === "All Products" ? "Category" : selectedCategory}</span>
-              <FaChevronRight className={`dropdown-arrow ${activeDropdown === 'category' ? 'rotated' : ''}`} />
-            </button>
-            {activeDropdown === 'category' && (
-              <div className="filter-dropdown-content">
-                {categories.map((category) => (
-                  <button
-                    key={category.name}
-                    className={`filter-option ${selectedCategory === category.name ? "active" : ""}`}
-                    onClick={() => {
-                      handleCategoryClick(category);
-                      setActiveDropdown(null);
-                    }}
-                  >
-                    <span className="filter-option-icon">{category.icon}</span>
-                    <span className="filter-option-text">{category.name}</span>
-                    {category.name !== "Wish Genie" && (
-                      <span className="filter-option-count">({categoryCounts[category.id]})</span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="filter-dropdown">
-            <button 
-              className="filter-btn"
-              onClick={() => setActiveDropdown(activeDropdown === 'sort' ? null : 'sort')}
-            >
-              <FaSort className="filter-icon" />
-              <span>{sortOptions.find(opt => opt.id === sortOption)?.name || "Sort By"}</span>
-              <FaChevronRight className={`dropdown-arrow ${activeDropdown === 'sort' ? 'rotated' : ''}`} />
-            </button>
-            {activeDropdown === 'sort' && (
-              <div className="filter-dropdown-content">
-                {sortOptions.map((option) => (
-                  <button
-                    key={option.id}
-                    className={`filter-option ${sortOption === option.id ? "active" : ""}`}
-                    onClick={() => {
-                      setSortOption(option.id);
-                      setActiveDropdown(null);
-                    }}
-                  >
-                    <span className="filter-option-text">{option.name}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="filter-dropdown">
-            <button 
-              className="filter-btn"
-              onClick={() => setActiveDropdown(activeDropdown === 'price' ? null : 'price')}
-            >
-              <FaDollarSign className="filter-icon" />
-              <span>Price Range</span>
-              <FaChevronRight className={`dropdown-arrow ${activeDropdown === 'price' ? 'rotated' : ''}`} />
-            </button>
-            {activeDropdown === 'price' && (
-              <div className="filter-dropdown-content price-filter-content">
-                <div className="price-range-slider">
-                  <input
-                    type="range"
-                    min="0"
-                    max="10000"
-                    value={priceRange[1]}
-                    onChange={e => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                    className="price-slider"
-                  />
-                  <div className="price-range-display">
-                    <span>₹{priceRange[0]}</span>
-                    <span>₹{priceRange[1]}</span>
-                  </div>
+        {/* Category Indicator */}
+        <div className="category-indicator">
+          <div className="category-breadcrumb">
+            <div className="category-dropdown">
+              <button 
+                className="category-dropdown-btn"
+                onClick={toggleCategoryDropdown}
+              >
+                <span className="current-category">
+                  {selectedCategory === "All Products" ? "All Products" : selectedCategory}
+                  {selectedSubCategory && ` > ${selectedSubCategory}`}
+                </span>
+                <FaChevronRight className={`dropdown-arrow ${activeDropdown === 'category' ? 'rotated' : ''}`} />
+              </button>
+              {activeDropdown === 'category' && (
+                <div className="category-dropdown-content">
+                  {categories.map((category) => (
+                    <button
+                      key={category.name}
+                      className={`category-dropdown-option ${selectedCategory === category.name ? "active" : ""}`}
+                      onClick={() => {
+                        handleCategoryClick(category);
+                        setActiveDropdown(null);
+                      }}
+                    >
+                      <span className="category-dropdown-icon">{category.icon}</span>
+                      <span className="category-dropdown-text">{category.name}</span>
+                      {category.name !== "Wish Genie" && (
+                        <span className="category-dropdown-count">({categoryCounts[category.id]})</span>
+                      )}
+                    </button>
+                  ))}
                 </div>
-                <div className="filter-checkbox-group">
-                  <label className="filter-checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={showDiscounted}
-                      onChange={() => setShowDiscounted((v) => !v)}
-                    />
-                    <span>On Sale</span>
-                  </label>
-                  <label className="filter-checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={inStockOnly}
-                      onChange={() => setInStockOnly((v) => !v)}
-                    />
-                    <span>In Stock Only</span>
-                  </label>
-                </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-
-          <button 
-            className="clear-filters-btn"
-            onClick={() => {
-              setSelectedCategory('All Products');
-              setSelectedSubCategory('');
-              setMinRating(0);
-              setShowDiscounted(false);
-              setInStockOnly(false);
-              setPriceRange([0, 10000]);
-              setSortOption('featured');
-              setActiveDropdown(null);
-            }}
-          >
-            <FaTimes className="clear-icon" />
-            <span>Clear All</span>
-          </button>
         </div>
 
         <div className="products-main-content">
@@ -482,38 +399,23 @@ const AllProducts = () => {
               <h3><FaSlidersH /> Filters</h3>
               <button className="close-filters" onClick={() => setFiltersVisible(false)}>×</button>
             </div>
-            {/* Show sub-category dropdown if a main category is selected, else show rating filter */}
-            {selectedCategory !== "All Products" && selectedCategory !== "Wish Genie" && subCategories.length > 0 ? (
-              <div className="filter-group">
-                <h4>Sub-category</h4>
-                <div className="subcategory-options">
-                  <label className="subcategory-checkbox">
-                    <input
-                      type="radio"
-                      name="subCategory"
-                      value=""
-                      checked={selectedSubCategory === ""}
-                      onChange={() => setSelectedSubCategory("")}
-                    />
-                    <span>All</span>
-                  </label>
-                  {subCategories.map((sub) => (
-                    <label key={sub} className="subcategory-checkbox">
-                      <input
-                        type="radio"
-                        name="subCategory"
-                        value={sub}
-                        checked={selectedSubCategory === sub}
-                        onChange={() => setSelectedSubCategory(sub)}
-                      />
-                      <span>{sub}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              selectedCategory === "Wish Genie" && subCategories.length > 0 ? (
-                <div className="filter-group wish-genie-subcategories">
+            
+            {/* Mobile Filter Toggle */}
+            <div className="mobile-filter-toggle">
+              <button 
+                className="mobile-filter-btn"
+                onClick={() => setFiltersVisible(!filtersVisible)}
+              >
+                <FaSlidersH />
+                <span>Advanced Filters</span>
+                <FaChevronRight className={`toggle-arrow ${filtersVisible ? 'rotated' : ''}`} />
+              </button>
+            </div>
+
+            <div className={`filter-content ${filtersVisible ? 'visible' : ''}`}>
+              {/* Show sub-category dropdown if a main category is selected, else show rating filter */}
+              {selectedCategory !== "All Products" && selectedCategory !== "Wish Genie" && subCategories.length > 0 ? (
+                <div className="filter-group">
                   <h4>Sub-category</h4>
                   <div className="subcategory-options">
                     <label className="subcategory-checkbox">
@@ -541,107 +443,137 @@ const AllProducts = () => {
                   </div>
                 </div>
               ) : (
-                selectedCategory !== "Wish Genie" && (
-                  <div className="filter-group">
-                    <h4><FaStar /> Minimum Rating</h4>
-                    <div className="rating-options">
-                      {[4, 3, 2, 1].map((star) => (
-                        <label key={star} className="rating-checkbox">
+                selectedCategory === "Wish Genie" && subCategories.length > 0 ? (
+                  <div className="filter-group wish-genie-subcategories">
+                    <h4>Sub-category</h4>
+                    <div className="subcategory-options">
+                      <label className="subcategory-checkbox">
+                        <input
+                          type="radio"
+                          name="subCategory"
+                          value=""
+                          checked={selectedSubCategory === ""}
+                          onChange={() => setSelectedSubCategory("")}
+                        />
+                        <span>All</span>
+                      </label>
+                      {subCategories.map((sub) => (
+                        <label key={sub} className="subcategory-checkbox">
+                          <input
+                            type="radio"
+                            name="subCategory"
+                            value={sub}
+                            checked={selectedSubCategory === sub}
+                            onChange={() => setSelectedSubCategory(sub)}
+                          />
+                          <span>{sub}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  selectedCategory !== "Wish Genie" && (
+                    <div className="filter-group">
+                      <h4><FaStar /> Minimum Rating</h4>
+                      <div className="rating-options">
+                        {[4, 3, 2, 1].map((star) => (
+                          <label key={star} className="rating-checkbox">
+                            <input
+                              type="radio"
+                              name="minRating"
+                              value={star}
+                              checked={minRating === star}
+                              onChange={() => setMinRating(star)}
+                            />
+                            {star} stars & up
+                          </label>
+                        ))}
+                        <label className="rating-checkbox">
                           <input
                             type="radio"
                             name="minRating"
-                            value={star}
-                            checked={minRating === star}
-                            onChange={() => setMinRating(star)}
+                            value={0}
+                            checked={minRating === 0}
+                            onChange={() => setMinRating(0)}
                           />
-                          {star} stars & up
+                          Any
                         </label>
-                      ))}
-                      <label className="rating-checkbox">
-                        <input
-                          type="radio"
-                          name="minRating"
-                          value={0}
-                          checked={minRating === 0}
-                          onChange={() => setMinRating(0)}
-                        />
-                        Any
-                      </label>
+                      </div>
                     </div>
-                  </div>
+                  )
                 )
-              )
-            )}
-            
-            {/* On Sale & In Stock Only */}
-            <div className="filter-group">
-              <div className="filter-checkbox-group">
-                <label className="filter-checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={showDiscounted}
-                    onChange={() => setShowDiscounted((v) => !v)}
-                  />
-                  <span>On Sale</span>
-                </label>
-                <label className="filter-checkbox-label">
-                  <input
-                    type="checkbox"
-                    checked={inStockOnly}
-                    onChange={() => setInStockOnly((v) => !v)}
-                  />
-                  <span>In Stock Only</span>
-                </label>
+              )}
+              
+              {/* On Sale & In Stock Only */}
+              <div className="filter-group">
+                <div className="filter-checkbox-group">
+                  <label className="filter-checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={showDiscounted}
+                      onChange={() => setShowDiscounted((v) => !v)}
+                    />
+                    <span>On Sale</span>
+                  </label>
+                  <label className="filter-checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={inStockOnly}
+                      onChange={() => setInStockOnly((v) => !v)}
+                    />
+                    <span>In Stock Only</span>
+                  </label>
+                </div>
               </div>
-            </div>
-            
-            {/* Price Range */}
-            <div className="filter-group">
-              <h4>Price Range</h4>
-              <input
-                type="range"
-                min="0"
-                max="10000"
-                value={priceRange[1]}
-                onChange={e => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                className="price-slider"
-              />
-              <div className="price-range-display">
-                <span>₹{priceRange[0]}</span>
-                <span>₹{priceRange[1]}</span>
+              
+              {/* Price Range */}
+              <div className="filter-group">
+                <h4>Price Range</h4>
+                <input
+                  type="range"
+                  min="0"
+                  max="10000"
+                  value={priceRange[1]}
+                  onChange={e => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                  className="price-slider"
+                />
+                <div className="price-range-display">
+                  <span>₹{priceRange[0]}</span>
+                  <span>₹{priceRange[1]}</span>
+                </div>
               </div>
-            </div>
-            
-            {/* Sort By */}
-            <div className="filter-group">
-              <h4><FaSortAmountDown /> Sort By</h4>
-              <select
-                className="sort-select"
-                value={sortOption}
-                onChange={(e) => setSortOption(e.target.value)}
+              
+              {/* Sort By */}
+              <div className="filter-group">
+                <h4><FaSortAmountDown /> Sort By</h4>
+                <select
+                  className="sort-select"
+                  value={sortOption}
+                  onChange={(e) => setSortOption(e.target.value)}
+                >
+                  {sortOptions.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              {/* Clear All Filters Button */}
+              <button className="reset-filters-btn" style={{marginTop:16, width:'100%'}}
+                onClick={() => {
+                  setSelectedCategory('All Products');
+                  setSelectedSubCategory('');
+                  setMinRating(0);
+                  setShowDiscounted(false);
+                  setInStockOnly(false);
+                  setPriceRange([0, 10000]);
+                  setSortOption('featured');
+                }}
               >
-                {sortOptions.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.name}
-                  </option>
-                ))}
-              </select>
+                Clear All Filters
+              </button>
             </div>
-            
-            {/* Clear All Filters Button */}
-            <button className="reset-filters-btn" style={{marginTop:16, width:'100%'}}
-              onClick={() => {
-                setSelectedCategory('All Products');
-                setSelectedSubCategory('');
-                setMinRating(0);
-                setShowDiscounted(false);
-                setInStockOnly(false);
-                setPriceRange([0, 10000]);
-                setSortOption('featured');
-              }}
-            >
-              Clear All Filters
-            </button>
           </div>
 
           {/* Main Products Grid */}
@@ -678,6 +610,17 @@ const AllProducts = () => {
                     </div>
                   </div>
                 )}
+              </div>
+              
+              {/* Mobile Filter Button */}
+              <div className="mobile-filter-button">
+                <button 
+                  className="mobile-filter-trigger"
+                  onClick={() => setFiltersVisible(true)}
+                >
+                  <FaSlidersH />
+                  <span>Filters</span>
+                </button>
               </div>
             </div>
 
@@ -912,6 +855,14 @@ const AllProducts = () => {
             </div>
           )}
         </div>
+
+        {/* Mobile Filter Backdrop */}
+        {filtersVisible && (
+          <div 
+            className="mobile-filter-backdrop"
+            onClick={() => setFiltersVisible(false)}
+          ></div>
+        )}
       </div>
     </section>
   );
