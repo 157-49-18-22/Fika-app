@@ -53,7 +53,7 @@
 
 .info-box {
     background-color: #9AD3C2;
-    padding: 30px;
+    padding: 50px;
     border-radius: 10px;
     position: relative;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
@@ -85,7 +85,7 @@
 /* Duo image section */
 .image-duo {
     height: 100%;
-    max-height: 518px;
+    max-height: 510px;
 }
 
 .duo-image-container {
@@ -154,7 +154,7 @@
     }
     
     .info-box .info-title {
-        font-size: 12px;
+        font-size: 10px;
         line-height: 1.4;
     }
     
@@ -169,6 +169,7 @@
     
     .info-box {
         padding: 10px;
+        height: -webkit-fill-available;
     }
 
     .duo-image-container{

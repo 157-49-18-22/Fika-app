@@ -1,5 +1,5 @@
 .collection-intro {
-    height: 950px;
+    height: 930px;
     margin: 0 auto;
     position: relative;
     /* Removed background image and overlay */
@@ -180,7 +180,7 @@
     }
 
     .collection-intro{
-        max-height: 380px;
+        max-height: 350px;
     }
 
     .collection-intro-container{

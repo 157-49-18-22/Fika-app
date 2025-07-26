@@ -2,7 +2,7 @@
 
 .style-empower-container {
     width: 100%;
-    background-image: url('../../assets/blur02_3.jpg');
+    background-image: url('../../assets/blur02_3.webp');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -30,5 +30,7 @@
 @media (max-width: 480px) {
     .style-empower-container{
         height: 200px;
+        width: 96%;
+        margin: 20px auto;
     }
 }
