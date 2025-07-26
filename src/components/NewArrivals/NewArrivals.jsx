@@ -283,19 +283,19 @@ const NewArrivals = () => {
   };
 
   // Optimize image loading with error handling
-  const handleImageError = (e, fallbackImage = '/placeholder-image.jpg') => {
+  const handleImageError = (e, fallbackImage = '/placeholder-image.webp') => {
     e.target.onerror = null; // Prevent infinite loop
     e.target.src = fallbackImage;
   };
 
   // Helper to get the first image from the comma-separated image field
   const getFirstImage = (imageField) => {
-    if (!imageField) return '/placeholder-image.jpg';
+    if (!imageField) return '/placeholder-image.webp';
     const imagesArr = imageField.split(',').map(img => img.trim()).filter(Boolean);
     if (imagesArr.length > 0) {
       return imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
     }
-    return '/placeholder-image.jpg';
+    return '/placeholder-image.webp';
   };
 
   // Render product card with optimized image loading

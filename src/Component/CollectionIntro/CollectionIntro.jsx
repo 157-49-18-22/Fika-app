@@ -38,7 +38,7 @@ const CollectionIntro = () => {
       <div className="collection-intro-container">
         {/* Overlaid image */}
         <div className="intro-image" onClick={handleClick}>
-          <img src="/wish_ginne.jpg" alt="New collection with decorative pillows and throw" />
+          <img src="/wish_ginne.webp" alt="New collection with decorative pillows and throw" />
 
           {/* shop now button */}
           <button className="wish-btn" onClick={handleClick}>

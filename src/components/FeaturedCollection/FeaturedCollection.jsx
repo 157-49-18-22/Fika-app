@@ -1,7 +1,7 @@
 import React from "react";
 import "./FeaturedCollection.css";
-import img1 from "../../assets/featured.jpg";
-import img2 from "../../assets/featured1.jpg";
+import img1 from "../../assets/featured.webp";
+import img2 from "../../assets/featured1.webp";
 import "../../Component/Hero/Hero.css";
 
 const FeaturedCollection = () => {

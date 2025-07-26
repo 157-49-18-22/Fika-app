@@ -204,7 +204,7 @@ function Navbar() {
 
           <div className="navbar-center">
             <Link to="/" className="logo" onClick={handleMobileNavClick}>
-              <img style={{width: "70px", height: "70px"}} src="/fika_page-001.jpg" alt="logo" />
+              <img style={{width: "70px", height: "70px"}} src="/fika_page-001.webp" alt="logo" />
             </Link>
           </div>
 

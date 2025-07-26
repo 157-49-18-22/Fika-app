@@ -20,7 +20,7 @@ const FashionGrid = () => {
         </div>
 
         <div className="grid-item main-image">
-          <img src="./FK-CC-039.jpg" alt="Decorative cushion on sofa" />
+          <img src="./FK-CC-039.webp" alt="Decorative cushion on sofa" />
         </div>
       </div>
 
@@ -31,10 +31,10 @@ const FashionGrid = () => {
         <div className="grid-item image-duo">
           <div className="duo-image-container">
             <div className="duo-image">
-              <img src="./FK-CC-041 close Up.jpg" alt="Stylish room design" />
+              <img src="./FK-CC-041 close Up.webp" alt="Stylish room design" />
             </div>
             <div className="duo-image">
-              <img src="./IMG_20250207_144036.jpg" alt="Interior design" />
+              <img src="./IMG_20250207_144036.webp" alt="Interior design" />
             </div>
           </div>
         </div>

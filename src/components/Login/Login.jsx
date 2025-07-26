@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { FaClock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import './Login.css';
-import fikaLogo from '/fika_logo1.png';
+import fikaLogo from '/fika_logo1.webp';
 
 
 const sliderImages = [

@@ -1,11 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./HeroSection.css";
-import heroImage from "../../assets/hero-image.jpg";
-import heroImage2 from "../../assets/hero-image2.jpg";
-import heroImage3 from "../../assets/hero-image3.jpg";
-import heroImage4 from "../../assets/hero-image4.jpg";
-import heroImage5 from "../../assets/Frame 1000002402.jpg";
+import heroImage from "../../assets/hero-image.webp";
+import heroImage2 from "../../assets/hero-image2.webp";
+import heroImage3 from "../../assets/hero-image3.webp";
+import heroImage4 from "../../assets/hero-image4.webp";
+import heroImage5 from "../../assets/Frame 1000002402.webp";
 
 const HeroSection = () => {
   return (

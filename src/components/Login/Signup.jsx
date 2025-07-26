@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import './Login.css';
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import fikaLogo from '/fika_logo1.png';
+import fikaLogo from '/fika_logo1.webp';
 
 const sliderImages = [
   'https://images.unsplash.com/photo-1526827826797-7b05204a22ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',  // Modern geometric cushions

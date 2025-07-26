@@ -379,7 +379,7 @@ const Products = () => {
     "inventory": 100,
     "mrp": 999,
     "discount": 10,
-    "image": "image1.jpg",
+            "image": "image1.webp",
     "featured": false
   }
 ]`}

@@ -18,12 +18,12 @@ const Wishlist = () => {
 
   // Helper function to get the first image from a comma-separated list
   const getFirstImage = (imageField) => {
-    if (!imageField) return '/placeholder-image.jpg';
+    if (!imageField) return '/placeholder-image.webp';
     const imagesArr = imageField.split(',').map(img => img.trim()).filter(Boolean);
     if (imagesArr.length > 0) {
       return imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
     }
-    return '/placeholder-image.jpg';
+    return '/placeholder-image.webp';
   };
 
   // Function to count images in a comma-separated string
@@ -126,7 +126,7 @@ const Wishlist = () => {
                   alt={item.productName} 
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = '/placeholder-image.jpg';
+                    e.target.src = '/placeholder-image.webp';
                   }}
                 />
                 {totalImages > 1 && (

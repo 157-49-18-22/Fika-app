@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "./FashionSection.css";
-import fashion1 from "../../assets/1.jpg";
-import fashion3 from "../../assets/3.jpg";
-import fashion4 from "../../assets/4.jpg";
-import fashion5 from "../../assets/5.jpg";
-import fashion10 from "../../assets/10.jpg";
-import fashion11 from "../../assets/11.jpg";
-import fashion12 from "../../assets/12.jpg";
-import fashion13 from "../../assets/13.jpg";
+import fashion1 from "../../assets/1.webp";
+import fashion3 from "../../assets/3.webp";
+import fashion4 from "../../assets/4.webp";
+import fashion5 from "../../assets/5.webp";
+import fashion10 from "../../assets/10.webp";
+import fashion11 from "../../assets/11.webp";
+import fashion12 from "../../assets/12.webp";
+import fashion13 from "../../assets/13.webp";
 import { FaEye, FaTimes } from "react-icons/fa";
 
 const fashionData = [

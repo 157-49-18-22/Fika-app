@@ -8,19 +8,19 @@ const InstaFeed = () => {
       
       <div className="insta-feed-gallery">
         <div className="gallery-image image1">
-          <img src="./tilt_image1.png" alt="Yellow cushion with leaf pattern" />
+          <img src="./tilt_image1.webp" alt="Yellow cushion with leaf pattern" />
         </div>
         <div className="gallery-image image2">
-          <img src="./tilt_image2.png" alt="Orange cushion with fern pattern" />
+          <img src="./tilt_image2.webp" alt="Orange cushion with fern pattern" />
         </div>
         <div className="gallery-image image3">
-          <img src="./tilt_image3.png" alt="Shopping bags and packaging" />
+          <img src="./tilt_image3.webp" alt="Shopping bags and packaging" />
         </div>
         <div className="gallery-image image4">
-          <img src="./tilt_image4.png" alt="Folded fabrics and crafts" />
+          <img src="./tilt_image4.webp" alt="Folded fabrics and crafts" />
         </div>
         <div className="gallery-image image5">
-          <img src="./tilt_image5.png" alt="Blue cushion with floral design" />
+          <img src="./tilt_image5.webp" alt="Blue cushion with floral design" />
         </div>
       </div>
     </section>

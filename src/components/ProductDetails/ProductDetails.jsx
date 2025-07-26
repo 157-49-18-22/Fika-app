@@ -120,10 +120,10 @@ const ProductDetails = () => {
         const normalized = {
           ...raw,
           id: productDoc.id,
-          image: raw.image || '/placeholder-image.jpg',
-          image2: raw.image2 || '/placeholder-image.jpg',
-          image3: raw.image3 || '/placeholder-image.jpg',
-          image4: raw.image4 || '/placeholder-image.jpg',
+                  image: raw.image || '/placeholder-image.webp',
+        image2: raw.image2 || '/placeholder-image.webp',
+        image3: raw.image3 || '/placeholder-image.webp',
+        image4: raw.image4 || '/placeholder-image.webp',
           reviews: raw.reviews || [],
           reviewsCount: raw.reviewsCount || 0,
           discount: raw.discount || 0,
@@ -244,9 +244,9 @@ const ProductDetails = () => {
         .map(img => img.trim())
         .filter(Boolean)
         .map(img => img.startsWith('/') ? img : `/${img}`); // Ensure leading slash for public folder
-      setProductImages(imagesArr.length > 0 ? imagesArr : ['/placeholder-image.jpg']);
+              setProductImages(imagesArr.length > 0 ? imagesArr : ['/placeholder-image.webp']);
     } else {
-      setProductImages(['/placeholder-image.jpg']);
+              setProductImages(['/placeholder-image.webp']);
     }
   }, [product]);
 
@@ -350,7 +350,7 @@ const ProductDetails = () => {
       name: product.product_name,
       price: product.mrp,
       discount: product.discount || 0,
-      image: product.image || '/placeholder-image.jpg',
+              image: product.image || '/placeholder-image.webp',
       category: product.category,
       size: selectedSize || 'Standard',
       quantity: quantity,
@@ -432,7 +432,7 @@ const ProductDetails = () => {
           name: product.product_name || product.name,
           price: product.mrp || product.price,
           discount: product.discount || 0,
-          image: product.image || '/placeholder-image.jpg',
+          image: product.image || '/placeholder-image.webp',
           category: product.category || '',
           size: product.size || 'Standard',
           quantity: 1,

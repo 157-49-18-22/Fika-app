@@ -22,7 +22,7 @@ const Footer = () => {
         <div className="footer-logo-section">
           <div className="footer-logo">
             <Link to="/" className="logo">
-              <img style={{width: "70px"}} src="/fika_page-001.jpg" alt="logo" />
+              <img style={{width: "70px"}} src="/fika_page-001.webp" alt="logo" />
             </Link>
           </div>
           

@@ -7,25 +7,25 @@ const Explore = () => {
     {
       id: 1,
       name: "Trending Now",
-      image: "/images/trending.jpg",
+      image: "/images/trending.webp",
       description: "Discover what's hot right now",
     },
     {
       id: 2,
       name: "Best Sellers",
-      image: "/images/bestsellers.jpg",
+      image: "/images/bestsellers.webp",
       description: "Our most popular items",
     },
     {
       id: 3,
       name: "Special Offers",
-      image: "/images/offers.jpg",
+      image: "/images/offers.webp",
       description: "Limited time deals",
     },
     {
       id: 4,
       name: "Featured Collections",
-      image: "/images/collections.jpg",
+      image: "/images/collections.webp",
       description: "Curated collections for you",
     },
   ];

@@ -10,7 +10,7 @@ import "./NewArrivalsWish.css";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import LoginPrompt from "../../components/LoginPrompt/LoginPrompt";
-import WishGenieLogo from '../../assets/Wish Genie.png';
+import WishGenieLogo from '../../assets/Wish Genie.webp';
 import { getWishGenieProducts, initializeWishGenieCollection } from '../../firebase/firestore';
 
 const NewArrivalsWish = () => {
@@ -163,7 +163,7 @@ const NewArrivalsWish = () => {
             description: featuredProduct['Product Description'] || 'Experience premium quality and exceptional design with this must-have piece from our latest collection.',
             price: featuredProduct.MRP || featuredProduct.price || 0,
             discount: featuredProduct.discount || 0,
-            image: featuredProduct.image || '/placeholder-image.jpg'
+            image: featuredProduct.image || '/placeholder-image.webp'
           };
           setFeaturedProduct(enhancedFeaturedProduct);
         }
@@ -201,7 +201,7 @@ const NewArrivalsWish = () => {
       id: product.id,
       name: product['Sticker Content Main'] || product.name || product.product_name || 'Product',
       price: Number(product.MRP) || Number(product.price) || 0,
-      image: product.image || '/placeholder-image.jpg',
+              image: product.image || '/placeholder-image.webp',
       category: product.Category || product.category || '',
       quantity: 1,
       discount: Number(product.discount) || 0,
@@ -306,12 +306,12 @@ const NewArrivalsWish = () => {
 
   // Helper to get the first image from the comma-separated image field
   const getFirstImage = (imageField) => {
-    if (!imageField) return '/placeholder-image.jpg';
+    if (!imageField) return '/placeholder-image.webp';
     const imagesArr = imageField.split(',').map(img => img.trim()).filter(Boolean);
     if (imagesArr.length > 0) {
       return imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
     }
-    return '/placeholder-image.jpg';
+    return '/placeholder-image.webp';
   };
 
   // Render product card - reusable component for all product sections

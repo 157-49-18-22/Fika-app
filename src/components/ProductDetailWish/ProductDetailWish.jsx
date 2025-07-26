@@ -126,7 +126,7 @@ const ProductDetailWish = () => {
       id: product.id,
       name: product['Sticker Content Main'] || product.name || product.product_name || 'Product',
       price: Number(product.MRP) || Number(product.price) || 0,
-      image: product.image || '/placeholder-image.jpg',
+              image: product.image || '/placeholder-image.webp',
       category: product.Category || product.category || '',
       quantity: quantity,
       discount: Number(product.discount) || 0,
@@ -168,7 +168,7 @@ const ProductDetailWish = () => {
         id: product.id,
         name: product['Sticker Content Main'] || product.name || product.product_name || 'Product',
         price: Number(product.MRP) || Number(product.price) || 0,
-        image: product.image || '/placeholder-image.jpg',
+        image: product.image || '/placeholder-image.webp',
         category: product.Category || product.category || '',
         quantity: 1,
         discount: Number(product.discount) || 0,
@@ -211,7 +211,7 @@ const ProductDetailWish = () => {
   // Get all images from the comma-separated image field
   const productImages = product.image
     ? product.image.split(',').map(img => img.trim()).filter(Boolean).map(img => img.startsWith('/') ? img : `/${img}`)
-    : ['/placeholder-image.jpg'];
+            : ['/placeholder-image.webp'];
 
   const ProductGallery = ({ images }) => {
     const [magnifierPosition, setMagnifierPosition] = useState({ x: 0, y: 0 });

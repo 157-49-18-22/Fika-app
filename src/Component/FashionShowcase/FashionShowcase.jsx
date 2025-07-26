@@ -50,11 +50,11 @@ const FashionShowcase = () => {
         <div className="showcase-side-container">
           <div className="showcase-side-item">
             <div>
-              <img src="./side_image2.png" alt="img" />
+              <img src="./side_image2.webp" alt="img" />
             </div>
             <div className="showcase-info-card">
               <div className="info-card-header">
-                <img src="./image-icon.png" alt="img" />
+                <img src="./image-icon.webp" alt="img" />
                 <span>
                   cushion collection
                 </span>
@@ -85,7 +85,7 @@ const FashionShowcase = () => {
           </div>
           <div className="showcase-side-item">
             <div className="showcase-side-image-container">
-              <img src="./side_image1.png" alt="img" />
+              <img src="./side_image1.webp" alt="img" />
               <div className="showcase-side-image-overlay">
                 <svg
                   onClick={handleShopNow}
