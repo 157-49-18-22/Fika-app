@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useWishlist } from "../../context/WishlistContext.jsx";
 import { useCart } from "../../context/CartContext.jsx";
+import { addReferrerToUrl } from "../../utils/navigationUtils.js";
 import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight, FaSlidersH, FaDollarSign, FaSortAmountDown, FaBed, FaCouch, FaGift } from "react-icons/fa";
 import { GiLargeDress, GiRunningShoe, GiWatch, GiHeartNecklace, GiTrousers } from "react-icons/gi";
 import "./AllProductsStyles.css";
@@ -21,22 +22,14 @@ const AllProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState("All Products");
-  const [selectedSubCategory, setSelectedSubCategory] = useState("");
-  const [sortOption, setSortOption] = useState("featured");
-  const [visibleItems, setVisibleItems] = useState(12);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [fadeIn, setFadeIn] = useState(false);
   const [quickView, setQuickView] = useState(null);
   const [filtersVisible, setFiltersVisible] = useState(false);
-  const [priceRange, setPriceRange] = useState([0, 10000]);
   const [showDropdown, setShowDropdown] = useState(false);
   const searchRef = useRef(null);
-  const [minRating, setMinRating] = useState(0);
-  const [showDiscounted, setShowDiscounted] = useState(false);
-  const [inStockOnly, setInStockOnly] = useState(false);
   const [wishlistProductIds, setWishlistProductIds] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null); // 'category', 'sort', 'price', or null
   
@@ -46,6 +39,186 @@ const AllProducts = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const searchQuery = searchParams.get('search') || '';
+
+  // Initialize filter states from URL parameters
+  const [selectedCategory, setSelectedCategory] = useState(() => {
+    const categoryFromUrl = searchParams.get('category');
+    return categoryFromUrl || "All Products";
+  });
+  
+  const [selectedSubCategory, setSelectedSubCategory] = useState(() => {
+    return searchParams.get('subCategory') || "";
+  });
+  
+  const [sortOption, setSortOption] = useState(() => {
+    return searchParams.get('sort') || "featured";
+  });
+  
+  const [visibleItems, setVisibleItems] = useState(12);
+  
+  const [priceRange, setPriceRange] = useState(() => {
+    const minPrice = searchParams.get('minPrice');
+    const maxPrice = searchParams.get('maxPrice');
+    return [
+      minPrice ? parseInt(minPrice) : 0,
+      maxPrice ? parseInt(maxPrice) : 10000
+    ];
+  });
+  
+  const [minRating, setMinRating] = useState(() => {
+    const ratingFromUrl = searchParams.get('rating');
+    return ratingFromUrl ? parseInt(ratingFromUrl) : 0;
+  });
+  
+  const [showDiscounted, setShowDiscounted] = useState(() => {
+    const discountedFromUrl = searchParams.get('discounted');
+    return discountedFromUrl === 'true';
+  });
+  
+  const [inStockOnly, setInStockOnly] = useState(() => {
+    const inStockFromUrl = searchParams.get('inStock');
+    return inStockFromUrl === 'true';
+  });
+
+  // Function to update URL with current filter state
+  const updateURL = (newFilters) => {
+    const params = new URLSearchParams(location.search);
+    
+    // Update or remove parameters based on new filters
+    if (newFilters.category && newFilters.category !== "All Products") {
+      params.set('category', newFilters.category);
+    } else {
+      params.delete('category');
+    }
+    
+    if (newFilters.subCategory) {
+      params.set('subCategory', newFilters.subCategory);
+    } else {
+      params.delete('subCategory');
+    }
+    
+    if (newFilters.sort && newFilters.sort !== "featured") {
+      params.set('sort', newFilters.sort);
+    } else {
+      params.delete('sort');
+    }
+    
+    if (newFilters.minPrice !== undefined && newFilters.minPrice > 0) {
+      params.set('minPrice', newFilters.minPrice.toString());
+    } else {
+      params.delete('minPrice');
+    }
+    
+    if (newFilters.maxPrice !== undefined && newFilters.maxPrice < 10000) {
+      params.set('maxPrice', newFilters.maxPrice.toString());
+    } else {
+      params.delete('maxPrice');
+    }
+    
+    if (newFilters.rating && newFilters.rating > 0) {
+      params.set('rating', newFilters.rating.toString());
+    } else {
+      params.delete('rating');
+    }
+    
+    if (newFilters.discounted) {
+      params.set('discounted', 'true');
+    } else {
+      params.delete('discounted');
+    }
+    
+    if (newFilters.inStock) {
+      params.set('inStock', 'true');
+    } else {
+      params.delete('inStock');
+    }
+    
+    // Update URL without causing a page reload
+    const newURL = `${location.pathname}?${params.toString()}`;
+    if (newURL !== location.pathname + location.search) {
+      navigate(newURL, { replace: true });
+    }
+  };
+
+  // Track if we're updating from URL to prevent infinite loops
+  const [isUpdatingFromURL, setIsUpdatingFromURL] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  
+  // Update URL whenever filters change (but only if they're not from URL)
+  useEffect(() => {
+    if (isInitialized && !isUpdatingFromURL) {
+      updateURL({
+        category: selectedCategory,
+        subCategory: selectedSubCategory,
+        sort: sortOption,
+        minPrice: priceRange[0],
+        maxPrice: priceRange[1],
+        rating: minRating,
+        discounted: showDiscounted,
+        inStock: inStockOnly
+      });
+    } else if (!isInitialized) {
+      setIsInitialized(true);
+    }
+  }, [selectedCategory, selectedSubCategory, sortOption, priceRange, minRating, showDiscounted, inStockOnly, isInitialized, isUpdatingFromURL]);
+
+  // Handle URL parameter changes (e.g., when navigating back)
+  useEffect(() => {
+    if (!isInitialized) return; // Skip during initial load
+    
+    const newSearchParams = new URLSearchParams(location.search);
+    
+    const newCategory = newSearchParams.get('category') || "All Products";
+    const newSubCategory = newSearchParams.get('subCategory') || "";
+    const newSort = newSearchParams.get('sort') || "featured";
+    const newMinPrice = newSearchParams.get('minPrice');
+    const newMaxPrice = newSearchParams.get('maxPrice');
+    const newRating = newSearchParams.get('rating');
+    const newDiscounted = newSearchParams.get('discounted');
+    const newInStock = newSearchParams.get('inStock');
+    
+    // Check if any values have actually changed
+    const hasChanges = 
+      newCategory !== selectedCategory ||
+      newSubCategory !== selectedSubCategory ||
+      newSort !== sortOption ||
+      (newMinPrice !== null && parseInt(newMinPrice) !== priceRange[0]) ||
+      (newMaxPrice !== null && parseInt(newMaxPrice) !== priceRange[1]) ||
+      (newRating !== null && parseInt(newRating) !== minRating) ||
+      (newDiscounted !== null && (newDiscounted === 'true') !== showDiscounted) ||
+      (newInStock !== null && (newInStock === 'true') !== inStockOnly);
+    
+    if (hasChanges) {
+      setIsUpdatingFromURL(true);
+      
+      // Update all states at once
+      setSelectedCategory(newCategory);
+      setSelectedSubCategory(newSubCategory);
+      setSortOption(newSort);
+      
+      if (newMinPrice !== null || newMaxPrice !== null) {
+        setPriceRange([
+          newMinPrice ? parseInt(newMinPrice) : 0,
+          newMaxPrice ? parseInt(newMaxPrice) : 10000
+        ]);
+      }
+      
+      if (newRating !== null) {
+        setMinRating(parseInt(newRating));
+      }
+      
+      if (newDiscounted !== null) {
+        setShowDiscounted(newDiscounted === 'true');
+      }
+      
+      if (newInStock !== null) {
+        setInStockOnly(newInStock === 'true');
+      }
+      
+      // Reset the flag after a short delay
+      setTimeout(() => setIsUpdatingFromURL(false), 100);
+    }
+  }, [location.search, isInitialized]);
 
   // Fetch products from Firestore
   useEffect(() => {
@@ -87,8 +260,10 @@ const AllProducts = () => {
   useEffect(() => {
     setFadeIn(true);
     
-    // Scroll to top when component mounts
-    window.scrollTo(0, 0);
+    // Only scroll to top if there are no URL parameters (first visit)
+    if (!location.search) {
+      window.scrollTo(0, 0);
+    }
 
     // Add click outside listener
     const handleClickOutside = (event) => {
@@ -106,7 +281,7 @@ const AllProducts = () => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [location.search]);
 
   const categories = [
     { id: "all", name: "All Products", icon: <FaShoppingBag /> },
@@ -569,6 +744,8 @@ const AllProducts = () => {
                   setInStockOnly(false);
                   setPriceRange([0, 10000]);
                   setSortOption('featured');
+                  // Clear URL parameters
+                  navigate(location.pathname, { replace: true });
                 }}
               >
                 Clear All Filters
@@ -638,7 +815,7 @@ const AllProducts = () => {
                   <div 
                     key={product.id} 
                     className="product-card"
-                    onClick={() => navigate(`/product/${product.id}`)}
+                    onClick={() => navigate(addReferrerToUrl(`/product/${product.id}`, location.pathname + location.search))}
                   >
                     <div className="product-image-container">
                       <img 
@@ -713,6 +890,8 @@ const AllProducts = () => {
                       setSelectedSubCategory("");
                       setSearchQuery("");
                       setPriceRange([0, 10000]);
+                      // Clear URL parameters
+                      navigate(location.pathname, { replace: true });
                     }}
                   >
                     Reset All Filters

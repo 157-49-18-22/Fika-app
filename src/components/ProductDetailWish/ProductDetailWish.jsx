@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { useBackNavigation } from "../../utils/navigationUtils.js";
 import {
   FaShoppingCart,
   FaHeart,
@@ -34,6 +35,7 @@ const formatPrice = (price) => {
 
 const ProductDetailWish = () => {
   const navigate = useNavigate();
+  const { goBack } = useBackNavigation();
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -190,7 +192,7 @@ const ProductDetailWish = () => {
       <div className="error-container">
         <h2>Error</h2>
         <p>{error}</p>
-        <button onClick={() => navigate(-1)} className="back-button">
+        <button onClick={() => goBack('/new-arrivals-wish')} className="back-button">
           ← Back to Products
         </button>
       </div>
@@ -201,7 +203,7 @@ const ProductDetailWish = () => {
     return (
       <div className="product-not-found">
         <h2>Product not found</h2>
-        <button onClick={() => navigate(-1)} className="back-button">
+        <button onClick={() => goBack('/new-arrivals-wish')} className="back-button">
           ← Back to Products
         </button>
       </div>

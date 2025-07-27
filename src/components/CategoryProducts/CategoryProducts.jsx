@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { FiHeart, FiFilter, FiX } from "react-icons/fi";
 import { BsGrid, BsList } from "react-icons/bs";
 import { useCart } from "../../context/CartContext";
@@ -178,6 +178,10 @@ const FilterSection = styled.aside`
 
 const CategoryProducts = () => {
   const { categoryName } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const searchParams = new URLSearchParams(location.search);
+  
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState("grid");
@@ -186,12 +190,19 @@ const CategoryProducts = () => {
   const { addToCart } = useCart();
   const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
 
-  // Initialize all filter states properly
-  const [selectedFilters, setSelectedFilters] = useState({
-    priceRange: [0, 150000],
-    styles: [],
-    materials: [],
-    brands: [],
+  // Initialize filter states from URL parameters
+  const [selectedFilters, setSelectedFilters] = useState(() => {
+    const priceRangeFromUrl = searchParams.get('priceRange');
+    const stylesFromUrl = searchParams.get('styles');
+    const materialsFromUrl = searchParams.get('materials');
+    const brandsFromUrl = searchParams.get('brands');
+    
+    return {
+      priceRange: priceRangeFromUrl ? JSON.parse(priceRangeFromUrl) : [0, 150000],
+      styles: stylesFromUrl ? JSON.parse(stylesFromUrl) : [],
+      materials: materialsFromUrl ? JSON.parse(materialsFromUrl) : [],
+      brands: brandsFromUrl ? JSON.parse(brandsFromUrl) : [],
+    };
   });
 
   // Updated product categories
@@ -246,6 +257,109 @@ const CategoryProducts = () => {
     }
     return ["Cotton", "Silk", "Linen", "Denim", "Polyester"];
   };
+
+  // Function to update URL with current filter state
+  const updateURL = (newFilters) => {
+    const params = new URLSearchParams(location.search);
+    
+    if (newFilters.priceRange && (newFilters.priceRange[0] !== 0 || newFilters.priceRange[1] !== 150000)) {
+      params.set('priceRange', JSON.stringify(newFilters.priceRange));
+    } else {
+      params.delete('priceRange');
+    }
+    
+    if (newFilters.styles && newFilters.styles.length > 0) {
+      params.set('styles', JSON.stringify(newFilters.styles));
+    } else {
+      params.delete('styles');
+    }
+    
+    if (newFilters.materials && newFilters.materials.length > 0) {
+      params.set('materials', JSON.stringify(newFilters.materials));
+    } else {
+      params.delete('materials');
+    }
+    
+    if (newFilters.brands && newFilters.brands.length > 0) {
+      params.set('brands', JSON.stringify(newFilters.brands));
+    } else {
+      params.delete('brands');
+    }
+    
+    // Update URL without causing a page reload
+    const newURL = `${location.pathname}?${params.toString()}`;
+    if (newURL !== location.pathname + location.search) {
+      navigate(newURL, { replace: true });
+    }
+  };
+
+  // Track if we're updating from URL to prevent infinite loops
+  const [isUpdatingFromURL, setIsUpdatingFromURL] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  
+  // Update URL whenever filters change
+  useEffect(() => {
+    if (isInitialized && !isUpdatingFromURL) {
+      updateURL(selectedFilters);
+    } else if (!isInitialized) {
+      setIsInitialized(true);
+    }
+  }, [selectedFilters, isInitialized, isUpdatingFromURL]);
+
+  // Handle URL parameter changes (e.g., when navigating back)
+  useEffect(() => {
+    if (!isInitialized) return; // Skip during initial load
+    
+    const newSearchParams = new URLSearchParams(location.search);
+    
+    const newPriceRange = newSearchParams.get('priceRange');
+    const newStyles = newSearchParams.get('styles');
+    const newMaterials = newSearchParams.get('materials');
+    const newBrands = newSearchParams.get('brands');
+    
+    // Check if any values have actually changed
+    let hasChanges = false;
+    const newFilters = { ...selectedFilters };
+    
+    if (newPriceRange !== null) {
+      const parsedPriceRange = JSON.parse(newPriceRange);
+      if (JSON.stringify(parsedPriceRange) !== JSON.stringify(selectedFilters.priceRange)) {
+        newFilters.priceRange = parsedPriceRange;
+        hasChanges = true;
+      }
+    }
+    
+    if (newStyles !== null) {
+      const parsedStyles = JSON.parse(newStyles);
+      if (JSON.stringify(parsedStyles) !== JSON.stringify(selectedFilters.styles)) {
+        newFilters.styles = parsedStyles;
+        hasChanges = true;
+      }
+    }
+    
+    if (newMaterials !== null) {
+      const parsedMaterials = JSON.parse(newMaterials);
+      if (JSON.stringify(parsedMaterials) !== JSON.stringify(selectedFilters.materials)) {
+        newFilters.materials = parsedMaterials;
+        hasChanges = true;
+      }
+    }
+    
+    if (newBrands !== null) {
+      const parsedBrands = JSON.parse(newBrands);
+      if (JSON.stringify(parsedBrands) !== JSON.stringify(selectedFilters.brands)) {
+        newFilters.brands = parsedBrands;
+        hasChanges = true;
+      }
+    }
+    
+    if (hasChanges) {
+      setIsUpdatingFromURL(true);
+      setSelectedFilters(newFilters);
+      // Reset the flag after a short delay
+      setTimeout(() => setIsUpdatingFromURL(false), 100);
+    }
+  }, [location.search, isInitialized]);
 
   // Simulated product data with proper categorization
   useEffect(() => {
@@ -984,6 +1098,8 @@ const CategoryProducts = () => {
                   materials: [],
                   brands: [],
                 });
+                // Clear URL parameters
+                navigate(location.pathname, { replace: true });
               }}
             >
               Clear All

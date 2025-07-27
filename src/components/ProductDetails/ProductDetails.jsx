@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { useBackNavigation } from "../../utils/navigationUtils.js";
 import { io } from "socket.io-client";
 import {
   FaShoppingCart,
@@ -56,6 +57,7 @@ const formatPrice = (price) => {
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { goBack } = useBackNavigation();
   const { addToCart } = useCart();
   const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
   const { isAuthenticated } = useAuth();
@@ -271,7 +273,7 @@ const ProductDetails = () => {
       <div className="error-container">
         <h2>Error</h2>
         <p>{error}</p>
-        <button onClick={() => navigate(-1)} className="back-button">
+        <button onClick={() => goBack()} className="back-button">
           ← Back to Products
         </button>
       </div>
@@ -282,7 +284,7 @@ const ProductDetails = () => {
     return (
       <div className="product-not-found">
         <h2>Product not found</h2>
-        <button onClick={() => navigate(-1)} className="back-button">
+        <button onClick={() => goBack()} className="back-button">
           ← Back to Products
         </button>
       </div>

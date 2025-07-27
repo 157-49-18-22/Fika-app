@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { addReferrerToUrl } from "../../utils/navigationUtils.js";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -15,6 +16,7 @@ import { getWishGenieProducts, initializeWishGenieCollection } from '../../fireb
 
 const NewArrivalsWish = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("all");
   const [isAutoPlay, setIsAutoPlay] = useState(false);
   const [featuredProduct, setFeaturedProduct] = useState(null);
@@ -320,7 +322,7 @@ const NewArrivalsWish = () => {
       <div 
         key={product.id} 
         className="wish-product-card"
-        onClick={() => navigate(`/product-wish/${product.id}`)}
+                        onClick={() => navigate(addReferrerToUrl(`/product-wish/${product.id}`, location.pathname + location.search))}
       >
         <div className="wish-product-image">
           <img src={getFirstImage(product.image)} alt="" />
