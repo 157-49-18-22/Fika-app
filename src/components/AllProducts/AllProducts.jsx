@@ -595,6 +595,7 @@ const AllProducts = () => {
                   <div className="subcategory-options">
                     <label className="subcategory-checkbox">
                       <input
+                        style={{width:"fit-content"}}
                         type="radio"
                         name="subCategory"
                         value=""
@@ -606,6 +607,7 @@ const AllProducts = () => {
                     {subCategories.map((sub) => (
                       <label key={sub} className="subcategory-checkbox">
                         <input
+                          style={{width:"fit-content"}}
                           type="radio"
                           name="subCategory"
                           value={sub}
@@ -624,6 +626,7 @@ const AllProducts = () => {
                     <div className="subcategory-options">
                       <label className="subcategory-checkbox">
                         <input
+                          style={{width:"fit-content"}}
                           type="radio"
                           name="subCategory"
                           value=""
@@ -635,6 +638,7 @@ const AllProducts = () => {
                       {subCategories.map((sub) => (
                         <label key={sub} className="subcategory-checkbox">
                           <input
+                            style={{width:"fit-content"}}
                             type="radio"
                             name="subCategory"
                             value={sub}
@@ -654,6 +658,7 @@ const AllProducts = () => {
                         {[4, 3, 2, 1].map((star) => (
                           <label key={star} className="rating-checkbox">
                             <input
+                              style={{width:"fit-content"}}
                               type="radio"
                               name="minRating"
                               value={star}
@@ -665,6 +670,7 @@ const AllProducts = () => {
                         ))}
                         <label className="rating-checkbox">
                           <input
+                            style={{width:"fit-content"}}
                             type="radio"
                             name="minRating"
                             value={0}
@@ -817,7 +823,7 @@ const AllProducts = () => {
                     className="product-card"
                     onClick={() => navigate(addReferrerToUrl(`/product/${product.id}`, location.pathname + location.search))}
                   >
-                    <div className="product-image-container">
+                    <div className="product-image-container" style={{aspectRatio:'3/4'}}>
                       <img 
                         src={firstImage} 
                         alt={product.product_name} 

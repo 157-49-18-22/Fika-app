@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
+import { FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa';
 import './Products.css';
 import { db } from '../../firebase/config';
 import { 
@@ -22,6 +22,9 @@ const Products = () => {
   const [showModal, setShowModal] = useState(false);
   const [showBulkForm, setShowBulkForm] = useState(false);
   const [bulkJson, setBulkJson] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
   const [formData, setFormData] = useState({
     product_name: '',
     category: '',
@@ -62,6 +65,23 @@ const Products = () => {
       views: product.views || 0
     }));
   }, [products]);
+
+  // Filter products based on search term and price range
+  const filteredProducts = useMemo(() => {
+    return processedProducts.filter(product => {
+      // Search filter - check product code and name
+      const searchMatch = !searchTerm || 
+        (product.product_code && product.product_code.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        (product.product_name && product.product_name.toLowerCase().includes(searchTerm.toLowerCase()));
+
+      // Price filter
+      const price = Number(product.mrp) || 0;
+      const minPriceFilter = !minPrice || price >= Number(minPrice);
+      const maxPriceFilter = !maxPrice || price <= Number(maxPrice);
+
+      return searchMatch && minPriceFilter && maxPriceFilter;
+    });
+  }, [processedProducts, searchTerm, minPrice, maxPrice]);
 
   useEffect(() => {
     fetchProducts();
@@ -355,6 +375,59 @@ const Products = () => {
         </div>
       </div>
 
+      {/* Search and Filter Section */}
+      <div className="search-filter-section">
+        <div className="search-container">
+          <div className="search-input-wrapper">
+            <FaSearch className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search by product code or name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+              style={{
+                color: 'black',
+              }}
+            />
+          </div>
+        </div>
+        <div className="price-filter-container">
+          <div className="price-filter-group">
+            <label>Min Price (₹)</label>
+            <input
+              type="number"
+              placeholder="Min"
+              value={minPrice}
+              onChange={(e) => setMinPrice(e.target.value)}
+              className="price-input"
+              min="0"
+            />
+          </div>
+          <div className="price-filter-group">
+            <label>Max Price (₹)</label>
+            <input
+              type="number"
+              placeholder="Max"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value)}
+              className="price-input"
+              min="0"
+            />
+          </div>
+          <button
+            className="clear-filters-btn"
+            onClick={() => {
+              setSearchTerm('');
+              setMinPrice('');
+              setMaxPrice('');
+            }}
+          >
+            Clear Filters
+          </button>
+        </div>
+      </div>
+
       {showBulkForm && (
         <div className="bulk-form">
           <h3>Bulk Add Products</h3>
@@ -407,11 +480,18 @@ const Products = () => {
       )}
 
       <div className="products-table-container">
+        <div className="results-info">
+          <span>Showing {filteredProducts.length} of {processedProducts.length} products</span>
+          {(searchTerm || minPrice || maxPrice) && (
+            <span className="filter-active">(Filtered)</span>
+          )}
+        </div>
         <table className="products-table">
           <thead>
             <tr>
               <th>Image</th>
               <th>Name</th>
+              <th>Product Code</th>
               <th>Category</th>
               <th>Price</th>
               <th>Inventory</th>
@@ -420,7 +500,7 @@ const Products = () => {
             </tr>
           </thead>
           <tbody>
-            {processedProducts.map(product => (
+            {filteredProducts.map(product => (
               <tr key={`product-${product.id}`}>
                 <td>
                   {product.firstImage ? (
@@ -440,6 +520,7 @@ const Products = () => {
                   )}
                 </td>
                 <td>{product.product_name}</td>
+                <td>{product.product_code || 'N/A'}</td>
                 <td>{product.category}</td>
                 <td>₹{product.mrp}</td>
                 <td>{product.inventory}</td>
