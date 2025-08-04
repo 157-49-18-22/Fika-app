@@ -1814,3 +1814,107 @@ body.login-prompt-active {
         padding-left: 25px;
     }
 }
+
+/* Mobile Responsive Styles for Discount Display */
+@media (max-width: 768px) {
+    .product-price .current-price {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .product-price .current-price span[style*="text-decoration: line-through"] {
+        font-size: 16px !important;
+        margin-right: 0 !important;
+        margin-bottom: 4px;
+    }
+    
+    .product-price .current-price span[style*="color: #e74c3c"] {
+        font-size: 20px !important;
+        font-weight: bold;
+    }
+    
+    .product-price .current-price span[style*="background: #e74c3c"] {
+        font-size: 11px !important;
+        padding: 3px 8px !important;
+        border-radius: 4px !important;
+        margin-left: 0 !important;
+        margin-top: 4px;
+        align-self: center;
+    }
+    
+    .stock-status {
+        margin-top: 8px;
+        font-size: 14px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-price .current-price {
+        gap: 6px;
+    }
+    
+    .product-price .current-price span[style*="text-decoration: line-through"] {
+        font-size: 14px !important;
+    }
+    
+    .product-price .current-price span[style*="color: #e74c3c"] {
+        font-size: 18px !important;
+    }
+    
+    .product-price .current-price span[style*="background: #e74c3c"] {
+        font-size: 10px !important;
+        padding: 2px 6px !important;
+    }
+    
+    .stock-status {
+        font-size: 12px;
+    }
+}
+
+/* Mobile Responsive for Related Products Discount */
+@media (max-width: 768px) {
+    .related-products .product-price {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .related-products .product-price .original-price {
+        font-size: 12px !important;
+        margin-right: 0 !important;
+        margin-bottom: 2px;
+    }
+    
+    .related-products .product-price .current-price {
+        font-size: 16px !important;
+    }
+    
+    .related-products .product-price span[style*="background: #e74c3c"] {
+        font-size: 9px !important;
+        padding: 1px 4px !important;
+        margin-left: 0 !important;
+        margin-top: 2px;
+        align-self: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .related-products .product-price .original-price {
+        font-size: 11px !important;
+    }
+    
+    .related-products .product-price .current-price {
+        font-size: 14px !important;
+    }
+    
+    .related-products .product-price span[style*="background: #e74c3c"] {
+        font-size: 8px !important;
+        padding: 1px 3px !important;
+    }
+}
