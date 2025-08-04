@@ -123,6 +123,19 @@ const ProductDetailWish = () => {
       setShowLoginPrompt(true);
       return;
     }
+
+    // Check if product is in stock
+    if (product.inventory && product.inventory <= 0) {
+      alert('This product is currently out of stock.');
+      return;
+    }
+
+    // Check if requested quantity is available
+    if (product.inventory && quantity > product.inventory) {
+      alert(`Only ${product.inventory} items available in stock.`);
+      return;
+    }
+
     // Normalize product fields for cart
     const productToAdd = {
       id: product.id,
@@ -295,7 +308,20 @@ const ProductDetailWish = () => {
 
           <div className="product-meta">
             <div className="product-price">
-              <span className="current-price">Price: ₹{product.MRP}</span>
+              <span className="current-price">
+                Price: ₹{product.MRP}
+                <span className="stock-status">
+                  {product.inventory !== undefined && product.inventory !== null ? (
+                    product.inventory > 0 ? (
+                      <span className="in-stock"> • In Stock</span>
+                    ) : (
+                      <span className="out-of-stock"> • Out of Stock</span>
+                    )
+                  ) : (
+                    <span className="in-stock"> • In Stock</span>
+                  )}
+                </span>
+              </span>
             </div>
           </div>
 
@@ -327,16 +353,19 @@ const ProductDetailWish = () => {
                 <span>{quantity}</span>
                 <button
                   onClick={() => setQuantity((q) => q + 1)}
+                  disabled={product.inventory && quantity >= product.inventory}
                 >
                   +
                 </button>
               </div>
+
             </div>
 
             <div className="main-cart-actions">
               <button
                 className="main-add-to-cart-btn"
                 onClick={handleAddToCart}
+                disabled={product.inventory && product.inventory <= 0}
               >
                 <FaShoppingCart /> Add to Cart - ₹{product.MRP * quantity}
               </button>
@@ -467,6 +496,15 @@ const ProductDetailWish = () => {
                 <div className="product-price">
                   <span className="current-price">₹{relatedProduct.MRP}</span>
                 </div>
+                {relatedProduct.inventory !== undefined && (
+                  <div className="related-product-stock">
+                    {relatedProduct.inventory > 0 ? (
+                      <span className="in-stock">In Stock</span>
+                    ) : (
+                      <span className="out-of-stock">Out of Stock</span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           ))}

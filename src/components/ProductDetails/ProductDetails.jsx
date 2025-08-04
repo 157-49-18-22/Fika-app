@@ -1,3 +1,6 @@
+
+
+
 import React, { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useBackNavigation } from "../../utils/navigationUtils.js";
@@ -147,6 +150,8 @@ const ProductDetails = () => {
           sub_category: raw.sub_category || '',
         };
         console.log('Normalized product data:', normalized); // Debug log
+        console.log('Product inventory value:', normalized.inventory); // Debug inventory
+        console.log('Inventory type:', typeof normalized.inventory); // Debug inventory type
         setProduct(normalized);
 
         // Increment view count for this product
@@ -579,10 +584,22 @@ const ProductDetails = () => {
                 <FaShoppingBag /> {purchaseCount} people bought this
               </div>
             </div>
-            <div className="product-price">
-              {/* <span className="cost-price" style={{fontSize: '18px'}}>Price: ₹{product.cost_price}</span> */}
-              <span className="current-price" style={{fontSize: '18px'}}>Price:₹{product.mrp}</span>
-            </div>
+                         <div className="product-price">
+               <span className="current-price" style={{fontSize: '18px'}}>
+                 Price: ₹{product.mrp}
+                 <span className="stock-status">
+                   {product.inventory !== undefined && product.inventory !== null ? (
+                     product.inventory > 0 ? (
+                       <span className="in-stock"> • In Stock</span>
+                     ) : (
+                       <span className="out-of-stock"> • Out of Stock</span>
+                     )
+                   ) : (
+                     <span className="in-stock"> • In Stock</span>
+                   )}
+                 </span>
+               </span>
+             </div>
           </div>
 
           <div className="product-features">
@@ -700,18 +717,12 @@ const ProductDetails = () => {
                   <span>{quantity}</span>
                   <button
                     onClick={() => setQuantity((q) => q + 1)}
-                    disabled={quantity >= product.inventory}
+                    disabled={product.inventory !== undefined && product.inventory !== null && quantity >= product.inventory}
                   >
                     +
                   </button>
                 </div>
-                <div className="inventory-info">
-                  {product.inventory > 0 ? (
-                    <span className="in-stock">In Stock ({product.inventory} available)</span>
-                  ) : (
-                    <span className="out-of-stock">Out of Stock</span>
-                  )}
-                </div>
+                
               </div>
             </div>
 
@@ -719,7 +730,7 @@ const ProductDetails = () => {
               <button
                 className="main-add-to-cart-btn"
                 onClick={handleAddToCart}
-                disabled={product.inventory <= 0}
+                disabled={product.inventory !== undefined && product.inventory !== null && product.inventory <= 0}
               >
                 <FaShoppingCart /> Add to Cart - ₹{product.mrp * quantity}
               </button>

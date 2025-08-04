@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Hero.css";
+import bannerImage from "../../assets/banner001.jpg";
 
 function Hero() {
   const navigate = useNavigate();
+  const [showBanner, setShowBanner] = useState(true);
 
   const handleShopNow = () => {
     navigate('/new-arrivals');
@@ -13,9 +15,24 @@ function Hero() {
     navigate('/all-products');
   };
 
+  const handleCloseBanner = () => {
+    setShowBanner(false);
+  };
 
   return (
     <section className="hero" style={{position:'relative'}}>
+      {/* Banner Modal/Prompt */}
+      {showBanner && (
+        <div className="banner-modal-overlay">
+          <div className="banner-modal">
+            <button className="banner-close-btn" onClick={handleCloseBanner}>
+              ✕
+            </button>
+            <img src={bannerImage} alt="Fika Banner" className="banner-modal-image" />
+          </div>
+        </div>
+      )}
+
       <div className="hero-heading">
         <div className="hero-heading-content">
           <h1 className="hero-main-title">
