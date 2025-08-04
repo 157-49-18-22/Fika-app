@@ -120,6 +120,8 @@ const Products = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log('Form data before processing:', formData);
+      
       // Convert numeric fields to numbers
       const numericFormData = {
         ...formData,
@@ -128,6 +130,9 @@ const Products = () => {
         mrp: Number(formData.mrp),
         discount: formData.discount ? Number(formData.discount) : 0
       };
+      
+      console.log('Numeric form data:', numericFormData);
+      console.log('Discount value:', numericFormData.discount);
 
       if (selectedProduct) {
         // Update existing product
@@ -141,10 +146,12 @@ const Products = () => {
           
           if (!querySnapshot.empty) {
             const docRef = querySnapshot.docs[0].ref;
-            await updateDoc(docRef, {
+            const updateData = {
               ...numericFormData,
               updatedAt: serverTimestamp()
-            });
+            };
+            console.log('Updating product with data:', updateData);
+            await updateDoc(docRef, updateData);
             console.log('Product updated in Firebase by numeric ID:', selectedProduct.id);
           } else {
             throw new Error(`Product with numeric ID ${selectedProduct.id} not found`);
@@ -152,10 +159,12 @@ const Products = () => {
         } else {
           // If ID is a string (document ID), update directly
           const productRef = doc(db, 'products', selectedProduct.id);
-          await updateDoc(productRef, {
+          const updateData = {
             ...numericFormData,
             updatedAt: serverTimestamp()
-          });
+          };
+          console.log('Updating product with data:', updateData);
+          await updateDoc(productRef, updateData);
           console.log('Product updated in Firebase by document ID:', selectedProduct.id);
         }
       } else {
@@ -203,8 +212,27 @@ const Products = () => {
   };
 
   const handleEdit = (product) => {
+    console.log('Editing product:', product);
+    console.log('Product discount value:', product.discount);
     setSelectedProduct(product);
     setFormData({
+      product_name: product.product_name || '',
+      category: product.category || '',
+      sub_category: product.sub_category || '',
+      product_code: product.product_code || '',
+      color: product.color || '',
+      product_description: product.product_description || '',
+      material: product.material || '',
+      product_details: product.product_details || '',
+      dimension: product.dimension || '',
+      care_instructions: product.care_instructions || '',
+      inventory: product.inventory || '',
+      mrp: product.mrp || '',
+      discount: product.discount || '',
+      image: product.image || '',
+      featured: product.featured || false
+    });
+    console.log('Form data set to:', {
       product_name: product.product_name || '',
       category: product.category || '',
       sub_category: product.sub_category || '',
