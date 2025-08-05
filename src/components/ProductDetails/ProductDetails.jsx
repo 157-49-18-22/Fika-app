@@ -57,6 +57,34 @@ const formatPrice = (price) => {
   return `₹${numPrice.toFixed(2)}`;
 };
 
+// Helper function to calculate discounted price
+const calculateDiscountedPrice = (originalPrice, discountPercentage) => {
+  if (!discountPercentage || discountPercentage <= 0) return originalPrice;
+  return originalPrice * (1 - discountPercentage / 100);
+};
+
+// Helper function to format price with discount
+const formatPriceWithDiscount = (price, discount) => {
+  const originalPrice = Number(price) || 0;
+  const discountPercentage = Number(discount) || 0;
+  
+  if (!discountPercentage || discountPercentage <= 0) {
+    return {
+      original: null,
+      discounted: originalPrice.toFixed(2),
+      discountPercentage: 0
+    };
+  }
+  
+  const discountedPrice = calculateDiscountedPrice(originalPrice, discountPercentage);
+  
+  return {
+    original: originalPrice.toFixed(2),
+    discounted: discountedPrice.toFixed(2),
+    discountPercentage: discountPercentage
+  };
+};
+
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -152,6 +180,9 @@ const ProductDetails = () => {
         console.log('Normalized product data:', normalized); // Debug log
         console.log('Product inventory value:', normalized.inventory); // Debug inventory
         console.log('Inventory type:', typeof normalized.inventory); // Debug inventory type
+        console.log('Product discount value:', normalized.discount); // Debug discount
+        console.log('Product MRP value:', normalized.mrp); // Debug MRP
+        console.log('Price info for display:', formatPriceWithDiscount(normalized.mrp, normalized.discount)); // Debug price display
         setProduct(normalized);
 
         // Increment view count for this product
@@ -586,18 +617,39 @@ const ProductDetails = () => {
             </div>
                          <div className="product-price">
                <span className="current-price" style={{fontSize: '18px'}}>
-                 Price: ₹{product.mrp}
-                 <span className="stock-status">
-                   {product.inventory !== undefined && product.inventory !== null ? (
-                     product.inventory > 0 ? (
-                       <span className="in-stock"> • In Stock</span>
-                     ) : (
-                       <span className="out-of-stock"> • Out of Stock</span>
-                     )
-                   ) : (
-                     <span className="in-stock"> • In Stock</span>
-                   )}
-                 </span>
+                 {(() => {
+                   const priceInfo = formatPriceWithDiscount(product.mrp, product.discount);
+                   return (
+                     <>
+                       {priceInfo.original ? (
+                         <>
+                           <span style={{textDecoration: 'line-through', color: '#999', marginRight: '10px'}}>
+                             ₹{priceInfo.original}
+                           </span>
+                           <span style={{color: '#e74c3c', fontWeight: 'bold'}}>
+                             ₹{priceInfo.discounted}
+                           </span>
+                           <span style={{background: '#e74c3c', color: 'white', padding: '2px 6px', borderRadius: '3px', fontSize: '12px', marginLeft: '8px'}}>
+                             -{priceInfo.discountPercentage}%
+                           </span>
+                         </>
+                       ) : (
+                         <span>₹{priceInfo.discounted}</span>
+                       )}
+                       <span className="stock-status">
+                         {product.inventory !== undefined && product.inventory !== null ? (
+                           product.inventory > 0 ? (
+                             <span className="in-stock"> • In Stock</span>
+                           ) : (
+                             <span className="out-of-stock"> • Out of Stock</span>
+                           )
+                         ) : (
+                           <span className="in-stock"> • In Stock</span>
+                         )}
+                       </span>
+                     </>
+                   );
+                 })()}
                </span>
              </div>
           </div>
@@ -968,9 +1020,30 @@ const ProductDetails = () => {
                   <h3 className="product-name">{product.product_name}</h3>
                   <p className="product-category">{product.category} - {product.sub_category}</p>
                   <div className="product-price">
-                    <span className="current-price">
-                      ₹{Number(product.mrp).toFixed(2)}
-                    </span>
+                    {(() => {
+                      const priceInfo = formatPriceWithDiscount(product.mrp, product.discount);
+                      return (
+                        <>
+                          {priceInfo.original ? (
+                            <>
+                              <span className="original-price" style={{textDecoration: 'line-through', color: '#999', fontSize: '14px', marginRight: '5px'}}>
+                                ₹{priceInfo.original}
+                              </span>
+                              <span className="current-price" style={{color: '#e74c3c', fontWeight: 'bold'}}>
+                                ₹{priceInfo.discounted}
+                              </span>
+                              <span style={{background: '#e74c3c', color: 'white', padding: '1px 4px', borderRadius: '2px', fontSize: '10px', marginLeft: '4px'}}>
+                                -{priceInfo.discountPercentage}%
+                              </span>
+                            </>
+                          ) : (
+                            <span className="current-price">
+                              ₹{priceInfo.discounted}
+                            </span>
+                          )}
+                        </>
+                      );
+                    })()}
                   </div>
                   
                   <button className="shop-now-btn">
