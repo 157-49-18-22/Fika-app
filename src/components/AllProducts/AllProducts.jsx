@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useWishlist } from "../../context/WishlistContext.jsx";
 import { useCart } from "../../context/CartContext.jsx";
 import { addReferrerToUrl } from "../../utils/navigationUtils.js";
-import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight, FaSlidersH, FaDollarSign, FaSortAmountDown, FaBed, FaCouch, FaGift } from "react-icons/fa";
+import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight, FaSlidersH, FaDollarSign, FaSortAmountDown, FaBed, FaCouch, FaGift, FaBoxOpen } from "react-icons/fa";
 import { GiLargeDress, GiRunningShoe, GiWatch, GiHeartNecklace, GiTrousers } from "react-icons/gi";
 import "./AllProductsStyles.css";
 import { db } from '../../firebase/config';
@@ -15,6 +15,7 @@ const CATEGORY_SUBCATEGORIES = {
   "Bedsets": ["Bedcover", "Bedsheet"],
   "Dohars & Quilts": ["Baby Quilts", "Dohar", "Quilt"],
   "Wish Genie": ["Scented Candles", "Crystal Jewellery", "Journals"],
+  "Gifting": ["Gift Sets", "Personalized Gifts", "Occasion Gifts"],
   "Men's Shirts": ["Formal Shirts", "Casual Shirts", "Denim Shirts", "Printed Shirts", "Linen Shirts"]
 };
 
@@ -290,6 +291,7 @@ const AllProducts = () => {
     { id: "Dohars & Quilts", name: "Dohars & Quilts", icon: <FaBed /> },
     { id: "Bags & Pouches", name: "Bags & Pouches", icon: <FaTshirt /> },
     { id: "wish-genie", name: "Wish Genie", icon: <FaGift /> },
+    { id: "Gifting", name: "Gifting", icon: <FaBoxOpen /> },
   ];
 
   const sortOptions = [
@@ -556,7 +558,7 @@ const AllProducts = () => {
                     >
                       <span className="category-dropdown-icon">{category.icon}</span>
                       <span className="category-dropdown-text">{category.name}</span>
-                      {category.name !== "Wish Genie" && (
+                      {category.name !== "Wish Genie" && category.name !== "Gifting" && (
                         <span className="category-dropdown-count">({categoryCounts[category.id]})</span>
                       )}
                     </button>
@@ -589,7 +591,7 @@ const AllProducts = () => {
 
             <div className={`filter-content ${filtersVisible ? 'visible' : ''}`}>
               {/* Show sub-category dropdown if a main category is selected, else show rating filter */}
-              {selectedCategory !== "All Products" && selectedCategory !== "Wish Genie" && subCategories.length > 0 ? (
+              {selectedCategory !== "All Products" && selectedCategory !== "Wish Genie" && selectedCategory !== "Gifting" && subCategories.length > 0 ? (
                 <div className="filter-group">
                   <h4>Sub-category</h4>
                   <div className="subcategory-options">
@@ -650,8 +652,38 @@ const AllProducts = () => {
                       ))}
                     </div>
                   </div>
+                ) : selectedCategory === "Gifting" && subCategories.length > 0 ? (
+                  <div className="filter-group gifting-subcategories">
+                    <h4>Sub-category</h4>
+                    <div className="subcategory-options">
+                      <label className="subcategory-checkbox">
+                        <input
+                          style={{width:"fit-content"}}
+                          type="radio"
+                          name="subCategory"
+                          value=""
+                          checked={selectedSubCategory === ""}
+                          onChange={() => setSelectedSubCategory("")}
+                        />
+                        <span>All</span>
+                      </label>
+                      {subCategories.map((sub) => (
+                        <label key={sub} className="subcategory-checkbox">
+                          <input
+                            style={{width:"fit-content"}}
+                            type="radio"
+                            name="subCategory"
+                            value={sub}
+                            checked={selectedSubCategory === sub}
+                            onChange={() => setSelectedSubCategory(sub)}
+                          />
+                          <span>{sub}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
                 ) : (
-                  selectedCategory !== "Wish Genie" && (
+                  selectedCategory !== "Wish Genie" && selectedCategory !== "Gifting" && (
                     <div className="filter-group">
                       <h4><FaStar /> Minimum Rating</h4>
                       <div className="rating-options">
