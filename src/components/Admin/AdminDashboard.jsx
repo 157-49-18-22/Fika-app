@@ -228,6 +228,10 @@ const AdminDashboard = () => {
             <span className="nav-icon"><AiOutlineBell /></span>
             <span className="nav-text">Notifications</span>
           </NavLink>
+          <NavLink to="/admin/testimonials" className={({ isActive }) => 'nav-item' + (isActive ? ' active' : '')}>
+            <span className="nav-icon"><FaStar /></span>
+            <span className="nav-text">Testimonials</span>
+          </NavLink>
           <button onClick={handleLogout} className="nav-item logout">
             <span className="nav-icon"><AiOutlineLogout /></span>
             <span className="nav-text">Logout</span>
