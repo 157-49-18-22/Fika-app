@@ -51,7 +51,7 @@ import SavedCart from './Component/SavedCart/SavedCart.jsx';
 import CartManagement from './components/Admin/CartManagement';
 import WishlistManagement from './components/Admin/WishlistManagement.jsx';
 import TestimonialsManagement from './components/Admin/TestimonialsManagement.jsx';
-import './utils/testS3Urls.js';
+
 
 // Layout component with navbar and footer
 const PageLayout = ({ children }) => {
