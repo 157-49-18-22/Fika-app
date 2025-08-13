@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FaSearch, FaChevronRight, FaCalendarAlt, FaUserAlt, FaClock, FaHeart, FaComment, FaGlobeAmericas, FaTshirt, FaGem, FaLeaf, FaFeatherAlt, FaStar } from "react-icons/fa";
 import "./FeaturedStories.css";
 import axios from "axios";
 import Testimonials from "../Testimonials/Testimonials.jsx";
 import { motion } from "framer-motion";
+import { db } from "../../firebase/config";
+import { collection, getDocs, query, where, orderBy, limit } from "firebase/firestore";
 
 const FeaturedStories = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -13,23 +15,80 @@ const FeaturedStories = () => {
   const [expandedPost, setExpandedPost] = useState(null);
   const [fadeIn, setFadeIn] = useState(false);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [dynamicTestimonials, setDynamicTestimonials] = useState([]);
 
   useEffect(() => {
     setFadeIn(true);
+    fetchTestimonials();
   }, []);
+
+  // Fetch testimonials from Firestore
+  const fetchTestimonials = async () => {
+    try {
+      console.log('🔍 Fetching testimonials from Firestore...');
+      const testimonialsRef = collection(db, 'testimonials');
+      // First try to get all testimonials to see what's in the database
+      console.log('🔍 Trying to get all testimonials first...');
+      let allTestimonials = await getDocs(testimonialsRef);
+      console.log('📊 All testimonials in database:', allTestimonials.docs.length);
+      
+      allTestimonials.docs.forEach((doc, index) => {
+        console.log(`📄 Testimonial ${index + 1}:`, doc.data());
+      });
+      
+      // Now try the filtered query
+      const q = query(
+        testimonialsRef, 
+        where('status', '==', 'active'),
+        orderBy('createdAt', 'desc'),
+        limit(10)
+      );
+      let querySnapshot;
+      try {
+        querySnapshot = await getDocs(q);
+        console.log('📊 Filtered query result:', querySnapshot.docs.length, 'testimonials');
+      } catch (filterError) {
+        console.log('⚠️ Filtered query failed, trying without filters...');
+        // If filtered query fails, try without filters
+        querySnapshot = allTestimonials;
+      }
+      
+      console.log('📊 Final query snapshot:', querySnapshot);
+      console.log('📝 Number of testimonials found:', querySnapshot.docs.length);
+      
+      const testimonialsData = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        console.log('📄 Document data:', data);
+        return {
+          id: doc.id,
+          ...data
+        };
+      });
+      
+      console.log('✅ Processed testimonials data:', testimonialsData);
+      setDynamicTestimonials(testimonialsData);
+      console.log('🔄 State updated with testimonials count:', testimonialsData.length);
+    } catch (error) {
+      console.error('❌ Error fetching testimonials:', error);
+      // Fallback to static testimonials if database fails
+      setDynamicTestimonials([]);
+    }
+  };
 
   // Auto-cycle testimonials on mobile
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % 3);
-    }, 5000); // Change every 5 seconds
+    if (dynamicTestimonials.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentTestimonial((prev) => (prev + 1) % dynamicTestimonials.length);
+      }, 5000); // Change every 5 seconds
 
-    return () => clearInterval(interval);
-  }, []);
+      return () => clearInterval(interval);
+    }
+  }, [dynamicTestimonials]);
 
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const handleTestimonialChange = (newIndex) => {
+  const handleTestimonialChange = useCallback((newIndex) => {
     if (newIndex === currentTestimonial) return;
     
     setIsTransitioning(true);
@@ -37,16 +96,18 @@ const FeaturedStories = () => {
       setCurrentTestimonial(newIndex);
       setIsTransitioning(false);
     }, 250);
-  };
+  }, [currentTestimonial]);
 
   // Auto-cycle with smooth transition
   useEffect(() => {
-    const interval = setInterval(() => {
-      handleTestimonialChange((currentTestimonial + 1) % 3);
-    }, 5000);
+    if (dynamicTestimonials.length > 0) {
+      const interval = setInterval(() => {
+        handleTestimonialChange((currentTestimonial + 1) % dynamicTestimonials.length);
+      }, 5000);
 
-    return () => clearInterval(interval);
-  }, [currentTestimonial]);
+      return () => clearInterval(interval);
+    }
+  }, [currentTestimonial, dynamicTestimonials.length, handleTestimonialChange]);
 
   const testimonials = [
     {
@@ -429,113 +490,111 @@ const FeaturedStories = () => {
         >
           {/* Desktop Testimonials Grid */}
           <div className="testimonials-grid">
-            <div className="testimonial-card featured">
-              <div className="testimonial-content">
-                <div className="quote-icon">"</div>
-                <p className="testimonial-text">
-                  "I was looking for quality bedsheets that would last, and Fika delivered beyond my expectations! The cotton feels so soft against my skin, and even after multiple washes, the colors stay vibrant. My family loves them too!"
-                </p>
-                <div className="testimonial-author">
-                  <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop" alt="Priya Sharma" className="author-image" />
-                  <div className="author-info">
-                    <h4 className="author-name">Priya Sharma</h4>
-                    <p className="author-title">Delhi</p>
-                    <div className="rating">
-                      <FaStar className="star" />
-                      <FaStar className="star" />
-                      <FaStar className="star" />
-                      <FaStar className="star" />
-                      <FaStar className="star" />
-                    </div>
+            {(() => {
+              // Combine dynamic and static testimonials
+              let allTestimonials = [];
+              
+              // Add dynamic testimonials first (they get priority)
+              if (dynamicTestimonials.length > 0) {
+                allTestimonials.push(...dynamicTestimonials);
+              }
+              
+              // Add static testimonials to fill up to 3 total
+              const remainingSlots = 3 - allTestimonials.length;
+              if (remainingSlots > 0) {
+                allTestimonials.push(...testimonials.slice(0, remainingSlots));
+              }
+              
+              // Show up to 3 testimonials
+              return allTestimonials.slice(0, 3).map((testimonial, index) => (
+                <div key={testimonial.id || index} className={`testimonial-card ${index === 0 ? 'featured' : ''}`}>
+                  <div className="testimonial-content">
+                    <div className="quote-icon">"</div>
+                    <p className="testimonial-text">
+                      "{testimonial.text}"
+                    </p>
+                                                 <div className="testimonial-author">
+                               <div className="author-info">
+                                 <h4 className="author-name">{testimonial.author}</h4>
+                                 <p className="author-title">{testimonial.location}</p>
+                                 <div className="rating">
+                                   {[...Array(5)].map((_, starIndex) => (
+                                     <FaStar 
+                                       key={starIndex} 
+                                       className={`star ${starIndex < (testimonial.rating || 5) ? 'filled' : ''}`} 
+                                     />
+                                   ))}
+                                 </div>
+                               </div>
+                             </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div className="testimonial-card">
-              <div className="testimonial-content">
-                <div className="quote-icon">"</div>
-                <p className="testimonial-text">
-                  "The cushion covers I ordered match perfectly with my living room decor! The fabric quality is excellent, and the zippers are sturdy. Delivery was quick too - ordered on Monday and received by Thursday!"
-                </p>
-                <div className="testimonial-author">
-                  <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop" alt="Arjun Patel" className="author-image" />
-                  <div className="author-info">
-                    <h4 className="author-name">Arjun Patel</h4>
-                    <p className="author-title">Mumbai</p>
-                    <div className="rating">
-                      <FaStar className="star" />
-                      <FaStar className="star" />
-                      <FaStar className="star" />
-                      <FaStar className="star" />
-                      <FaStar className="star" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="testimonial-card">
-              <div className="testimonial-content">
-                <div className="quote-icon">"</div>
-                <p className="testimonial-text">
-                  "During the monsoon season, I needed quick-drying bedsheets, and a friend recommended Fika. Not only do they dry fast, but they're also so comfortable! Customer service helped me choose the right material over WhatsApp. Truly amazing!"
-                </p>
-                <div className="testimonial-author">
-                  <img src="https://images.unsplash.com/photo-1607346256330-dee7af15f7c5?w=150&h=150&fit=crop" alt="Kavita Reddy" className="author-image" />
-                  <div className="author-info">
-                    <h4 className="author-name">Kavita Reddy</h4>
-                    <p className="author-title">Bangalore</p>
-                    <div className="rating">
-                      <FaStar className="star" />
-                      <FaStar className="star" />
-                      <FaStar className="star" />
-                      <FaStar className="star" />
-                      <FaStar className="star" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              ));
+            })()}
           </div>
 
           {/* Mobile Single Testimonial */}
           <div className="mobile-testimonial-container">
-            <div className="mobile-testimonial-card">
-              <div className="quote-icon">"</div>
-              <div className={`mobile-testimonial-content ${isTransitioning ? 'fade-out' : ''}`}>
-                <p className="mobile-testimonial-text">
-                  "{testimonials[currentTestimonial].text}"
-                </p>
-                <div className="mobile-testimonial-author">
-                  <img 
-                    src={testimonials[currentTestimonial].image} 
-                    alt={testimonials[currentTestimonial].author} 
-                    className="mobile-author-image" 
-                  />
-                  <div className="mobile-author-info">
-                    <h4 className="mobile-author-name">{testimonials[currentTestimonial].author}</h4>
-                    <p className="mobile-author-title">{testimonials[currentTestimonial].location}</p>
-                    <div className="mobile-rating">
-                      <FaStar className="star" />
-                      <FaStar className="star" />
-                      <FaStar className="star" />
-                      <FaStar className="star" />
-                      <FaStar className="star" />
+            {(() => {
+              // Combine dynamic and static testimonials for mobile
+              let allMobileTestimonials = [];
+              
+              // Add dynamic testimonials first
+              if (dynamicTestimonials.length > 0) {
+                allMobileTestimonials.push(...dynamicTestimonials);
+              }
+              
+              // Add static testimonials to fill up
+              const remainingSlots = Math.max(3, allMobileTestimonials.length) - allMobileTestimonials.length;
+              if (remainingSlots > 0) {
+                allMobileTestimonials.push(...testimonials.slice(0, remainingSlots));
+              }
+              
+              // Ensure we have at least 3 testimonials
+              if (allMobileTestimonials.length === 0) {
+                allMobileTestimonials = testimonials;
+              }
+              
+              const currentTestimonialData = allMobileTestimonials[currentTestimonial % allMobileTestimonials.length];
+              
+              return (
+                <>
+                  <div className="mobile-testimonial-card">
+                    <div className="quote-icon">"</div>
+                    <div className={`mobile-testimonial-content ${isTransitioning ? 'fade-out' : ''}`}>
+                      <p className="mobile-testimonial-text">
+                        "{currentTestimonialData?.text || 'Loading...'}"
+                      </p>
+                      <div className="mobile-testimonial-author">
+                        <div className="mobile-author-info">
+                          <h4 className="mobile-author-name">{currentTestimonialData?.author || 'Loading...'}</h4>
+                          <p className="mobile-author-title">{currentTestimonialData?.location || 'Location'}</p>
+                          <div className="mobile-rating">
+                            {[...Array(5)].map((_, starIndex) => (
+                              <FaStar 
+                                key={starIndex} 
+                                className={`star ${starIndex < (currentTestimonialData?.rating || 5) ? 'filled' : ''}`} 
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Navigation Dots */}
-            <div className="testimonial-dots">
-              {testimonials.map((_, index) => (
-                <div
-                  key={index}
-                  className={`testimonial-dot ${index === currentTestimonial ? 'active' : ''}`}
-                  onClick={() => handleTestimonialChange(index)}
-                />
-              ))}
-            </div>
+                  
+                  {/* Navigation Dots */}
+                  <div className="testimonial-dots">
+                    {allMobileTestimonials.map((_, index) => (
+                      <div
+                        key={index}
+                        className={`testimonial-dot ${index === (currentTestimonial % allMobileTestimonials.length) ? 'active' : ''}`}
+                        onClick={() => handleTestimonialChange(index)}
+                      />
+                    ))}
+                  </div>
+                </>
+              );
+            })()}
           </div>
         </motion.div>
       </section>
