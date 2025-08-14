@@ -41,7 +41,7 @@ const FeaturedStories = () => {
         testimonialsRef, 
         where('status', '==', 'active'),
         orderBy('createdAt', 'desc'),
-        limit(10)
+        limit(50) // Increased limit to allow more testimonials
       );
       let querySnapshot;
       try {
@@ -66,6 +66,7 @@ const FeaturedStories = () => {
       });
       
       console.log('✅ Processed testimonials data:', testimonialsData);
+      console.log('🔄 Setting state with testimonials count:', testimonialsData.length);
       setDynamicTestimonials(testimonialsData);
       console.log('🔄 State updated with testimonials count:', testimonialsData.length);
     } catch (error) {
@@ -481,6 +482,20 @@ const FeaturedStories = () => {
           <span className="testimonials-subtitle">TESTIMONIALS</span>
           <h2 className="testimonials-title">What Our Customers Say</h2>
           <div className="testimonials-divider"></div>
+          {/* Add testimonial counter */}
+          <div className="testimonials-counter">
+            <span className="counter-text">
+              Showing {(() => {
+                let totalCount = 0;
+                if (dynamicTestimonials.length > 0) {
+                  totalCount = dynamicTestimonials.length;
+                } else if (testimonials.length > 0) {
+                  totalCount = testimonials.length;
+                }
+                return totalCount;
+              })()} customer testimonials
+            </span>
+          </div>
         </div>
         <motion.div 
           className="testimonials-wrapper"
@@ -497,16 +512,19 @@ const FeaturedStories = () => {
               // Add dynamic testimonials first (they get priority)
               if (dynamicTestimonials.length > 0) {
                 allTestimonials.push(...dynamicTestimonials);
+                console.log('📱 Desktop: Using dynamic testimonials:', dynamicTestimonials.length);
               }
               
-              // Add static testimonials to fill up to 3 total
-              const remainingSlots = 3 - allTestimonials.length;
-              if (remainingSlots > 0) {
-                allTestimonials.push(...testimonials.slice(0, remainingSlots));
+              // Add static testimonials to fill up if no dynamic ones
+              if (allTestimonials.length === 0) {
+                allTestimonials = testimonials;
+                console.log('📱 Desktop: Using static testimonials:', testimonials.length);
               }
               
-              // Show up to 3 testimonials
-              return allTestimonials.slice(0, 3).map((testimonial, index) => (
+              console.log('📱 Desktop: Total testimonials to display:', allTestimonials.length);
+              
+              // Show all testimonials, not just 3
+              return allTestimonials.map((testimonial, index) => (
                 <div key={testimonial.id || index} className={`testimonial-card ${index === 0 ? 'featured' : ''}`}>
                   <div className="testimonial-content">
                     <div className="quote-icon">"</div>
@@ -542,18 +560,22 @@ const FeaturedStories = () => {
               // Add dynamic testimonials first
               if (dynamicTestimonials.length > 0) {
                 allMobileTestimonials.push(...dynamicTestimonials);
+                console.log('📱 Mobile: Using dynamic testimonials:', dynamicTestimonials.length);
               }
               
-              // Add static testimonials to fill up
-              const remainingSlots = Math.max(3, allMobileTestimonials.length) - allMobileTestimonials.length;
-              if (remainingSlots > 0) {
-                allMobileTestimonials.push(...testimonials.slice(0, remainingSlots));
+              // Add static testimonials to fill up if no dynamic ones
+              if (allMobileTestimonials.length === 0) {
+                allMobileTestimonials = testimonials;
+                console.log('📱 Mobile: Using static testimonials:', testimonials.length);
               }
               
-              // Ensure we have at least 3 testimonials
+              // Ensure we have at least 1 testimonial
               if (allMobileTestimonials.length === 0) {
                 allMobileTestimonials = testimonials;
               }
+              
+              console.log('📱 Mobile: Total testimonials available:', allMobileTestimonials.length);
+              console.log('📱 Mobile: Current testimonial index:', currentTestimonial);
               
               const currentTestimonialData = allMobileTestimonials[currentTestimonial % allMobileTestimonials.length];
               
@@ -591,6 +613,13 @@ const FeaturedStories = () => {
                         onClick={() => handleTestimonialChange(index)}
                       />
                     ))}
+                  </div>
+                  
+                  {/* Mobile Testimonial Counter */}
+                  <div className="mobile-testimonial-counter">
+                    <span className="mobile-counter-text">
+                      {currentTestimonial + 1} of {allMobileTestimonials.length} testimonials
+                    </span>
                   </div>
                 </>
               );
