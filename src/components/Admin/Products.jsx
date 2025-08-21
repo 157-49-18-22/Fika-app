@@ -40,6 +40,7 @@ const Products = () => {
     mrp: '',
     discount: '',
     image: '',
+    views: '',
     featured: false
   });
 
@@ -128,7 +129,8 @@ const Products = () => {
         cost_price: Number(formData.cost_price),
         inventory: Number(formData.inventory),
         mrp: Number(formData.mrp),
-        discount: formData.discount ? Number(formData.discount) : 0
+        discount: formData.discount ? Number(formData.discount) : 0,
+        views: formData.views === '' ? 0 : Number(formData.views)
       };
       
       console.log('Numeric form data:', numericFormData);
@@ -200,6 +202,7 @@ const Products = () => {
         mrp: '',
         discount: '',
         image: '',
+        views: '',
         featured: false
       });
       
@@ -230,6 +233,7 @@ const Products = () => {
       mrp: product.mrp || '',
       discount: product.discount || '',
       image: product.image || '',
+      views: product.views || '',
       featured: product.featured || false
     });
     console.log('Form data set to:', {
@@ -701,6 +705,16 @@ const Products = () => {
                 />
               </div>
               <div className="form-group">
+                <label>Views (people)</label>
+                <input
+                  type="number"
+                  name="views"
+                  value={formData.views}
+                  onChange={handleInputChange}
+                  min="0"
+                />
+              </div>
+              <div className="form-group">
                 <label>Image URL</label>
                 <input
                   type="text"
@@ -746,6 +760,7 @@ const Products = () => {
                       mrp: '',
                       discount: '',
                       image: '',
+                      views: '',
                       featured: false
                     });
                   }}

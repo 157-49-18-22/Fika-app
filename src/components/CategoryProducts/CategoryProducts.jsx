@@ -435,7 +435,8 @@ const CategoryProducts = () => {
             product_code: productData.product_code || '',
             product_description: productData.product_description || '',
             inventory: productData.inventory || 0,
-            featured: productData.featured || false
+            featured: productData.featured || false,
+            views: productData.views || 0
           };
           regularProducts.push(normalizedProduct);
         });
@@ -833,6 +834,10 @@ const CategoryProducts = () => {
                   >
                     <FiHeart />
                   </button>
+                  <div className="views-overlay" title="Views">
+                    <img src="/Eye3.png" alt="views" className="views-icon-img" />
+                    <span>{product.views || 0}</span>
+                  </div>
                 </div>
                 <div className="product-info">
                   <h3>{product.name}</h3>

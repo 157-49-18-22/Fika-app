@@ -36,6 +36,7 @@ const WishGenieProducts = () => {
     'Wax color': '',
     'Weight': '',
     'warning': '',
+    views: '',
     image: null
   });
   
@@ -149,6 +150,7 @@ const WishGenieProducts = () => {
       'Wax color': product['Wax color'] || '',
       'Weight': product['Weight'] || '',
       'warning': product['warning'] || '',
+      views: product.views || '',
       image: product.image || ''
     });
     setShowForm(true);
@@ -169,6 +171,7 @@ const WishGenieProducts = () => {
       const productData = {
         ...formData,
         image: imageUrl,
+        views: formData.views === '' ? 0 : Number(formData.views),
         updatedAt: new Date()
       };
 
@@ -205,6 +208,7 @@ const WishGenieProducts = () => {
         'Wax color': '',
         'Weight': '',
         'warning': '',
+        views: '',
         image: null
       });
       fetchProducts();
@@ -583,6 +587,16 @@ const WishGenieProducts = () => {
                     value={formData['Product code']}
                     onChange={handleInputChange}
                     required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Views (people):</label>
+                  <input
+                    type="number"
+                    name="views"
+                    value={formData.views}
+                    onChange={handleInputChange}
+                    min="0"
                   />
                 </div>
               </div>

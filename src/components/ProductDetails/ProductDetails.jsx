@@ -989,7 +989,10 @@ const ProductDetails = () => {
                     className="product-image" 
                     loading="lazy" 
                   />
-                  
+                  <div className="views-overlay" title="Views">
+                    <img src="/Eye3.png" alt="views" className="views-icon-img" />
+                    <span>{product.views || 0}</span>
+                  </div>
                   <div className="product-actions">
                     <button 
                       className="product-action-btn cart-btn"
@@ -1080,7 +1083,10 @@ const ProductDetails = () => {
                     className="product-image" 
                     loading="lazy" 
                   />
-                  
+                  <div className="views-overlay" title="Views">
+                    <img src="/Eye3.png" alt="views" className="views-icon-img" />
+                    <span>{product.views || 0}</span>
+                  </div>
                   <div className="product-actions">
                     <button 
                       className="product-action-btn cart-btn"
@@ -1150,7 +1156,10 @@ const ProductDetails = () => {
                     className="product-image" 
                     loading="lazy" 
                   />
-                  
+                  <div className="views-overlay" title="Views">
+                    <img src="/Eye3.png" alt="views" className="views-icon-img" />
+                    <span>{product.views || 0}</span>
+                  </div>
                   <div className="product-actions">
                     <button 
                       className="product-action-btn cart-btn"

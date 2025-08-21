@@ -944,6 +944,27 @@
     object-fit: cover;
 }
 
+/* Views overlay for related/recent/trending product cards */
+.product-image-container { position: relative; }
+.views-overlay {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    border-radius: 16px;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    font-size: 0.85rem;
+}
+.product-card:hover .views-overlay { opacity: 1; transform: translateY(0); }
+.views-icon-img { width: 16px; height: 16px; display: block; }
+
 .product-actions {
     position: absolute;
     top: 1rem;
