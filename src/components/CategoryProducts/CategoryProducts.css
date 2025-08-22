@@ -243,15 +243,12 @@
   background: rgba(0,0,0,0.55);
   color: #fff;
   border-radius: 16px;
-  opacity: 0;
-  transform: translateY(-6px);
+  opacity: 1;
+  transform: translateY(0);
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-.product-card:hover .views-overlay {
-  opacity: 1;
-  transform: translateY(0);
-}
+.product-card:hover .views-overlay { opacity: 1; transform: translateY(0); }
 
 .product-image img {
   width: 100%;

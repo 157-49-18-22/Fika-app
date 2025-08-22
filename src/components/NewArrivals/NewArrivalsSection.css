@@ -425,6 +425,24 @@
     transition: transform 0.5s ease;
 }
 
+/* Always-visible views overlay */
+.product-image-container { position: relative; }
+.views-overlay {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    border-radius: 16px;
+    opacity: 1;
+    transform: translateY(0);
+}
+.views-icon-img { width: 16px; height: 16px; display: block; }
+
 .arrivals-product-card:hover .arrivals-product-image img {
     transform: scale(1.05);
 }
