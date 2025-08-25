@@ -170,7 +170,7 @@ const ProductDetails = () => {
           product_name: raw.product_name || '',
           product_code: raw.product_code || '',
           category: raw.category || '',
-          sub_category: raw.sub_category || '',
+    
         };
         console.log('Normalized product data:', normalized); // Debug log
         console.log('Product inventory value:', normalized.inventory); // Debug inventory
@@ -901,7 +901,7 @@ const ProductDetails = () => {
                   <ul>
                     <li><strong>Product Code:</strong> {product.product_code}</li>
                     <li><strong>Category:</strong> {product.category}</li>
-                    <li><strong>Sub Category:</strong> {product.sub_category}</li>
+
                     <li><strong>Color:</strong> {product.color}</li>
                     <li><strong>Material:</strong> {product.material}</li>
                     <li><strong>Product Details:</strong> {product.product_details}</li>
@@ -1058,7 +1058,9 @@ const ProductDetails = () => {
                 
                 <div className="product-info">
                   <h3 className="product-name">{product.product_name}</h3>
-                  <p className="product-category">{product.category} - {product.sub_category}</p>
+                                    <p className="product-category">
+                    {product.category}
+                  </p>
                   <div className="product-price">
                     {(() => {
                       const priceInfo = formatPriceWithDiscount(product.mrp, product.discount);
@@ -1152,7 +1154,9 @@ const ProductDetails = () => {
                 
                 <div className="product-info">
                   <h3 className="product-name">{product.product_name}</h3>
-                  <p className="product-category">{product.category} - {product.sub_category}</p>
+                  <p className="product-category">
+                    {product.category}
+                  </p>
                   <div className="product-price">
                     <span className="current-price">
                       ₹{Number(product.mrp).toFixed(2)}
@@ -1225,7 +1229,9 @@ const ProductDetails = () => {
                 
                 <div className="product-info">
                   <h3 className="product-name">{product.product_name}</h3>
-                  <p className="product-category">{product.category} - {product.sub_category}</p>
+                  <p className="product-category">
+                    {product.category}
+                  </p>
                   <div className="product-price">
                     <span className="current-price">
                       ₹{Number(product.mrp).toFixed(2)}

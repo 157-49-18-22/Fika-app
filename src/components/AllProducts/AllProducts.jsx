@@ -9,15 +9,7 @@ import "./AllProductsStyles.css";
 import { db } from '../../firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
 
-// Category and sub-category mapping
-const CATEGORY_SUBCATEGORIES = {
-  "Cushions": ["Cushion Cover"],
-  "Bedsets": ["Bedcover", "Bedsheet"],
-  "Dohars & Quilts": ["Baby Quilts", "Dohar", "Quilt"],
-  "Wish Genie": ["Scented Candles", "Crystal Jewellery", "Journals"],
-  "Gifting": ["Gift Sets", "Personalized Gifts", "Occasion Gifts"],
-  "Men's Shirts": ["Formal Shirts", "Casual Shirts", "Denim Shirts", "Printed Shirts", "Linen Shirts"]
-};
+
 
 const AllProducts = () => {
   const [products, setProducts] = useState([]);
@@ -47,9 +39,7 @@ const AllProducts = () => {
     return categoryFromUrl || "All Products";
   });
   
-  const [selectedSubCategory, setSelectedSubCategory] = useState(() => {
-    return searchParams.get('subCategory') || "";
-  });
+
   
   const [sortOption, setSortOption] = useState(() => {
     return searchParams.get('sort') || "featured";
@@ -92,11 +82,7 @@ const AllProducts = () => {
       params.delete('category');
     }
     
-    if (newFilters.subCategory) {
-      params.set('subCategory', newFilters.subCategory);
-    } else {
-      params.delete('subCategory');
-    }
+
     
     if (newFilters.sort && newFilters.sort !== "featured") {
       params.set('sort', newFilters.sort);
@@ -148,20 +134,19 @@ const AllProducts = () => {
   // Update URL whenever filters change (but only if they're not from URL)
   useEffect(() => {
     if (isInitialized && !isUpdatingFromURL) {
-      updateURL({
-        category: selectedCategory,
-        subCategory: selectedSubCategory,
-        sort: sortOption,
-        minPrice: priceRange[0],
-        maxPrice: priceRange[1],
-        rating: minRating,
-        discounted: showDiscounted,
-        inStock: inStockOnly
-      });
+             updateURL({
+         category: selectedCategory,
+         sort: sortOption,
+         minPrice: priceRange[0],
+         maxPrice: priceRange[1],
+         rating: minRating,
+         discounted: showDiscounted,
+         inStock: inStockOnly
+       });
     } else if (!isInitialized) {
       setIsInitialized(true);
     }
-  }, [selectedCategory, selectedSubCategory, sortOption, priceRange, minRating, showDiscounted, inStockOnly, isInitialized, isUpdatingFromURL]);
+  }, [selectedCategory, sortOption, priceRange, minRating, showDiscounted, inStockOnly, isInitialized, isUpdatingFromURL]);
 
   // Handle URL parameter changes (e.g., when navigating back)
   useEffect(() => {
@@ -170,7 +155,7 @@ const AllProducts = () => {
     const newSearchParams = new URLSearchParams(location.search);
     
     const newCategory = newSearchParams.get('category') || "All Products";
-    const newSubCategory = newSearchParams.get('subCategory') || "";
+    
     const newSort = newSearchParams.get('sort') || "featured";
     const newMinPrice = newSearchParams.get('minPrice');
     const newMaxPrice = newSearchParams.get('maxPrice');
@@ -179,10 +164,9 @@ const AllProducts = () => {
     const newInStock = newSearchParams.get('inStock');
     
     // Check if any values have actually changed
-    const hasChanges = 
-      newCategory !== selectedCategory ||
-      newSubCategory !== selectedSubCategory ||
-      newSort !== sortOption ||
+         const hasChanges = 
+       newCategory !== selectedCategory ||
+       newSort !== sortOption ||
       (newMinPrice !== null && parseInt(newMinPrice) !== priceRange[0]) ||
       (newMaxPrice !== null && parseInt(newMaxPrice) !== priceRange[1]) ||
       (newRating !== null && parseInt(newRating) !== minRating) ||
@@ -194,7 +178,7 @@ const AllProducts = () => {
       
       // Update all states at once
       setSelectedCategory(newCategory);
-      setSelectedSubCategory(newSubCategory);
+      
       setSortOption(newSort);
       
       if (newMinPrice !== null || newMaxPrice !== null) {
@@ -245,17 +229,15 @@ const AllProducts = () => {
 
   console.log('Products data:', products);
 
-  // Get sub-categories for the selected category
-  const subCategories = CATEGORY_SUBCATEGORIES[selectedCategory] || [];
 
-  // Filter products based on selected category and sub-category
+
+  // Filter products based on selected category
   const filteredProducts = products.filter(product => {
     const matchCategory = selectedCategory === "All Products" || product.category === selectedCategory;
-    const matchSubCategory = !selectedSubCategory || product.sub_category === selectedSubCategory;
     const matchPrice = Number(product.mrp) >= priceRange[0] && Number(product.mrp) <= priceRange[1];
     const matchStock = !inStockOnly || Number(product.inventory) > 0;
     const hasImage = product.image && product.image.trim() !== '';
-    return matchCategory && matchSubCategory && matchPrice && matchStock && hasImage;
+    return matchCategory && matchPrice && matchStock && hasImage;
   });
 
   useEffect(() => {
@@ -420,7 +402,7 @@ const AllProducts = () => {
       return;
     }
     setSelectedCategory(category.name);
-    setSelectedSubCategory("");
+    
     setVisibleItems(12);
   };
 
@@ -541,7 +523,7 @@ const AllProducts = () => {
               >
                 <span className="current-category">
                   {selectedCategory === "All Products" ? "All Products" : selectedCategory}
-                  {selectedSubCategory && ` > ${selectedSubCategory}`}
+                  
                 </span>
                 <FaChevronRight className={`dropdown-arrow ${activeDropdown === 'category' ? 'rotated' : ''}`} />
               </button>
@@ -590,132 +572,38 @@ const AllProducts = () => {
             </div>
 
             <div className={`filter-content ${filtersVisible ? 'visible' : ''}`}>
-              {/* Show sub-category dropdown if a main category is selected, else show rating filter */}
-              {selectedCategory !== "All Products" && selectedCategory !== "Wish Genie" && selectedCategory !== "Gifting" && subCategories.length > 0 ? (
-                <div className="filter-group">
-                  <h4>Sub-category</h4>
-                  <div className="subcategory-options">
-                    <label className="subcategory-checkbox">
+              {/* Show rating filter for all categories */}
+              <div className="filter-group">
+                <h4><FaStar /> Minimum Rating</h4>
+                <div className="rating-options">
+                  {[4, 3, 2, 1].map((star) => (
+                    <label key={star} className="rating-checkbox">
                       <input
                         style={{width:"fit-content"}}
                         type="radio"
-                        name="subCategory"
-                        value=""
-                        checked={selectedSubCategory === ""}
-                        onChange={() => setSelectedSubCategory("")}
+                        name="minRating"
+                        value={star}
+                        checked={minRating === star}
+                        onChange={() => setMinRating(star)}
                       />
-                      <span>All</span>
+                      {star} stars & up
                     </label>
-                    {subCategories.map((sub) => (
-                      <label key={sub} className="subcategory-checkbox">
-                        <input
-                          style={{width:"fit-content"}}
-                          type="radio"
-                          name="subCategory"
-                          value={sub}
-                          checked={selectedSubCategory === sub}
-                          onChange={() => setSelectedSubCategory(sub)}
-                        />
-                        <span>{sub}</span>
-                      </label>
-                    ))}
-                  </div>
+                  ))}
+                  <label className="rating-checkbox">
+                    <input
+                      style={{width:"fit-content"}}
+                      type="radio"
+                      name="minRating"
+                      value={0}
+                      checked={minRating === 0}
+                      onChange={() => setMinRating(0)}
+                    />
+                    Any
+                  </label>
                 </div>
-              ) : (
-                selectedCategory === "Wish Genie" && subCategories.length > 0 ? (
-                  <div className="filter-group wish-genie-subcategories">
-                    <h4>Sub-category</h4>
-                    <div className="subcategory-options">
-                      <label className="subcategory-checkbox">
-                        <input
-                          style={{width:"fit-content"}}
-                          type="radio"
-                          name="subCategory"
-                          value=""
-                          checked={selectedSubCategory === ""}
-                          onChange={() => setSelectedSubCategory("")}
-                        />
-                        <span>All</span>
-                      </label>
-                      {subCategories.map((sub) => (
-                        <label key={sub} className="subcategory-checkbox">
-                          <input
-                            style={{width:"fit-content"}}
-                            type="radio"
-                            name="subCategory"
-                            value={sub}
-                            checked={selectedSubCategory === sub}
-                            onChange={() => setSelectedSubCategory(sub)}
-                          />
-                          <span>{sub}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                ) : selectedCategory === "Gifting" && subCategories.length > 0 ? (
-                  <div className="filter-group gifting-subcategories">
-                    <h4>Sub-category</h4>
-                    <div className="subcategory-options">
-                      <label className="subcategory-checkbox">
-                        <input
-                          style={{width:"fit-content"}}
-                          type="radio"
-                          name="subCategory"
-                          value=""
-                          checked={selectedSubCategory === ""}
-                          onChange={() => setSelectedSubCategory("")}
-                        />
-                        <span>All</span>
-                      </label>
-                      {subCategories.map((sub) => (
-                        <label key={sub} className="subcategory-checkbox">
-                          <input
-                            style={{width:"fit-content"}}
-                            type="radio"
-                            name="subCategory"
-                            value={sub}
-                            checked={selectedSubCategory === sub}
-                            onChange={() => setSelectedSubCategory(sub)}
-                          />
-                          <span>{sub}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  selectedCategory !== "Wish Genie" && selectedCategory !== "Gifting" && (
-                    <div className="filter-group">
-                      <h4><FaStar /> Minimum Rating</h4>
-                      <div className="rating-options">
-                        {[4, 3, 2, 1].map((star) => (
-                          <label key={star} className="rating-checkbox">
-                            <input
-                              style={{width:"fit-content"}}
-                              type="radio"
-                              name="minRating"
-                              value={star}
-                              checked={minRating === star}
-                              onChange={() => setMinRating(star)}
-                            />
-                            {star} stars & up
-                          </label>
-                        ))}
-                        <label className="rating-checkbox">
-                          <input
-                            style={{width:"fit-content"}}
-                            type="radio"
-                            name="minRating"
-                            value={0}
-                            checked={minRating === 0}
-                            onChange={() => setMinRating(0)}
-                          />
-                          Any
-                        </label>
-                      </div>
-                    </div>
-                  )
-                )
-              )}
+              </div>
+
+
               
               {/* On Sale & In Stock Only */}
               <div className="filter-group">
@@ -776,7 +664,7 @@ const AllProducts = () => {
               <button className="reset-filters-btn" style={{marginTop:16, width:'100%'}}
                 onClick={() => {
                   setSelectedCategory('All Products');
-                  setSelectedSubCategory('');
+                  
                   setMinRating(0);
                   setShowDiscounted(false);
                   setInStockOnly(false);
@@ -895,7 +783,9 @@ const AllProducts = () => {
                     
                     <div className="product-info">
                       <h3 className="product-name">{product.product_name}</h3>
-                      <p className="product-category">{product.category} - {product.sub_category}</p>
+                      <p className="product-category">
+                        {product.category}
+                      </p>
                       <div className="product-price">
                         <span className="current-price">
                           ₹{Number(product.mrp).toFixed(2)}
@@ -929,7 +819,7 @@ const AllProducts = () => {
                     className="reset-filters-btn"
                     onClick={() => {
                       setSelectedCategory("All Products");
-                      setSelectedSubCategory("");
+                 
                       setSearchQuery("");
                       setPriceRange([0, 10000]);
                       // Clear URL parameters

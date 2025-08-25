@@ -347,7 +347,9 @@ const NewArrivals = () => {
 
         <div className="product-info">
           <h3 className="product-name">{product.product_name}</h3>
-          <p className="product-category">{product.category} - {product.sub_category}</p>
+          <p className="product-category">
+            {product.category}
+          </p>
           <div className="product-price">
             <span className="current-price">
               ₹{Number(product.mrp).toFixed(2)}
