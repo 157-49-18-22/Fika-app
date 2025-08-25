@@ -1532,6 +1532,168 @@ export const getProductViews = async (productId) => {
   }
 };
 
+/**
+ * Initialize engagement fields for a regular product
+ * @param {string|number} productId - The product ID
+ * @returns {Promise<void>}
+ */
+export const initializeProductFields = async (productId) => {
+  try {
+    const productsRef = collection(db, 'products');
+    
+    // Try to find the product by numeric ID first
+    let q = query(productsRef, where('id', '==', parseInt(productId)));
+    let querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      // If not found by numeric ID, try by document ID
+      const productRef = doc(db, 'products', productId);
+      const productDoc = await getDoc(productRef);
+      
+      if (productDoc.exists()) {
+        const productData = productDoc.data();
+        if (productData.views === undefined || productData.bought === undefined) {
+          await updateDoc(productRef, {
+            views: productData.views || 0,
+            bought: productData.bought || 0
+          });
+        }
+      }
+    } else {
+      // Update the document found by numeric ID
+      const docRef = querySnapshot.docs[0].ref;
+      const productData = querySnapshot.docs[0].data();
+      
+      if (productData.views === undefined || productData.bought === undefined) {
+        await updateDoc(docRef, {
+          views: productData.views || 0,
+          bought: productData.bought || 0
+        });
+      }
+    }
+  } catch (error) {
+    console.error('Error initializing product fields:', error);
+  }
+};
+
+/**
+ * Increment the bought count for a regular product
+ * @param {string|number} productId - The product ID
+ * @returns {Promise<void>}
+ */
+export const incrementProductBought = async (productId) => {
+  try {
+    const productsRef = collection(db, 'products');
+    
+    // Try to find the product by numeric ID first
+    let q = query(productsRef, where('id', '==', parseInt(productId)));
+    let querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      // If not found by numeric ID, try by document ID
+      const productRef = doc(db, 'products', productId);
+      const productDoc = await getDoc(productRef);
+      
+      if (productDoc.exists()) {
+        const currentBought = productDoc.data().bought || 0;
+        await updateDoc(productRef, {
+          bought: currentBought + 1,
+          lastBought: serverTimestamp()
+        });
+      }
+    } else {
+      // Update the document found by numeric ID
+      const docRef = querySnapshot.docs[0].ref;
+      const productData = querySnapshot.docs[0].data();
+      
+      await updateDoc(docRef, {
+        bought: (productData.bought || 0) + 1,
+        lastBought: serverTimestamp()
+      });
+    }
+  } catch (error) {
+    console.error('Error incrementing product bought count:', error);
+  }
+};
+
+/**
+ * Simulate multiple views for a regular product (for testing)
+ * @param {string|number} productId - The product ID
+ * @param {number} count - Number of views to add
+ * @returns {Promise<void>}
+ */
+export const simulateMultipleProductViews = async (productId, count) => {
+  try {
+    const productsRef = collection(db, 'products');
+    
+    // Try to find the product by numeric ID first
+    let q = query(productsRef, where('id', '==', parseInt(productId)));
+    let querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      // If not found by numeric ID, try by document ID
+      const productRef = doc(db, 'products', productId);
+      const productDoc = await getDoc(productRef);
+      
+      if (productDoc.exists()) {
+        const currentViews = productDoc.data().views || 0;
+        await updateDoc(productRef, {
+          views: currentViews + count
+        });
+      }
+    } else {
+      // Update the document found by numeric ID
+      const docRef = querySnapshot.docs[0].ref;
+      const productData = querySnapshot.docs[0].data();
+      
+      await updateDoc(docRef, {
+        views: (productData.views || 0) + count
+      });
+    }
+  } catch (error) {
+    console.error('Error simulating product views:', error);
+  }
+};
+
+/**
+ * Simulate multiple bought counts for a regular product (for testing)
+ * @param {string|number} productId - The product ID
+ * @param {number} count - Number of bought counts to add
+ * @returns {Promise<void>}
+ */
+export const simulateMultipleProductBought = async (productId, count) => {
+  try {
+    const productsRef = collection(db, 'products');
+    
+    // Try to find the product by numeric ID first
+    let q = query(productsRef, where('id', '==', parseInt(productId)));
+    let querySnapshot = await getDocs(q);
+    
+    if (querySnapshot.empty) {
+      // If not found by numeric ID, try by document ID
+      const productRef = doc(db, 'products', productId);
+      const productDoc = await getDoc(productRef);
+      
+      if (productDoc.exists()) {
+        const currentBought = productDoc.data().bought || 0;
+        await updateDoc(productRef, {
+          bought: currentBought + count
+        });
+      }
+    } else {
+      // Update the document found by numeric ID
+      const docRef = querySnapshot.docs[0].ref;
+      const productData = querySnapshot.docs[0].data();
+      
+      await updateDoc(docRef, {
+        bought: (productData.bought || 0) + count
+      });
+    }
+  } catch (error) {
+    console.error('Error simulating product bought counts:', error);
+  }
+};
+
 // WISH GENIE PRODUCT VIEW COUNTER
 
 /**
@@ -1583,5 +1745,143 @@ export const getWishGenieViews = async (productId) => {
   } catch (error) {
     console.error('Error getting Wish Genie product views:', error);
     return 0;
+  }
+};
+
+/**
+ * Initialize Wish Genie fields if they don't exist
+ * @param {string} productId - The Wish Genie product ID
+ * @returns {Promise<void>}
+ */
+export const initializeWishGenieFields = async (productId) => {
+  try {
+    console.log('Initializing Wish Genie fields for product ID:', productId);
+    const wishGenieRef = collection(db, 'wish_genie');
+    const productRef = doc(wishGenieRef, productId);
+    const productDoc = await getDoc(productRef);
+    
+    if (productDoc.exists()) {
+      const productData = productDoc.data();
+      const updates = {};
+      
+      // Initialize views field if it doesn't exist
+      if (productData.views === undefined || productData.views === null) {
+        updates.views = 0;
+      }
+      
+      // Initialize bought field if it doesn't exist
+      if (productData.bought === undefined || productData.bought === null) {
+        updates.bought = 0;
+      }
+      
+      // Only update if there are fields to initialize
+      if (Object.keys(updates).length > 0) {
+        await updateDoc(productRef, {
+          ...updates,
+          updatedAt: serverTimestamp()
+        });
+        console.log('Successfully initialized Wish Genie fields:', updates);
+      }
+    } else {
+      console.log('Wish Genie product not found with ID:', productId);
+    }
+  } catch (error) {
+    console.error('Error initializing Wish Genie fields:', error);
+    // Don't throw error to avoid breaking the product page
+  }
+};
+
+/**
+ * Simulate multiple views for testing purposes
+ * @param {string} productId - The Wish Genie product ID
+ * @param {number} count - Number of views to add
+ * @returns {Promise<void>}
+ */
+export const simulateMultipleViews = async (productId, count) => {
+  try {
+    console.log(`Simulating ${count} views for Wish Genie product ID:`, productId);
+    const wishGenieRef = collection(db, 'wish_genie');
+    const productRef = doc(wishGenieRef, productId);
+    const productDoc = await getDoc(productRef);
+    
+    if (productDoc.exists()) {
+      const currentViews = productDoc.data().views || 0;
+      const newViews = currentViews + count;
+      console.log('Current views:', currentViews, 'New views after simulation:', newViews);
+      
+      await updateDoc(productRef, {
+        views: newViews,
+        updatedAt: serverTimestamp()
+      });
+      console.log('Successfully simulated views for Wish Genie product');
+    } else {
+      console.log('Wish Genie product not found with ID:', productId);
+    }
+  } catch (error) {
+    console.error('Error simulating views for Wish Genie product:', error);
+    // Don't throw error to avoid breaking the product page
+  }
+};
+
+/**
+ * Increment the bought count for a Wish Genie product
+ * @param {string} productId - The Wish Genie product ID
+ * @returns {Promise<void>}
+ */
+export const incrementWishGenieBought = async (productId) => {
+  try {
+    console.log('Incrementing Wish Genie bought count for product ID:', productId);
+    const wishGenieRef = collection(db, 'wish_genie');
+    const productRef = doc(wishGenieRef, productId);
+    const productDoc = await getDoc(productRef);
+    
+    if (productDoc.exists()) {
+      const currentBought = productDoc.data().bought || 0;
+      const newBought = currentBought + 1;
+      console.log('Current bought count:', currentBought, 'New bought count:', newBought);
+      
+      await updateDoc(productRef, {
+        bought: newBought,
+        lastBought: serverTimestamp()
+      });
+      console.log('Successfully updated Wish Genie product bought count');
+    } else {
+      console.log('Wish Genie product not found with ID:', productId);
+    }
+  } catch (error) {
+    console.error('Error incrementing Wish Genie product bought count:', error);
+    // Don't throw error to avoid breaking the product page
+  }
+};
+
+/**
+ * Simulate multiple bought counts for testing purposes
+ * @param {string} productId - The Wish Genie product ID
+ * @param {number} count - Number of bought counts to add
+ * @returns {Promise<void>}
+ */
+export const simulateMultipleBought = async (productId, count) => {
+  try {
+    console.log(`Simulating ${count} bought counts for Wish Genie product ID:`, productId);
+    const wishGenieRef = collection(db, 'wish_genie');
+    const productRef = doc(wishGenieRef, productId);
+    const productDoc = await getDoc(productRef);
+    
+    if (productDoc.exists()) {
+      const currentBought = productDoc.data().bought || 0;
+      const newBought = currentBought + count;
+      console.log('Current bought count:', currentBought, 'New bought count after simulation:', newBought);
+      
+      await updateDoc(productRef, {
+        bought: newBought,
+        updatedAt: serverTimestamp()
+      });
+      console.log('Successfully simulated bought counts for Wish Genie product');
+    } else {
+      console.log('Wish Genie product not found with ID:', productId);
+    }
+  } catch (error) {
+    console.error('Error simulating bought counts for Wish Genie product:', error);
+    // Don't throw error to avoid breaking the product page
   }
 }; 

@@ -25,7 +25,9 @@ import { useWishlist } from "../../context/WishlistContext.jsx";
 import "./ProductDetailWish.css";
 import { useAuth } from '../../context/AuthContext';
 import LoginPrompt from '../LoginPrompt/LoginPrompt';
-import { getWishGenieProduct, getWishGenieProducts, incrementWishGenieViews } from '../../firebase/firestore';
+import { getWishGenieProduct, getWishGenieProducts, incrementWishGenieViews, incrementWishGenieBought } from '../../firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../../firebase/config';
 
 const formatPrice = (price) => {
   const numPrice = Number(price);
@@ -71,10 +73,26 @@ const ProductDetailWish = () => {
         // Increment view count for this Wish Genie product
         console.log('Incrementing views for Wish Genie product:', id);
         try {
+          // First initialize the fields if they don't exist
+          await initializeWishGenieFields(id);
+          
+          // Then increment the views
           await incrementWishGenieViews(id);
           console.log('Successfully incremented views for Wish Genie product:', id);
+          
+          // Fetch the updated product data to get the new view count
+          const updatedProductData = await getWishGenieProduct(id);
+          if (updatedProductData) {
+            console.log('Updated product data:', updatedProductData);
+            console.log('Views field:', updatedProductData.views);
+            console.log('Bought field:', updatedProductData.bought);
+            setProduct(updatedProductData);
+          } else {
+            setProduct(productData);
+          }
         } catch (error) {
           console.error('Error incrementing Wish Genie views:', error);
+          setProduct(productData);
         }
 
         // Fetch related products
@@ -115,7 +133,36 @@ const ProductDetailWish = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleAddToCart = (e) => {
+  // Real-time listener for product updates
+  useEffect(() => {
+    if (!id) return;
+
+    const productRef = doc(db, 'wish_genie', id);
+    
+    const unsubscribe = onSnapshot(productRef, (doc) => {
+      if (doc.exists()) {
+        const updatedData = { id: doc.id, ...doc.data() };
+        console.log('Real-time update received:', updatedData);
+        console.log('New views count:', updatedData.views);
+        console.log('New bought count:', updatedData.bought);
+        
+        // Update product state with real-time data
+        setProduct(prevProduct => {
+          if (prevProduct) {
+            return { ...prevProduct, ...updatedData };
+          }
+          return updatedData;
+        });
+      }
+    }, (error) => {
+      console.error('Error in real-time listener:', error);
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, [id]);
+
+  const handleAddToCart = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -149,6 +196,15 @@ const ProductDetailWish = () => {
       product_code: product['Product code'] || product.product_code || '',
     };
     addToCart(productToAdd);
+    
+    // Increment bought count when product is added to cart
+    try {
+      await incrementWishGenieBought(id);
+      console.log('Successfully incremented bought count for Wish Genie product:', id);
+    } catch (error) {
+      console.error('Error incrementing Wish Genie bought count:', error);
+    }
+    
     setShowSuccessMessage(true);
     setTimeout(() => setShowSuccessMessage(false), 1000);
   };
@@ -169,7 +225,7 @@ const ProductDetailWish = () => {
     navigate(`/product-wish/${productId}`);
   };
 
-  const handleRelatedProductAction = (e, action, product) => {
+  const handleRelatedProductAction = async (e, action, product) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -178,7 +234,7 @@ const ProductDetailWish = () => {
       return;
     }
     if (action === 'cart') {
-      // Normalize related product fields for cart
+      // Normalize product fields for cart
       const productToAdd = {
         id: product.id,
         name: product['Sticker Content Main'] || product.name || product.product_name || 'Product',
@@ -191,10 +247,20 @@ const ProductDetailWish = () => {
         product_code: product['Product code'] || product.product_code || '',
       };
       addToCart(productToAdd);
+      
+      // Increment bought count when related product is added to cart
+      try {
+        await incrementWishGenieBought(product.id);
+        console.log('Successfully incremented bought count for related Wish Genie product:', product.id);
+      } catch (error) {
+        console.error('Error incrementing related Wish Genie product bought count:', error);
+      }
     } else if (action === 'wishlist') {
       addToWishlist(product);
     }
   };
+
+
 
   if (loading) {
     return <div className="loading">Loading...</div>;
@@ -322,6 +388,29 @@ const ProductDetailWish = () => {
                   )}
                 </span>
               </span>
+            </div>
+            
+            {/* View Count and Bought Count */}
+            <div className="product-engagement">
+              <h3 className="engagement-title">Product Engagement</h3>
+              <div className="engagement-item">
+                <FaEye />
+                <span>
+                  {product.views !== undefined && product.views !== null 
+                    ? `${product.views} people viewing` 
+                    : '0 people viewing'}
+                </span>
+              </div>
+              <div className="engagement-item">
+                <FaShoppingBag />
+                <span>
+                  {product.bought !== undefined && product.bought !== null 
+                    ? `${product.bought} people bought this` 
+                    : '0 people bought this'}
+                </span>
+              </div>
+              
+
             </div>
           </div>
 

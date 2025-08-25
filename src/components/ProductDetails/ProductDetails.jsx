@@ -4,7 +4,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useBackNavigation } from "../../utils/navigationUtils.js";
-import { io } from "socket.io-client";
 import {
   FaShoppingCart,
   FaHeart,
@@ -31,11 +30,10 @@ import { useWishlist } from "../../context/WishlistContext.jsx";
 import "./ProductDetails.css";
 import { useAuth } from '../../context/AuthContext';
 import LoginPrompt from '../LoginPrompt/LoginPrompt';
-import config from '../../config';
 import { db } from '../../firebase/config';
-import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
 import { auth } from '../../firebase/config';
-import { incrementProductViews } from '../../firebase/firestore';
+import { incrementProductViews, initializeProductFields, incrementProductBought } from '../../firebase/firestore';
 
 const getAllProducts = async () => {
   try {
@@ -120,9 +118,6 @@ const ProductDetails = () => {
   const galleryRef = useRef(null);
   const wrapperRef = useRef(null);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const [viewerCount, setViewerCount] = useState(0);
-  const [purchaseCount, setPurchaseCount] = useState(0);
-  const socketRef = useRef();
   const [recentlyViewedProducts, setRecentlyViewedProducts] = useState([]);
   const [trendingProducts, setTrendingProducts] = useState([]);
   const [productImages, setProductImages] = useState([]);
@@ -185,8 +180,14 @@ const ProductDetails = () => {
         console.log('Price info for display:', formatPriceWithDiscount(normalized.mrp, normalized.discount)); // Debug price display
         setProduct(normalized);
 
-        // Increment view count for this product
-        await incrementProductViews(id);
+        // Initialize engagement fields and increment view count for this product
+        try {
+          await initializeProductFields(id);
+          await incrementProductViews(id);
+          console.log('Successfully initialized and incremented views for product:', id);
+        } catch (error) {
+          console.error('Error handling product engagement:', error);
+        }
 
         // Fetch related products from Firestore
         const relatedQuery = query(
@@ -213,27 +214,30 @@ const ProductDetails = () => {
   }, [id]);
 
   useEffect(() => {
-    // Connect to Socket.IO server
-    socketRef.current = io(config.SOCKET_URL);
+    // Real-time listener for product engagement updates
+    if (!id) return;
 
-    // Join product room
-    socketRef.current.emit('joinProduct', id);
-
-    // Listen for viewer count updates
-    socketRef.current.on('viewerCount', (count) => {
-      setViewerCount(count);
+    const productsRef = collection(db, 'products');
+    const q = query(productsRef, where('id', '==', parseInt(id)));
+    
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      if (!querySnapshot.empty) {
+        const updatedData = querySnapshot.docs[0].data();
+        console.log('Real-time engagement update received:', updatedData);
+        
+        setProduct(prevProduct => {
+          if (prevProduct) {
+            return { ...prevProduct, ...updatedData };
+          }
+          return updatedData;
+        });
+      }
+    }, (error) => {
+      console.error('Error in real-time listener:', error);
     });
 
-    // Listen for purchase count updates
-    socketRef.current.on('purchaseCount', (count) => {
-      setPurchaseCount(count);
-    });
-
-    // Cleanup on unmount
-    return () => {
-      socketRef.current.emit('leaveProduct', id);
-      socketRef.current.disconnect();
-    };
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
   }, [id]);
 
   useEffect(() => {
@@ -409,6 +413,14 @@ const ProductDetails = () => {
       // Add to cart - pass the navigate function
       await addToCart(productToAdd, selectedSize || 'Standard', quantity, navigate);
       
+      // Increment bought count when product is added to cart
+      try {
+        await incrementProductBought(id);
+        console.log('Successfully incremented bought count for product:', id);
+      } catch (error) {
+        console.error('Error incrementing product bought count:', error);
+      }
+      
       // Show success message
       setShowSuccessMessage(true);
       setTimeout(() => setShowSuccessMessage(false), 3000);
@@ -453,7 +465,7 @@ const ProductDetails = () => {
     navigate(`/product/${productId}`);
   };
 
-  const handleRelatedProductAction = (e, action, product) => {
+  const handleRelatedProductAction = async (e, action, product) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -481,7 +493,15 @@ const ProductDetails = () => {
         };
         
         // Add to cart
-        addToCart(productToAdd, productToAdd.size, 1, navigate);
+        await addToCart(productToAdd, productToAdd.size, 1, navigate);
+        
+        // Increment bought count when related product is added to cart
+        try {
+          await incrementProductBought(product.id);
+          console.log('Successfully incremented bought count for related product:', product.id);
+        } catch (error) {
+          console.error('Error incrementing related product bought count:', error);
+        }
         
         // Show a brief success message
         alert('Product added to cart!');
@@ -581,6 +601,8 @@ const ProductDetails = () => {
     return "N/A";
   };
 
+
+
   return (
     <div className="product-details-container">
       {showLoginPrompt && (
@@ -607,15 +629,30 @@ const ProductDetails = () => {
           <h1 className="product-title">{product.product_name}</h1>
 
           <div className="product-meta">
-            <div className="product-stats">
-              <div className="viewer-count">
-                <FaUsers /> {viewerCount} people viewing
+            {/* Product Engagement Section */}
+            <div className="product-engagement">
+              <h3 className="engagement-title">Product Engagement</h3>
+              <div className="engagement-item">
+                <FaEye />
+                <span>
+                  {product.views !== undefined && product.views !== null 
+                    ? `${product.views} people viewing` 
+                    : '0 people viewing'}
+                </span>
               </div>
-              <div className="purchase-count">
-                <FaShoppingBag /> {purchaseCount} people bought this
+              <div className="engagement-item">
+                <FaShoppingBag />
+                <span>
+                  {product.bought !== undefined && product.bought !== null 
+                    ? `${product.bought} people bought this` 
+                    : '0 people bought this'}
+                </span>
               </div>
+              
+
             </div>
-                         <div className="product-price">
+
+            <div className="product-price">
                <span className="current-price" style={{fontSize: '18px'}}>
                  {(() => {
                    const priceInfo = formatPriceWithDiscount(product.mrp, product.discount);

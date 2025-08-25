@@ -37,6 +37,7 @@ const WishGenieProducts = () => {
     'Weight': '',
     'warning': '',
     views: '',
+    bought: '',
     image: null
   });
   
@@ -151,6 +152,7 @@ const WishGenieProducts = () => {
       'Weight': product['Weight'] || '',
       'warning': product['warning'] || '',
       views: product.views || '',
+      bought: product.bought || '',
       image: product.image || ''
     });
     setShowForm(true);
@@ -172,6 +174,7 @@ const WishGenieProducts = () => {
         ...formData,
         image: imageUrl,
         views: formData.views === '' ? 0 : Number(formData.views),
+        bought: formData.bought === '' ? 0 : Number(formData.bought),
         updatedAt: new Date()
       };
 
@@ -209,6 +212,7 @@ const WishGenieProducts = () => {
         'Weight': '',
         'warning': '',
         views: '',
+        bought: '',
         image: null
       });
       fetchProducts();
@@ -595,6 +599,16 @@ const WishGenieProducts = () => {
                     type="number"
                     name="views"
                     value={formData.views}
+                    onChange={handleInputChange}
+                    min="0"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Bought (people):</label>
+                  <input
+                    type="number"
+                    name="bought"
+                    value={formData.bought}
                     onChange={handleInputChange}
                     min="0"
                   />

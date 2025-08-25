@@ -41,6 +41,7 @@ const Products = () => {
     discount: '',
     image: '',
     views: '',
+    bought: '',
     featured: false
   });
 
@@ -130,7 +131,8 @@ const Products = () => {
         inventory: Number(formData.inventory),
         mrp: Number(formData.mrp),
         discount: formData.discount ? Number(formData.discount) : 0,
-        views: formData.views === '' ? 0 : Number(formData.views)
+        views: formData.views === '' ? 0 : Number(formData.views),
+        bought: formData.bought === '' ? 0 : Number(formData.bought)
       };
       
       console.log('Numeric form data:', numericFormData);
@@ -203,6 +205,7 @@ const Products = () => {
         discount: '',
         image: '',
         views: '',
+        bought: '',
         featured: false
       });
       
@@ -234,6 +237,7 @@ const Products = () => {
       discount: product.discount || '',
       image: product.image || '',
       views: product.views || '',
+      bought: product.bought || '',
       featured: product.featured || false
     });
     console.log('Form data set to:', {
@@ -528,6 +532,7 @@ const Products = () => {
               <th>Price</th>
               <th>Inventory</th>
               <th>Views</th>
+              <th>Bought</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -557,6 +562,7 @@ const Products = () => {
                 <td>₹{product.mrp}</td>
                 <td>{product.inventory}</td>
                 <td>{product.views || 0}</td>
+                <td>{product.bought || 0}</td>
                 <td className="action-buttons">
                   <button
                     className="edit-btn"
@@ -715,6 +721,16 @@ const Products = () => {
                 />
               </div>
               <div className="form-group">
+                <label>Bought (count)</label>
+                <input
+                  type="number"
+                  name="bought"
+                  value={formData.bought}
+                  onChange={handleInputChange}
+                  min="0"
+                />
+              </div>
+              <div className="form-group">
                 <label>Image URL</label>
                 <input
                   type="text"
@@ -761,6 +777,7 @@ const Products = () => {
                       discount: '',
                       image: '',
                       views: '',
+                      bought: '',
                       featured: false
                     });
                   }}
