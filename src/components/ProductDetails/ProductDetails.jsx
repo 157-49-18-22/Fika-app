@@ -629,29 +629,6 @@ const ProductDetails = () => {
           <h1 className="product-title">{product.product_name}</h1>
 
           <div className="product-meta">
-            {/* Product Engagement Section */}
-            <div className="product-engagement">
-              <h3 className="engagement-title">Product Engagement</h3>
-              <div className="engagement-item">
-                <FaEye />
-                <span>
-                  {product.views !== undefined && product.views !== null 
-                    ? `${product.views} people viewing` 
-                    : '0 people viewing'}
-                </span>
-              </div>
-              <div className="engagement-item">
-                <FaShoppingBag />
-                <span>
-                  {product.bought !== undefined && product.bought !== null 
-                    ? `${product.bought} people bought this` 
-                    : '0 people bought this'}
-                </span>
-              </div>
-              
-
-            </div>
-
             <div className="product-price">
                <span className="current-price" style={{fontSize: '18px'}}>
                  {(() => {

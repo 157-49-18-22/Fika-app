@@ -390,28 +390,7 @@ const ProductDetailWish = () => {
               </span>
             </div>
             
-            {/* View Count and Bought Count */}
-            <div className="product-engagement">
-              <h3 className="engagement-title">Product Engagement</h3>
-              <div className="engagement-item">
-                <FaEye />
-                <span>
-                  {product.views !== undefined && product.views !== null 
-                    ? `${product.views} people viewing` 
-                    : '0 people viewing'}
-                </span>
-              </div>
-              <div className="engagement-item">
-                <FaShoppingBag />
-                <span>
-                  {product.bought !== undefined && product.bought !== null 
-                    ? `${product.bought} people bought this` 
-                    : '0 people bought this'}
-                </span>
-              </div>
-              
-
-            </div>
+            {/* View Count and Bought Count section removed */}
           </div>
 
           <div className="product-features">
