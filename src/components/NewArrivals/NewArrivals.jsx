@@ -98,7 +98,15 @@ const NewArrivals = () => {
           const hasImage = product.image && product.image.trim() !== '';
           return productDate >= thirtyDaysAgo && hasImage;
         });
-        setNewArrivals(newProducts);
+        
+        // Sort new arrivals by creation date (newest first)
+        const sortedNewProducts = newProducts.sort((a, b) => {
+          const dateA = a.createdAt?.toDate?.() || new Date(a.created_at || 0);
+          const dateB = b.createdAt?.toDate?.() || new Date(b.created_at || 0);
+          return dateB - dateA; // Newest first
+        });
+        
+        setNewArrivals(sortedNewProducts);
         // Set featured product (first item with discount or first new arrival)
         const discountedProduct = newProducts.find(product => product.discount);
         if (discountedProduct) {
@@ -106,12 +114,20 @@ const NewArrivals = () => {
         } else if (newProducts.length > 0) {
           setFeaturedProduct(newProducts[0]);
         }
-        // Organize products by categories
+        // Organize products by categories and sort by creation date (newest first)
+        const sortByCreationDate = (products) => {
+          return products.sort((a, b) => {
+            const dateA = a.createdAt?.toDate?.() || new Date(a.created_at || 0);
+            const dateB = b.createdAt?.toDate?.() || new Date(b.created_at || 0);
+            return dateB - dateA; // Newest first
+          });
+        };
+
         const categorizedProducts = {
-          cushions: products.filter(p => p.category?.toLowerCase() === "cushions" && p.image && p.image.trim() !== ''),
-          bedsets: products.filter(p => p.category?.toLowerCase() === "bedsets" && p.image && p.image.trim() !== ''),
-          doharsAndQuilts: products.filter(p => p.category?.toLowerCase() === "dohars & quilts" && p.image && p.image.trim() !== ''),
-          wishGenie: products.filter(p => p.category?.toLowerCase() === "wish genie" && p.image && p.image.trim() !== '')
+          cushions: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "cushions" && p.image && p.image.trim() !== '')),
+          bedsets: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "bedsets" && p.image && p.image.trim() !== '')),
+          doharsAndQuilts: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "dohars & quilts" && p.image && p.image.trim() !== '')),
+          wishGenie: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "wish genie" && p.image && p.image.trim() !== ''))
         };
         setCategoryProducts(categorizedProducts);
         setLoading(false);
@@ -181,6 +197,10 @@ const NewArrivals = () => {
     : newArrivals.filter(product => {
         const hasImage = product.image && product.image.trim() !== '';
         return product.category === activeTab && hasImage;
+      }).sort((a, b) => {
+        const dateA = a.createdAt?.toDate?.() || new Date(a.created_at || 0);
+        const dateB = b.createdAt?.toDate?.() || new Date(b.created_at || 0);
+        return dateB - dateA; // Newest first
       });
 
   console.log('Filtered Products:', filteredProducts);

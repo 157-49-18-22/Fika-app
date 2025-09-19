@@ -453,13 +453,20 @@ const CategoryProducts = () => {
           );
         });
 
-        console.log("Filtered products with discounts:", filteredProducts.map(p => ({
+        // Sort products by creation date (newest first)
+        const sortedProducts = filteredProducts.sort((a, b) => {
+          const dateA = a.createdAt?.toDate?.() || new Date(a.created_at || 0);
+          const dateB = b.createdAt?.toDate?.() || new Date(b.created_at || 0);
+          return dateB - dateA; // Newest first
+        });
+
+        console.log("Filtered products with discounts:", sortedProducts.map(p => ({
           name: p.name,
           price: p.price,
           discount: p.discount,
           category: p.category
         })));
-        setProducts(filteredProducts);
+        setProducts(sortedProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
         // Fallback to mock data if backend fails

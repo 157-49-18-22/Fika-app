@@ -141,18 +141,28 @@ const NewArrivalsWish = () => {
           .filter(Boolean);
         setAvailableCategories(categories);
         
-        // Categorize products based on their actual categories
+        // Sort products by creation date (newest first)
+        const sortByCreationDate = (products) => {
+          return products.sort((a, b) => {
+            const dateA = a.createdAt?.toDate?.() || new Date(a.created_at || 0);
+            const dateB = b.createdAt?.toDate?.() || new Date(b.created_at || 0);
+            return dateB - dateA; // Newest first
+          });
+        };
+
+        // Categorize products based on their actual categories and sort by creation date
         const categorizedProducts = {};
         categories.forEach(category => {
-          categorizedProducts[category] = products.filter(p => 
+          const categoryProducts = products.filter(p => 
             p.Category === category && 
             p.image && 
             p.image.trim() !== ''
           );
+          categorizedProducts[category] = sortByCreationDate(categoryProducts);
         });
         
         setCategoryProducts(categorizedProducts);
-        setWishGenieProducts(products.filter(p => p.image && p.image.trim() !== ''));
+        setWishGenieProducts(sortByCreationDate(products.filter(p => p.image && p.image.trim() !== '')));
         
         // Set featured product - prioritize products with discounts or select the first product
         const featuredProduct = products.find(p => p.discount > 0) || products[0];

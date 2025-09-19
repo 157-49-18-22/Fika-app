@@ -299,7 +299,9 @@ const AllProducts = () => {
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     switch (sortOption) {
       case "newest":
-        return new Date(b.created_at) - new Date(a.created_at);
+        const dateA = a.createdAt?.toDate?.() || new Date(a.created_at || 0);
+        const dateB = b.createdAt?.toDate?.() || new Date(b.created_at || 0);
+        return dateB - dateA; // Newest first
       case "priceAsc":
         return Number(a.mrp) - Number(b.mrp);
       case "priceDesc":
