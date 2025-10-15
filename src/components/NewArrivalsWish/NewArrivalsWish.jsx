@@ -538,13 +538,13 @@ const NewArrivalsWish = () => {
                 <div className="wish-featured-actions">
                   <button 
                     className="wish-cart-btn"
-                    onClick={() => handleAddToCart(featuredProduct)}
+                    onClick={(e) => handleAddToCart(featuredProduct, e)}
                   >
                     Add to Cart
                   </button>
                   <button 
                     className={`wish-wishlist-btn ${isInWishlist(featuredProduct.id) ? 'active' : ''}`}
-                    onClick={() => handleAddToWishlist(featuredProduct)}
+                    onClick={(e) => handleAddToWishlist(featuredProduct, e)}
                   >
                     <FaHeart /> {isInWishlist(featuredProduct.id) ? "Added to Wishlist" : "Add to Wishlist"}
                   </button>

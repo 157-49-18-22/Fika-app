@@ -212,7 +212,14 @@ const NewArrivals = () => {
       setShowLoginPrompt(true);
       return;
     }
-    addToCart(product, undefined, 1, navigate);
+    // Normalize product data for cart
+    const normalizedProduct = {
+      ...product,
+      name: product.product_name || product.name,
+      price: product.mrp || product.price,
+      image: product.image || '/placeholder-image.webp'
+    };
+    addToCart(normalizedProduct, undefined, 1, navigate);
   };
 
   const handleAddToWishlist = (product, e) => {
@@ -224,7 +231,14 @@ const NewArrivals = () => {
     if (isInWishlist(product.id)) {
       removeFromWishlist(product.id, navigate);
     } else {
-      addToWishlist(product, navigate);
+      // Normalize product data for wishlist
+      const normalizedProduct = {
+        ...product,
+        product_name: product.product_name || product.name,
+        mrp: product.mrp || product.price,
+        image: product.image || '/placeholder-image.webp'
+      };
+      addToWishlist(normalizedProduct, navigate);
     }
   };
 
@@ -465,7 +479,11 @@ const NewArrivals = () => {
         {/* Featured Product Highlight */}
         {featuredProduct && (
           <div className="arrivals-featured-product">
-            <div className="arrivals-featured-image">
+            <div 
+              className="arrivals-featured-image"
+              onClick={() => navigate(`/product/${featuredProduct.id}`)}
+              style={{ cursor: 'pointer' }}
+            >
               <img src={getFirstImage(featuredProduct.image)} alt={featuredProduct.product_name} />
               {/* {featuredProduct.discount && (
                 <div className="arrivals-featured-discount">
@@ -515,13 +533,13 @@ const NewArrivals = () => {
               <div className="arrivals-featured-actions">
                 <button
                   className="arrivals-cart-btn"
-                  onClick={() => addToCart(featuredProduct)}
+                  onClick={(e) => handleAddToCart(featuredProduct, e)}
                 >
                   Add to Cart
                 </button>
                 <button
                   className={`arrivals-wishlist-btn ${isInWishlist(featuredProduct.id) ? 'active' : ''}`}
-                  onClick={() => isInWishlist(featuredProduct.id) ? removeFromWishlist(featuredProduct.id) : addToWishlist(featuredProduct)}
+                  onClick={(e) => handleAddToWishlist(featuredProduct, e)}
                 >
                   <FaHeart /> {isInWishlist(featuredProduct.id) ? "Added to Wishlist" : "Add to Wishlist"}
                 </button>

@@ -247,19 +247,23 @@ const Cart = () => {
                     {item.name || item.product_name || 'Product'}
                   </Link>
                   <span className="cart-item-category">{item.category}</span>
-                  <div className="cart-item-price">
-                    {item.discount ? (
-                      <>
-                        <span className="discounted-price">
-                          ₹{((Number(item.price) || 0) * (1 - (Number(item.discount) || 0) / 100)).toFixed(2)}
-                        </span>
-                        <span className="original-price">
-                          ₹{(Number(item.price) || 0).toFixed(2)}
-                        </span>
-                        <span className="discount-badge">-{item.discount}%</span>
-                      </>
-                    ) : (
-                      `₹${(Number(item.price) || 0).toFixed(2)}`
+                  <div className="cart-item-price-wrapper">
+                    <div className="cart-item-price">
+                      {item.discount ? (
+                        <>
+                          <span className="discounted-price">
+                            ₹{((Number(item.price) || 0) * (1 - (Number(item.discount) || 0) / 100)).toFixed(2)}
+                          </span>
+                          <span className="original-price">
+                            ₹{(Number(item.price) || 0).toFixed(2)}
+                          </span>
+                        </>
+                      ) : (
+                        `₹${(Number(item.price) || 0).toFixed(2)}`
+                      )}
+                    </div>
+                    {item.discount && (
+                      <span className="discount-badge">-{item.discount}% OFF</span>
                     )}
                   </div>
                 </div>

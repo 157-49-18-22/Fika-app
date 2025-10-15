@@ -98,6 +98,12 @@
   color: var(--text-medium);
 }
 
+.cart-item-price-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
 .cart-item-price {
   display: flex;
   align-items: center;
@@ -107,6 +113,7 @@
 .discounted-price {
   font-weight: 600;
   color: var(--text-dark);
+  font-size: 1rem;
 }
 
 .original-price {
@@ -121,6 +128,10 @@
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
   font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-block;
+  width: fit-content;
+  margin-right: 37px;
 }
 
 .cart-item-quantity {
@@ -164,20 +175,26 @@
   position: absolute;
   top: 1rem;
   right: 1rem;
-  width: 24px;
-  height: 24px;
-  border: none;
-  background: transparent;
-  color: #9ca3af;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #6b7280;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.2s;
+  transition: all 0.2s;
+  border-radius: 6px;
+  font-size: 14px;
+  z-index: 10;
 }
 
 .remove-btn:hover {
   color: #ef4444;
+  background: #fee2e2;
+  border-color: #fecaca;
+  transform: scale(1.05);
 }
 
 /* Order Summary Section */
@@ -546,9 +563,19 @@
     color: #666;
   }
   
+  .cart-item-price-wrapper {
+    gap: 0.3rem;
+  }
+  
   .cart-item-price {
     font-size: 0.9rem;
     font-weight: 600;
+  }
+  
+  .discount-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+    margin-right: 17px;
   }
   
   .cart-item-bottom {
@@ -592,11 +619,19 @@
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;
-    width: 20px;
-    height: 20px;
-    background: transparent;
-    border: none;
-    color: #999;
+    width: 28px;
+    height: 28px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    color: #6b7280;
+    border-radius: 5px;
+    font-size: 12px;
+  }
+  
+  .remove-btn:hover {
+    color: #ef4444;
+    background: #fee2e2;
+    border-color: #fecaca;
   }
   
   .order-summary {
