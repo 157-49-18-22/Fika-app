@@ -17,6 +17,8 @@
 /* Product Gallery Styles */
 .product-gallery {
   position: relative;
+      margin-right: -153px;
+
 }
 
 .thumbnail-column {
