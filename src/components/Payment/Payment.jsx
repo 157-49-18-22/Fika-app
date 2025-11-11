@@ -349,6 +349,11 @@ const Payment = ({ onClose, total }) => {
             // Save successful payment to backup collection first
             console.log('[PAYMENT] Saving payment details to backup collection...');
             try {
+              // Get promo code and discount from URL or props
+              const urlParams = new URLSearchParams(window.location.search);
+              const promoCode = urlParams.get('promoCode') || '';
+              const discount = parseFloat(urlParams.get('discount')) || 0;
+              
               await saveSuccessfulPayment({
                 orderId: response.razorpay_order_id,
                 paymentId: response.razorpay_payment_id,
@@ -371,7 +376,10 @@ const Payment = ({ onClose, total }) => {
                 },
                 shippingAddress: selectedAddress || options.notes?.address || '',
                 orderDate: new Date().toISOString(),
-                orderTotal: total
+                orderTotal: total,
+                promoCode: promoCode,
+                discount: discount,
+                subtotal: total + discount, // Add discount back to get the original subtotal
               });
               console.log('[PAYMENT] Successfully saved payment to backup collection');
             } catch (backupError) {

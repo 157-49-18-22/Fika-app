@@ -123,42 +123,54 @@ const Cart = () => {
   const total = selectedTotal + shipping;
 
 
-  // Promo code validation (simulate backend check for now)
+  // Promo code validation
   const handleApplyPromo = async () => {
     setPromoError("");
+    
+    // If promo is already applied, remove it
     if (promoApplied) {
-      // Remove promo code
       setPromoApplied(false);
       setPromoCode("");
       setDiscount(0);
       setPromoError("");
       return;
     }
-    if (promoCode.trim().toUpperCase() !== "NEW10OFF") {
-      setPromoError("Invalid promo code.");
-      setPromoApplied(false);
-      setDiscount(0);
+
+    // Trim and get uppercase version of the promo code
+    const promoCodeTrimmed = promoCode.trim();
+    const promoCodeUpper = promoCodeTrimmed.toUpperCase();
+    
+    // Check if it's FIKA11:11 promo code (case sensitive)
+    if (promoCodeTrimmed === "FIKA11:11") {
+      // Calculate 11% discount
+      const discountPercentage = 11;
+      const discountAmount = Math.round((selectedTotal * discountPercentage) / 100);
+      
+      setPromoApplied(true);
+      setDiscount(discountAmount);
+      setPromoError("");
+      console.log(`Applied ${discountPercentage}% discount:`, discountAmount, "on total:", selectedTotal);
       return;
     }
-    setPromoLoading(true);
-    try {
-      const data = await checkPromoEligibility(user?.uid, promoCode.trim().toUpperCase());
-      if (data.eligible) {
-        setPromoApplied(true);
-        setDiscount(selectedTotal * 0.1);
-        setPromoError("");
-      } else {
-        setPromoApplied(false);
-        setDiscount(0);
-        setPromoError(data.message || "Promo code not eligible.");
-      }
-    } catch (err) {
-      setPromoApplied(false);
-      setDiscount(0);
-      setPromoError("Error checking promo code. Try again.");
-    } finally {
-      setPromoLoading(false);
+    
+    // Check if it's NEW10OFF promo code (case insensitive)
+    if (promoCodeUpper === "NEW10OFF") {
+      // For NEW10OFF, apply 10% discount directly without eligibility check
+      const discountPercentage = 10;
+      const discountAmount = Math.round((selectedTotal * discountPercentage) / 100);
+      
+      setPromoApplied(true);
+      setDiscount(discountAmount);
+      setPromoError("");
+      console.log(`Applied ${discountPercentage}% discount:`, discountAmount, "on total:", selectedTotal);
+      return;
     }
+    
+    // If we get here, the promo code is not recognized
+    console.log("Invalid promo code entered:", promoCodeTrimmed);
+    setPromoError("Invalid promo code. Please check and try again.");
+    setPromoApplied(false);
+    setDiscount(0);
   };
 
   const handleCheckout = () => {
@@ -307,7 +319,7 @@ const Cart = () => {
         </div>
 
         <div className="order-summary">
-          <div className="promo-info-banner">10% off on your first order! Use code <b>NEW10OFF</b></div>
+          <div className="promo-info-banner">Use code <b>NEW10OFF</b> for 10% off or <b>FIKA11:11</b> for 11% off your order!</div>
           <h3 className="summary-header">Order Summary</h3>
           
           {selectMode && (
@@ -335,7 +347,11 @@ const Cart = () => {
           </div>
           <div className="summary-row">
             {promoError && <div className="promo-error">{promoError}</div>}
-            {promoApplied && <div className="promo-success">10% off applied!</div>}
+            {promoApplied && (
+              <div className="promo-success">
+                {promoCode.trim().toUpperCase() === 'FIKA11:11' ? '11%' : '10%'} off applied!
+              </div>
+            )}
           </div>
           <div className="summary-row">
             <span>Subtotal:</span>
@@ -374,8 +390,9 @@ const Cart = () => {
         <Payment
           selectedItems={selectedItems}
           total={totalAfterDiscount}
-          promoCode={promoApplied ? promoCode.trim().toUpperCase() : null}
+          promoCode={promoApplied ? promoCode.trim() : ''}
           discount={promoApplied ? discount : 0}
+          subtotal={selectedTotal}
           onClose={() => setShowPayment(false)}
         />
       )}
