@@ -344,10 +344,15 @@ const NewArrivals = () => {
           <img
             src={getFirstImage(product.image)}
             alt={product.product_name}
-            className="product-image"
+            className={`product-image ${product.inventory <= 0 ? 'out-of-stock-image' : ''}`}
             loading="lazy"
             onError={(e) => handleImageError(e)}
           />
+          {product.inventory <= 0 && (
+            <div className="out-of-stock-overlay">
+              <span>Out of Stock</span>
+            </div>
+          )}
           <div className="views-overlay" title="Views">
             <img src="/Eye3.png" alt="views" className="views-icon-img" />
             <span>{product.views || 0}</span>

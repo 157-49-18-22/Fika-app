@@ -18,7 +18,7 @@ const SimplePlusIcon = () => (
   <span className="simple-icon plus-icon">+</span>
 );
 
-const Payment = ({ onClose, total }) => {
+const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
   const navigate = useNavigate();
   const { cart, getCartTotal, clearCart } = useCart();
   const { user } = useAuth();
@@ -33,6 +33,9 @@ const Payment = ({ onClose, total }) => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [addressesLoading, setAddressesLoading] = useState(true);
+  
+  // Calculate final total after applying discount
+  const finalTotal = Math.max(0, total - (discount || 0));
 
   // Fetch user details if logged in
   useEffect(() => {
@@ -308,7 +311,8 @@ const Payment = ({ onClose, total }) => {
       // Initialize Razorpay options - Following documentation more closely
       const options = {
         key: "rzp_live_oR04gue1fn6wcY", // Updated to production key
-        amount: orderResponse.amount,
+        // Convert final total to paisa and ensure it's an integer
+        amount: Math.round(finalTotal * 100),
         currency: orderResponse.currency,
         name: "Fika App",
         description: "Food Order Payment",
@@ -376,7 +380,10 @@ const Payment = ({ onClose, total }) => {
                 },
                 shippingAddress: selectedAddress || options.notes?.address || '',
                 orderDate: new Date().toISOString(),
-                orderTotal: total,
+                orderTotal: finalTotal,
+                originalTotal: total,
+                promoCode: promoCode,
+                discountApplied: discount,
                 promoCode: promoCode,
                 discount: discount,
                 subtotal: total + discount, // Add discount back to get the original subtotal

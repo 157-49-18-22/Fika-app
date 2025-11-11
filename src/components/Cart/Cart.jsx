@@ -136,9 +136,80 @@ const Cart = () => {
       return;
     }
 
-    // Trim and get uppercase version of the promo code
+    // Trim the promo code
     const promoCodeTrimmed = promoCode.trim();
     const promoCodeUpper = promoCodeTrimmed.toUpperCase();
+    
+    console.log('Applying promo code:', promoCodeTrimmed);
+    
+    // Check if it's Wish11:11 promo code (case sensitive) - Only for WishGenie products
+    if (promoCodeTrimmed === "Wish11:11") {
+      console.log('Wish11:11 promo code detected');
+      
+      // Debug: Log all selected items and their properties
+      console.log('All selected items:', selectedItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        category: item.category,
+        price: item.price,
+        quantity: item.quantity
+      })));
+      
+      // Find products with 'Luxury Crystal' category
+      const wishGenieItems = selectedItems.filter(item => {
+        if (!item) return false;
+        
+        // Get the category and clean it up
+        const category = item.category ? item.category.toString().trim().toLowerCase() : '';
+        
+        // Check if category is 'luxury crystal'
+        const isLuxuryCrystal = category.includes('luxury') && category.includes('crystal');
+        
+        console.log('Checking product category:', {
+          name: item.name,
+          originalCategory: item.category,
+          cleanedCategory: category,
+          isLuxuryCrystal: isLuxuryCrystal
+        });
+        
+        return isLuxuryCrystal;
+      });
+      
+      console.log('Found WishGenie items:', wishGenieItems);
+      
+      if (wishGenieItems.length === 0) {
+        const errorMsg = "This promo code is only valid for WishGenie products.";
+        console.log(errorMsg);
+        setPromoError(errorMsg);
+        return;
+      }
+      
+      // Calculate total only for WishGenie items
+      const wishGenieTotal = wishGenieItems.reduce((sum, item) => {
+        return sum + (Number(item.price) * Number(item.quantity));
+      }, 0);
+      
+      console.log('WishGenie items total:', wishGenieTotal);
+      
+      // Apply 11% discount only to WishGenie items
+      const discountPercentage = 11;
+      const discountAmount = Math.round((wishGenieTotal * discountPercentage) / 100);
+      
+      console.log('Calculated discount:', discountAmount);
+      
+      setPromoApplied(true);
+      setDiscount(discountAmount);
+      setPromoError("");
+      
+      console.log(`Applied ${discountPercentage}% Wish11:11 discount:`, {
+        discountAmount,
+        wishGenieTotal,
+        selectedTotal,
+        cartTotal: getCartTotal()
+      });
+      
+      return;
+    }
     
     // Check if it's FIKA11:11 promo code (case sensitive)
     if (promoCodeTrimmed === "FIKA11:11") {
@@ -168,7 +239,11 @@ const Cart = () => {
     
     // If we get here, the promo code is not recognized
     console.log("Invalid promo code entered:", promoCodeTrimmed);
-    setPromoError("Invalid promo code. Please check and try again.");
+    if (promoCodeTrimmed === "WISH11:11") {
+      setPromoError("Please use 'Wish11:11' (case sensitive) for WishGenie products");
+    } else {
+      setPromoError("Invalid promo code. Try 'FIKA11:11' for 11% off or 'NEW10OFF' for 10% off");
+    }
     setPromoApplied(false);
     setDiscount(0);
   };
@@ -319,7 +394,11 @@ const Cart = () => {
         </div>
 
         <div className="order-summary">
-          <div className="promo-info-banner">Use code <b>NEW10OFF</b> for 10% off or <b>FIKA11:11</b> for 11% off your order!</div>
+          <div className="promo-info-banner">
+            Use <b>NEW10OFF</b> for 10% off | 
+            <b>FIKA11:11</b> for 11% off | 
+            <b>Wish11:11</b> for 11% on WishGenie
+          </div>
           <h3 className="summary-header">Order Summary</h3>
           
           {selectMode && (
@@ -336,10 +415,9 @@ const Cart = () => {
               type="text"
               placeholder="Enter promo code"
               value={promoCode}
-              onChange={e => setPromoCode(e.target.value)}
-              disabled={promoApplied}
+              onChange={(e) => setPromoCode(e.target.value)}
               className="promo-input"
-              style={{textTransform:'uppercase'}}
+              disabled={promoLoading}
             />
             <button onClick={handleApplyPromo} className="apply-promo-btn" disabled={promoLoading}>
               {promoLoading ? "Please wait..." : promoApplied ? "Remove" : "Apply"}
@@ -349,7 +427,9 @@ const Cart = () => {
             {promoError && <div className="promo-error">{promoError}</div>}
             {promoApplied && (
               <div className="promo-success">
-                {promoCode.trim().toUpperCase() === 'FIKA11:11' ? '11%' : '10%'} off applied!
+                {promoCode.trim() === 'FIKA11:11' ? '11%' : 
+                 promoCode.trim() === 'Wish11:11' ? '11% (WishGenie only)' : 
+                 '10%'} off applied!
               </div>
             )}
           </div>

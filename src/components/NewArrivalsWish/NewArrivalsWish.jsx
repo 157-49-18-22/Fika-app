@@ -335,7 +335,16 @@ const NewArrivalsWish = () => {
                         onClick={() => navigate(addReferrerToUrl(`/product-wish/${product.id}`, location.pathname + location.search))}
       >
         <div className="wish-product-image">
-          <img src={getFirstImage(product.image)} alt="" />
+          <img 
+            src={getFirstImage(product.image)} 
+            alt="" 
+            className={product.inventory <= 0 ? 'out-of-stock-image' : ''} 
+          />
+          {product.inventory <= 0 && (
+            <div className="out-of-stock-overlay">
+              <span>Out of Stock</span>
+            </div>
+          )}
           <div className="wish-product-actions">
             <button 
               className="wish-action-btn cart-btn" 
