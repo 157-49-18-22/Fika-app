@@ -242,6 +242,14 @@ const ProductDetails = () => {
 
   useEffect(() => {
     const handleScroll = () => {
+      // Disable sticky scroll on smaller screens where layout stacks vertically (overlapping issue)
+      if (window.innerWidth <= 1200) {
+        if (galleryRef.current) {
+          galleryRef.current.style.transform = 'translateY(0)';
+        }
+        return;
+      }
+
       if (galleryRef.current && wrapperRef.current) {
         const wrapperRect = wrapperRef.current.getBoundingClientRect();
         const galleryRect = galleryRef.current.getBoundingClientRect();
@@ -256,7 +264,11 @@ const ProductDetails = () => {
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
   }, []);
 
   useEffect(() => {
