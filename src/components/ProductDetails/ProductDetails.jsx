@@ -65,7 +65,7 @@ const calculateDiscountedPrice = (originalPrice, discountPercentage) => {
 const formatPriceWithDiscount = (price, discount) => {
   const originalPrice = Number(price) || 0;
   const discountPercentage = Number(discount) || 0;
-  
+
   if (!discountPercentage || discountPercentage <= 0) {
     return {
       original: null,
@@ -73,9 +73,9 @@ const formatPriceWithDiscount = (price, discount) => {
       discountPercentage: 0
     };
   }
-  
+
   const discountedPrice = calculateDiscountedPrice(originalPrice, discountPercentage);
-  
+
   return {
     original: originalPrice.toFixed(2),
     discounted: discountedPrice.toFixed(2),
@@ -132,7 +132,7 @@ const ProductDetails = () => {
         const productsRef = collection(db, 'products');
         const q = query(productsRef, where('id', '==', parseInt(id)));
         const querySnapshot = await getDocs(q);
-        
+
         if (querySnapshot.empty) {
           console.log('Product not found in Firestore'); // Debug log
           setError('Product not found');
@@ -144,14 +144,14 @@ const ProductDetails = () => {
         const productDoc = querySnapshot.docs[0];
         const raw = productDoc.data();
         console.log('Raw product data:', raw); // Debug log
-        
+
         const normalized = {
           ...raw,
           id: productDoc.id,
-                  image: raw.image || '/placeholder-image.webp',
-        image2: raw.image2 || '/placeholder-image.webp',
-        image3: raw.image3 || '/placeholder-image.webp',
-        image4: raw.image4 || '/placeholder-image.webp',
+          image: raw.image || '/placeholder-image.webp',
+          image2: raw.image2 || '/placeholder-image.webp',
+          image3: raw.image3 || '/placeholder-image.webp',
+          image4: raw.image4 || '/placeholder-image.webp',
           reviews: raw.reviews || [],
           reviewsCount: raw.reviewsCount || 0,
           discount: raw.discount || 0,
@@ -170,7 +170,7 @@ const ProductDetails = () => {
           product_name: raw.product_name || '',
           product_code: raw.product_code || '',
           category: raw.category || '',
-    
+
         };
         console.log('Normalized product data:', normalized); // Debug log
         console.log('Product inventory value:', normalized.inventory); // Debug inventory
@@ -219,12 +219,12 @@ const ProductDetails = () => {
 
     const productsRef = collection(db, 'products');
     const q = query(productsRef, where('id', '==', parseInt(id)));
-    
+
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       if (!querySnapshot.empty) {
         const updatedData = querySnapshot.docs[0].data();
         console.log('Real-time engagement update received:', updatedData);
-        
+
         setProduct(prevProduct => {
           if (prevProduct) {
             return { ...prevProduct, ...updatedData };
@@ -245,7 +245,7 @@ const ProductDetails = () => {
       if (galleryRef.current && wrapperRef.current) {
         const wrapperRect = wrapperRef.current.getBoundingClientRect();
         const galleryRect = galleryRef.current.getBoundingClientRect();
-        
+
         if (wrapperRect.top <= 0 && wrapperRect.bottom >= galleryRect.height) {
           const translateY = -wrapperRect.top;
           galleryRef.current.style.transform = `translateY(${translateY}px)`;
@@ -265,7 +265,7 @@ const ProductDetails = () => {
       // Filter out current product and get recently viewed
       const filteredProducts = products.filter(p => p.id !== product?.id);
       setRecentlyViewedProducts(filteredProducts.slice(0, 4));
-      
+
       // Get trending products (sorted by rating)
       const trending = [...filteredProducts]
         .sort((a, b) => (b.rating || 0) - (a.rating || 0))
@@ -286,9 +286,9 @@ const ProductDetails = () => {
         .map(img => img.trim())
         .filter(Boolean)
         .map(img => img.startsWith('/') ? img : `/${img}`); // Ensure leading slash for public folder
-              setProductImages(imagesArr.length > 0 ? imagesArr : ['/placeholder-image.webp']);
+      setProductImages(imagesArr.length > 0 ? imagesArr : ['/placeholder-image.webp']);
     } else {
-              setProductImages(['/placeholder-image.webp']);
+      setProductImages(['/placeholder-image.webp']);
     }
   }, [product]);
 
@@ -355,7 +355,7 @@ const ProductDetails = () => {
     console.log('Add to cart button clicked');
     e.preventDefault();
     e.stopPropagation();
-    
+
     // First check if user is authenticated
     if (!isAuthenticated) {
       console.log('User not authenticated, showing login prompt');
@@ -370,13 +370,13 @@ const ProductDetails = () => {
       setShowLoginPrompt(true);
       return;
     }
-    
+
     // Log user details for debugging
     console.log('Current user:', {
       email: user.email,
       uid: user.uid
     });
-    
+
     // Log product data for debugging
     console.log('Product data:', {
       id: product.id,
@@ -385,14 +385,14 @@ const ProductDetails = () => {
       sizes: product.sizes,
       color: product.color
     });
-    
+
     // Create the product object to add to cart with all necessary fields
     const productToAdd = {
       id: product.id,
       name: product.product_name,
       price: product.mrp,
       discount: product.discount || 0,
-              image: product.image || '/placeholder-image.webp',
+      image: product.image || '/placeholder-image.webp',
       category: product.category,
       size: selectedSize || 'Standard',
       quantity: quantity,
@@ -401,18 +401,18 @@ const ProductDetails = () => {
       selected: true,
       addedAt: new Date().toISOString()
     };
-    
+
     console.log('Adding to cart:', {
       product: productToAdd,
       size: selectedSize || 'Standard',
       quantity: quantity,
       userEmail: user.email
     });
-    
+
     try {
       // Add to cart - pass the navigate function
       await addToCart(productToAdd, selectedSize || 'Standard', quantity, navigate);
-      
+
       // Increment bought count when product is added to cart
       try {
         await incrementProductBought(id);
@@ -420,14 +420,14 @@ const ProductDetails = () => {
       } catch (error) {
         console.error('Error incrementing product bought count:', error);
       }
-      
+
       // Show success message
       setShowSuccessMessage(true);
       setTimeout(() => setShowSuccessMessage(false), 3000);
 
       // Emit a custom event that can be listened for in other components
-      const cartUpdateEvent = new CustomEvent('cartUpdated', { 
-        detail: { item: productToAdd, action: 'add' } 
+      const cartUpdateEvent = new CustomEvent('cartUpdated', {
+        detail: { item: productToAdd, action: 'add' }
       });
       window.dispatchEvent(cartUpdateEvent);
 
@@ -442,7 +442,7 @@ const ProductDetails = () => {
   const handleAddToWishlist = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!isAuthenticated) {
       setShowLoginPrompt(true);
       return;
@@ -468,12 +468,12 @@ const ProductDetails = () => {
   const handleRelatedProductAction = async (e, action, product) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!isAuthenticated) {
       setShowLoginPrompt(true);
       return;
     }
-    
+
     try {
       if (action === 'cart') {
         // Format the product data consistently for Cart and SavedCart
@@ -491,10 +491,10 @@ const ProductDetails = () => {
           selected: true,
           addedAt: new Date().toISOString()
         };
-        
+
         // Add to cart
         await addToCart(productToAdd, productToAdd.size, 1, navigate);
-        
+
         // Increment bought count when related product is added to cart
         try {
           await incrementProductBought(product.id);
@@ -502,13 +502,13 @@ const ProductDetails = () => {
         } catch (error) {
           console.error('Error incrementing related product bought count:', error);
         }
-        
+
         // Show a brief success message
         alert('Product added to cart!');
-        
+
         // Emit cart update event
-        const cartUpdateEvent = new CustomEvent('cartUpdated', { 
-          detail: { item: productToAdd, action: 'add' } 
+        const cartUpdateEvent = new CustomEvent('cartUpdated', {
+          detail: { item: productToAdd, action: 'add' }
         });
         window.dispatchEvent(cartUpdateEvent);
       } else if (action === 'wishlist') {
@@ -533,7 +533,7 @@ const ProductDetails = () => {
     const deliveryDays = Math.floor(Math.random() * 5) + 3; // Random between 3-7 days
     const delivery = new Date(today);
     delivery.setDate(today.getDate() + deliveryDays);
-    
+
     // Format date as "Day, DD Month YYYY"
     const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
     setDeliveryDate(delivery.toLocaleDateString('en-IN', options));
@@ -557,6 +557,11 @@ const ProductDetails = () => {
     return stars;
   };
 
+  // Helper to check if URL is a video
+  const isVideo = (url) => {
+    return /\.(mp4|webm|ogg|mov)$/i.test(url);
+  };
+
   const ProductGallery = ({ images }) => {
     return (
       <div className="product-gallery">
@@ -567,17 +572,42 @@ const ProductDetails = () => {
               className={`thumbnail ${selectedImage === index ? "active" : ""}`}
               onClick={() => setSelectedImage(index)}
             >
-              <img src={img} alt={`Product thumbnail ${index + 1}`} />
+              {isVideo(img) ? (
+                <video
+                  src={img}
+                  className="thumbnail-video"
+                  muted
+                  autoPlay
+                  loop
+                  playsInline
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : (
+                <img src={img} alt={`Product thumbnail ${index + 1}`} />
+              )}
             </div>
           ))}
         </div>
 
         <div className="main-image-container">
-          <img
-            src={images[selectedImage]}
-            alt="Selected product"
-            className="main-image"
-          />
+          {isVideo(images[selectedImage]) ? (
+            <video
+              src={images[selectedImage]}
+              className="main-image"
+              autoPlay
+              muted
+              loop
+              playsInline
+              controls
+              key={images[selectedImage]} // Force re-render when video changes
+            />
+          ) : (
+            <img
+              src={images[selectedImage]}
+              alt="Selected product"
+              className="main-image"
+            />
+          )}
         </div>
       </div>
     );
@@ -630,42 +660,42 @@ const ProductDetails = () => {
 
           <div className="product-meta">
             <div className="product-price">
-               <span className="current-price" style={{fontSize: '18px'}}>
-                 {(() => {
-                   const priceInfo = formatPriceWithDiscount(product.mrp, product.discount);
-                   return (
-                     <>
-                       {priceInfo.original ? (
-                         <>
-                           <span style={{textDecoration: 'line-through', color: '#999', marginRight: '10px'}}>
-                             ₹{priceInfo.original}
-                           </span>
-                           <span style={{color: '#e74c3c', fontWeight: 'bold'}}>
-                             ₹{priceInfo.discounted}
-                           </span>
-                           <span style={{background: '#e74c3c', color: 'white', padding: '2px 6px', borderRadius: '3px', fontSize: '12px', marginLeft: '8px'}}>
-                             -{priceInfo.discountPercentage}%
-                           </span>
-                         </>
-                       ) : (
-                         <span>₹{priceInfo.discounted}</span>
-                       )}
-                       <span className="stock-status">
-                         {product.inventory !== undefined && product.inventory !== null ? (
-                           product.inventory > 0 ? (
-                             <span className="in-stock"> • In Stock</span>
-                           ) : (
-                             <span className="out-of-stock"> • Out of Stock</span>
-                           )
-                         ) : (
-                           <span className="in-stock"> • In Stock</span>
-                         )}
-                       </span>
-                     </>
-                   );
-                 })()}
-               </span>
-             </div>
+              <span className="current-price" style={{ fontSize: '18px' }}>
+                {(() => {
+                  const priceInfo = formatPriceWithDiscount(product.mrp, product.discount);
+                  return (
+                    <>
+                      {priceInfo.original ? (
+                        <>
+                          <span style={{ textDecoration: 'line-through', color: '#999', marginRight: '10px' }}>
+                            ₹{priceInfo.original}
+                          </span>
+                          <span style={{ color: '#e74c3c', fontWeight: 'bold' }}>
+                            ₹{priceInfo.discounted}
+                          </span>
+                          <span style={{ background: '#e74c3c', color: 'white', padding: '2px 6px', borderRadius: '3px', fontSize: '12px', marginLeft: '8px' }}>
+                            -{priceInfo.discountPercentage}%
+                          </span>
+                        </>
+                      ) : (
+                        <span>₹{priceInfo.discounted}</span>
+                      )}
+                      <span className="stock-status">
+                        {product.inventory !== undefined && product.inventory !== null ? (
+                          product.inventory > 0 ? (
+                            <span className="in-stock"> • In Stock</span>
+                          ) : (
+                            <span className="out-of-stock"> • Out of Stock</span>
+                          )
+                        ) : (
+                          <span className="in-stock"> • In Stock</span>
+                        )}
+                      </span>
+                    </>
+                  );
+                })()}
+              </span>
+            </div>
           </div>
 
           <div className="product-features">
@@ -788,7 +818,7 @@ const ProductDetails = () => {
                     +
                   </button>
                 </div>
-                
+
               </div>
             </div>
 
@@ -991,24 +1021,24 @@ const ProductDetails = () => {
               }
             }
             return (
-              <div 
-                key={product.id} 
+              <div
+                key={product.id}
                 className="product-card"
                 onClick={() => navigate(`/product/${product.id}`)}
               >
                 <div className="product-image-container">
-                  <img 
-                    src={firstImage} 
-                    alt={product.product_name} 
-                    className="product-image" 
-                    loading="lazy" 
+                  <img
+                    src={firstImage}
+                    alt={product.product_name}
+                    className="product-image"
+                    loading="lazy"
                   />
                   <div className="views-overlay" title="Views">
                     <img src="/Eye3.png" alt="views" className="views-icon-img" />
                     <span>{product.views || 0}</span>
                   </div>
                   <div className="product-actions">
-                    <button 
+                    <button
                       className="product-action-btn cart-btn"
                       onClick={(e) => handleRelatedProductAction(e, 'cart', product)}
                       title="Add to Cart"
@@ -1016,14 +1046,14 @@ const ProductDetails = () => {
                     >
                       <FaShoppingCart />
                     </button>
-                    <button 
+                    <button
                       className={`product-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
                       onClick={(e) => handleRelatedProductAction(e, 'wishlist', product)}
                       title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
                     >
                       {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
                     </button>
-                    <button 
+                    <button
                       className="product-action-btn quickview-btn"
                       onClick={(e) => handleQuickView(product.id, e)}
                       title="Quick View"
@@ -1032,10 +1062,10 @@ const ProductDetails = () => {
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="product-info">
                   <h3 className="product-name">{product.product_name}</h3>
-                                    <p className="product-category">
+                  <p className="product-category">
                     {product.category}
                   </p>
                   <div className="product-price">
@@ -1045,13 +1075,13 @@ const ProductDetails = () => {
                         <>
                           {priceInfo.original ? (
                             <>
-                              <span className="original-price" style={{textDecoration: 'line-through', color: '#999', fontSize: '14px', marginRight: '5px'}}>
+                              <span className="original-price" style={{ textDecoration: 'line-through', color: '#999', fontSize: '14px', marginRight: '5px' }}>
                                 ₹{priceInfo.original}
                               </span>
-                              <span className="current-price" style={{color: '#e74c3c', fontWeight: 'bold'}}>
+                              <span className="current-price" style={{ color: '#e74c3c', fontWeight: 'bold' }}>
                                 ₹{priceInfo.discounted}
                               </span>
-                              <span style={{background: '#e74c3c', color: 'white', padding: '1px 4px', borderRadius: '2px', fontSize: '10px', marginLeft: '4px'}}>
+                              <span style={{ background: '#e74c3c', color: 'white', padding: '1px 4px', borderRadius: '2px', fontSize: '10px', marginLeft: '4px' }}>
                                 -{priceInfo.discountPercentage}%
                               </span>
                             </>
@@ -1064,7 +1094,7 @@ const ProductDetails = () => {
                       );
                     })()}
                   </div>
-                  
+
                   <button className="shop-now-btn">
                     Shop Now <FaArrowRight className="" />
                   </button>
@@ -1087,24 +1117,24 @@ const ProductDetails = () => {
               }
             }
             return (
-              <div 
-                key={product.id} 
+              <div
+                key={product.id}
                 className="product-card"
                 onClick={() => navigate(`/product/${product.id}`)}
               >
                 <div className="product-image-container">
-                  <img 
-                    src={firstImage} 
-                    alt={product.product_name} 
-                    className="product-image" 
-                    loading="lazy" 
+                  <img
+                    src={firstImage}
+                    alt={product.product_name}
+                    className="product-image"
+                    loading="lazy"
                   />
                   <div className="views-overlay" title="Views">
                     <img src="/Eye3.png" alt="views" className="views-icon-img" />
                     <span>{product.views || 0}</span>
                   </div>
                   <div className="product-actions">
-                    <button 
+                    <button
                       className="product-action-btn cart-btn"
                       onClick={(e) => handleRelatedProductAction(e, 'cart', product)}
                       title="Add to Cart"
@@ -1112,14 +1142,14 @@ const ProductDetails = () => {
                     >
                       <FaShoppingCart />
                     </button>
-                    <button 
+                    <button
                       className={`product-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
                       onClick={(e) => handleRelatedProductAction(e, 'wishlist', product)}
                       title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
                     >
                       {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
                     </button>
-                    <button 
+                    <button
                       className="product-action-btn quickview-btn"
                       onClick={(e) => handleQuickView(product.id, e)}
                       title="Quick View"
@@ -1128,7 +1158,7 @@ const ProductDetails = () => {
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="product-info">
                   <h3 className="product-name">{product.product_name}</h3>
                   <p className="product-category">
@@ -1139,7 +1169,7 @@ const ProductDetails = () => {
                       ₹{Number(product.mrp).toFixed(2)}
                     </span>
                   </div>
-                  
+
                   <button className="shop-now-btn">
                     Shop Now <FaArrowRight className="" />
                   </button>
@@ -1162,24 +1192,24 @@ const ProductDetails = () => {
               }
             }
             return (
-              <div 
-                key={product.id} 
+              <div
+                key={product.id}
                 className="product-card"
                 onClick={() => navigate(`/product/${product.id}`)}
               >
                 <div className="product-image-container">
-                  <img 
-                    src={firstImage} 
-                    alt={product.product_name} 
-                    className="product-image" 
-                    loading="lazy" 
+                  <img
+                    src={firstImage}
+                    alt={product.product_name}
+                    className="product-image"
+                    loading="lazy"
                   />
                   <div className="views-overlay" title="Views">
                     <img src="/Eye3.png" alt="views" className="views-icon-img" />
                     <span>{product.views || 0}</span>
                   </div>
                   <div className="product-actions">
-                    <button 
+                    <button
                       className="product-action-btn cart-btn"
                       onClick={(e) => handleRelatedProductAction(e, 'cart', product)}
                       title="Add to Cart"
@@ -1187,14 +1217,14 @@ const ProductDetails = () => {
                     >
                       <FaShoppingCart />
                     </button>
-                    <button 
+                    <button
                       className={`product-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
                       onClick={(e) => handleRelatedProductAction(e, 'wishlist', product)}
                       title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
                     >
                       {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
                     </button>
-                    <button 
+                    <button
                       className="product-action-btn quickview-btn"
                       onClick={(e) => handleQuickView(product.id, e)}
                       title="Quick View"
@@ -1203,7 +1233,7 @@ const ProductDetails = () => {
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="product-info">
                   <h3 className="product-name">{product.product_name}</h3>
                   <p className="product-category">
@@ -1214,7 +1244,7 @@ const ProductDetails = () => {
                       ₹{Number(product.mrp).toFixed(2)}
                     </span>
                   </div>
-                  
+
                   <button className="shop-now-btn">
                     Shop Now <FaArrowRight className="" />
                   </button>
