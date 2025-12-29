@@ -331,23 +331,23 @@
   .search-filter-section {
     padding: 16px;
   }
-  
+
   .price-filter-container {
     flex-direction: column;
     align-items: stretch;
     gap: 16px;
   }
-  
+
   .price-filter-group {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
   }
-  
+
   .price-input {
     width: 100px;
   }
-  
+
   .clear-filters-btn {
     align-self: flex-start;
   }
@@ -422,7 +422,7 @@
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
   z-index: 100;
   min-width: 220px;
   max-width: 340px;
@@ -436,11 +436,12 @@
   width: 260px;
   height: 300px;
 }
+
 .wishlist-dropdown-user {
   background: #fff;
   border: 1px solid #eee;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
   padding: 12px 18px;
   margin: 8px 12px;
   display: flex;
@@ -450,15 +451,18 @@
   box-sizing: border-box;
   transition: box-shadow 0.18s, border 0.18s;
 }
+
 .wishlist-dropdown-user:hover {
-  box-shadow: 0 4px 16px rgba(108,71,255,0.10);
+  box-shadow: 0 4px 16px rgba(108, 71, 255, 0.10);
   border: 1.5px solid #bdb2ff;
 }
+
 .wishlist-dropdown-user .user-name {
   font-weight: 600;
   font-size: 1rem;
   color: #222;
 }
+
 .wishlist-dropdown-user .user-email {
   font-size: 0.95em;
   color: #888;
@@ -561,19 +565,3 @@
 .bulk-form .cancel-btn:hover {
   background-color: #000000;
 }
-
-.media-preview {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-  flex-wrap: wrap;
-}
-
-.media-preview-item {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  background-color: #f5f5f5;
-} 
