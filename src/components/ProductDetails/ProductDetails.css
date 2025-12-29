@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
 
 @font-face {
     font-family: 'Carmine';
@@ -348,7 +348,7 @@
 }
 
 .color-option.unavailable::after {
-    content: '×';
+    content: 'Ã—';
     position: absolute;
     top: 50%;
     left: 50%;
@@ -478,7 +478,7 @@
 }
 
 .size-btn.unavailable::after {
-    content: '×';
+    content: 'Ã—';
     position: absolute;
     top: -8px;
     right: -8px;
@@ -728,7 +728,7 @@
 }
 
 .description-features li::before {
-    content: '✓';
+    content: 'âœ“';
     position: absolute;
     left: 0;
     color: #1D1D1D;
@@ -763,7 +763,7 @@
 }
 
 .details-section li::before {
-    content: '•';
+    content: 'â€¢';
     position: absolute;
     left: 0;
     color: #1D1D1D;
@@ -907,7 +907,7 @@
 
 .shipping-section li::before,
 .returns-section li::before {
-    content: '✓';
+    content: 'âœ“';
     position: absolute;
     left: 0;
     color: #1D1D1D;
@@ -1784,4 +1784,15 @@ body.login-prompt-active {
         font-size: 8px !important;
         padding: 1px 3px !important;
     }
+}
+
+/* Hide volume button from video controls */
+video::-webkit-media-controls-volume-control-container,
+video::-webkit-media-controls-mute-button {
+    display: none !important;
+}
+
+/* For Firefox/Modern browsers */
+video {
+    --media-controls-volume-control-display: none;
 }
