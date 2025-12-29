@@ -384,6 +384,7 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
                 originalTotal: total,
                 promoCode: promoCode,
                 discountApplied: discount,
+                promoCode: promoCode,
                 discount: discount,
                 subtotal: total + discount, // Add discount back to get the original subtotal
               });
