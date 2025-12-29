@@ -25,7 +25,7 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [userDetails, setUserDetails] = useState(null);
-  
+
   // Address selection state
   const [showAddressSelection, setShowAddressSelection] = useState(true);
   const [addresses, setAddresses] = useState([]);
@@ -33,7 +33,7 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [addressesLoading, setAddressesLoading] = useState(true);
-  
+
   // Calculate final total after applying discount
   const finalTotal = Math.max(0, total - (discount || 0));
 
@@ -49,10 +49,10 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
         }
       }
     };
-    
+
     fetchUserDetails();
   }, [user]);
-  
+
   // Fetch user addresses
   useEffect(() => {
     if (user && user.uid) {
@@ -62,11 +62,11 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
       setAddresses([]);
     }
   }, [user]);
-  
+
   const fetchAddresses = async () => {
     setAddressesLoading(true);
     setError("");
-    
+
     try {
       // Check if user exists and has uid
       if (!user || !user.uid) {
@@ -75,31 +75,31 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
         setAddressesLoading(false);
         return;
       }
-      
+
       console.log("Fetching addresses for user:", user.uid);
-      
+
       // Use Firebase directly to fetch addresses
       const addressesQuery = query(
-        collection(db, "addresses"), 
+        collection(db, "addresses"),
         where("userId", "==", user.uid)
       );
-      
+
       console.log("Executing Firestore query...");
       const querySnapshot = await getDocs(addressesQuery);
       console.log(`Found ${querySnapshot.size} addresses`);
-      
+
       const addressList = [];
-      
+
       querySnapshot.forEach((doc) => {
         addressList.push({
           id: doc.id,
           ...doc.data()
         });
       });
-      
+
       console.log("Processed address list:", addressList);
       setAddresses(addressList);
-      
+
       // Select default address if exists
       const defaultAddress = addressList.find(addr => addr.isDefault);
       if (defaultAddress) {
@@ -122,7 +122,7 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
       setAddressesLoading(false);
     }
   };
-  
+
   const handleSaveAddress = async (formData) => {
     try {
       // Check if user exists and has uid
@@ -130,9 +130,9 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
         setError("You must be logged in to save an address");
         return;
       }
-      
+
       setLoading(true);
-      
+
       // Add user ID and other metadata to the form data
       const addressData = {
         ...formData,
@@ -141,14 +141,14 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
         createdAt: new Date(),
         updatedAt: new Date()
       };
-      
+
       console.log("Saving address data:", addressData);
-      
+
       try {
         // Use Firebase directly to save the address
         const docRef = await addDoc(collection(db, "addresses"), addressData);
         console.log("Address saved with ID:", docRef.id);
-        
+
         // If this is the first address or marked as default
         if (addresses.length === 0 || addressData.isDefault) {
           // Set any previous default address to non-default
@@ -163,19 +163,19 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
             }
           }
         }
-        
+
         // Add the new address to the local state
         const newAddress = {
           id: docRef.id,
           ...addressData
         };
-        
+
         setAddresses(prev => [...prev, newAddress]);
         setSelectedAddressId(newAddress.id);
         setSelectedAddress(newAddress);
         setShowAddressForm(false);
         setError("");
-        
+
       } catch (firestoreError) {
         console.error('Firestore error saving address:', firestoreError);
         setError(`Failed to save address: ${firestoreError.message}`);
@@ -187,12 +187,12 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
       setLoading(false);
     }
   };
-  
+
   const handleDeleteAddress = async (addressId) => {
     try {
       await deleteDoc(doc(db, "addresses", addressId));
       setAddresses(addresses.filter(addr => addr.id !== addressId));
-      
+
       if (selectedAddressId === addressId) {
         if (addresses.length > 1) {
           const nextAddress = addresses.find(addr => addr.id !== addressId);
@@ -213,13 +213,13 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
       setError("Failed to delete address. Please try again.");
     }
   };
-  
+
   const handleSelectAddress = (addressId) => {
     setSelectedAddressId(addressId);
     const address = addresses.find(addr => addr.id === addressId);
     setSelectedAddress(address);
   };
-  
+
   const handleContinueToPayment = () => {
     if (!selectedAddress) {
       setError("Please select a delivery address");
@@ -227,7 +227,7 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
     }
     setShowAddressSelection(false);
   };
-  
+
   const handleBackToAddresses = () => {
     setShowAddressSelection(true);
   };
@@ -285,13 +285,13 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
     try {
       const amount = Number(total); // Use the total prop which includes shipping
       console.log('[PAYMENT] Starting payment process with amount:', amount);
-      
+
       if (amount <= 0) {
         console.error('[PAYMENT] Invalid amount:', amount);
         setError("Invalid payment amount");
         return;
       }
-      
+
       // Create order using Firebase callable function
       console.log('[PAYMENT] Creating Razorpay order...');
       const orderResponse = await createRazorpayOrder(amount);
@@ -304,8 +304,8 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
       }
 
       // Format address for Razorpay
-      const formattedAddress = selectedAddress ? 
-        `${selectedAddress.addressLine1}, ${selectedAddress.addressLine2 || ''}, ${selectedAddress.city}, ${selectedAddress.state}, ${selectedAddress.pincode}` : 
+      const formattedAddress = selectedAddress ?
+        `${selectedAddress.addressLine1}, ${selectedAddress.addressLine2 || ''}, ${selectedAddress.city}, ${selectedAddress.state}, ${selectedAddress.pincode}` :
         "No address provided";
 
       // Initialize Razorpay options - Following documentation more closely
@@ -330,10 +330,10 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
         theme: {
           color: "#000000"
         },
-        handler: async function(response) {
+        handler: async function (response) {
           try {
             console.log('[PAYMENT] Handler triggered with response:', response);
-            
+
             if (!response.razorpay_payment_id) {
               console.error('[PAYMENT] Missing payment ID in response');
             }
@@ -343,13 +343,13 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
             if (!response.razorpay_signature) {
               console.error('[PAYMENT] Missing signature in response');
             }
-            
+
             if (!response.razorpay_payment_id || !response.razorpay_order_id || !response.razorpay_signature) {
               console.error('[PAYMENT] Invalid payment response - missing required fields');
               setError("Invalid payment response");
               return;
             }
-            
+
             // Save successful payment to backup collection first
             console.log('[PAYMENT] Saving payment details to backup collection...');
             try {
@@ -357,7 +357,7 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
               const urlParams = new URLSearchParams(window.location.search);
               const promoCode = urlParams.get('promoCode') || '';
               const discount = parseFloat(urlParams.get('discount')) || 0;
-              
+
               await saveSuccessfulPayment({
                 orderId: response.razorpay_order_id,
                 paymentId: response.razorpay_payment_id,
@@ -384,7 +384,6 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
                 originalTotal: total,
                 promoCode: promoCode,
                 discountApplied: discount,
-                promoCode: promoCode,
                 discount: discount,
                 subtotal: total + discount, // Add discount back to get the original subtotal
               });
@@ -393,7 +392,7 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
               console.error('[PAYMENT] Error saving to backup collection:', backupError);
               // Continue despite backup error
             }
-            
+
             // Verify payment using Firebase callable function
             console.log('[PAYMENT] Verifying payment with backend...');
             const verificationData = {
@@ -402,7 +401,7 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
               razorpay_signature: response.razorpay_signature
             };
             console.log('[PAYMENT] Verification data:', verificationData);
-            
+
             try {
               const verifyResponse = await verifyPayment(verificationData);
               console.log('[PAYMENT] Verification response received:', verifyResponse);
@@ -410,7 +409,7 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
               if (verifyResponse.verified) {
                 console.log('[PAYMENT] Payment successfully verified!');
                 alert('Payment Successful');
-                
+
                 console.log('[PAYMENT] Clearing cart...');
                 clearCart();
               }
@@ -418,13 +417,13 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
               console.error('[PAYMENT] Verification error:', verifyError);
               // Continue despite verification error - just log it
             }
-            
+
             // Always navigate to success page if we have payment ID
             // This happens regardless of verification or database errors
             console.log('[PAYMENT] Navigating to success page...');
             navigate(`/payment-success?order_id=${response.razorpay_order_id}`);
             console.log('[PAYMENT] Navigation triggered');
-            
+
           } catch (err) {
             console.error('[PAYMENT] Error in handler function:', err);
             console.error('[PAYMENT] Error details:', {
@@ -434,7 +433,7 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
               details: err.details
             });
             setError("Error verifying payment: " + (err.message || JSON.stringify(err)));
-            
+
             // Even if there's a major error, try to navigate to success if we have payment_id
             if (response && response.razorpay_payment_id && response.razorpay_order_id) {
               navigate(`/payment-success?order_id=${response.razorpay_order_id}`);
@@ -443,16 +442,16 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
         }
       };
 
-      console.log('[PAYMENT] Initializing Razorpay with options:', { 
-        ...options, 
+      console.log('[PAYMENT] Initializing Razorpay with options:', {
+        ...options,
         key: options.key.substring(0, 5) + '...'  // Don't log full key
       });
-      
+
       // Create and open Razorpay instance
       console.log('[PAYMENT] Creating Razorpay instance...');
       const paymentObject = new window.Razorpay(options);
       console.log('[PAYMENT] Razorpay instance created');
-      
+
       console.log('[PAYMENT] Opening Razorpay payment form...');
       paymentObject.open();
       console.log('[PAYMENT] Razorpay payment form opened');
@@ -474,18 +473,18 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('[PAYMENT] Payment form submitted');
-    
+
     if (cart.length === 0) {
       console.error('[PAYMENT] Attempted payment with empty cart');
       setError("Your cart is empty");
       return;
     }
-    
+
     if (!selectedAddress) {
       setError("Please select a delivery address");
       return;
     }
-    
+
     // Load Razorpay script
     console.log('[PAYMENT] Loading Razorpay script...');
     const script = document.createElement("script");
@@ -506,12 +505,12 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
   const handleTestOrder = async () => {
     setLoading(true);
     setError("");
-    
+
     try {
       // Create test order
       const orderResponse = await createTestOrder();
       console.log('Test order created:', orderResponse);
-      
+
       // Show success
       setError("Test order success! Order ID: " + orderResponse.id);
     } catch (err) {
@@ -525,18 +524,18 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
   const testDirectRazorpay = () => {
     setLoading(true);
     setError("");
-    
+
     try {
       console.log('Testing direct Razorpay integration');
-      
+
       // Load Razorpay script
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
       script.async = true;
-      
+
       script.onload = () => {
         console.log('Razorpay script loaded successfully');
-        
+
         // Create a simple test options object
         const options = {
           key: "rzp_live_oR04gue1fn6wcY", // Updated to production key
@@ -553,14 +552,14 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
           theme: {
             color: "#000000"
           },
-          handler: function(response) {
+          handler: function (response) {
             console.log('Test payment response:', response);
             alert('Test payment captured');
           }
         };
-        
+
         console.log('Initializing Razorpay with test options');
-        
+
         try {
           const rzp = new window.Razorpay(options);
           console.log('Razorpay object created:', rzp);
@@ -571,12 +570,12 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
           setError("Error initializing Razorpay: " + err.message);
         }
       };
-      
+
       script.onerror = (err) => {
         console.error('Failed to load Razorpay script:', err);
         setError("Failed to load Razorpay script");
       };
-      
+
       document.body.appendChild(script);
     } catch (err) {
       console.error('Razorpay test error:', err);
@@ -592,11 +591,11 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
         <button className="close-button" onClick={onClose}>
           ×
         </button>
-        
+
         {showAddressSelection ? (
           <>
             <h2><SimpleLocationIcon /> Select Delivery Address</h2>
-            
+
             {addressesLoading ? (
               <div className="address-loading">Loading addresses...</div>
             ) : (
@@ -604,8 +603,8 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
                 {addresses.length === 0 ? (
                   <div className="no-addresses-message">
                     <p>You don't have any saved addresses. Please add a new address to continue.</p>
-                    <button 
-                      className="add-address-btn" 
+                    <button
+                      className="add-address-btn"
                       onClick={() => setShowAddressForm(true)}
                     >
                       <SimplePlusIcon /> Add New Address
@@ -617,16 +616,16 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
                       <>
                         <div className="addresses-list">
                           {addresses.map((address) => (
-                            <div 
-                              key={address.id} 
+                            <div
+                              key={address.id}
                               className={`address-card ${selectedAddressId === address.id ? 'selected' : ''}`}
                               onClick={() => handleSelectAddress(address.id)}
                             >
                               <div className="address-selection">
-                                <input 
-                                  type="radio" 
+                                <input
+                                  type="radio"
                                   name="selectedAddress"
-                                  checked={selectedAddressId === address.id} 
+                                  checked={selectedAddressId === address.id}
                                   onChange={() => handleSelectAddress(address.id)}
                                 />
                               </div>
@@ -644,8 +643,8 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
                             </div>
                           ))}
                         </div>
-                        <button 
-                          className="add-another-address-btn" 
+                        <button
+                          className="add-another-address-btn"
                           onClick={() => setShowAddressForm(true)}
                         >
                           <SimplePlusIcon /> Add New Address
@@ -654,20 +653,20 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
                     )}
 
                     {showAddressForm ? (
-                      <AddressForm 
-                        onSave={handleSaveAddress} 
+                      <AddressForm
+                        onSave={handleSaveAddress}
                         onCancel={() => setShowAddressForm(false)}
                       />
                     ) : (
                       <div className="address-selection-actions">
-                        <button 
-                          className="cancel-btn" 
+                        <button
+                          className="cancel-btn"
                           onClick={onClose}
                         >
                           Cancel
                         </button>
-                        <button 
-                          className="continue-btn" 
+                        <button
+                          className="continue-btn"
                           onClick={handleContinueToPayment}
                           disabled={!selectedAddressId}
                         >
@@ -679,8 +678,8 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
                 )}
 
                 {addresses.length === 0 && showAddressForm && (
-                  <AddressForm 
-                    onSave={handleSaveAddress} 
+                  <AddressForm
+                    onSave={handleSaveAddress}
                     onCancel={() => setShowAddressForm(false)}
                   />
                 )}
@@ -690,7 +689,7 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
         ) : (
           <>
             <h2>Checkout</h2>
-            
+
             <div className="selected-address-summary">
               <div className="address-header">
                 <h3><SimpleLocationIcon /> Delivery Address</h3>

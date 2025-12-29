@@ -553,35 +553,33 @@ const Products = () => {
               <tr key={`product-${product.id}`}>
                 <td>
                   {product.firstImage ? (
-                    {
-                      product.firstImage ? (
-                        /\.(mp4|webm|ogg|mov)$/i.test(product.firstImage) ? (
-                          <video
-                            src={product.firstImage}
-                            className="product-thumbnail"
-                            muted
-                            autoPlay
-                            loop
-                            playsInline
-                          />
-                        ) : (
-                          <img
-                            src={product.firstImage}
-                            alt="Product Image"
-                            className="product-thumbnail"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.style.display = 'none';
-                              e.target.parentElement.textContent = 'No Image Available';
-                            }}
-                            loading="lazy"
-                          />
-                        )
-                      ) : (
-                        <div className="no-image">No Image Available</div>
-                      )
-                    }
+                    /\.(mp4|webm|ogg|mov)$/i.test(product.firstImage) ? (
+                      <video
+                        src={product.firstImage}
+                        className="product-thumbnail"
+                        muted
+                        autoPlay
+                        loop
+                        playsInline
+                      />
+                    ) : (
+                      <img
+                        src={product.firstImage}
+                        alt="Product Image"
+                        className="product-thumbnail"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.style.display = 'none';
+                          e.target.parentElement.textContent = 'No Image Available';
+                        }}
+                        loading="lazy"
+                      />
+                    )
+                  ) : (
+                    <div className="no-image">No Image Available</div>
+                  )}
                 </td>
+
                 <td>{product.product_name}</td>
                 <td>{product.product_code || 'N/A'}</td>
                 <td>{product.category}</td>
@@ -609,238 +607,240 @@ const Products = () => {
         </table>
       </div>
 
-      {showModal && (
-        <div className="modaloverlay">
-          <div className="modal-content">
-            <h3>{selectedProduct ? 'Edit Product' : 'Add New Product'}</h3>
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Product Name</label>
-                <input
-                  type="text"
-                  name="product_name"
-                  value={formData.product_name}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Category</label>
-                <input
-                  type="text"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Sub Category</label>
-                <input
-                  type="text"
-                  name="sub_category"
-                  value={formData.sub_category}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Product Code</label>
-                <input
-                  type="text"
-                  name="product_code"
-                  value={formData.product_code}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Color</label>
-                <input
-                  type="text"
-                  name="color"
-                  value={formData.color}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Description</label>
-                <textarea
-                  name="product_description"
-                  value={formData.product_description}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Material</label>
-                <input
-                  type="text"
-                  name="material"
-                  value={formData.material}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Product Details</label>
-                <textarea
-                  name="product_details"
-                  value={formData.product_details}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Dimension</label>
-                <input
-                  type="text"
-                  name="dimension"
-                  value={formData.dimension}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Care Instructions</label>
-                <textarea
-                  name="care_instructions"
-                  value={formData.care_instructions}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Inventory</label>
-                <input
-                  type="number"
-                  name="inventory"
-                  value={formData.inventory}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>MRP</label>
-                <input
-                  type="number"
-                  name="mrp"
-                  value={formData.mrp}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Discount (%)</label>
-                <input
-                  type="number"
-                  name="discount"
-                  value={formData.discount}
-                  onChange={handleInputChange}
-                  min="0"
-                  max="100"
-                />
-              </div>
-              <div className="form-group">
-                <label>Views (people)</label>
-                <input
-                  type="number"
-                  name="views"
-                  value={formData.views}
-                  onChange={handleInputChange}
-                  min="0"
-                />
-              </div>
-              <div className="form-group">
-                <label>Bought (count)</label>
-                <input
-                  type="number"
-                  name="bought"
-                  value={formData.bought}
-                  onChange={handleInputChange}
-                  min="0"
-                />
-              </div>
-              <div className="form-group">
-                <label>Image URL</label>
-                <input
-                  type="text"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleInputChange}
-                  required
-                />
-                {formData.image && (
-                  <div className="media-preview">
-                    {getMediaItems(formData.image).map((media, idx) => (
-                      media.isVideo ? (
-                        <video
-                          key={idx}
-                          src={media.src}
-                          className="media-preview-item"
-                          muted
-                          autoPlay
-                          loop
-                          playsInline
-                        />
-                      ) : (
-                        <img
-                          key={idx}
-                          src={media.src}
-                          alt={`Preview ${idx + 1}`}
-                          className="media-preview-item"
-                          onError={(e) => e.target.style.display = 'none'}
-                        />
-                      )
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div className="form-group">
-                <label>Featured Product</label>
-                <select
-                  name="featured"
-                  value={formData.featured}
-                  onChange={handleInputChange}
-                >
-                  <option value={false}>No</option>
-                  <option value={true}>Yes</option>
-                </select>
-              </div>
-              <div className="modal-buttons">
-                <button type="submit" className="save-btn">
-                  {selectedProduct ? 'Update' : 'Save'}
-                </button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => {
-                    setShowModal(false);
-                    setSelectedProduct(null);
-                    setFormData({
-                      product_name: '',
-                      category: '',
-                      sub_category: '',
-                      product_code: '',
-                      color: '',
-                      product_description: '',
-                      material: '',
-                      product_details: '',
-                      dimension: '',
-                      care_instructions: '',
-                      inventory: '',
-                      mrp: '',
-                      discount: '',
-                      image: '',
-                      views: '',
-                      bought: '',
-                      featured: false
-                    });
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+      {
+        showModal && (
+          <div className="modaloverlay">
+            <div className="modal-content">
+              <h3>{selectedProduct ? 'Edit Product' : 'Add New Product'}</h3>
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label>Product Name</label>
+                  <input
+                    type="text"
+                    name="product_name"
+                    value={formData.product_name}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Category</label>
+                  <input
+                    type="text"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Sub Category</label>
+                  <input
+                    type="text"
+                    name="sub_category"
+                    value={formData.sub_category}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Product Code</label>
+                  <input
+                    type="text"
+                    name="product_code"
+                    value={formData.product_code}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Color</label>
+                  <input
+                    type="text"
+                    name="color"
+                    value={formData.color}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Description</label>
+                  <textarea
+                    name="product_description"
+                    value={formData.product_description}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Material</label>
+                  <input
+                    type="text"
+                    name="material"
+                    value={formData.material}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Product Details</label>
+                  <textarea
+                    name="product_details"
+                    value={formData.product_details}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Dimension</label>
+                  <input
+                    type="text"
+                    name="dimension"
+                    value={formData.dimension}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Care Instructions</label>
+                  <textarea
+                    name="care_instructions"
+                    value={formData.care_instructions}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Inventory</label>
+                  <input
+                    type="number"
+                    name="inventory"
+                    value={formData.inventory}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>MRP</label>
+                  <input
+                    type="number"
+                    name="mrp"
+                    value={formData.mrp}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Discount (%)</label>
+                  <input
+                    type="number"
+                    name="discount"
+                    value={formData.discount}
+                    onChange={handleInputChange}
+                    min="0"
+                    max="100"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Views (people)</label>
+                  <input
+                    type="number"
+                    name="views"
+                    value={formData.views}
+                    onChange={handleInputChange}
+                    min="0"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Bought (count)</label>
+                  <input
+                    type="number"
+                    name="bought"
+                    value={formData.bought}
+                    onChange={handleInputChange}
+                    min="0"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Image URL</label>
+                  <input
+                    type="text"
+                    name="image"
+                    value={formData.image}
+                    onChange={handleInputChange}
+                    required
+                  />
+                  {formData.image && (
+                    <div className="media-preview">
+                      {getMediaItems(formData.image).map((media, idx) => (
+                        media.isVideo ? (
+                          <video
+                            key={idx}
+                            src={media.src}
+                            className="media-preview-item"
+                            muted
+                            autoPlay
+                            loop
+                            playsInline
+                          />
+                        ) : (
+                          <img
+                            key={idx}
+                            src={media.src}
+                            alt={`Preview ${idx + 1}`}
+                            className="media-preview-item"
+                            onError={(e) => e.target.style.display = 'none'}
+                          />
+                        )
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="form-group">
+                  <label>Featured Product</label>
+                  <select
+                    name="featured"
+                    value={formData.featured}
+                    onChange={handleInputChange}
+                  >
+                    <option value={false}>No</option>
+                    <option value={true}>Yes</option>
+                  </select>
+                </div>
+                <div className="modal-buttons">
+                  <button type="submit" className="save-btn">
+                    {selectedProduct ? 'Update' : 'Save'}
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={() => {
+                      setShowModal(false);
+                      setSelectedProduct(null);
+                      setFormData({
+                        product_name: '',
+                        category: '',
+                        sub_category: '',
+                        product_code: '',
+                        color: '',
+                        product_description: '',
+                        material: '',
+                        product_details: '',
+                        dimension: '',
+                        care_instructions: '',
+                        inventory: '',
+                        mrp: '',
+                        discount: '',
+                        image: '',
+                        views: '',
+                        bought: '',
+                        featured: false
+                      });
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 };
 
