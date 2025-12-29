@@ -560,4 +560,20 @@
 
 .bulk-form .cancel-btn:hover {
   background-color: #000000;
+}
+
+.media-preview {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.media-preview-item {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background-color: #f5f5f5;
 } 

@@ -2,13 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa';
 import './Products.css';
 import { db } from '../../firebase/config';
-import { 
-  collection, 
-  getDocs, 
-  doc, 
-  setDoc, 
-  updateDoc, 
-  deleteDoc, 
+import {
+  collection,
+  getDocs,
+  doc,
+  setDoc,
+  updateDoc,
+  deleteDoc,
   serverTimestamp,
   query,
   where
@@ -55,6 +55,18 @@ const Products = () => {
     return null;
   };
 
+  // Helper function to get all media items with types
+  const getMediaItems = (imageField) => {
+    if (!imageField) return [];
+    return imageField.split(',').map(img => {
+      const trimmed = img.trim();
+      if (!trimmed) return null;
+      const src = trimmed.startsWith('/') || trimmed.startsWith('http') ? trimmed : `/${trimmed}`;
+      const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(src);
+      return { src, isVideo };
+    }).filter(Boolean);
+  };
+
   // Process products once with useMemo to avoid reprocessing on every render
   const processedProducts = useMemo(() => {
     return products.map(product => ({
@@ -72,7 +84,7 @@ const Products = () => {
   const filteredProducts = useMemo(() => {
     return processedProducts.filter(product => {
       // Search filter - check product code and name
-      const searchMatch = !searchTerm || 
+      const searchMatch = !searchTerm ||
         (product.product_code && product.product_code.toLowerCase().includes(searchTerm.toLowerCase())) ||
         (product.product_name && product.product_name.toLowerCase().includes(searchTerm.toLowerCase()));
 
@@ -94,12 +106,12 @@ const Products = () => {
       setLoading(true);
       const productsRef = collection(db, 'products');
       const querySnapshot = await getDocs(productsRef);
-      
+
       const productsData = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
-      
+
       setProducts(productsData);
       setError(null);
       console.log('Fetched products from Firebase:', productsData);
@@ -123,7 +135,7 @@ const Products = () => {
     e.preventDefault();
     try {
       console.log('Form data before processing:', formData);
-      
+
       // Convert numeric fields to numbers
       const numericFormData = {
         ...formData,
@@ -134,20 +146,20 @@ const Products = () => {
         views: formData.views === '' ? 0 : Number(formData.views),
         bought: formData.bought === '' ? 0 : Number(formData.bought)
       };
-      
+
       console.log('Numeric form data:', numericFormData);
       console.log('Discount value:', numericFormData.discount);
 
       if (selectedProduct) {
         // Update existing product
         console.log('Updating product with ID:', selectedProduct.id, typeof selectedProduct.id);
-        
+
         if (typeof selectedProduct.id === 'number') {
           // If ID is a number, handle as a string or find the document by query
           const productsRef = collection(db, 'products');
           const q = query(productsRef, where('id', '==', selectedProduct.id));
           const querySnapshot = await getDocs(q);
-          
+
           if (!querySnapshot.empty) {
             const docRef = querySnapshot.docs[0].ref;
             const updateData = {
@@ -175,9 +187,9 @@ const Products = () => {
         // Create new product with a unique ID
         const newProductRef = doc(collection(db, 'products'));
         // Generate a new numeric ID for the product
-        const highestId = products.reduce((max, product) => 
+        const highestId = products.reduce((max, product) =>
           (product.id && typeof product.id === 'number' && product.id > max) ? product.id : max, 0);
-        
+
         await setDoc(newProductRef, {
           ...numericFormData,
           id: highestId + 1, // Ensure a unique numeric ID for compatibility
@@ -186,7 +198,7 @@ const Products = () => {
         });
         console.log('New product added to Firebase:', newProductRef.id);
       }
-      
+
       setShowModal(false);
       setSelectedProduct(null);
       setFormData({
@@ -208,7 +220,7 @@ const Products = () => {
         bought: '',
         featured: false
       });
-      
+
       // Refresh the products list
       fetchProducts();
     } catch (err) {
@@ -268,7 +280,7 @@ const Products = () => {
           const productsRef = collection(db, 'products');
           const q = query(productsRef, where('id', '==', id));
           const querySnapshot = await getDocs(q);
-          
+
           if (!querySnapshot.empty) {
             const docRef = querySnapshot.docs[0].ref;
             await deleteDoc(docRef);
@@ -308,7 +320,7 @@ const Products = () => {
       const productCodes = new Set();
       const duplicateCodes = new Set();
       const uniqueProducts = [];
-      
+
       // Filter out duplicates from input array
       productsToAdd.forEach(product => {
         if (product.product_code) {
@@ -331,7 +343,7 @@ const Products = () => {
       for (const product of uniqueProducts) {
         const q = query(productsRef, where('product_code', '==', product.product_code));
         const querySnapshot = await getDocs(q);
-        
+
         if (querySnapshot.empty) {
           validProducts.push(product);
         } else {
@@ -358,14 +370,14 @@ const Products = () => {
       }
 
       // Get the highest existing ID
-      const highestId = products.reduce((max, product) => 
+      const highestId = products.reduce((max, product) =>
         (product.id && typeof product.id === 'number' && product.id > max) ? product.id : max, 0);
 
       // Add valid products to the database
       for (let i = 0; i < validProducts.length; i++) {
         const product = validProducts[i];
         const newProductRef = doc(collection(db, 'products'));
-        
+
         // Convert numeric fields
         const numericProduct = {
           ...product,
@@ -402,7 +414,7 @@ const Products = () => {
           <button className="add-product-btn" onClick={() => setShowModal(true)}>
             <FaPlus /> Add New Product
           </button>
-          <button 
+          <button
             className="bulk-add-btn"
             onClick={() => setShowBulkForm(!showBulkForm)}
           >
@@ -496,13 +508,13 @@ const Products = () => {
             />
           </div>
           <div className="form-actions">
-            <button 
+            <button
               className="save-btn"
               onClick={handleBulkAdd}
             >
               Add Products
             </button>
-            <button 
+            <button
               className="cancel-btn"
               onClick={() => {
                 setShowBulkForm(false);
@@ -541,20 +553,34 @@ const Products = () => {
               <tr key={`product-${product.id}`}>
                 <td>
                   {product.firstImage ? (
-                    <img 
-                      src={product.firstImage} 
-                      alt="Product Image"
-                      className="product-thumbnail"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.style.display = 'none';
-                        e.target.parentElement.textContent = 'No Image Available';
-                      }}
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="no-image">No Image Available</div>
-                  )}
+                    {
+                      product.firstImage ? (
+                        /\.(mp4|webm|ogg|mov)$/i.test(product.firstImage) ? (
+                          <video
+                            src={product.firstImage}
+                            className="product-thumbnail"
+                            muted
+                            autoPlay
+                            loop
+                            playsInline
+                          />
+                        ) : (
+                          <img
+                            src={product.firstImage}
+                            alt="Product Image"
+                            className="product-thumbnail"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.style.display = 'none';
+                              e.target.parentElement.textContent = 'No Image Available';
+                            }}
+                            loading="lazy"
+                          />
+                        )
+                      ) : (
+                        <div className="no-image">No Image Available</div>
+                      )
+                    }
                 </td>
                 <td>{product.product_name}</td>
                 <td>{product.product_code || 'N/A'}</td>
@@ -570,7 +596,7 @@ const Products = () => {
                   >
                     <FaEdit />
                   </button>
-                  <button 
+                  <button
                     className="delete-btn"
                     onClick={() => handleDelete(product.id)}
                   >
@@ -739,6 +765,31 @@ const Products = () => {
                   onChange={handleInputChange}
                   required
                 />
+                {formData.image && (
+                  <div className="media-preview">
+                    {getMediaItems(formData.image).map((media, idx) => (
+                      media.isVideo ? (
+                        <video
+                          key={idx}
+                          src={media.src}
+                          className="media-preview-item"
+                          muted
+                          autoPlay
+                          loop
+                          playsInline
+                        />
+                      ) : (
+                        <img
+                          key={idx}
+                          src={media.src}
+                          alt={`Preview ${idx + 1}`}
+                          className="media-preview-item"
+                          onError={(e) => e.target.style.display = 'none'}
+                        />
+                      )
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="form-group">
                 <label>Featured Product</label>
@@ -755,8 +806,8 @@ const Products = () => {
                 <button type="submit" className="save-btn">
                   {selectedProduct ? 'Update' : 'Save'}
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="cancel-btn"
                   onClick={() => {
                     setShowModal(false);
