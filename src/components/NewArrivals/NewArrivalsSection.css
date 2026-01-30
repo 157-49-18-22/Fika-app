@@ -6,6 +6,7 @@
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -17,6 +18,7 @@
         transform: translateX(50px);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -24,9 +26,17 @@
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 @keyframes fadeInSection {
@@ -399,7 +409,7 @@
     margin: 0 -1rem;
 }
 
-.slick-slider .slick-slide > div {
+.slick-slider .slick-slide>div {
     padding: 0 1rem;
 }
 
@@ -427,7 +437,7 @@
     background-color: #f9f9f9;
 }
 
-.arrivals-product-image img {
+.arrivals-product-image .optimized-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -436,7 +446,10 @@
 }
 
 /* Always-visible views overlay */
-.product-image-container { position: relative; }
+.product-image-container {
+    position: relative;
+}
+
 .views-overlay {
     position: absolute;
     left: 10px;
@@ -445,13 +458,18 @@
     align-items: center;
     gap: 6px;
     padding: 6px 8px;
-    background: rgba(0,0,0,0.55);
+    background: rgba(0, 0, 0, 0.55);
     color: #fff;
     border-radius: 16px;
     opacity: 1;
     transform: translateY(0);
 }
-.views-icon-img { width: 16px; height: 16px; display: block; }
+
+.views-icon-img {
+    width: 16px;
+    height: 16px;
+    display: block;
+}
 
 .arrivals-product-card:hover .arrivals-product-image img {
     transform: scale(1.05);
@@ -477,7 +495,8 @@
     z-index: 2;
 }
 
-.arrivals-new-badge, .arrivals-bestseller-badge {
+.arrivals-new-badge,
+.arrivals-bestseller-badge {
     padding: 5px 10px;
     font-size: 0.75rem;
     font-weight: 600;
@@ -925,11 +944,25 @@
 }
 
 /* Animation delays for category sections */
-.arrivals-category-section:nth-child(1) { animation-delay: 0.1s; }
-.arrivals-category-section:nth-child(2) { animation-delay: 0.2s; }
-.arrivals-category-section:nth-child(3) { animation-delay: 0.3s; }
-.arrivals-category-section:nth-child(4) { animation-delay: 0.4s; }
-.arrivals-category-section:nth-child(5) { animation-delay: 0.5s; }
+.arrivals-category-section:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.arrivals-category-section:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.arrivals-category-section:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.arrivals-category-section:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.arrivals-category-section:nth-child(5) {
+    animation-delay: 0.5s;
+}
 
 /* Responsive styles */
 
@@ -963,11 +996,12 @@
         transform: translateY(-20px);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
     }
-} 
+}
 
 @media screen and (max-width: 480px) {
 
@@ -982,7 +1016,7 @@
     .arrivals-description {
         font-size: 0.9rem;
     }
-    
+
     .arrivals-feature-item {
         flex-direction: column;
         font-size: 14px;
@@ -1006,10 +1040,10 @@
         padding: 0 50px;
     }
 
-    .arrivals-featured-image img{
+    .arrivals-featured-image img {
         border-radius: 10px;
     }
-    
+
     .arrivals-featured-info {
         padding: 2rem;
     }
@@ -1143,48 +1177,48 @@
         font-size: 0.9rem;
     }
 
-    .arrivals-products-row{
+    .arrivals-products-row {
         padding: 0px;
         gap: 0px;
     }
 
-    .arrivals-featured-pricing{
+    .arrivals-featured-pricing {
         justify-content: center;
     }
 
-    .arrivals-cart-btn{
+    .arrivals-cart-btn {
         flex: 1;
         font-size: 14px;
         padding: 0px;
     }
 
-    .arrivals-section-title{
+    .arrivals-section-title {
         font-size: 20px;
         margin-bottom: 0px;
     }
 
-    .arrivals-category-tabs{
+    .arrivals-category-tabs {
         gap: 0px;
     }
 
-    .arrivals-category-description{
+    .arrivals-category-description {
         margin-bottom: 10px;
     }
-    
-    .arrivals-time-block{
+
+    .arrivals-time-block {
         padding: 0.6rem;
         min-width: 50px;
     }
 
-    .arrivals-time-value{
+    .arrivals-time-value {
         font-size: 14px;
     }
 
-    .arrivals-time-label{
+    .arrivals-time-label {
         font-size: 10px;
     }
 
-    .arrivals-time-separator{
+    .arrivals-time-separator {
         font-size: 14px;
     }
 }
