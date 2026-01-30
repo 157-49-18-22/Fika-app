@@ -341,11 +341,11 @@ const NewArrivals = () => {
         className="product-card"
         onClick={() => navigate(`/product/${product.id}`)}
       >
-        <div className="product-image-container">
+        <div className="product-image-container arrivals-product-image">
           <OptimizedImage
             src={getFirstImage(product.image)}
             alt={product.product_name}
-            className={`${product.inventory <= 0 ? 'out-of-stock-image' : ''}`}
+            className={`product-img ${product.inventory <= 0 ? 'out-of-stock-image' : ''}`}
           />
           {product.inventory <= 0 && (
             <div className="out-of-stock-overlay">

@@ -749,6 +749,7 @@ const AllProducts = () => {
                       <OptimizedImage
                         src={firstImage}
                         alt={product.product_name}
+                        className="product-image"
                       />
                       <div className="views-overlay" title="Views">
                         <img src="/Eye3.png" alt="views" className="views-icon-img" />
