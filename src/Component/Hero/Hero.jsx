@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Hero.css";
+import OptimizedImage from "../OptimizedImage";
 import bannerImage from "../../assets/banner001.jpg";
 
 function Hero() {
@@ -20,7 +21,7 @@ function Hero() {
   };
 
   return (
-    <section className="hero" style={{position:'relative'}}>
+    <section className="hero" style={{ position: 'relative' }}>
       {/* Banner Modal/Prompt */}
       {showBanner && (
         <div className="banner-modal-overlay">
@@ -28,7 +29,7 @@ function Hero() {
             <button className="banner-close-btn" onClick={handleCloseBanner}>
               ✕
             </button>
-            <img src={bannerImage} alt="Fika Banner" className="banner-modal-image" />
+            <img src={bannerImage} alt="Fika Banner" className="banner-modal-image" loading="lazy" />
           </div>
         </div>
       )}
@@ -42,8 +43,8 @@ function Hero() {
       </div>
 
       <div className="hero-content">
-        <div className="hero-content-left" style={{cursor:'pointer'}}>
-          <img src="./hero_image1.webp" alt="Shopping bag with products" />
+        <div className="hero-content-left" style={{ cursor: 'pointer' }}>
+          <OptimizedImage src="./hero_image1.webp" alt="Shopping bag with products" />
         </div>
 
         <div className="hero-content-middle">
@@ -60,36 +61,36 @@ function Hero() {
             {/* <div className="trending-text">TRENDING</div>
             <div className="collection-text">Awesome Collection</div> */}
             <div className="brand-logo">
-              <img style={{width: "300px"}} src="/fika_page-0001.webp" alt="logo" />
+              <img style={{ width: "300px" }} src="/fika_page-0001.webp" alt="logo" />
             </div>
           </div>
         </div>
 
         <div className="hero-content-right">
           <div className="main-product-image">
-            <img src="./hero_image2.webp" alt="Featured product" />
+            <OptimizedImage src="./hero_image2.webp" alt="Featured product" />
           </div>
 
           <div className="product-grid">
             <div className="product-grid-item item1 width-40">
               <div className="price-overlay"></div>
-              <img src="./hero_image2_1.webp" alt="Product thumbnail" />
+              <img src="./hero_image2_1.webp" alt="Product thumbnail" loading="lazy" />
             </div>
             <div className="product-grid-item item2 width-60">
-              <img src="./hero_image2_2.webp" alt="Product thumbnail" />
+              <img src="./hero_image2_2.webp" alt="Product thumbnail" loading="lazy" />
             </div>
             <div className="product-grid-item item3 width-60">
               <div className="collection-overlay">Blue Dreams Collection</div>
-              <img src="./hero_image2_5.webp" alt="Product thumbnail" />
+              <img src="./hero_image2_5.webp" alt="Product thumbnail" loading="lazy" />
             </div>
             <div className="product-grid-item item4 width-40">
-              <img src="./hero_image2_6.webp" alt="Product thumbnail" />
+              <img src="./hero_image2_6.webp" alt="Product thumbnail" loading="lazy" />
             </div>
             <div className="product-grid-item item5 width-40">
-              <img src="./hero_image2_3.webp" alt="Product thumbnail" />
+              <img src="./hero_image2_3.webp" alt="Product thumbnail" loading="lazy" />
             </div>
             <div className="product-grid-item item6 width-60">
-              <img src="./hero_image2_4.webp" alt="Product thumbnail" />
+              <img src="./hero_image2_4.webp" alt="Product thumbnail" loading="lazy" />
             </div>
           </div>
         </div>

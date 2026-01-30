@@ -4,7 +4,7 @@ import { FaQuoteLeft, FaStar } from 'react-icons/fa';
 import Slider from "react-slick";
 
 // Import slick carousel CSS
-import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 const TestimonialsContainer = styled.div`
@@ -170,7 +170,7 @@ const Testimonials = () => {
               <QuoteIcon />
               <TestimonialText>{testimonial.text}</TestimonialText>
               <CustomerInfo>
-                <CustomerImage src={testimonial.image} alt={testimonial.name} />
+                <CustomerImage src={testimonial.image} alt={testimonial.name} loading="lazy" />
                 <CustomerDetails>
                   <CustomerName>{testimonial.name}</CustomerName>
                   <CustomerRole>{testimonial.role}</CustomerRole>

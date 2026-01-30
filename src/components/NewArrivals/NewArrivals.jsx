@@ -12,6 +12,7 @@ import LoginPrompt from "../../components/LoginPrompt/LoginPrompt";
 import config from "../../config";
 import { db } from '../../firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
+import OptimizedImage from '../../Component/OptimizedImage';
 
 const NewArrivals = () => {
   const [newArrivals, setNewArrivals] = useState([]);
@@ -98,14 +99,14 @@ const NewArrivals = () => {
           const hasImage = product.image && product.image.trim() !== '';
           return productDate >= thirtyDaysAgo && hasImage;
         });
-        
+
         // Sort new arrivals by creation date (newest first)
         const sortedNewProducts = newProducts.sort((a, b) => {
           const dateA = a.createdAt?.toDate?.() || new Date(a.created_at || 0);
           const dateB = b.createdAt?.toDate?.() || new Date(b.created_at || 0);
           return dateB - dateA; // Newest first
         });
-        
+
         setNewArrivals(sortedNewProducts);
         // Set featured product (first item with discount or first new arrival)
         const discountedProduct = newProducts.find(product => product.discount);
@@ -195,13 +196,13 @@ const NewArrivals = () => {
   const filteredProducts = activeTab === "all"
     ? newArrivals
     : newArrivals.filter(product => {
-        const hasImage = product.image && product.image.trim() !== '';
-        return product.category === activeTab && hasImage;
-      }).sort((a, b) => {
-        const dateA = a.createdAt?.toDate?.() || new Date(a.created_at || 0);
-        const dateB = b.createdAt?.toDate?.() || new Date(b.created_at || 0);
-        return dateB - dateA; // Newest first
-      });
+      const hasImage = product.image && product.image.trim() !== '';
+      return product.category === activeTab && hasImage;
+    }).sort((a, b) => {
+      const dateA = a.createdAt?.toDate?.() || new Date(a.created_at || 0);
+      const dateB = b.createdAt?.toDate?.() || new Date(b.created_at || 0);
+      return dateB - dateA; // Newest first
+    });
 
   console.log('Filtered Products:', filteredProducts);
   console.log('Active Tab:', activeTab);
@@ -341,12 +342,10 @@ const NewArrivals = () => {
         onClick={() => navigate(`/product/${product.id}`)}
       >
         <div className="product-image-container">
-          <img
+          <OptimizedImage
             src={getFirstImage(product.image)}
             alt={product.product_name}
-            className={`product-image ${product.inventory <= 0 ? 'out-of-stock-image' : ''}`}
-            loading="lazy"
-            onError={(e) => handleImageError(e)}
+            className={`${product.inventory <= 0 ? 'out-of-stock-image' : ''}`}
           />
           {product.inventory <= 0 && (
             <div className="out-of-stock-overlay">
@@ -466,7 +465,7 @@ const NewArrivals = () => {
           <div className="arrivals-intro-content">
             <h1 className="arrivals-title">Discover Fresh Styles</h1>
             <p className="arrivals-description">
-            Explore our latestcollection in home décor, stylish mens shirts, and scented candles fresh arrivals for you and your space
+              Explore our latestcollection in home décor, stylish mens shirts, and scented candles fresh arrivals for you and your space
             </p>
             <div className="arrivals-features">
               <div className="arrivals-feature-item">
@@ -484,7 +483,7 @@ const NewArrivals = () => {
         {/* Featured Product Highlight */}
         {featuredProduct && (
           <div className="arrivals-featured-product">
-            <div 
+            <div
               className="arrivals-featured-image"
               onClick={() => navigate(`/product/${featuredProduct.id}`)}
               style={{ cursor: 'pointer' }}
@@ -559,12 +558,12 @@ const NewArrivals = () => {
           <button className="arrivals-carousel-control" onClick={toggleAutoScroll}>
             {isAutoPlay ? (
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 9V15M14 9V15M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M10 9V15M14 9V15M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             ) : (
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 16.5L16 12L10 7.5V16.5Z" fill="#222"/>
-                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M10 16.5L16 12L10 7.5V16.5Z" fill="#222" />
+                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             )}
           </button>
@@ -589,12 +588,12 @@ const NewArrivals = () => {
             {activeTab === "all"
               ? "Browse our complete selection of new arrivals, featuring the latest trends and must-have pieces for the season."
               : activeTab === "cushions"
-              ? "Discover our newest cushions, from elegant designs to casual essentials, all crafted with premium fabrics."
-              : activeTab === "bedsets"
-              ? "Complete your look with our just-arrived bedsets, including covers, sheets, and more."
-              : activeTab === "wish genie"
-              ? "Explore our magical collection of Wish Genie products, designed to make your wishes come true."
-              : "Explore our collection of dohars and quilts, perfect for every season and crafted with premium materials for ultimate comfort."}
+                ? "Discover our newest cushions, from elegant designs to casual essentials, all crafted with premium fabrics."
+                : activeTab === "bedsets"
+                  ? "Complete your look with our just-arrived bedsets, including covers, sheets, and more."
+                  : activeTab === "wish genie"
+                    ? "Explore our magical collection of Wish Genie products, designed to make your wishes come true."
+                    : "Explore our collection of dohars and quilts, perfect for every season and crafted with premium materials for ultimate comfort."}
           </p>
         </div>
 
@@ -680,7 +679,7 @@ const NewArrivals = () => {
               />
               <button type="submit">Subscribe</button>
             </form>
-            {newsletterSuccess && <div style={{color: 'green', marginTop: 8}}>Subscribed successfully!</div>}
+            {newsletterSuccess && <div style={{ color: 'green', marginTop: 8 }}>Subscribed successfully!</div>}
           </div>
         </div>
       </div>

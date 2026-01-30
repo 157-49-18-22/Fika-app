@@ -31,14 +31,14 @@ const FeaturedStories = () => {
       console.log('🔍 Trying to get all testimonials first...');
       let allTestimonials = await getDocs(testimonialsRef);
       console.log('📊 All testimonials in database:', allTestimonials.docs.length);
-      
+
       allTestimonials.docs.forEach((doc, index) => {
         console.log(`📄 Testimonial ${index + 1}:`, doc.data());
       });
-      
+
       // Now try the filtered query
       const q = query(
-        testimonialsRef, 
+        testimonialsRef,
         where('status', '==', 'active'),
         orderBy('createdAt', 'desc'),
         limit(50) // Increased limit to allow more testimonials
@@ -52,10 +52,10 @@ const FeaturedStories = () => {
         // If filtered query fails, try without filters
         querySnapshot = allTestimonials;
       }
-      
+
       console.log('📊 Final query snapshot:', querySnapshot);
       console.log('📝 Number of testimonials found:', querySnapshot.docs.length);
-      
+
       const testimonialsData = querySnapshot.docs.map(doc => {
         const data = doc.data();
         console.log('📄 Document data:', data);
@@ -64,7 +64,7 @@ const FeaturedStories = () => {
           ...data
         };
       });
-      
+
       console.log('✅ Processed testimonials data:', testimonialsData);
       console.log('🔄 Setting state with testimonials count:', testimonialsData.length);
       setDynamicTestimonials(testimonialsData);
@@ -91,7 +91,7 @@ const FeaturedStories = () => {
 
   const handleTestimonialChange = useCallback((newIndex) => {
     if (newIndex === currentTestimonial) return;
-    
+
     setIsTransitioning(true);
     setTimeout(() => {
       setCurrentTestimonial(newIndex);
@@ -115,7 +115,8 @@ const FeaturedStories = () => {
       text: "I was looking for quality bedsheets that would last, and Fika delivered beyond my expectations! The cotton feels so soft against my skin, and even after multiple washes, the colors stay vibrant. My family loves them too!",
       author: "Priya Sharma",
       location: "Delhi",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop"
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop",
+      loading: "lazy"
     },
     {
       text: "The cushion covers I ordered match perfectly with my living room decor! The fabric quality is excellent, and the zippers are sturdy. Delivery was quick too - ordered on Monday and received by Thursday!",
@@ -430,7 +431,7 @@ const FeaturedStories = () => {
             <span>E</span>
             <span>D</span>
           </div>
-          <br/>
+          <br />
           <div className="animated-heading">
             <span>S</span>
             <span>T</span>
@@ -443,7 +444,7 @@ const FeaturedStories = () => {
           <div className="blog-hero-description">
             <p>Explore Our Articles on Fashion Trends, Styling Tips, and Sustainable Fashion</p>
             <p>  Stay Informed with the Latest in Slow Living from Fika</p>
-           
+
           </div>
           <div className="search-container">
             <div className="search-bar">
@@ -497,7 +498,7 @@ const FeaturedStories = () => {
             </span>
           </div>
         </div>
-        <motion.div 
+        <motion.div
           className="testimonials-wrapper"
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -508,21 +509,21 @@ const FeaturedStories = () => {
             {(() => {
               // Combine dynamic and static testimonials
               let allTestimonials = [];
-              
+
               // Add dynamic testimonials first (they get priority)
               if (dynamicTestimonials.length > 0) {
                 allTestimonials.push(...dynamicTestimonials);
                 console.log('📱 Desktop: Using dynamic testimonials:', dynamicTestimonials.length);
               }
-              
+
               // Add static testimonials to fill up if no dynamic ones
               if (allTestimonials.length === 0) {
                 allTestimonials = testimonials;
                 console.log('📱 Desktop: Using static testimonials:', testimonials.length);
               }
-              
+
               console.log('📱 Desktop: Total testimonials to display:', allTestimonials.length);
-              
+
               // Show all testimonials, not just 3
               return allTestimonials.map((testimonial, index) => (
                 <div key={testimonial.id || index} className={`testimonial-card ${index === 0 ? 'featured' : ''}`}>
@@ -531,20 +532,20 @@ const FeaturedStories = () => {
                     <p className="testimonial-text">
                       "{testimonial.text}"
                     </p>
-                                                 <div className="testimonial-author">
-                               <div className="author-info">
-                                 <h4 className="author-name">{testimonial.author}</h4>
-                                 <p className="author-title">{testimonial.location}</p>
-                                 <div className="rating">
-                                   {[...Array(5)].map((_, starIndex) => (
-                                     <FaStar 
-                                       key={starIndex} 
-                                       className={`star ${starIndex < (testimonial.rating || 5) ? 'filled' : ''}`} 
-                                     />
-                                   ))}
-                                 </div>
-                               </div>
-                             </div>
+                    <div className="testimonial-author">
+                      <div className="author-info">
+                        <h4 className="author-name">{testimonial.author}</h4>
+                        <p className="author-title">{testimonial.location}</p>
+                        <div className="rating">
+                          {[...Array(5)].map((_, starIndex) => (
+                            <FaStar
+                              key={starIndex}
+                              className={`star ${starIndex < (testimonial.rating || 5) ? 'filled' : ''}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ));
@@ -556,29 +557,29 @@ const FeaturedStories = () => {
             {(() => {
               // Combine dynamic and static testimonials for mobile
               let allMobileTestimonials = [];
-              
+
               // Add dynamic testimonials first
               if (dynamicTestimonials.length > 0) {
                 allMobileTestimonials.push(...dynamicTestimonials);
                 console.log('📱 Mobile: Using dynamic testimonials:', dynamicTestimonials.length);
               }
-              
+
               // Add static testimonials to fill up if no dynamic ones
               if (allMobileTestimonials.length === 0) {
                 allMobileTestimonials = testimonials;
                 console.log('📱 Mobile: Using static testimonials:', testimonials.length);
               }
-              
+
               // Ensure we have at least 1 testimonial
               if (allMobileTestimonials.length === 0) {
                 allMobileTestimonials = testimonials;
               }
-              
+
               console.log('📱 Mobile: Total testimonials available:', allMobileTestimonials.length);
               console.log('📱 Mobile: Current testimonial index:', currentTestimonial);
-              
+
               const currentTestimonialData = allMobileTestimonials[currentTestimonial % allMobileTestimonials.length];
-              
+
               return (
                 <>
                   <div className="mobile-testimonial-card">
@@ -593,9 +594,9 @@ const FeaturedStories = () => {
                           <p className="mobile-author-title">{currentTestimonialData?.location || 'Location'}</p>
                           <div className="mobile-rating">
                             {[...Array(5)].map((_, starIndex) => (
-                              <FaStar 
-                                key={starIndex} 
-                                className={`star ${starIndex < (currentTestimonialData?.rating || 5) ? 'filled' : ''}`} 
+                              <FaStar
+                                key={starIndex}
+                                className={`star ${starIndex < (currentTestimonialData?.rating || 5) ? 'filled' : ''}`}
                               />
                             ))}
                           </div>
@@ -603,7 +604,7 @@ const FeaturedStories = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   {/* Navigation Dots */}
                   <div className="testimonial-dots">
                     {allMobileTestimonials.map((_, index) => (
@@ -614,7 +615,7 @@ const FeaturedStories = () => {
                       />
                     ))}
                   </div>
-                  
+
                   {/* Mobile Testimonial Counter */}
                   <div className="mobile-testimonial-counter">
                     <span className="mobile-counter-text">
@@ -642,7 +643,7 @@ const FeaturedStories = () => {
               onClick={() => handlePostClick(post.id)}
             >
               <div className="featured-blog-image">
-                <img src={post.image} alt={post.title} />
+                <img src={post.image} alt={post.title} loading="lazy" />
                 <div className="category-badge">{post.category}</div>
               </div>
               <div className="featured-blog-content">
@@ -679,7 +680,7 @@ const FeaturedStories = () => {
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="blog-card-image">
-                <img src={post.image} alt={post.title} />
+                <img src={post.image} alt={post.title} loading="lazy" />
                 <div className="blog-card-overlay">
                   <div className="category-tag">{post.category}</div>
                 </div>
@@ -733,7 +734,7 @@ const FeaturedStories = () => {
           )}
         </div>
       </section>
-      
+
       {/* Trending Topics */}
       {/* <section className="trending-topics">
         <div className="trending-container">

@@ -24,11 +24,12 @@ const About = () => {
               src={slide.image}
               alt={slide.alt}
               className={`slider-image${idx === sliderIndex ? ' active' : ''}`}
+              loading={idx === 0 ? "eager" : "lazy"}
             />
           ))}
           <div className="slider-overlay"></div>
         </div>
-        
+
         <div className="about-banner-content">
           <div className="title-container">
             <h1>
@@ -60,22 +61,22 @@ const About = () => {
         <div className="content-container">
           <div className="about-description">
             <p>
-              At FIKA, we believe that home is more than just a place — it's a feeling. 
-              Inspired by the Scandinavian concept of slowing down and savoring life's simple moments, 
-              FIKA brings you thoughtfully designed soft furnishings that turn everyday living into 
+              At FIKA, we believe that home is more than just a place — it's a feeling.
+              Inspired by the Scandinavian concept of slowing down and savoring life's simple moments,
+              FIKA brings you thoughtfully designed soft furnishings that turn everyday living into
               a cozy, stylish experience.
             </p>
-            
+
             <p>
-              Our collection includes beautifully crafted cushion covers, bed linens, quilts, 
-              dohars, and more — each piece a harmonious blend of comfort, quality, and aesthetic charm. 
-              Whether it's the richness of hand-block prints, the softness of pure cotton, or the 
+              Our collection includes beautifully crafted cushion covers, bed linens, quilts,
+              dohars, and more — each piece a harmonious blend of comfort, quality, and aesthetic charm.
+              Whether it's the richness of hand-block prints, the softness of pure cotton, or the
               elegance of velvet textures, our products are made to transform your space into a sanctuary.
             </p>
 
             <p>
-              We work with skilled artisans and ethical production practices to create pieces that 
-              feel as good as they look. Every item from FIKA is a gentle invitation to pause, 
+              We work with skilled artisans and ethical production practices to create pieces that
+              feel as good as they look. Every item from FIKA is a gentle invitation to pause,
               unwind, and enjoy the art of slow living — right at home.
             </p>
 

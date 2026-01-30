@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { db } from '../../firebase/config';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import './FeaturedCollection.css';
-import config from '../../config';
+import OptimizedImage from '../OptimizedImage';
 
 const FeaturedCollection = () => {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const FeaturedCollection = () => {
         const q = query(productsRef, where('featured', '==', true));
         const querySnapshot = await getDocs(q);
         const productsArr = [];
-        
+
         querySnapshot.forEach((doc) => {
           const data = { id: doc.id, ...doc.data() };
           // Parse the image field for the first image
@@ -61,25 +61,25 @@ const FeaturedCollection = () => {
     const after = products.slice(0, 3).map(p => ({ ...p, id: `after-${p.id}` }));
     return [...before, ...products, ...after];
   }, [products]);
-  
+
   const productsLength = products.length;
 
   // Advanced rotation handling for infinite loop effect
   const rotateCarousel = useCallback(() => {
     if (isTransitioning || productsLength === 0) return;
-    
+
     setIsTransitioning(true);
-    
+
     const nextIndex = (activeIndex + 1) % productsLength;
-    
+
     // If we're moving from the last to the first item
     if (activeIndex === productsLength - 1 && nextIndex === 0) {
       setEnteringCardId(products[0].id);
     }
-    
+
     setActiveIndex(nextIndex);
     lastIndex.current = activeIndex;
-    
+
     // Reset transition flag after animation completes
     setTimeout(() => {
       setIsTransitioning(false);
@@ -97,19 +97,19 @@ const FeaturedCollection = () => {
 
   const handleCardClick = (index) => {
     if (isTransitioning || productsLength === 0) return;
-    
+
     setIsTransitioning(true);
-    
+
     // Check if we're jumping across the loop point (between first and last items)
-    if ((activeIndex === productsLength - 1 && index === 0) || 
-        (activeIndex === 0 && index === productsLength - 1)) {
+    if ((activeIndex === productsLength - 1 && index === 0) ||
+      (activeIndex === 0 && index === productsLength - 1)) {
       setEnteringCardId(products[index].id);
     }
-    
+
     setActiveIndex(index);
     lastIndex.current = activeIndex;
     setIsAutoPlay(false);
-    
+
     // Reset transition flag after animation completes
     setTimeout(() => {
       setIsTransitioning(false);
@@ -123,44 +123,44 @@ const FeaturedCollection = () => {
 
   const getCardClass = (index) => {
     if (productsLength === 0) return 'card card-hidden';
-    
+
     // Calculate the relative position considering the infinite loop
     let position = index - activeIndex;
-    
+
     // Optimize for the loop transition
     if (Math.abs(position) > productsLength / 2) {
-      position = position > 0 
-        ? position - productsLength 
+      position = position > 0
+        ? position - productsLength
         : position + productsLength;
     }
-    
+
     if (position === 0) return 'card card-active';
     if (Math.abs(position) > 3) return 'card card-hidden';
-    
+
     // Add entering class for the card that's entering from the opposite side during loop transition
     const isEntering = enteringCardId === products[index].id;
     const baseClass = `card card-${position < 0 ? 'left' : 'right'}${Math.min(Math.abs(position), 3)}`;
-    
+
     return isEntering ? `${baseClass} card-entering` : baseClass;
   };
 
   const getVisibleRange = () => {
     if (productsLength === 0) return [];
-    
+
     // Return indices for visible cards (active card +/- 3 in each direction)
     const visibleRange = [];
     for (let i = -3; i <= 3; i++) {
       const wrappedIndex = ((activeIndex + i) % productsLength + productsLength) % productsLength;
       visibleRange.push(wrappedIndex);
     }
-    
+
     // Special case: if we're at a loop point, make sure both ends are visible
     if (activeIndex <= 2) {
       visibleRange.push(productsLength - 1, productsLength - 2);
     } else if (activeIndex >= productsLength - 3) {
       visibleRange.push(0, 1);
     }
-    
+
     return [...new Set(visibleRange)]; // Remove any duplicates
   };
 
@@ -190,32 +190,32 @@ const FeaturedCollection = () => {
         <button className="carousel-control" onClick={toggleAutoPlay}>
           {isAutoPlay ? (
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10 9V15M14 9V15M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M10 9V15M14 9V15M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           ) : (
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10 16.5L16 12L10 7.5V16.5Z" fill="#222"/>
-              <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M10 16.5L16 12L10 7.5V16.5Z" fill="#222" />
+              <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#222" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           )}
         </button>
       </div>
-      
+
       <div className="card-carousel">
         {products.map((product, index) => {
           // Only render cards that are visible or will become visible soon
           if (!visibleIndices.includes(index)) return null;
-          
+
           return (
-            <div 
-              key={product.id} 
+            <div
+              key={product.id}
               className={getCardClass(index)}
               onClick={() => navigate(`/product/${product.id}`)}
             >
               <div className="card-inner">
                 <div className="card-image">
-                  <img src={product.firstImage} alt={product.product_name} />
-                  {new Date(product.created_at) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) && 
+                  <OptimizedImage src={product.firstImage} alt={product.product_name} />
+                  {new Date(product.created_at) >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) &&
                     <span className="new-label">NEW</span>
                   }
                 </div>
@@ -233,9 +233,9 @@ const FeaturedCollection = () => {
                     }}>
                       <svg className="shop-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         {isAutoPlay ? (
-                          <path d="M10 9V15M14 9V15M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M10 9V15M14 9V15M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                         ) : (
-                          <path d="M10 16.5L16 12L10 7.5V16.5Z" fill="white"/>
+                          <path d="M10 16.5L16 12L10 7.5V16.5Z" fill="white" />
                         )}
                       </svg>
                     </button>
@@ -246,11 +246,11 @@ const FeaturedCollection = () => {
           );
         })}
       </div>
-      
+
       <div className="carousel-indicators">
         {products.map((_, index) => (
-          <span 
-            key={index} 
+          <span
+            key={index}
             className={`indicator ${index === activeIndex ? 'active' : ''}`}
             onClick={() => handleIndicatorClick(index)}
             style={{ cursor: 'pointer' }}

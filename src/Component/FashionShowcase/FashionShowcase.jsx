@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./FashionShowcase.css";
+import OptimizedImage from "../OptimizedImage";
 
 const FashionShowcase = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const FashionShowcase = () => {
             </h1>
             <h2 className="main-subtitle">Collection of Inspired Living</h2>
             <p className="main-description">
-            Transform your space with a collection that speaks style and soul. <span className="mobile-hidden">Explore pieces crafted to inspire and elevate everyday living.</span>
+              Transform your space with a collection that speaks style and soul. <span className="mobile-hidden">Explore pieces crafted to inspire and elevate everyday living.</span>
             </p>
           </div>
           <div className="shop-nowbtn" onClick={handleShopNow}>
@@ -50,11 +51,11 @@ const FashionShowcase = () => {
         <div className="showcase-side-container">
           <div className="showcase-side-item">
             <div>
-              <img src="./side_image2.webp" alt="img" />
+              <OptimizedImage src="./side_image2.webp" alt="img" />
             </div>
             <div className="showcase-info-card">
               <div className="info-card-header">
-                <img src="./image-icon.webp" alt="img" />
+                <img src="./image-icon.webp" alt="img" loading="lazy" />
                 <span>
                   cushion collection
                 </span>
@@ -67,7 +68,7 @@ const FashionShowcase = () => {
                   showcase your style through thoughtfully curated, stylish accents for every space
                   <svg
                     onClick={handleShopNow}
-                    xmlns="http://www.w3.org/2000/svg"  
+                    xmlns="http://www.w3.org/2000/svg"
                     width="60"
                     height="60"
                     viewBox="0 0 24 24"
@@ -85,7 +86,7 @@ const FashionShowcase = () => {
           </div>
           <div className="showcase-side-item">
             <div className="showcase-side-image-container">
-              <img src="./side_image1.webp" alt="img" />
+              <OptimizedImage src="./side_image1.webp" alt="img" />
               <div className="showcase-side-image-overlay">
                 <svg
                   onClick={handleShopNow}
