@@ -27,7 +27,9 @@ const NewArrivals = () => {
     bedsets: [],
     doharsAndQuilts: [],
     wishGenie: [],
-    tableLinen: []
+    tableLinen: [],
+    bagsAndPouches: [],
+    gifting: []
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,6 +40,8 @@ const NewArrivals = () => {
     bedsets: useRef(null),
     doharsAndQuilts: useRef(null),
     tableLinen: useRef(null),
+    bagsAndPouches: useRef(null),
+    gifting: useRef(null),
     main: useRef(null)
   };
 
@@ -127,11 +131,13 @@ const NewArrivals = () => {
         };
 
         const categorizedProducts = {
-          cushions: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "cushions" && p.image && p.image.trim() !== '')),
+          cushions: sortByCreationDate(products.filter(p => (p.category?.toLowerCase() === "cushions" || p.category?.toLowerCase() === "cushion covers") && p.image && p.image.trim() !== '')),
           bedsets: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "bedsets" && p.image && p.image.trim() !== '')),
           doharsAndQuilts: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "dohars & quilts" && p.image && p.image.trim() !== '')),
           wishGenie: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "wish genie" && p.image && p.image.trim() !== '')),
-          tableLinen: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "table linen" && p.image && p.image.trim() !== ''))
+          tableLinen: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "table linen" && p.image && p.image.trim() !== '')),
+          bagsAndPouches: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "bags & pouches" && p.image && p.image.trim() !== '')),
+          gifting: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "gifting" && p.image && p.image.trim() !== ''))
         };
         setCategoryProducts(categorizedProducts);
         setLoading(false);
@@ -200,7 +206,7 @@ const NewArrivals = () => {
     ? newArrivals
     : newArrivals.filter(product => {
       const hasImage = product.image && product.image.trim() !== '';
-      return product.category === activeTab && hasImage;
+      return product.category?.toLowerCase().trim() === activeTab.toLowerCase().trim() && hasImage;
     }).sort((a, b) => {
       const dateA = a.createdAt?.toDate?.() || new Date(a.created_at || 0);
       const dateB = b.createdAt?.toDate?.() || new Date(b.created_at || 0);
@@ -443,7 +449,7 @@ const NewArrivals = () => {
   };
 
   const handleCategoryClick = (category) => {
-    if (category === 'wish genie') {
+    if (category.toLowerCase() === 'wish genie') {
       navigate('/new-arrivals-wish');
     } else {
       setActiveTab(category);
@@ -580,7 +586,7 @@ const NewArrivals = () => {
               className={`arrivals-category-tab ${activeTab === category ? 'active' : ''}`}
               onClick={() => handleCategoryClick(category)}
             >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
+              {category.toUpperCase()}
             </button>
           ))}
         </div>
@@ -620,7 +626,7 @@ const NewArrivals = () => {
         {/* Category-specific product sections */}
         <div className="arrivals-sections-container">
           {/* Cushions */}
-          {renderProductsContainer("Cushions", categoryProducts.cushions, "cushions")}
+          {renderProductsContainer("Cushion Covers", categoryProducts.cushions, "cushions")}
 
           {/* Bedsets */}
           {renderProductsContainer("Bedsets", categoryProducts.bedsets, "bedsets")}
@@ -630,6 +636,12 @@ const NewArrivals = () => {
 
           {/* Table Linen */}
           {renderProductsContainer("Table Linen", categoryProducts.tableLinen, "tableLinen")}
+
+          {/* Bags & Pouches */}
+          {renderProductsContainer("Bags & Pouches", categoryProducts.bagsAndPouches, "bagsAndPouches")}
+
+          {/* Gifting */}
+          {renderProductsContainer("Gifting", categoryProducts.gifting, "gifting")}
         </div>
 
         {/* Shopping Benefits */}
