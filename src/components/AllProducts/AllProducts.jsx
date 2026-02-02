@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useWishlist } from "../../context/WishlistContext.jsx";
 import { useCart } from "../../context/CartContext.jsx";
 import { addReferrerToUrl } from "../../utils/navigationUtils.js";
-import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight, FaSlidersH, FaDollarSign, FaSortAmountDown, FaBed, FaCouch, FaGift, FaBoxOpen } from "react-icons/fa";
+import { FaShoppingBag, FaHeart, FaShoppingCart, FaEye, FaTimes, FaRegHeart, FaTshirt, FaSearch, FaChevronRight, FaStar, FaStarHalfAlt, FaRegStar, FaFilter, FaSort, FaTags, FaArrowRight, FaSlidersH, FaDollarSign, FaSortAmountDown, FaBed, FaCouch, FaGift, FaBoxOpen, FaUtensils } from "react-icons/fa";
 import { GiLargeDress, GiRunningShoe, GiWatch, GiHeartNecklace, GiTrousers } from "react-icons/gi";
 import "./AllProductsStyles.css";
 import { db } from '../../firebase/config';
@@ -271,6 +271,7 @@ const AllProducts = () => {
     { id: "Cushion Covers", name: "Cushion Covers", icon: <FaCouch /> },
     { id: "Bedsets", name: "Bedsets", icon: <FaBed /> },
     { id: "Dohars & Quilts", name: "Dohars & Quilts", icon: <FaBed /> },
+    { id: "Table Linen", name: "Table Linen", icon: <FaUtensils /> },
     { id: "Bags & Pouches", name: "Bags & Pouches", icon: <FaTshirt /> },
     { id: "wish-genie", name: "Wish Genie", icon: <FaGift /> },
     { id: "Gifting", name: "Gifting", icon: <FaBoxOpen /> },

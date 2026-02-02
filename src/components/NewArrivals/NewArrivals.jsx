@@ -26,7 +26,8 @@ const NewArrivals = () => {
     cushions: [],
     bedsets: [],
     doharsAndQuilts: [],
-    wishGenie: []
+    wishGenie: [],
+    tableLinen: []
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -36,6 +37,7 @@ const NewArrivals = () => {
     cushions: useRef(null),
     bedsets: useRef(null),
     doharsAndQuilts: useRef(null),
+    tableLinen: useRef(null),
     main: useRef(null)
   };
 
@@ -128,7 +130,8 @@ const NewArrivals = () => {
           cushions: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "cushions" && p.image && p.image.trim() !== '')),
           bedsets: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "bedsets" && p.image && p.image.trim() !== '')),
           doharsAndQuilts: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "dohars & quilts" && p.image && p.image.trim() !== '')),
-          wishGenie: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "wish genie" && p.image && p.image.trim() !== ''))
+          wishGenie: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "wish genie" && p.image && p.image.trim() !== '')),
+          tableLinen: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "table linen" && p.image && p.image.trim() !== ''))
         };
         setCategoryProducts(categorizedProducts);
         setLoading(false);
@@ -593,7 +596,9 @@ const NewArrivals = () => {
                   ? "Complete your look with our just-arrived bedsets, including covers, sheets, and more."
                   : activeTab === "wish genie"
                     ? "Explore our magical collection of Wish Genie products, designed to make your wishes come true."
-                    : "Explore our collection of dohars and quilts, perfect for every season and crafted with premium materials for ultimate comfort."}
+                    : activeTab.toLowerCase() === "table linen"
+                      ? "Elevate your dining experience with our premium table linen collection, featuring elegant tablecloths, runners, and napkins."
+                      : "Explore our collection of dohars and quilts, perfect for every season and crafted with premium materials for ultimate comfort."}
           </p>
         </div>
 
@@ -622,6 +627,9 @@ const NewArrivals = () => {
 
           {/* Dohars and Quilts */}
           {renderProductsContainer("Dohars & Quilts", categoryProducts.doharsAndQuilts, "doharsAndQuilts")}
+
+          {/* Table Linen */}
+          {renderProductsContainer("Table Linen", categoryProducts.tableLinen, "tableLinen")}
         </div>
 
         {/* Shopping Benefits */}
