@@ -128,15 +128,15 @@
     object-fit: cover;
     display: block;
     transition: transform 0.5s ease;
-    transform: rotate(-2.5deg) scale(1.15);
+    transform: scale(1.05);
 }
 
 .arrivals-featured-image:hover img {
-    transform: rotate(-2.5deg) scale(1.2);
+    transform: scale(1.1);
 }
 
 .arrivals-featured-product:hover .arrivals-featured-image img {
-    transform: rotate(-2.5deg) scale(1.2);
+    transform: scale(1.1);
 }
 
 .arrivals-featured-discount {
@@ -1043,6 +1043,12 @@
 
     .arrivals-featured-image img {
         border-radius: 10px;
+        transform: scale(1.05);
+    }
+
+    .arrivals-featured-image:hover img,
+    .arrivals-featured-product:hover .arrivals-featured-image img {
+        transform: scale(1.1);
     }
 
     .arrivals-featured-info {
