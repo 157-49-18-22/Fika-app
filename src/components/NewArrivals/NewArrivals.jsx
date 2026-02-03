@@ -344,6 +344,13 @@ const NewArrivals = () => {
 
   // Render product card with optimized image loading
   const renderProductCard = (product) => {
+    let displayName = product.product_name || "";
+    let subtitle = "";
+    const match = displayName.match(/^(.*?)\s*(\(.*\))$/);
+    if (match) {
+      displayName = match[1];
+      subtitle = match[2];
+    }
     return (
       <div
         key={product.id}
@@ -393,7 +400,8 @@ const NewArrivals = () => {
         </div>
 
         <div className="product-info">
-          <h3 className="product-name">{product.product_name}</h3>
+          <h3 className="product-name">{displayName}</h3>
+          {subtitle && <div className="product-subtitle">{subtitle}</div>}
           <p className="product-category">
             {product.category}
           </p>

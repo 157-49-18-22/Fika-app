@@ -1229,3 +1229,12 @@
         font-size: 14px;
     }
 }
+
+.product-subtitle {
+    font-size: 0.9rem;
+    color: #444;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    font-weight: 500;
+    display: block;
+}
