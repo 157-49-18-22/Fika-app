@@ -414,7 +414,7 @@
 }
 
 /* Product Card */
-.arrivals-product-card {
+.arrivals-section .product-card {
     min-width: 260px;
     position: relative;
     border-radius: 8px;
@@ -425,7 +425,7 @@
     cursor: pointer;
 }
 
-.arrivals-product-card:hover {
+.arrivals-section .product-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
@@ -471,7 +471,7 @@
     display: block;
 }
 
-.arrivals-product-card:hover .arrivals-product-image img {
+.arrivals-section .product-card:hover .arrivals-product-image img {
     transform: scale(1.05);
 }
 
@@ -527,7 +527,7 @@
     z-index: 3;
 }
 
-.arrivals-product-card:hover .arrivals-product-actions {
+.arrivals-section .product-card:hover .arrivals-product-actions {
     opacity: 1;
     transform: translateX(0);
 }
@@ -572,7 +572,7 @@
     text-overflow: ellipsis;
 }
 
-.arrivals-product-card:hover .arrivals-product-info h3 {
+.arrivals-section .product-card:hover .arrivals-product-info h3 {
     color: #1D1D1D;
 }
 
@@ -638,7 +638,7 @@
     gap: 0.8rem;
 }
 
-.arrivals-product-card:hover .arrivals-hover-details {
+.arrivals-section .product-card:hover .arrivals-hover-details {
     transform: translateY(0);
 }
 
@@ -1236,4 +1236,43 @@
     margin-bottom: 2px;
     font-weight: 500;
     display: block;
+}
+
+/* Ensure left alignment for slick slider items and equal height */
+.arrivals-products-row .slick-track {
+    display: flex !important;
+    margin-left: 0;
+    margin-right: auto;
+}
+
+.arrivals-products-row .slick-slide {
+    height: auto;
+    display: flex;
+    justify-content: center;
+    float: none;
+    /* Reset standard float behavior to rely on flex */
+}
+
+.arrivals-products-row .slick-slide>div {
+    display: flex;
+    flex: 1;
+    height: 100%;
+    width: 100%;
+}
+
+.arrivals-products-row .product-card {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.arrivals-products-row .product-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.arrivals-products-row .shop-now-btn {
+    margin-top: auto;
 }
