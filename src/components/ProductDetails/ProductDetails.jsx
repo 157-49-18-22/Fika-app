@@ -848,7 +848,7 @@ const ProductDetails = () => {
                 onClick={handleAddToCart}
                 disabled={product.inventory !== undefined && product.inventory !== null && product.inventory <= 0}
               >
-                <FaShoppingCart /> Add to Cart - ₹{product.mrp * quantity}
+                <FaShoppingCart /> Add to Cart - ₹{Math.round(calculateDiscountedPrice(currentPrice, product.discount) * quantity)}
               </button>
               <button
                 className={`main-wishlist-btn ${isInWishlist(product.id) ? "in-wishlist" : ""}`}
