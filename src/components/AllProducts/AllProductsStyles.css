@@ -789,6 +789,8 @@
   cursor: pointer;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  /* Ensure cards are same height */
 }
 
 .product-card:hover {
@@ -912,20 +914,36 @@
 }
 
 .product-info {
-  padding: 20px;
+  padding: 1.2rem;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  flex-grow: 1;
+  gap: 8px;
 }
 
 .product-name {
   font-size: 1rem;
-  font-weight: 600;
-  color: #333;
+  font-weight: 500;
   margin: 0;
-  line-height: 1.4;
-  transition: var(--transition);
+  color: #333;
+  transition: color 0.3s ease;
+  height: 2.8rem;
+  /* Space for 2 lines */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.product-category {
+  font-size: 0.85rem;
+  color: #888;
+  height: 1.2rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin: 0;
 }
 
 .product-card:hover .product-name {
@@ -2227,4 +2245,5 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  margin-top: auto;
 }
