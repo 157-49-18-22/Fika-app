@@ -792,6 +792,9 @@ const AllProducts = () => {
                         <span className="current-price">
                           ₹{Number(product.mrp).toFixed(2)}
                         </span>
+                        <span className={`stock-status-badge ${Number(product.inventory) > 0 ? 'in-stock' : 'out-of-stock'}`}>
+                          {Number(product.inventory) > 0 ? 'In Stock' : 'Out of Stock'}
+                        </span>
                       </div>
 
                       <button className="shop-now-btn">

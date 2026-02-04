@@ -102,6 +102,7 @@ const ProductDetails = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPrice, setCurrentPrice] = useState(0);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [availableColors] = useState([
     { name: "Black", code: "#000000", available: true },
@@ -170,7 +171,7 @@ const ProductDetails = () => {
           product_name: raw.product_name || '',
           product_code: raw.product_code || '',
           category: raw.category || '',
-
+          variantPrices: raw.variantPrices || {},
         };
         console.log('Normalized product data:', normalized); // Debug log
         console.log('Product inventory value:', normalized.inventory); // Debug inventory
@@ -179,6 +180,7 @@ const ProductDetails = () => {
         console.log('Product MRP value:', normalized.mrp); // Debug MRP
         console.log('Price info for display:', formatPriceWithDiscount(normalized.mrp, normalized.discount)); // Debug price display
         setProduct(normalized);
+        setCurrentPrice(Number(normalized.mrp) || 0);
 
         // Initialize engagement fields and increment view count for this product
         try {
@@ -361,6 +363,13 @@ const ProductDetails = () => {
     }
     setSelectedSize(size);
     setSizeError("");
+
+    // Update price based on selected size variant
+    if (product.variantPrices && product.variantPrices[size]) {
+      setCurrentPrice(Number(product.variantPrices[size]));
+    } else {
+      setCurrentPrice(Number(product.mrp));
+    }
   };
 
   const handleAddToCart = async (e) => {
@@ -394,15 +403,14 @@ const ProductDetails = () => {
       id: product.id,
       name: product.product_name,
       price: product.mrp,
-      sizes: product.sizes,
-      color: product.color
+      currentPrice: currentPrice
     });
 
     // Create the product object to add to cart with all necessary fields
     const productToAdd = {
       id: product.id,
       name: product.product_name,
-      price: product.mrp,
+      price: currentPrice, // Use the dynamically updated price
       discount: product.discount || 0,
       image: product.image || '/placeholder-image.webp',
       category: product.category,
@@ -674,7 +682,7 @@ const ProductDetails = () => {
             <div className="product-price">
               <span className="current-price" style={{ fontSize: '18px' }}>
                 {(() => {
-                  const priceInfo = formatPriceWithDiscount(product.mrp, product.discount);
+                  const priceInfo = formatPriceWithDiscount(currentPrice, product.discount);
                   return (
                     <>
                       {priceInfo.original ? (

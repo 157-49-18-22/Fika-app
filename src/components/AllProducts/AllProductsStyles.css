@@ -2181,3 +2181,50 @@
   z-index: 999;
   animation: fadeIn 0.3s ease;
 }
+
+/* Stock Status Badges */
+.stock-status-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.stock-status-badge.in-stock {
+  color: #2e7d32;
+  background-color: #e8f5e9;
+}
+
+.stock-status-badge.in-stock::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background-color: #4caf50;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.stock-status-badge.out-of-stock {
+  color: #c62828;
+  background-color: #ffebee;
+}
+
+.stock-status-badge.out-of-stock::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background-color: #f44336;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.product-price {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}

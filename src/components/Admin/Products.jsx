@@ -42,7 +42,9 @@ const Products = () => {
     image: '',
     views: '',
     bought: '',
-    featured: false
+    featured: false,
+    sizes: '', // Comma-separated string in form
+    variantPrices: '' // Format: "Size:Price, Size:Price"
   });
 
   // Helper function to get first image from comma-separated string
@@ -136,6 +138,22 @@ const Products = () => {
     try {
       console.log('Form data before processing:', formData);
 
+      // Helper to parse variant prices string into object
+      const parseVariantPrices = (str) => {
+        if (!str) return {};
+        const prices = {};
+        str.split(',').forEach(item => {
+          const [size, price] = item.split(':').map(s => s.trim());
+          if (size && price) {
+            prices[size] = Number(price);
+          }
+        });
+        return prices;
+      };
+
+      const finalSizes = formData.sizes ? formData.sizes.split(',').map(s => s.trim()).filter(Boolean) : [];
+      const finalVariantPrices = parseVariantPrices(formData.variantPrices);
+
       // Convert numeric fields to numbers
       const numericFormData = {
         ...formData,
@@ -144,7 +162,9 @@ const Products = () => {
         mrp: Number(formData.mrp),
         discount: formData.discount ? Number(formData.discount) : 0,
         views: formData.views === '' ? 0 : Number(formData.views),
-        bought: formData.bought === '' ? 0 : Number(formData.bought)
+        bought: formData.bought === '' ? 0 : Number(formData.bought),
+        sizes: finalSizes,
+        variantPrices: finalVariantPrices
       };
 
       console.log('Numeric form data:', numericFormData);
@@ -202,23 +222,12 @@ const Products = () => {
       setShowModal(false);
       setSelectedProduct(null);
       setFormData({
-        product_name: '',
-        category: '',
-        sub_category: '',
-        product_code: '',
-        color: '',
-        product_description: '',
-        material: '',
-        product_details: '',
-        dimension: '',
-        care_instructions: '',
-        inventory: '',
-        mrp: '',
-        discount: '',
         image: '',
         views: '',
         bought: '',
-        featured: false
+        featured: false,
+        sizes: '',
+        variantPrices: ''
       });
 
       // Refresh the products list
@@ -250,7 +259,9 @@ const Products = () => {
       image: product.image || '',
       views: product.views || '',
       bought: product.bought || '',
-      featured: product.featured || false
+      featured: product.featured || false,
+      sizes: Array.isArray(product.sizes) ? product.sizes.join(', ') : '',
+      variantPrices: product.variantPrices ? Object.entries(product.variantPrices).map(([size, price]) => `${size}:${price}`).join(', ') : ''
     });
     console.log('Form data set to:', {
       product_name: product.product_name || '',
@@ -801,6 +812,27 @@ const Products = () => {
                     <option value={true}>Yes</option>
                   </select>
                 </div>
+                <div className="form-group">
+                  <label>Sizes (comma separated)</label>
+                  <input
+                    type="text"
+                    name="sizes"
+                    value={formData.sizes}
+                    onChange={handleInputChange}
+                    placeholder="Set of 4, Set of 6, Standard"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Variant Prices (Format: Size:Price, Size:Price)</label>
+                  <input
+                    type="text"
+                    name="variantPrices"
+                    value={formData.variantPrices}
+                    onChange={handleInputChange}
+                    placeholder="Set of 4:1500, Set of 6:2200"
+                  />
+                  <small style={{ color: '#666' }}>Note: If a size's price is not specified, it will use the base MRP.</small>
+                </div>
                 <div className="modal-buttons">
                   <button type="submit" className="save-btn">
                     {selectedProduct ? 'Update' : 'Save'}
@@ -828,7 +860,9 @@ const Products = () => {
                         image: '',
                         views: '',
                         bought: '',
-                        featured: false
+                        featured: false,
+                        sizes: '',
+                        variantPrices: ''
                       });
                     }}
                   >
