@@ -9,6 +9,7 @@ import "./AllProductsStyles.css";
 import { db } from '../../firebase/config';
 import { collection, getDocs } from 'firebase/firestore';
 import OptimizedImage from '../../Component/OptimizedImage';
+import BlogSection from '../BlogSection/BlogSection.jsx';
 
 
 const AllProducts = () => {
@@ -980,6 +981,9 @@ const AllProducts = () => {
           ></div>
         )}
       </div>
+
+      {/* Blog Section */}
+      <BlogSection />
     </section>
   );
 };
