@@ -51,6 +51,7 @@ import SavedCart from './Component/SavedCart/SavedCart.jsx';
 import CartManagement from './components/Admin/CartManagement';
 import WishlistManagement from './components/Admin/WishlistManagement.jsx';
 import TestimonialsManagement from './components/Admin/TestimonialsManagement.jsx';
+import BlogDetail from './components/Blog/BlogDetail.jsx';
 
 
 // Layout component with navbar and footer
@@ -108,6 +109,7 @@ function App() {
                 <Route path="/contact" element={<PageLayout><Contact /></PageLayout>} />
                 <Route path="/about" element={<PageLayout><About /></PageLayout>} />
                 <Route path="/product/:id" element={<PageLayout><ProductDetails /></PageLayout>} />
+                <Route path="/blog/:id" element={<PageLayout><BlogDetail /></PageLayout>} />
                 <Route path="/category/:categoryName" element={<PageLayout><CategoryProducts /></PageLayout>} />
                 <Route path="/terms" element={<PageLayout><TermsAndConditions /></PageLayout>} />
                 <Route path="/privacy-policy" element={<PageLayout><PrivacyPolicy /></PageLayout>} />
