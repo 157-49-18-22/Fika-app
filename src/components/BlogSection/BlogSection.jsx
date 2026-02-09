@@ -56,7 +56,7 @@ With detailed product listings and carefully curated collections, finding the ri
 If you're looking to upgrade your living space with stylish, modern, and thoughtfully designed décor, Fika India is your go-to destination. Explore our all products collection and discover home décor that turns everyday spaces into places you truly love.
 
 Create a home that feels calm, stylish, and welcoming with Fika India.`,
-            image: "/blog-home-decor-1.jpg",
+            image: "/FK-BS-001 Full.webp",
             date: "February 2026",
             category: "Home Décor"
         },
