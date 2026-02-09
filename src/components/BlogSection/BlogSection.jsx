@@ -146,6 +146,8 @@ Fika India offers décor pieces crafted for homes that value simplicity, comfort
         }
     ];
 
+    console.log('BlogSection rendering with', blogs.length, 'blogs');
+
     return (
         <section className="blog-section">
             <div className="blog-container">
