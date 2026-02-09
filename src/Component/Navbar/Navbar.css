@@ -54,7 +54,7 @@
     display: flex;
     align-items: center;
     gap: 5px;
-   
+
 }
 
 .logo-watch {
@@ -71,7 +71,8 @@
     font-weight: 500;
     position: relative;
     transition: color 0.3s ease;
-    white-space: nowrap; /* Prevents line break */
+    white-space: nowrap;
+    /* Prevents line break */
 }
 
 
@@ -175,7 +176,7 @@
     z-index: 1;
     min-width: 20px;
     text-align: center;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 }
 
 .wishlist-badge {
@@ -309,15 +310,30 @@
     border-radius: 8px;
     z-index: 2000;
     font-size: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     animation: fadeInOut 2s;
 }
 
 @keyframes fadeInOut {
-    0% { opacity: 0; transform: translateY(-20px);}
-    10% { opacity: 1; transform: translateY(0);}
-    90% { opacity: 1; transform: translateY(0);}
-    100% { opacity: 0; transform: translateY(-20px);}
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    10% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    90% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
 }
 
 /* Mobile Responsive Styles */
@@ -633,6 +649,7 @@
             opacity: 0;
             transform: translateY(-10px);
         }
+
         to {
             opacity: 1;
             transform: translateY(0);
@@ -643,6 +660,7 @@
         from {
             opacity: 0;
         }
+
         to {
             opacity: 1;
         }
@@ -652,6 +670,7 @@
         from {
             transform: translateX(-100%);
         }
+
         to {
             transform: translateX(0);
         }
@@ -694,7 +713,7 @@
         border-radius: 8px;
         z-index: 2000;
         font-size: 14px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         animation: fadeInOut 2s;
         max-width: 90%;
         text-align: center;
