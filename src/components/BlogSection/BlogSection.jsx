@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FaChevronRight } from "react-icons/fa";
 import './BlogSection.css';
 
 const BlogSection = () => {
@@ -181,21 +182,7 @@ Fika India offers décor pieces crafted for homes that value simplicity, comfort
 
                                 <Link to={`/blog/${blog.id}`} className="blog-read-more">
                                     Read More
-                                    <svg
-                                        className="blog-arrow-icon"
-                                        width="16"
-                                        height="16"
-                                        viewBox="0 0 16 16"
-                                        fill="none"
-                                    >
-                                        <path
-                                            d="M6 12L10 8L6 4"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                    </svg>
+                                    <FaChevronRight className="blog-arrow-icon" />
                                 </Link>
                             </div>
                         </article>

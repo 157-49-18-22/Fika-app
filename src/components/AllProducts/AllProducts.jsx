@@ -415,576 +415,578 @@ const AllProducts = () => {
   };
 
   return (
-    <section className={`products-section ${fadeIn ? 'fade-in' : ''}`}>
-      {loading && (
-        <>
-          <div className="loading-container">
-            {/* <div className="loading-spinner"></div> */}
-            <div className="loading-text">Loading Products...</div>
-            <div className="loading-subtext">Discovering our latest collection for you</div>
-          </div>
-
-          {/* Skeleton Loading Cards */}
-          <div className="products-container">
-            <div className="products-header" style={{ flexDirection: 'column' }}>
-              <div className="animated-title">
-                {Array.from("Our Collection").map((letter, index) => (
-                  <span key={index} className={letter === ' ' ? 'space' : ''} style={{ animationDelay: `${0.1 * index}s` }}>
-                    {letter === ' ' ? '\u00A0' : letter}
-                  </span>
-                ))}
-              </div>
-              <div className="products-subtitle">
-                Discover our curated selection of premium fashion items designed for style and comfort
-              </div>
-              <div className="products-divider"></div>
+    <>
+      <section className={`products-section ${fadeIn ? 'fade-in' : ''}`}>
+        {loading && (
+          <>
+            <div className="loading-container">
+              {/* <div className="loading-spinner"></div> */}
+              <div className="loading-text">Loading Products...</div>
+              <div className="loading-subtext">Discovering our latest collection for you</div>
             </div>
 
-            <div className="products-main-content">
-              <div className="products-content">
-                <div className="products-grid">
-                  {[...Array(8)].map((_, index) => (
-                    <div key={index} className="skeleton-card">
-                      <div className="skeleton skeleton-image"></div>
-                      <div className="skeleton skeleton-title"></div>
-                      <div className="skeleton skeleton-category"></div>
-                      <div className="skeleton skeleton-price"></div>
-                      <div className="skeleton skeleton-button"></div>
-                    </div>
+            {/* Skeleton Loading Cards */}
+            <div className="products-container">
+              <div className="products-header" style={{ flexDirection: 'column' }}>
+                <div className="animated-title">
+                  {Array.from("Our Collection").map((letter, index) => (
+                    <span key={index} className={letter === ' ' ? 'space' : ''} style={{ animationDelay: `${0.1 * index}s` }}>
+                      {letter === ' ' ? '\u00A0' : letter}
+                    </span>
                   ))}
+                </div>
+                <div className="products-subtitle">
+                  Discover our curated selection of premium fashion items designed for style and comfort
+                </div>
+                <div className="products-divider"></div>
+              </div>
+
+              <div className="products-main-content">
+                <div className="products-content">
+                  <div className="products-grid">
+                    {[...Array(8)].map((_, index) => (
+                      <div key={index} className="skeleton-card">
+                        <div className="skeleton skeleton-image"></div>
+                        <div className="skeleton skeleton-title"></div>
+                        <div className="skeleton skeleton-category"></div>
+                        <div className="skeleton skeleton-price"></div>
+                        <div className="skeleton skeleton-button"></div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
+          </>
+        )}
+
+        {error && (
+          <div className="error-container">
+            <div className="error-icon">⚠️</div>
+            <div className="error-text">Oops! Something went wrong</div>
+            <div className="error-subtext">{error}</div>
+            <button
+              className="retry-button"
+              onClick={() => {
+                setError(null);
+                setLoading(true);
+                // Refetch products
+                const fetchProducts = async () => {
+                  try {
+                    const querySnapshot = await getDocs(collection(db, 'products'));
+                    const productsArr = [];
+                    querySnapshot.forEach((doc) => {
+                      productsArr.push({ id: doc.id, ...doc.data() });
+                    });
+                    setProducts(productsArr);
+                    setError(null);
+                  } catch (err) {
+                    setError('Error fetching products. Please try again later.');
+                    console.error('Error fetching products:', err);
+                  } finally {
+                    setLoading(false);
+                  }
+                };
+                fetchProducts();
+              }}
+            >
+              Try Again
+            </button>
           </div>
-        </>
-      )}
+        )}
 
-      {error && (
-        <div className="error-container">
-          <div className="error-icon">⚠️</div>
-          <div className="error-text">Oops! Something went wrong</div>
-          <div className="error-subtext">{error}</div>
-          <button
-            className="retry-button"
-            onClick={() => {
-              setError(null);
-              setLoading(true);
-              // Refetch products
-              const fetchProducts = async () => {
-                try {
-                  const querySnapshot = await getDocs(collection(db, 'products'));
-                  const productsArr = [];
-                  querySnapshot.forEach((doc) => {
-                    productsArr.push({ id: doc.id, ...doc.data() });
-                  });
-                  setProducts(productsArr);
-                  setError(null);
-                } catch (err) {
-                  setError('Error fetching products. Please try again later.');
-                  console.error('Error fetching products:', err);
-                } finally {
-                  setLoading(false);
-                }
-              };
-              fetchProducts();
-            }}
-          >
-            Try Again
-          </button>
-        </div>
-      )}
-
-      {/* Toast notification */}
-      {showToast && (
-        <div className="products-toast">
-          <span>{toastMessage}</span>
-        </div>
-      )}
-
-      <div className="products-container">
-        {/* Hero Header */}
-        <div className="products-header" style={{ flexDirection: 'column' }}>
-          <div className="animated-title">
-            {Array.from("Our Collection").map((letter, index) => (
-              <span key={index} className={letter === ' ' ? 'space' : ''} style={{ animationDelay: `${0.1 * index}s` }}>
-                {letter === ' ' ? '\u00A0' : letter}
-              </span>
-            ))}
+        {/* Toast notification */}
+        {showToast && (
+          <div className="products-toast">
+            <span>{toastMessage}</span>
           </div>
-          <div className="products-subtitle">
-            Discover our curated selection of premium fashion items designed for style and comfort
-          </div>
-          <div className="products-divider"></div>
-        </div>
+        )}
 
-        {/* Category Indicator */}
-        <div className="category-indicator">
-          <div className="category-breadcrumb">
-            <div className="category-dropdown">
-              <button
-                className="category-dropdown-btn"
-                onClick={toggleCategoryDropdown}
-              >
-                <span className="current-category">
-                  {selectedCategory === "All Products" ? "All Products" : selectedCategory}
-
+        <div className="products-container">
+          {/* Hero Header */}
+          <div className="products-header" style={{ flexDirection: 'column' }}>
+            <div className="animated-title">
+              {Array.from("Our Collection").map((letter, index) => (
+                <span key={index} className={letter === ' ' ? 'space' : ''} style={{ animationDelay: `${0.1 * index}s` }}>
+                  {letter === ' ' ? '\u00A0' : letter}
                 </span>
-                <FaChevronRight className={`dropdown-arrow ${activeDropdown === 'category' ? 'rotated' : ''}`} />
-              </button>
-              {activeDropdown === 'category' && (
-                <div className="category-dropdown-content">
-                  {categories.map((category) => (
-                    <button
-                      key={category.name}
-                      className={`category-dropdown-option ${selectedCategory === category.name ? "active" : ""}`}
-                      onClick={() => {
-                        handleCategoryClick(category);
-                        setActiveDropdown(null);
-                      }}
-                    >
-                      <span className="category-dropdown-icon">{category.icon}</span>
-                      <span className="category-dropdown-text">{category.name}</span>
-                      {category.name !== "Wish Genie" && category.name !== "Gifting" && (
-                        <span className="category-dropdown-count">({categoryCounts[category.id]})</span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
+              ))}
+            </div>
+            <div className="products-subtitle">
+              Discover our curated selection of premium fashion items designed for style and comfort
+            </div>
+            <div className="products-divider"></div>
+          </div>
+
+          {/* Category Indicator */}
+          <div className="category-indicator">
+            <div className="category-breadcrumb">
+              <div className="category-dropdown">
+                <button
+                  className="category-dropdown-btn"
+                  onClick={toggleCategoryDropdown}
+                >
+                  <span className="current-category">
+                    {selectedCategory === "All Products" ? "All Products" : selectedCategory}
+
+                  </span>
+                  <FaChevronRight className={`dropdown-arrow ${activeDropdown === 'category' ? 'rotated' : ''}`} />
+                </button>
+                {activeDropdown === 'category' && (
+                  <div className="category-dropdown-content">
+                    {categories.map((category) => (
+                      <button
+                        key={category.name}
+                        className={`category-dropdown-option ${selectedCategory === category.name ? "active" : ""}`}
+                        onClick={() => {
+                          handleCategoryClick(category);
+                          setActiveDropdown(null);
+                        }}
+                      >
+                        <span className="category-dropdown-icon">{category.icon}</span>
+                        <span className="category-dropdown-text">{category.name}</span>
+                        {category.name !== "Wish Genie" && category.name !== "Gifting" && (
+                          <span className="category-dropdown-count">({categoryCounts[category.id]})</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="products-main-content">
-          {/* Side Filters Panel */}
-          <div className={`products-filters ${filtersVisible ? 'visible' : ''}`}>
-            <div className="filters-header">
-              <h3><FaSlidersH /> Filters</h3>
-              <button className="close-filters" onClick={() => setFiltersVisible(false)}>×</button>
-            </div>
+          <div className="products-main-content">
+            {/* Side Filters Panel */}
+            <div className={`products-filters ${filtersVisible ? 'visible' : ''}`}>
+              <div className="filters-header">
+                <h3><FaSlidersH /> Filters</h3>
+                <button className="close-filters" onClick={() => setFiltersVisible(false)}>×</button>
+              </div>
 
-            {/* Mobile Filter Toggle */}
-            <div className="mobile-filter-toggle">
-              <button
-                className="mobile-filter-btn"
-                onClick={() => setFiltersVisible(!filtersVisible)}
-              >
-                <FaSlidersH />
-                <span>Advanced Filters</span>
-                <FaChevronRight className={`toggle-arrow ${filtersVisible ? 'rotated' : ''}`} />
-              </button>
-            </div>
+              {/* Mobile Filter Toggle */}
+              <div className="mobile-filter-toggle">
+                <button
+                  className="mobile-filter-btn"
+                  onClick={() => setFiltersVisible(!filtersVisible)}
+                >
+                  <FaSlidersH />
+                  <span>Advanced Filters</span>
+                  <FaChevronRight className={`toggle-arrow ${filtersVisible ? 'rotated' : ''}`} />
+                </button>
+              </div>
 
-            <div className={`filter-content ${filtersVisible ? 'visible' : ''}`}>
-              {/* Show rating filter for all categories */}
-              <div className="filter-group">
-                <h4><FaStar /> Minimum Rating</h4>
-                <div className="rating-options">
-                  {[4, 3, 2, 1].map((star) => (
-                    <label key={star} className="rating-checkbox">
+              <div className={`filter-content ${filtersVisible ? 'visible' : ''}`}>
+                {/* Show rating filter for all categories */}
+                <div className="filter-group">
+                  <h4><FaStar /> Minimum Rating</h4>
+                  <div className="rating-options">
+                    {[4, 3, 2, 1].map((star) => (
+                      <label key={star} className="rating-checkbox">
+                        <input
+                          style={{ width: "fit-content" }}
+                          type="radio"
+                          name="minRating"
+                          value={star}
+                          checked={minRating === star}
+                          onChange={() => setMinRating(star)}
+                        />
+                        {star} stars & up
+                      </label>
+                    ))}
+                    <label className="rating-checkbox">
                       <input
                         style={{ width: "fit-content" }}
                         type="radio"
                         name="minRating"
-                        value={star}
-                        checked={minRating === star}
-                        onChange={() => setMinRating(star)}
+                        value={0}
+                        checked={minRating === 0}
+                        onChange={() => setMinRating(0)}
                       />
-                      {star} stars & up
+                      Any
                     </label>
-                  ))}
-                  <label className="rating-checkbox">
-                    <input
-                      style={{ width: "fit-content" }}
-                      type="radio"
-                      name="minRating"
-                      value={0}
-                      checked={minRating === 0}
-                      onChange={() => setMinRating(0)}
-                    />
-                    Any
-                  </label>
-                </div>
-              </div>
-
-
-
-              {/* On Sale & In Stock Only */}
-              <div className="filter-group">
-                <div className="filter-checkbox-group">
-                  <label className="filter-checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={showDiscounted}
-                      onChange={() => setShowDiscounted((v) => !v)}
-                    />
-                    <span>On Sale</span>
-                  </label>
-                  <label className="filter-checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={inStockOnly}
-                      onChange={() => setInStockOnly((v) => !v)}
-                    />
-                    <span>In Stock Only</span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Price Range */}
-              <div className="filter-group">
-                <h4>Price Range</h4>
-                <input
-                  type="range"
-                  min="0"
-                  max="10000"
-                  value={priceRange[1]}
-                  onChange={e => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                  className="price-slider"
-                />
-                <div className="price-range-display">
-                  <span>₹{priceRange[0]}</span>
-                  <span>₹{priceRange[1]}</span>
-                </div>
-              </div>
-
-              {/* Sort By */}
-              <div className="filter-group">
-                <h4><FaSortAmountDown /> Sort By</h4>
-                <select
-                  className="sort-select"
-                  value={sortOption}
-                  onChange={(e) => setSortOption(e.target.value)}
-                >
-                  {sortOptions.map((option) => (
-                    <option key={option.id} value={option.id}>
-                      {option.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Clear All Filters Button */}
-              <button className="reset-filters-btn" style={{ marginTop: 16, width: '100%' }}
-                onClick={() => {
-                  setSelectedCategory('All Products');
-
-                  setMinRating(0);
-                  setShowDiscounted(false);
-                  setInStockOnly(false);
-                  setPriceRange([0, 10000]);
-                  setSortOption('featured');
-                  // Clear URL parameters
-                  navigate(location.pathname, { replace: true });
-                }}
-              >
-                Clear All Filters
-              </button>
-            </div>
-          </div>
-
-          {/* Main Products Grid */}
-          <div className="products-content">
-            <div className="products-result-stats">
-              <div className="results-count">
-                Showing {Math.min(visibleItems, sortedProducts.length)} of {sortedProducts.length} products
-              </div>
-              <div className="sort-mobile">
-                <button className="sort-btn" onClick={() => setFiltersVisible(true)}>
-                  <FaSort /> Sort
-                </button>
-                {filtersVisible && (
-                  <div className="mobile-sort-dropdown">
-                    <div className="mobile-sort-header">
-                      <h4><FaSortAmountDown /> Sort By</h4>
-                      <button className="close-sort" onClick={() => setFiltersVisible(false)}>
-                        <FaTimes />
-                      </button>
-                    </div>
-                    <div className="mobile-sort-options">
-                      {sortOptions.map((option) => (
-                        <button
-                          key={option.id}
-                          className={`mobile-sort-option ${sortOption === option.id ? 'active' : ''}`}
-                          onClick={() => {
-                            setSortOption(option.id);
-                            setFiltersVisible(false);
-                          }}
-                        >
-                          {option.name}
-                        </button>
-                      ))}
-                    </div>
                   </div>
-                )}
-              </div>
+                </div>
 
-              {/* Mobile Filter Button */}
-              <div className="mobile-filter-button">
-                <button
-                  className="mobile-filter-trigger"
-                  onClick={() => setFiltersVisible(true)}
-                >
-                  <FaSlidersH />
-                  <span>Filters</span>
-                </button>
-              </div>
-            </div>
 
-            <div className="products-grid">
-              {sortedProducts.slice(0, visibleItems).map((product) => {
-                // Parse the image field for the first image
-                let firstImage = '';
-                if (product.image) {
-                  const imagesArr = product.image.split(',').map(img => img.trim()).filter(Boolean);
-                  if (imagesArr.length > 0) {
-                    firstImage = imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
-                  }
-                }
-                return (
-                  <div
-                    key={product.id}
-                    className="product-card"
-                    onClick={() => navigate(addReferrerToUrl(`/product/${product.id}`, location.pathname + location.search))}
-                  >
-                    <div className="product-image-container" style={{ aspectRatio: '3/4' }}>
-                      <OptimizedImage
-                        src={firstImage}
-                        alt={product.product_name}
-                        className="product-image"
+
+                {/* On Sale & In Stock Only */}
+                <div className="filter-group">
+                  <div className="filter-checkbox-group">
+                    <label className="filter-checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={showDiscounted}
+                        onChange={() => setShowDiscounted((v) => !v)}
                       />
-                      <div className="views-overlay" title="Views">
-                        <img src="/Eye3.png" alt="views" className="views-icon-img" />
-                        <span>{product.views || 0}</span>
-                      </div>
-
-                      <div className="product-actions">
-                        <button
-                          className="product-action-btn cart-btn"
-                          onClick={(e) => handleAddToCartClick(product, e)}
-                          title="Add to Cart"
-                          disabled={product.inventory <= 0}
-                        >
-                          <FaShoppingCart />
-                        </button>
-                        <button
-                          className={`product-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
-                          onClick={(e) => handleAddToWishlistClick(product, e)}
-                          title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
-                        >
-                          {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
-                        </button>
-                        <button
-                          className="product-action-btn quickview-btn"
-                          onClick={(e) => handleQuickView(product, e)}
-                          title="Quick View"
-                        >
-                          <FaEye />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="product-info">
-                      <h3 className="product-name">{product.product_name}</h3>
-                      <p className="product-category">
-                        {product.category}
-                      </p>
-                      <div className="product-price">
-                        <span className="current-price">
-                          ₹{Number(product.mrp).toFixed(2)}
-                        </span>
-                        <span className={`stock-status-badge ${Number(product.inventory) > 0 ? 'in-stock' : 'out-of-stock'}`}>
-                          {Number(product.inventory) > 0 ? 'In Stock' : 'Out of Stock'}
-                        </span>
-                      </div>
-
-                      <button className="shop-now-btn">
-                        Shop Now <FaArrowRight className="" />
-                      </button>
-                    </div>
+                      <span>On Sale</span>
+                    </label>
+                    <label className="filter-checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={inStockOnly}
+                        onChange={() => setInStockOnly((v) => !v)}
+                      />
+                      <span>In Stock Only</span>
+                    </label>
                   </div>
-                );
-              })}
-            </div>
+                </div>
 
-            {visibleItems < sortedProducts.length && (
-              <div className="load-more-container">
-                <button className="load-more-btn" onClick={handleLoadMore}>
-                  Load More Products...
+                {/* Price Range */}
+                <div className="filter-group">
+                  <h4>Price Range</h4>
+                  <input
+                    type="range"
+                    min="0"
+                    max="10000"
+                    value={priceRange[1]}
+                    onChange={e => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                    className="price-slider"
+                  />
+                  <div className="price-range-display">
+                    <span>₹{priceRange[0]}</span>
+                    <span>₹{priceRange[1]}</span>
+                  </div>
+                </div>
+
+                {/* Sort By */}
+                <div className="filter-group">
+                  <h4><FaSortAmountDown /> Sort By</h4>
+                  <select
+                    className="sort-select"
+                    value={sortOption}
+                    onChange={(e) => setSortOption(e.target.value)}
+                  >
+                    {sortOptions.map((option) => (
+                      <option key={option.id} value={option.id}>
+                        {option.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Clear All Filters Button */}
+                <button className="reset-filters-btn" style={{ marginTop: 16, width: '100%' }}
+                  onClick={() => {
+                    setSelectedCategory('All Products');
+
+                    setMinRating(0);
+                    setShowDiscounted(false);
+                    setInStockOnly(false);
+                    setPriceRange([0, 10000]);
+                    setSortOption('featured');
+                    // Clear URL parameters
+                    navigate(location.pathname, { replace: true });
+                  }}
+                >
+                  Clear All Filters
                 </button>
               </div>
-            )}
+            </div>
 
-            {sortedProducts.length === 0 && (
-              <div className="no-products-found">
-                <div className="empty-state">
-                  <FaShoppingBag className="empty-icon" />
-                  <h3>No products found</h3>
-                  <p>Try adjusting your search or filter criteria</p>
+            {/* Main Products Grid */}
+            <div className="products-content">
+              <div className="products-result-stats">
+                <div className="results-count">
+                  Showing {Math.min(visibleItems, sortedProducts.length)} of {sortedProducts.length} products
+                </div>
+                <div className="sort-mobile">
+                  <button className="sort-btn" onClick={() => setFiltersVisible(true)}>
+                    <FaSort /> Sort
+                  </button>
+                  {filtersVisible && (
+                    <div className="mobile-sort-dropdown">
+                      <div className="mobile-sort-header">
+                        <h4><FaSortAmountDown /> Sort By</h4>
+                        <button className="close-sort" onClick={() => setFiltersVisible(false)}>
+                          <FaTimes />
+                        </button>
+                      </div>
+                      <div className="mobile-sort-options">
+                        {sortOptions.map((option) => (
+                          <button
+                            key={option.id}
+                            className={`mobile-sort-option ${sortOption === option.id ? 'active' : ''}`}
+                            onClick={() => {
+                              setSortOption(option.id);
+                              setFiltersVisible(false);
+                            }}
+                          >
+                            {option.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Mobile Filter Button */}
+                <div className="mobile-filter-button">
                   <button
-                    className="reset-filters-btn"
-                    onClick={() => {
-                      setSelectedCategory("All Products");
-
-                      setSearchQuery("");
-                      setPriceRange([0, 10000]);
-                      // Clear URL parameters
-                      navigate(location.pathname, { replace: true });
-                    }}
+                    className="mobile-filter-trigger"
+                    onClick={() => setFiltersVisible(true)}
                   >
-                    Reset All Filters
+                    <FaSlidersH />
+                    <span>Filters</span>
                   </button>
                 </div>
               </div>
-            )}
-          </div>
-        </div>
 
-        {/* Image Modal */}
-        {selectedImage && (
-          <div className="image-modal" onClick={handleCloseModal}>
-            <div className="modal-content">
-              <button className="close-modal" onClick={handleCloseModal}>
-                ×
-              </button>
-              <img src={selectedImage} alt="Product Preview" />
-            </div>
-          </div>
-        )}
+              <div className="products-grid">
+                {sortedProducts.slice(0, visibleItems).map((product) => {
+                  // Parse the image field for the first image
+                  let firstImage = '';
+                  if (product.image) {
+                    const imagesArr = product.image.split(',').map(img => img.trim()).filter(Boolean);
+                    if (imagesArr.length > 0) {
+                      firstImage = imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
+                    }
+                  }
+                  return (
+                    <div
+                      key={product.id}
+                      className="product-card"
+                      onClick={() => navigate(addReferrerToUrl(`/product/${product.id}`, location.pathname + location.search))}
+                    >
+                      <div className="product-image-container" style={{ aspectRatio: '3/4' }}>
+                        <OptimizedImage
+                          src={firstImage}
+                          alt={product.product_name}
+                          className="product-image"
+                        />
+                        <div className="views-overlay" title="Views">
+                          <img src="/Eye3.png" alt="views" className="views-icon-img" />
+                          <span>{product.views || 0}</span>
+                        </div>
 
-        {/* Quick View Modal */}
-        <div
-          className={`quickview-modal ${quickView ? "active" : ""}`}
-          onClick={closeQuickView}
-        >
-          {quickView && (
-            <div
-              className="quickview-content"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button className="quickview-close" onClick={closeQuickView}>
-                <FaTimes />
-              </button>
+                        <div className="product-actions">
+                          <button
+                            className="product-action-btn cart-btn"
+                            onClick={(e) => handleAddToCartClick(product, e)}
+                            title="Add to Cart"
+                            disabled={product.inventory <= 0}
+                          >
+                            <FaShoppingCart />
+                          </button>
+                          <button
+                            className={`product-action-btn wishlist-btn ${isInWishlist(product.id) ? 'active' : ''}`}
+                            onClick={(e) => handleAddToWishlistClick(product, e)}
+                            title={isInWishlist(product.id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                          >
+                            {isInWishlist(product.id) ? <FaHeart /> : <FaRegHeart />}
+                          </button>
+                          <button
+                            className="product-action-btn quickview-btn"
+                            onClick={(e) => handleQuickView(product, e)}
+                            title="Quick View"
+                          >
+                            <FaEye />
+                          </button>
+                        </div>
+                      </div>
 
-              <div className="quickview-grid">
-                <div className="quickview-image">
-                  <img src={quickView.image} alt={quickView.name} />
-                  {quickView.discount && (
-                    <div className="quickview-badge">-{quickView.discount}%</div>
-                  )}
+                      <div className="product-info">
+                        <h3 className="product-name">{product.product_name}</h3>
+                        <p className="product-category">
+                          {product.category}
+                        </p>
+                        <div className="product-price">
+                          <span className="current-price">
+                            ₹{Number(product.mrp).toFixed(2)}
+                          </span>
+                          <span className={`stock-status-badge ${Number(product.inventory) > 0 ? 'in-stock' : 'out-of-stock'}`}>
+                            {Number(product.inventory) > 0 ? 'In Stock' : 'Out of Stock'}
+                          </span>
+                        </div>
+
+                        <button className="shop-now-btn">
+                          Shop Now <FaArrowRight className="" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {visibleItems < sortedProducts.length && (
+                <div className="load-more-container">
+                  <button className="load-more-btn" onClick={handleLoadMore}>
+                    Load More Products...
+                  </button>
                 </div>
+              )}
 
-                <div className="quickview-details">
-                  <h2 className="quickview-name">{quickView.name}</h2>
-
-                  <div className="quickview-category">
-                    <FaTags className="category-icon" />
-                    {quickView.category.charAt(0).toUpperCase() + quickView.category.slice(1)}
-                  </div>
-
-                  <div className="quickview-price">
-                    {quickView.discount ? (
-                      <>
-                        <span className="current-price">
-                          ₹{(quickView.price * (1 - quickView.discount / 100)).toFixed(2)}
-                        </span>
-                        <span className="original-price">
-                          ₹{quickView.price.toFixed(2)}
-                        </span>
-                      </>
-                    ) : (
-                      <span className="current-price">₹{quickView.price.toFixed(2)}</span>
-                    )}
-                  </div>
-
-                  {quickView.rating && (
-                    <div className="quickview-rating">
-                      <div className="stars">
-                        {renderStars(quickView.rating)}
-                      </div>
-                      {quickView.reviewsCount && (
-                        <span className="reviews-count">({quickView.reviewsCount} reviews)</span>
-                      )}
-                    </div>
-                  )}
-
-                  <div className="quickview-description">
-                    {quickView.description ||
-                      "This premium product combines style, comfort and durability. Perfect for everyday use and special occasions alike."}
-                  </div>
-
-                  {quickView.sizes && (
-                    <div className="quickview-sizes">
-                      <h4>Available Sizes</h4>
-                      <div className="size-options">
-                        {quickView.sizes.map((size, index) => (
-                          <span key={index} className="size-option">{size}</span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {quickView.colors && (
-                    <div className="quickview-colors">
-                      <h4>Available Colors</h4>
-                      <div className="color-options">
-                        {quickView.colors.map((color, index) => (
-                          <div
-                            key={index}
-                            className="color-option"
-                            style={{ backgroundColor: color.toLowerCase() }}
-                            title={color}
-                          ></div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="quickview-actions">
+              {sortedProducts.length === 0 && (
+                <div className="no-products-found">
+                  <div className="empty-state">
+                    <FaShoppingBag className="empty-icon" />
+                    <h3>No products found</h3>
+                    <p>Try adjusting your search or filter criteria</p>
                     <button
-                      className="add-to-cart-btn"
+                      className="reset-filters-btn"
                       onClick={() => {
-                        handleAddToCartClick(quickView);
-                        closeQuickView();
+                        setSelectedCategory("All Products");
+
+                        setSearchQuery("");
+                        setPriceRange([0, 10000]);
+                        // Clear URL parameters
+                        navigate(location.pathname, { replace: true });
                       }}
                     >
-                      <FaShoppingCart /> Add to Cart
-                    </button>
-
-                    <button
-                      className={`add-to-wishlist-btn ${isInWishlist(quickView.id) ? 'active' : ''}`}
-                      onClick={() => handleAddToWishlistClick(quickView)}
-                    >
-                      {isInWishlist(quickView.id) ? <FaHeart /> : <FaRegHeart />}
-                      {isInWishlist(quickView.id) ? 'In Wishlist' : 'Add to Wishlist'}
+                      Reset All Filters
                     </button>
                   </div>
-
-                  <Link
-                    to={`/product/${quickView.id}`}
-                    className="view-details-btn"
-                    onClick={closeQuickView}
-                  >
-                    View Full Details <FaChevronRight className="arrow-icon" />
-                  </Link>
                 </div>
+              )}
+            </div>
+          </div>
+
+          {/* Image Modal */}
+          {selectedImage && (
+            <div className="image-modal" onClick={handleCloseModal}>
+              <div className="modal-content">
+                <button className="close-modal" onClick={handleCloseModal}>
+                  ×
+                </button>
+                <img src={selectedImage} alt="Product Preview" />
               </div>
             </div>
           )}
-        </div>
 
-        {/* Mobile Filter Backdrop */}
-        {filtersVisible && (
+          {/* Quick View Modal */}
           <div
-            className="mobile-filter-backdrop"
-            onClick={() => setFiltersVisible(false)}
-          ></div>
-        )}
-      </div>
+            className={`quickview-modal ${quickView ? "active" : ""}`}
+            onClick={closeQuickView}
+          >
+            {quickView && (
+              <div
+                className="quickview-content"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button className="quickview-close" onClick={closeQuickView}>
+                  <FaTimes />
+                </button>
+
+                <div className="quickview-grid">
+                  <div className="quickview-image">
+                    <img src={quickView.image} alt={quickView.name} />
+                    {quickView.discount && (
+                      <div className="quickview-badge">-{quickView.discount}%</div>
+                    )}
+                  </div>
+
+                  <div className="quickview-details">
+                    <h2 className="quickview-name">{quickView.name}</h2>
+
+                    <div className="quickview-category">
+                      <FaTags className="category-icon" />
+                      {quickView.category.charAt(0).toUpperCase() + quickView.category.slice(1)}
+                    </div>
+
+                    <div className="quickview-price">
+                      {quickView.discount ? (
+                        <>
+                          <span className="current-price">
+                            ₹{(quickView.price * (1 - quickView.discount / 100)).toFixed(2)}
+                          </span>
+                          <span className="original-price">
+                            ₹{quickView.price.toFixed(2)}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="current-price">₹{quickView.price.toFixed(2)}</span>
+                      )}
+                    </div>
+
+                    {quickView.rating && (
+                      <div className="quickview-rating">
+                        <div className="stars">
+                          {renderStars(quickView.rating)}
+                        </div>
+                        {quickView.reviewsCount && (
+                          <span className="reviews-count">({quickView.reviewsCount} reviews)</span>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="quickview-description">
+                      {quickView.description ||
+                        "This premium product combines style, comfort and durability. Perfect for everyday use and special occasions alike."}
+                    </div>
+
+                    {quickView.sizes && (
+                      <div className="quickview-sizes">
+                        <h4>Available Sizes</h4>
+                        <div className="size-options">
+                          {quickView.sizes.map((size, index) => (
+                            <span key={index} className="size-option">{size}</span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {quickView.colors && (
+                      <div className="quickview-colors">
+                        <h4>Available Colors</h4>
+                        <div className="color-options">
+                          {quickView.colors.map((color, index) => (
+                            <div
+                              key={index}
+                              className="color-option"
+                              style={{ backgroundColor: color.toLowerCase() }}
+                              title={color}
+                            ></div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="quickview-actions">
+                      <button
+                        className="add-to-cart-btn"
+                        onClick={() => {
+                          handleAddToCartClick(quickView);
+                          closeQuickView();
+                        }}
+                      >
+                        <FaShoppingCart /> Add to Cart
+                      </button>
+
+                      <button
+                        className={`add-to-wishlist-btn ${isInWishlist(quickView.id) ? 'active' : ''}`}
+                        onClick={() => handleAddToWishlistClick(quickView)}
+                      >
+                        {isInWishlist(quickView.id) ? <FaHeart /> : <FaRegHeart />}
+                        {isInWishlist(quickView.id) ? 'In Wishlist' : 'Add to Wishlist'}
+                      </button>
+                    </div>
+
+                    <Link
+                      to={`/product/${quickView.id}`}
+                      className="view-details-btn"
+                      onClick={closeQuickView}
+                    >
+                      View Full Details <FaChevronRight className="arrow-icon" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Filter Backdrop */}
+          {filtersVisible && (
+            <div
+              className="mobile-filter-backdrop"
+              onClick={() => setFiltersVisible(false)}
+            ></div>
+          )}
+        </div>
+      </section>
 
       {/* Blog Section */}
       <BlogSection />
-    </section>
+    </>
   );
 };
 
