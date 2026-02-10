@@ -416,7 +416,6 @@ const AllProducts = () => {
 
   return (
     <>
-      <BlogSection />
       <section className={`products-section ${fadeIn ? 'fade-in' : ''}`}>
         {loading && (
           <>
@@ -986,7 +985,7 @@ const AllProducts = () => {
       </section>
 
       {/* Blog Section */}
-
+      <BlogSection />
     </>
   );
 };
