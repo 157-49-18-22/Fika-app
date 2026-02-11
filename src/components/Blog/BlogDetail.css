@@ -78,6 +78,7 @@
 
 .blog-detail-content p {
     margin-bottom: 25px;
+    white-space: pre-wrap;
 }
 
 .blog-detail-content h2 {

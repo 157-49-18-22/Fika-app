@@ -32,7 +32,7 @@ Each product is designed to fit seamlessly into your home while enhancing its ov
 
 Choosing the right home décor brand makes all the difference. Fika India stands out because we focus on quality, design consistency, and customer experience.
 
-What makes Fika India special:
+**What makes Fika India special:**
 • Premium-quality home décor products
 • Clean, modern, and timeless designs
 • Perfect for everyday living and gifting
@@ -66,7 +66,11 @@ Create a home that feels calm, stylish, and welcoming with Fika India.`,
             id: 2,
             title: "Modern & Minimalist Home Decor Items by Fika India",
             excerpt: "Buy home decor online in India at Fika India. Explore modern and minimalist home decor items, premium cushions, candles and home accessories online.",
-            content: `### Home Decor Online in India Modern & Minimalist Home Decor Items
+            content: `Modern & Minimalist Home Decor Items by Fika India
+
+Buy home decor online in India at Fika India. Explore modern and minimalist home decor items, premium cushions, candles and home accessories online.
+
+### Home Decor Online in India Modern & Minimalist Home Decor Items
 
 Choosing the right home decor online is essential for creating interiors that feel stylish, comfortable, and timeless. At Fika India, home décor is thoughtfully designed to suit modern Indian homes where aesthetics, quality, and functionality come together.
 
