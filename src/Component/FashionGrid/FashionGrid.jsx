@@ -14,9 +14,11 @@ const FashionGrid = () => {
                 home décor possibilities<br />
               </h2>
               <p className="info-text">
-                Elevate every corner of your space with style and comfort<br />
-                Discover Your Signature Style At Fika.
+                Elevate every corner of your space with style and comfort
               </p>
+              <h2 className="info-text" style={{ fontSize: "inherit", fontWeight: "inherit", fontFamily: "inherit", margin: 0 }}>
+                Discover Your Signature Style with a Premium Indian Home Decor Brand
+              </h2>
             </div>
           </div>
 

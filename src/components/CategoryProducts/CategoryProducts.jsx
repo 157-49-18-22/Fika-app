@@ -227,12 +227,32 @@ const CategoryProducts = () => {
     },
   };
 
-  // Format category name for display
+  // Format category name for display (SEO updated)
   const formatCategoryName = (name) => {
-    return name
+    const formattedName = name
       .split("-")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
+      
+    const lowerName = name.toLowerCase();
+    
+    if (lowerName === "bedding") {
+      return "Premium Bedroom Decor Accessories & Bedding Sets";
+    }
+    if (lowerName === "cushions" || lowerName === "cushion" || lowerName === "cushion-covers") {
+      return "Living Room Decor Items: Designer Cushion Covers";
+    }
+    if (lowerName === "hampers" || lowerName === "gift-boxes" || lowerName === "gift boxes" || lowerName === "gifting") {
+      return "Handcrafted Home Decor Items & Scented Candles For Home Décor";
+    }
+    if (lowerName === "blue-dreams" || lowerName === "blue dreams") {
+      return "Modern Home Decor Accessories: Blue Dreams";
+    }
+    if (lowerName === "all" || lowerName === "all-products") {
+      return "All Products";
+    }
+    
+    return `Modern Home Decor Accessories: ${formattedName}`;
   };
 
   // Helper function to calculate discounted price

@@ -420,14 +420,14 @@ const NewArrivals = () => {
   };
 
   // Render products container - reusable component for product sections
-  const renderProductsContainer = (title, products, refKey) => {
+  const renderProductsContainer = (title, products, refKey, customTitle = null) => {
     // If no products, don't render the section
     if (!products || products.length === 0) return null;
 
     return (
       <div className="arrivals-category-section">
         <div className="arrivals-category-header">
-          <h2 className="arrivals-category-title">{title}</h2>
+          <h2 className="arrivals-category-title">{customTitle || title}</h2>
           <Link to={`/all-products?category=${title.toLowerCase().replace(/\s+/g, '-')}`} className="arrivals-view-category">
             View All <span className="arrivals-arrow-circle">&#8599;</span>
           </Link>
@@ -649,7 +649,7 @@ const NewArrivals = () => {
           {renderProductsContainer("Bags & Pouches", categoryProducts.bagsAndPouches, "bagsAndPouches")}
 
           {/* Gifting */}
-          {renderProductsContainer("Gifting", categoryProducts.gifting, "gifting")}
+          {renderProductsContainer("Gifting", categoryProducts.gifting, "gifting", "Luxury Scented Candles & Home Decor Gifts")}
         </div>
 
         {/* Shopping Benefits */}

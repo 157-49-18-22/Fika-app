@@ -23,7 +23,7 @@ const FashionShowcase = () => {
             >
               100+
             </h1>
-            <h2 className="main-subtitle">Collection of Inspired Living</h2>
+            <h2 className="main-subtitle">Modern Home Decor Accessories for Your Living Room</h2>
             <p className="main-description">
               Transform your space with a collection that speaks style and soul. <span className="mobile-hidden">Explore pieces crafted to inspire and elevate everyday living.</span>
             </p>
@@ -108,13 +108,16 @@ const FashionShowcase = () => {
                   <div className="showcase-side-image-badge">
                     CUSHION COLLECTION
                   </div>
-                  <h2 className="showcase-side-image-title">
+                  <h2 className="seo-heading" style={{fontSize: "1.2rem", marginBottom: "10px", fontWeight: "600"}}>
+                    Designer Cushion Covers Online in India
+                  </h2>
+                  <h3 className="showcase-side-image-title">
                     Let Your Cushions
                     <br />
                     Do The Talking
                     <br />
                     Style That's All You
-                  </h2>
+                  </h3>
                 </div>
               </div>
             </div>

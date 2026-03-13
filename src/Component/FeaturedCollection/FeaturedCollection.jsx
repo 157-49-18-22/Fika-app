@@ -186,7 +186,7 @@ const FeaturedCollection = () => {
   return (
     <section className="featured-collection">
       <div className="collection-header">
-        <h2 className="collection-title">FEATURED COLLECTION</h2>
+        <h2 className="collection-title">Handcrafted Home Decor Items & Featured Collections</h2>
         <button className="carousel-control" onClick={toggleAutoPlay}>
           {isAutoPlay ? (
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
