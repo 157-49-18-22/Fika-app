@@ -245,8 +245,8 @@ const CategoryProducts = () => {
     if (lowerName === "hampers" || lowerName === "gift-boxes" || lowerName === "gift boxes" || lowerName === "gifting") {
       return "Handcrafted Home Decor Items & Scented Candles For Home Décor";
     }
-    if (lowerName === "blue-dreams" || lowerName === "blue dreams") {
-      return "Modern Home Decor Accessories: Blue Dreams";
+    if (lowerName === "blue-dreams" || lowerName === "blue dreams" || lowerName === "the-scallop-story" || lowerName === "the scallop story") {
+      return "Modern Home Decor Accessories: The Scallop Story";
     }
     if (lowerName === "all" || lowerName === "all-products") {
       return "All Products";
@@ -467,6 +467,17 @@ const CategoryProducts = () => {
         // Filter products based on category and subcategory
         const filteredProducts = allProducts.filter((product) => {
           if (categoryName === "all") return true;
+          
+          const lowerCat = categoryName?.toLowerCase();
+          const giftingCategories = ["hampers", "gift-boxes", "gift boxes", "gifting"];
+          
+          if (giftingCategories.includes(lowerCat)) {
+            return (
+              giftingCategories.includes(product.category?.toLowerCase()) ||
+              giftingCategories.includes(product.subcategory?.toLowerCase())
+            );
+          }
+          
           return (
             product.category === categoryName ||
             product.subcategory === categoryName

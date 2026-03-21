@@ -234,7 +234,9 @@ const AllProducts = () => {
 
   // Filter products based on selected category
   const filteredProducts = products.filter(product => {
-    const matchCategory = selectedCategory === "All Products" || product.category === selectedCategory;
+    const matchCategory = selectedCategory === "All Products" || 
+                         product.category === selectedCategory || 
+                         (selectedCategory === "Hampers / Gift Boxes" && product.category?.toLowerCase() === "gifting");
     const matchPrice = Number(product.mrp) >= priceRange[0] && Number(product.mrp) <= priceRange[1];
     const matchStock = !inStockOnly || Number(product.inventory) > 0;
     const hasImage = product.image && product.image.trim() !== '';
@@ -275,7 +277,7 @@ const AllProducts = () => {
     { id: "Table Linen", name: "Table Linen", icon: <FaUtensils /> },
     { id: "Bags & Pouches", name: "Bags & Pouches", icon: <FaTshirt /> },
     { id: "wish-genie", name: "Wish Genie", icon: <FaGift /> },
-    { id: "Gifting", name: "Gifting", icon: <FaBoxOpen /> },
+    { id: "Gifting", name: "Hampers / Gift Boxes", icon: <FaBoxOpen /> },
   ];
 
   const sortOptions = [
@@ -545,7 +547,7 @@ const AllProducts = () => {
                       >
                         <span className="category-dropdown-icon">{category.icon}</span>
                         <span className="category-dropdown-text">{category.name}</span>
-                        {category.name !== "Wish Genie" && category.name !== "Gifting" && (
+                        {category.name !== "Wish Genie" && category.name !== "Hampers / Gift Boxes" && (
                           <span className="category-dropdown-count">({categoryCounts[category.id]})</span>
                         )}
                       </button>
