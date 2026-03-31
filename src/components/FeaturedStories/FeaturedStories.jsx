@@ -533,6 +533,15 @@ const FeaturedStories = () => {
                       "{testimonial.text}"
                     </p>
                     <div className="testimonial-author">
+                      <div className="author-image">
+                        {testimonial.image ? (
+                          <img src={testimonial.image} alt={testimonial.author} />
+                        ) : (
+                          <div className="author-placeholder">
+                            <FaUserAlt />
+                          </div>
+                        )}
+                      </div>
                       <div className="author-info">
                         <h4 className="author-name">{testimonial.author}</h4>
                         <p className="author-title">{testimonial.location}</p>
@@ -589,6 +598,15 @@ const FeaturedStories = () => {
                         "{currentTestimonialData?.text || 'Loading...'}"
                       </p>
                       <div className="mobile-testimonial-author">
+                        <div className="mobile-author-image">
+                          {currentTestimonialData?.image ? (
+                            <img src={currentTestimonialData.image} alt={currentTestimonialData.author} />
+                          ) : (
+                            <div className="mobile-author-placeholder">
+                              <FaUserAlt />
+                            </div>
+                          )}
+                        </div>
                         <div className="mobile-author-info">
                           <h4 className="mobile-author-name">{currentTestimonialData?.author || 'Loading...'}</h4>
                           <p className="mobile-author-title">{currentTestimonialData?.location || 'Location'}</p>

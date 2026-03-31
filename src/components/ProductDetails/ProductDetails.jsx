@@ -30,8 +30,8 @@ import { useWishlist } from "../../context/WishlistContext.jsx";
 import "./ProductDetails.css";
 import { useAuth } from '../../context/AuthContext';
 import LoginPrompt from '../LoginPrompt/LoginPrompt';
-import { db } from '../../firebase/config';
-import { doc, getDoc, collection, query, where, getDocs, onSnapshot } from 'firebase/firestore';
+import { db } from "../../firebase/config";
+import { collection, getDocs, query, where, orderBy, limit } from "firebase/firestore";
 import { auth } from '../../firebase/config';
 import { incrementProductViews, initializeProductFields, incrementProductBought } from '../../firebase/firestore';
 import OptimizedImage from '../../Component/OptimizedImage';
@@ -123,6 +123,31 @@ const ProductDetails = () => {
   const [recentlyViewedProducts, setRecentlyViewedProducts] = useState([]);
   const [trendingProducts, setTrendingProducts] = useState([]);
   const [productImages, setProductImages] = useState([]);
+  const [dynamicTestimonials, setDynamicTestimonials] = useState([]);
+
+  useEffect(() => {
+    const fetchDynamicTestimonials = async () => {
+      try {
+        const testimonialsRef = collection(db, 'testimonials');
+        const q = query(
+          testimonialsRef,
+          where('status', '==', 'active'),
+          orderBy('createdAt', 'desc'),
+          limit(6)
+        );
+        const querySnapshot = await getDocs(q);
+        const data = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setDynamicTestimonials(data);
+      } catch (error) {
+        console.error("Error fetching testimonials in ProductDetails:", error);
+      }
+    };
+
+    fetchDynamicTestimonials();
+  }, []);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -1249,45 +1274,67 @@ const ProductDetails = () => {
       <div className="customer-testimonials">
         <h2>What Our Customers Say</h2>
         <div className="testimonials-grid">
-          {[
-            {
-              name: "Sarah Johnson",
-              rating: 5,
-              comment: "Absolutely love this product! The quality is outstanding and it exceeded my expectations.",
-              date: "2 days ago",
-              verified: true
-            },
-            {
-              name: "Michael Brown",
-              rating: 4,
-              comment: "Great product with excellent customer service. Will definitely buy again!",
-              date: "1 week ago",
-              verified: true
-            },
-            {
-              name: "Emily Davis",
-              rating: 5,
-              comment: "The best purchase I've made this year. Highly recommend to everyone!",
-              date: "2 weeks ago",
-              verified: true
-            }
-          ].map((testimonial, index) => (
-            <div key={index} className="testimonial-card">
-              <div className="testimonial-header">
-                <div className="testimonial-rating">
-                  {renderStars(testimonial.rating)}
+          {dynamicTestimonials.length > 0 ? (
+            dynamicTestimonials.map((testimonial, index) => (
+              <div key={testimonial.id || index} className="testimonial-card">
+                <div className="testimonial-header">
+                  <div className="testimonial-rating">
+                    {renderStars(testimonial.rating || 5)}
+                  </div>
+                  {testimonial.image && (
+                    <div className="testimonial-customer-image">
+                      <img src={testimonial.image} alt={testimonial.author} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                    </div>
+                  )}
                 </div>
-                <div className="testimonial-verified">
-                  {testimonial.verified && <span>Verified Purchase</span>}
+                <p className="testimonial-comment">{testimonial.text}</p>
+                <div className="testimonial-footer">
+                  <span className="testimonial-name">{testimonial.author}</span>
+                  <span className="testimonial-date">{testimonial.location}</span>
                 </div>
               </div>
-              <p className="testimonial-comment">{testimonial.comment}</p>
-              <div className="testimonial-footer">
-                <span className="testimonial-name">{testimonial.name}</span>
-                <span className="testimonial-date">{testimonial.date}</span>
+            ))
+          ) : (
+            [
+              {
+                name: "Sarah Johnson",
+                rating: 5,
+                comment: "Absolutely love this product! The quality is outstanding and it exceeded my expectations.",
+                date: "2 days ago",
+                verified: true
+              },
+              {
+                name: "Michael Brown",
+                rating: 4,
+                comment: "Great product with excellent customer service. Will definitely buy again!",
+                date: "1 week ago",
+                verified: true
+              },
+              {
+                name: "Emily Davis",
+                rating: 5,
+                comment: "The best purchase I've made this year. Highly recommend to everyone!",
+                date: "2 weeks ago",
+                verified: true
+              }
+            ].map((testimonial, index) => (
+              <div key={index} className="testimonial-card">
+                <div className="testimonial-header">
+                  <div className="testimonial-rating">
+                    {renderStars(testimonial.rating)}
+                  </div>
+                  <div className="testimonial-verified">
+                    {testimonial.verified && <span>Verified Purchase</span>}
+                  </div>
+                </div>
+                <p className="testimonial-comment">{testimonial.comment}</p>
+                <div className="testimonial-footer">
+                  <span className="testimonial-name">{testimonial.name}</span>
+                  <span className="testimonial-date">{testimonial.date}</span>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 

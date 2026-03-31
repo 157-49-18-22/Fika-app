@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaQuoteLeft, FaStar } from 'react-icons/fa';
+import { FaQuoteLeft, FaStar, FaUser } from 'react-icons/fa';
 import Slider from "react-slick";
+import { db } from '../../firebase/config';
+import { collection, getDocs, query, where, orderBy, limit } from 'firebase/firestore';
 
 // Import slick carousel CSS
 import "slick-carousel/slick/slick.css";
@@ -110,72 +112,105 @@ const StarIcon = styled(FaStar)`
   font-size: 0.7rem;
 `;
 
-const testimonials = [
-  {
-    id: 1,
-    text: "I absolutely love shopping here! The quality of products and customer service is exceptional. Every purchase has been a delightful experience.",
-    name: "Sarah Johnson",
-    role: "Regular Customer",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150",
-    rating: 5
-  },
-  {
-    id: 2,
-    text: "The selection of products is amazing, and the website is so easy to navigate. I've recommended this store to all my friends!",
-    name: "Michael Chen",
-    role: "Fashion Enthusiast",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
-    rating: 5
-  },
-  {
-    id: 3,
-    text: "Outstanding experience from browsing to delivery. The attention to detail and product quality exceeded my expectations.",
-    name: "Emma Davis",
-    role: "Verified Buyer",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150",
-    rating: 5
-  },
-  {
-    id: 4,
-    text: "The customer service team went above and beyond to help me find the perfect outfit. I couldn't be happier with my purchase!",
-    name: "David Wilson",
-    role: "Style Enthusiast",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150",
-    rating: 5
-  }
-];
+// Placeholder for static testimonials removed in favor of dynamic fetching
 
 const Testimonials = () => {
+  const [dynamicTestimonials, setDynamicTestimonials] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTestimonials = async () => {
+      try {
+        const testimonialsRef = collection(db, 'testimonials');
+        const q = query(
+          testimonialsRef,
+          where('status', '==', 'active'),
+          where('featured', '==', true),
+          orderBy('createdAt', 'desc'),
+          limit(10)
+        );
+        const querySnapshot = await getDocs(q);
+        const data = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        
+        if (data.length === 0) {
+          // If no featured testimonials, just get latest active ones
+          const q2 = query(
+            testimonialsRef,
+            where('status', '==', 'active'),
+            orderBy('createdAt', 'desc'),
+            limit(10)
+          );
+          const querySnapshot2 = await getDocs(q2);
+          const data2 = querySnapshot2.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          setDynamicTestimonials(data2);
+        } else {
+          setDynamicTestimonials(data);
+        }
+      } catch (error) {
+        console.error("Error fetching testimonials:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTestimonials();
+  }, []);
+
   const settings = {
     dots: false,
     arrows: false,
-    infinite: true,
+    infinite: dynamicTestimonials.length > 1,
     slidesToShow: 1,
     slidesToScroll: 1,
     vertical: true,
     verticalSwiping: true,
-    autoplay: true,
+    autoplay: dynamicTestimonials.length > 1,
     speed: 1000,
     autoplaySpeed: 3000,
     cssEase: "linear"
   };
 
+  if (loading) return null;
+  if (dynamicTestimonials.length === 0) return null;
+
   return (
     <TestimonialsContainer>
       <TestimonialTitle>What Our Customers Say</TestimonialTitle>
       <Slider {...settings}>
-        {testimonials.map((testimonial) => (
+        {dynamicTestimonials.map((testimonial) => (
           <div key={testimonial.id}>
             <TestimonialCard>
               <QuoteIcon />
               <TestimonialText>{testimonial.text}</TestimonialText>
               <CustomerInfo>
-                <CustomerImage src={testimonial.image} alt={testimonial.name} loading="lazy" />
+                {testimonial.image ? (
+                  <CustomerImage src={testimonial.image} alt={testimonial.author} loading="lazy" />
+                ) : (
+                  <div style={{ 
+                    width: '45px', 
+                    height: '45px', 
+                    borderRadius: '50%', 
+                    background: '#f0f0f0', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center',
+                    border: '2px solid #764ba2',
+                    color: '#ccc'
+                  }}>
+                    <FaUser size={20} />
+                  </div>
+                )}
                 <CustomerDetails>
-                  <CustomerName>{testimonial.name}</CustomerName>
-                  <CustomerRole>{testimonial.role}</CustomerRole>
+                  <CustomerName>{testimonial.author}</CustomerName>
+                  <CustomerRole>{testimonial.location}</CustomerRole>
                   <RatingContainer>
-                    {[...Array(testimonial.rating)].map((_, index) => (
+                    {[...Array(testimonial.rating || 5)].map((_, index) => (
                       <StarIcon key={index} />
                     ))}
                   </RatingContainer>

@@ -11,7 +11,8 @@ import {
   deleteDoc, 
   serverTimestamp,
   query,
-  orderBy
+  orderBy,
+  addDoc
 } from 'firebase/firestore';
 
 const TestimonialsManagement = () => {
@@ -27,8 +28,13 @@ const TestimonialsManagement = () => {
     location: '',
     rating: 5,
     featured: false,
-    status: 'active'
+    status: 'active',
+    image: ''
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   // Fetch testimonials from Firestore
   useEffect(() => {
@@ -57,12 +63,41 @@ const TestimonialsManagement = () => {
 
 
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setUploading(true);
     
     try {
+      let imageUrl = formData.image;
+
+      if (imageFile) {
+        imageUrl = await fileToBase64(imageFile);
+      }
+
       const testimonialData = {
-        ...formData
+        ...formData,
+        image: imageUrl
       };
       
       console.log('💾 Saving testimonial data:', testimonialData);
@@ -105,8 +140,11 @@ const TestimonialsManagement = () => {
       location: testimonial.location,
       rating: testimonial.rating,
       featured: testimonial.featured || false,
-      status: testimonial.status || 'active'
+      status: testimonial.status || 'active',
+      image: testimonial.image || ''
     });
+    setImagePreview(testimonial.image || null);
+    setImageFile(null);
     setShowModal(true);
   };
 
@@ -119,8 +157,12 @@ const TestimonialsManagement = () => {
       location: '',
       rating: 5,
       featured: false,
-      status: 'active'
+      status: 'active',
+      image: ''
     });
+    setImageFile(null);
+    setImagePreview(null);
+    setUploadProgress(0);
   };
 
   const handleDelete = async (id) => {
@@ -208,19 +250,26 @@ const TestimonialsManagement = () => {
               </div>
             </div>
 
-            <div className="testimonial-content">
-              <div className="quote-icon">
-                <FaQuoteLeft />
-              </div>
-              <p className="testimonial-text">{testimonial.text}</p>
-              
-              <div className="rating">
-                {[...Array(5)].map((_, index) => (
-                  <FaStar 
-                    key={index} 
-                    className={index < testimonial.rating ? 'star filled' : 'star empty'} 
-                  />
-                ))}
+            <div className="testimonial-body">
+              {testimonial.image && (
+                <div className="testimonial-image">
+                  <img src={testimonial.image} alt={testimonial.author} />
+                </div>
+              )}
+              <div className="testimonial-content">
+                <div className="quote-icon">
+                  <FaQuoteLeft />
+                </div>
+                <p className="testimonial-text">{testimonial.text}</p>
+                
+                <div className="rating">
+                  {[...Array(5)].map((_, index) => (
+                    <FaStar 
+                      key={index} 
+                      className={index < testimonial.rating ? 'star filled' : 'star empty'} 
+                    />
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -252,6 +301,42 @@ const TestimonialsManagement = () => {
             </div>
 
                          <form onSubmit={handleSubmit} className="testimonial-form">
+              <div className="form-group">
+                <label>Customer Picture</label>
+                <div className="image-upload-container">
+                  <div className="image-preview">
+                    {imagePreview ? (
+                      <img src={imagePreview} alt="Preview" />
+                    ) : (
+                      <div className="placeholder-preview">
+                        <FaUser />
+                      </div>
+                    )}
+                  </div>
+                  <div className="upload-controls">
+                    <input
+                      type="file"
+                      id="image"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      hidden
+                    />
+                    <label htmlFor="image" className="upload-btn">
+                      {imagePreview ? 'Change Picture' : 'Upload Picture'}
+                    </label>
+                    {uploading && (
+                      <div className="upload-progress">
+                        <div 
+                          className="progress-bar" 
+                          style={{ width: `${uploadProgress}%` }}
+                        ></div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <p className="upload-hint">Format: JPG, PNG • Max size: 1MB</p>
+              </div>
+
               <div className="form-group">
                 <label htmlFor="text">Testimonial Text *</label>
                 <textarea
@@ -336,8 +421,8 @@ const TestimonialsManagement = () => {
                 <button type="button" className="cancel-btn" onClick={closeModal}>
                   Cancel
                 </button>
-                                 <button type="submit" className="save-btn">
-                   {selectedTestimonial ? 'Update' : 'Save'} Testimonial
+                                 <button type="submit" className="save-btn" disabled={uploading}>
+                   {uploading ? 'Uploading...' : (selectedTestimonial ? 'Update' : 'Save')} Testimonial
                  </button>
               </div>
             </form>
