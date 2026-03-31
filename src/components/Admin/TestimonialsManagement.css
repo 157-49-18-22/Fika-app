@@ -560,6 +560,13 @@
   transition: width 0.3s ease;
 }
 
+.upload-hint {
+  font-size: 11px;
+  color: #888;
+  margin-top: 5px;
+  font-style: italic;
+}
+
 /* Testimonial Card Layout */
 .testimonial-body {
   display: flex;
