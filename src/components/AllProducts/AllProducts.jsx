@@ -234,9 +234,9 @@ const AllProducts = () => {
 
   // Filter products based on selected category
   const filteredProducts = products.filter(product => {
-    const matchCategory = selectedCategory === "All Products" || 
-                         product.category === selectedCategory || 
-                         (selectedCategory === "Hampers / Gift Boxes" && product.category?.toLowerCase() === "gifting");
+    const matchCategory = selectedCategory === "All Products" ||
+      product.category === selectedCategory ||
+      (selectedCategory === "Hampers / Gift Boxes" && product.category?.toLowerCase() === "gifting");
     const matchPrice = Number(product.mrp) >= priceRange[0] && Number(product.mrp) <= priceRange[1];
     const matchStock = !inStockOnly || Number(product.inventory) > 0;
     const hasImage = product.image && product.image.trim() !== '';
@@ -430,23 +430,21 @@ const AllProducts = () => {
             {/* Skeleton Loading Cards */}
             <div className="products-container">
               <div className="products-header" style={{ flexDirection: 'column' }}>
-                {selectedCategory === "Hampers / Gift Boxes" ? (
-                  <h1 className="animated-title" style={{ fontSize: '2rem', fontWeight: 700, letterSpacing: '0.02em', textAlign: 'center', color: '#2d2d2d' }}>
-                    Handcrafted Home Decor Items &amp; Scented Candles For Home D&#xe9;cor
-                  </h1>
-                ) : (
-                  <div className="animated-title">
-                    {Array.from("Our Collection").map((letter, index) => (
-                      <span key={index} className={letter === ' ' ? 'space' : ''} style={{ animationDelay: `${0.1 * index}s` }}>
-                        {letter === ' ' ? '\u00A0' : letter}
-                      </span>
-                    ))}
-                  </div>
-                )}
+                <div className="animated-title">
+                  {Array.from("Our Collection").map((letter, index) => (
+                    <span key={index} className={letter === ' ' ? 'space' : ''} style={{ animationDelay: `${0.1 * index}s` }}>
+                      {letter === ' ' ? '\u00A0' : letter}
+                    </span>
+                  ))}
+                </div>
                 <div className="products-subtitle">
                   {selectedCategory === "Hampers / Gift Boxes"
-                    ? "Explore our handcrafted hampers, gift boxes & scented candles for every occasion"
-                    : "Discover our curated selection of premium fashion items designed for style and comfort"}
+                    ? "Handcrafted Home Decor Items & Scented Candles For Home Décor"
+                    : selectedCategory === "Bedsets"
+                      ? "Premium Bedroom Decor Accessories & Bedding Sets"
+                      : selectedCategory === "Cushion Covers"
+                        ? "Living Room Decor Items: Designer Cushion Covers"
+                        : "Discover our curated selection of premium fashion items designed for style and comfort"}
                 </div>
                 <div className="products-divider"></div>
               </div>
@@ -515,23 +513,21 @@ const AllProducts = () => {
         <div className="products-container">
           {/* Hero Header */}
           <div className="products-header" style={{ flexDirection: 'column' }}>
-            {selectedCategory === "Hampers / Gift Boxes" ? (
-              <h1 className="animated-title" style={{ fontSize: '2rem', fontWeight: 700, letterSpacing: '0.02em', textAlign: 'center', color: '#2d2d2d' }}>
-                Handcrafted Home Decor Items &amp; Scented Candles For Home D&#xe9;cor
-              </h1>
-            ) : (
-              <div className="animated-title">
-                {Array.from("Our Collection").map((letter, index) => (
-                  <span key={index} className={letter === ' ' ? 'space' : ''} style={{ animationDelay: `${0.1 * index}s` }}>
-                    {letter === ' ' ? '\u00A0' : letter}
-                  </span>
-                ))}
-              </div>
-            )}
+            <div className="animated-title">
+              {Array.from("Our Collection").map((letter, index) => (
+                <span key={index} className={letter === ' ' ? 'space' : ''} style={{ animationDelay: `${0.1 * index}s` }}>
+                  {letter === ' ' ? '\u00A0' : letter}
+                </span>
+              ))}
+            </div>
             <div className="products-subtitle">
               {selectedCategory === "Hampers / Gift Boxes"
-                ? "Explore our handcrafted hampers, gift boxes & scented candles for every occasion"
-                : "Discover our curated selection of premium fashion items designed for style and comfort"}
+                ? "Handcrafted Home Decor Items & Scented Candles For Home Décor"
+                : selectedCategory === "Bedsets"
+                  ? "Premium Bedroom Decor Accessories & Bedding Sets"
+                  : selectedCategory === "Cushion Covers"
+                    ? "Living Room Decor Items: Designer Cushion Covers"
+                    : "Discover our curated selection of premium fashion items designed for style and comfort"}
             </div>
             <div className="products-divider"></div>
           </div>

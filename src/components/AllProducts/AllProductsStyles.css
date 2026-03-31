@@ -248,7 +248,7 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   margin-top: 5px;
-  max-height: 300px;
+  max-height: 500px;
   overflow-y: auto;
   animation: dropdownFadeIn 0.2s ease-out;
 }

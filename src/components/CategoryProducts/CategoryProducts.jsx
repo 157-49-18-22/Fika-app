@@ -236,7 +236,7 @@ const CategoryProducts = () => {
       
     const lowerName = name.toLowerCase();
     
-    if (lowerName === "bedding") {
+    if (lowerName === "bedding" || lowerName === "bedsets") {
       return "Premium Bedroom Decor Accessories & Bedding Sets";
     }
     if (lowerName === "cushions" || lowerName === "cushion" || lowerName === "cushion-covers") {
@@ -246,7 +246,7 @@ const CategoryProducts = () => {
       return "Handcrafted Home Decor Items & Scented Candles For Home Décor";
     }
     if (lowerName === "blue-dreams" || lowerName === "blue dreams" || lowerName === "the-scallop-story" || lowerName === "the scallop story") {
-      return "Modern Home Decor Accessories: The Scallop Story";
+      return `Modern Home Decor Accessories: ${formattedName}`;
     }
     if (lowerName === "all" || lowerName === "all-products") {
       return "All Products";
