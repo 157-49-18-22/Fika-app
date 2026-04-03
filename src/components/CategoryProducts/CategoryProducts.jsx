@@ -616,6 +616,15 @@ const CategoryProducts = () => {
       (product.discount && product.discount > 0);
 
     return priceInRange && styleMatch && materialMatch && brandMatch && discountMatch;
+  }).sort((a, b) => {
+    // Push out of stock products to the bottom
+    const stockA = Number(a.inventory) > 0 ? 1 : 0;
+    const stockB = Number(b.inventory) > 0 ? 1 : 0;
+
+    if (stockA !== stockB) {
+      return stockB - stockA; // In-stock (1) before out-of-stock (0)
+    }
+    return 0; // Keep the existing sort (newest first) for products with same stock status
   });
 
   return (

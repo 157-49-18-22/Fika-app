@@ -301,6 +301,14 @@ const AllProducts = () => {
   }, {});
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
+    // Push out of stock products to the bottom
+    const stockA = Number(a.inventory) > 0 ? 1 : 0;
+    const stockB = Number(b.inventory) > 0 ? 1 : 0;
+    
+    if (stockA !== stockB) {
+      return stockB - stockA; // In-stock (1) before out-of-stock (0)
+    }
+
     switch (sortOption) {
       case "newest":
         const dateA = a.createdAt?.toDate?.() || new Date(a.created_at || 0);

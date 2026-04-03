@@ -106,38 +106,38 @@ const NewArrivals = () => {
           return productDate >= thirtyDaysAgo && hasImage;
         });
 
-        // Sort new arrivals by creation date (newest first)
-        const sortedNewProducts = newProducts.sort((a, b) => {
-          const dateA = a.createdAt?.toDate?.() || new Date(a.created_at || 0);
-          const dateB = b.createdAt?.toDate?.() || new Date(b.created_at || 0);
-          return dateB - dateA; // Newest first
-        });
-
-        setNewArrivals(sortedNewProducts);
-        // Set featured product (first item with discount or first new arrival)
-        const discountedProduct = newProducts.find(product => product.discount);
-        if (discountedProduct) {
-          setFeaturedProduct(discountedProduct);
-        } else if (newProducts.length > 0) {
-          setFeaturedProduct(newProducts[0]);
-        }
-        // Organize products by categories and sort by creation date (newest first)
-        const sortByCreationDate = (products) => {
+        const sortProducts = (products) => {
           return products.sort((a, b) => {
+            const stockA = Number(a.inventory) > 0 ? 1 : 0;
+            const stockB = Number(b.inventory) > 0 ? 1 : 0;
+            if (stockA !== stockB) {
+              return stockB - stockA; // In-stock (1) before out-of-stock (0)
+            }
             const dateA = a.createdAt?.toDate?.() || new Date(a.created_at || 0);
             const dateB = b.createdAt?.toDate?.() || new Date(b.created_at || 0);
             return dateB - dateA; // Newest first
           });
         };
 
+        setNewArrivals(sortProducts(newProducts));
+        // Set featured product (first item with discount or first new arrival)
+        const discountedProduct = newProducts.find(product => product.discount && Number(product.inventory) > 0);
+        if (discountedProduct) {
+          setFeaturedProduct(discountedProduct);
+        } else if (newProducts.length > 0) {
+          // Fallback to first available product (ideally in stock if any)
+          const firstInStock = newProducts.find(p => Number(p.inventory) > 0);
+          setFeaturedProduct(firstInStock || newProducts[0]);
+        }
+
         const categorizedProducts = {
-          cushions: sortByCreationDate(products.filter(p => (p.category?.toLowerCase() === "cushions" || p.category?.toLowerCase() === "cushion covers") && p.image && p.image.trim() !== '')),
-          bedsets: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "bedsets" && p.image && p.image.trim() !== '')),
-          doharsAndQuilts: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "dohars & quilts" && p.image && p.image.trim() !== '')),
-          wishGenie: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "wish genie" && p.image && p.image.trim() !== '')),
-          tableLinen: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "table linen" && p.image && p.image.trim() !== '')),
-          bagsAndPouches: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "bags & pouches" && p.image && p.image.trim() !== '')),
-          gifting: sortByCreationDate(products.filter(p => p.category?.toLowerCase() === "gifting" && p.image && p.image.trim() !== ''))
+          cushions: sortProducts(products.filter(p => (p.category?.toLowerCase() === "cushions" || p.category?.toLowerCase() === "cushion covers") && p.image && p.image.trim() !== '')),
+          bedsets: sortProducts(products.filter(p => p.category?.toLowerCase() === "bedsets" && p.image && p.image.trim() !== '')),
+          doharsAndQuilts: sortProducts(products.filter(p => p.category?.toLowerCase() === "dohars & quilts" && p.image && p.image.trim() !== '')),
+          wishGenie: sortProducts(products.filter(p => p.category?.toLowerCase() === "wish genie" && p.image && p.image.trim() !== '')),
+          tableLinen: sortProducts(products.filter(p => p.category?.toLowerCase() === "table linen" && p.image && p.image.trim() !== '')),
+          bagsAndPouches: sortProducts(products.filter(p => p.category?.toLowerCase() === "bags & pouches" && p.image && p.image.trim() !== '')),
+          gifting: sortProducts(products.filter(p => p.category?.toLowerCase() === "gifting" && p.image && p.image.trim() !== ''))
         };
         setCategoryProducts(categorizedProducts);
         setLoading(false);
@@ -202,12 +202,20 @@ const NewArrivals = () => {
     return ['all', ...categoriesWithProducts, 'wish genie'];
   }, [newArrivals]);
 
-  const filteredProducts = activeTab === "all"
+  const filteredProducts = (activeTab === "all"
     ? newArrivals
     : newArrivals.filter(product => {
       const hasImage = product.image && product.image.trim() !== '';
       return product.category?.toLowerCase().trim() === activeTab.toLowerCase().trim() && hasImage;
-    }).sort((a, b) => {
+    })).sort((a, b) => {
+      // Push out of stock products to the bottom
+      const stockA = Number(a.inventory) > 0 ? 1 : 0;
+      const stockB = Number(b.inventory) > 0 ? 1 : 0;
+
+      if (stockA !== stockB) {
+        return stockB - stockA; // In-stock (1) before out-of-stock (0)
+      }
+
       const dateA = a.createdAt?.toDate?.() || new Date(a.created_at || 0);
       const dateB = b.createdAt?.toDate?.() || new Date(b.created_at || 0);
       return dateB - dateA; // Newest first

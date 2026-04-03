@@ -36,8 +36,9 @@ const FeaturedCollection = () => {
               firstImage = imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
             }
           }
-          // Only add products that have a valid image
-          if (firstImage) {
+          // Only add products that have a valid image and are in stock
+          const isOutOfStock = data.inventory !== undefined && Number(data.inventory) <= 0;
+          if (firstImage && !isOutOfStock) {
             productsArr.push({ ...data, firstImage });
           }
         });
