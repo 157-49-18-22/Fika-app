@@ -31,7 +31,7 @@ import "./ProductDetails.css";
 import { useAuth } from '../../context/AuthContext';
 import LoginPrompt from '../LoginPrompt/LoginPrompt';
 import { db } from "../../firebase/config";
-import { collection, getDocs, query, where, orderBy, limit } from "firebase/firestore";
+import { collection, getDocs, query, where, orderBy, limit, onSnapshot } from "firebase/firestore";
 import { auth } from '../../firebase/config';
 import { incrementProductViews, initializeProductFields, incrementProductBought } from '../../firebase/firestore';
 import OptimizedImage from '../../Component/OptimizedImage';
