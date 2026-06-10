@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa';
 import './Products.css';
-import { db } from '../../firebase/config';
+import { db, storage } from '../../firebase/config';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import imageCompression from 'browser-image-compression';
 import {
   collection,
   getDocs,
@@ -25,6 +27,8 @@ const Products = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState({
     product_name: '',
     category: '',
@@ -131,6 +135,55 @@ const Products = () => {
       ...prev,
       [name]: name === 'featured' ? value === 'true' : value
     }));
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    let fileToUpload = file;
+
+    if (file.type.startsWith('image/')) {
+      setIsUploading(true);
+      try {
+        const options = {
+          maxSizeMB: 0.3, // Compressed map to ~300KB
+          maxWidthOrHeight: 1024,
+          useWebWorker: true
+        };
+        fileToUpload = await imageCompression(file, options);
+      } catch (error) {
+        console.error('Compression error:', error);
+      }
+    } else {
+      setIsUploading(true);
+    }
+
+    const storageRef = ref(storage, `products/${Date.now()}_${fileToUpload.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
+
+    uploadTask.on(
+      'state_changed',
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setUploadProgress(progress);
+      },
+      (error) => {
+        console.error("Upload failed", error);
+        setError('Image upload failed: ' + error.message);
+        setIsUploading(false);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setFormData(prev => ({
+            ...prev,
+            image: prev.image ? `${prev.image}, ${downloadURL}` : downloadURL
+          }));
+          setIsUploading(false);
+          setUploadProgress(0);
+        });
+      }
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -767,7 +820,21 @@ const Products = () => {
                   />
                 </div>
                 <div className="form-group">
-                  <label>Image URL</label>
+                  <label>Product Image / Video Upload</label>
+                  <input
+                    type="file"
+                    accept="image/*,video/*"
+                    onChange={handleImageUpload}
+                    disabled={isUploading}
+                    style={{ marginBottom: '10px' }}
+                  />
+                  {isUploading && (
+                    <div style={{ marginBottom: '10px', color: '#6a11cb', fontWeight: 'bold' }}>
+                      Uploading... {Math.round(uploadProgress)}%
+                    </div>
+                  )}
+                  
+                  <label>Image URLs (Comma separated)</label>
                   <input
                     type="text"
                     name="image"
