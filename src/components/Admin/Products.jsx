@@ -158,32 +158,43 @@ const Products = () => {
     } else {
       setIsUploading(true);
     }
+    
+    // Simulate upload progress
+    setUploadProgress(30);
 
-    const storageRef = ref(storage, `products/${Date.now()}_${fileToUpload.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, fileToUpload);
+    const uploadData = new FormData();
+    uploadData.append('file', fileToUpload);
 
-    uploadTask.on(
-      'state_changed',
-      (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setUploadProgress(progress);
-      },
-      (error) => {
-        console.error("Upload failed", error);
-        setError('Image upload failed: ' + error.message);
+    // Determine the base URL dynamically. If testing on localhost, use the live domain (or provide a fallback).
+    // Otherwise, use the current domain (works for both fika-india.com AND the Hostinger preview URL)
+    const baseUrl = window.location.hostname === 'localhost' ? 'https://orange-clam-521767.hostingersite.com' : window.location.origin;
+    
+    try {
+      const response = await fetch(`${baseUrl}/upload.php`, {
+        method: 'POST',
+        body: uploadData,
+      });
+
+      setUploadProgress(80);
+      const data = await response.json();
+
+      if (data.success) {
+        setUploadProgress(100);
+        setFormData(prev => ({
+          ...prev,
+          image: prev.image ? `${prev.image}, ${data.url}` : data.url
+        }));
         setIsUploading(false);
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setFormData(prev => ({
-            ...prev,
-            image: prev.image ? `${prev.image}, ${downloadURL}` : downloadURL
-          }));
-          setIsUploading(false);
-          setUploadProgress(0);
-        });
+        setTimeout(() => setUploadProgress(0), 1000);
+      } else {
+        throw new Error(data.message || 'Upload failed on server');
       }
-    );
+    } catch (error) {
+      console.error("Upload failed", error);
+      setError('Upload failed: ' + error.message);
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
   };
 
   const handleSubmit = async (e) => {
