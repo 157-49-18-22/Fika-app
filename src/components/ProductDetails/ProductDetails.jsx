@@ -325,7 +325,10 @@ const ProductDetails = () => {
         .split(',')
         .map(img => img.trim())
         .filter(Boolean)
-        .map(img => img.startsWith('/') ? img : `/${img}`); // Ensure leading slash for public folder
+        .map(img => {
+          if (img.startsWith('http') || img.startsWith('blob:')) return img;
+          return img.startsWith('/') ? img : `/${img}`;
+        }); // Ensure leading slash only for relative paths
       setProductImages(imagesArr.length > 0 ? imagesArr : ['/placeholder-image.webp']);
     } else {
       setProductImages(['/placeholder-image.webp']);

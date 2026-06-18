@@ -1,4 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap');
 
 @font-face {
     font-family: 'Carmine';
@@ -728,7 +728,7 @@
 }
 
 .description-features li::before {
-    content: 'âœ“';
+    content: '\2713';
     position: absolute;
     left: 0;
     color: #1D1D1D;
@@ -763,7 +763,7 @@
 }
 
 .details-section li::before {
-    content: 'â€¢';
+    content: '\2022';
     position: absolute;
     left: 0;
     color: #1D1D1D;
@@ -907,7 +907,7 @@
 
 .shipping-section li::before,
 .returns-section li::before {
-    content: 'âœ“';
+    content: '\2713';
     position: absolute;
     left: 0;
     color: #1D1D1D;
