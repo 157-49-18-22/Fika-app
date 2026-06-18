@@ -486,19 +486,90 @@ const Payment = ({ onClose, total, promoCode = '', discount = 0 }) => {
       return;
     }
 
-    // Load Razorpay script
-    console.log('[PAYMENT] Loading Razorpay script...');
+    // Direct Client-Side Implementation (Bypassing Firebase Cloud Functions)
+    setLoading(true);
+    setError("");
+
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
+
     script.onload = () => {
-      console.log('[PAYMENT] Razorpay script loaded successfully');
-      displayRazorpay();
+      const formattedAddress = selectedAddress ?
+        `${selectedAddress.addressLine1}, ${selectedAddress.addressLine2 || ''}, ${selectedAddress.city}, ${selectedAddress.state}, ${selectedAddress.pincode}` :
+        "No address provided";
+
+      const options = {
+        key: "rzp_live_oR04gue1fn6wcY", // Production key
+        amount: Math.round(finalTotal * 100), // Real dynamic total amount in paise
+        currency: "INR",
+        name: "Fika",
+        description: "Food Order Payment",
+        prefill: {
+          name: selectedAddress ? selectedAddress.fullName : "Customer",
+          email: user?.email || "customer@example.com",
+          contact: selectedAddress ? selectedAddress.mobile : "9999999999"
+        },
+        notes: {
+          address: formattedAddress
+        },
+        theme: {
+          color: "#000000"
+        },
+        handler: async function (response) {
+          console.log('Payment successful:', response);
+          
+          try {
+            // Save successful payment to backup collection directly from client
+            const urlParams = new URLSearchParams(window.location.search);
+            const promoCode = urlParams.get('promoCode') || '';
+            const discount = parseFloat(urlParams.get('discount')) || 0;
+
+            await saveSuccessfulPayment({
+              orderId: `DIRECT_${Date.now()}`,
+              paymentId: response.razorpay_payment_id,
+              amount: finalTotal,
+              currency: "INR",
+              items: cart.map(item => ({
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price,
+                image: item.image,
+                id: item.id || item._id || `item-${Date.now()}`
+              })),
+              userId: user?.uid || null,
+              shippingAddress: selectedAddress || formattedAddress,
+              orderDate: new Date().toISOString(),
+              orderTotal: finalTotal,
+              originalTotal: total,
+            });
+            
+            alert('Payment Successful');
+            clearCart();
+            navigate(`/payment-success?payment_id=${response.razorpay_payment_id}`);
+          } catch (err) {
+            console.error('Error saving order details:', err);
+            // Navigate to success anyway since payment went through
+            navigate(`/payment-success?payment_id=${response.razorpay_payment_id}`);
+          }
+        }
+      };
+
+      try {
+        const paymentObject = new window.Razorpay(options);
+        paymentObject.open();
+      } catch (err) {
+        setError("Error opening Razorpay: " + err.message);
+      } finally {
+        setLoading(false);
+      }
     };
-    script.onerror = (err) => {
-      console.error('[PAYMENT] Failed to load Razorpay script:', err);
-      setError("Failed to load Razorpay SDK. Please check your internet connection.");
+
+    script.onerror = () => {
+      setError("Failed to load Razorpay SDK.");
+      setLoading(false);
     };
+
     document.body.appendChild(script);
   };
 
