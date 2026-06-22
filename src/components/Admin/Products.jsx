@@ -156,9 +156,7 @@ const Products = () => {
     setIsUploading(true);
     setUploadProgress(10);
 
-    const baseUrl = window.location.hostname === 'localhost'
-      ? 'https://orange-clam-521767.hostingersite.com'
-      : window.location.origin;
+    const baseUrl = 'https://fika-india.com';
 
     const newUrls = [];
     for (let i = 0; i < files.length; i++) {
