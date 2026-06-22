@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { FaEdit, FaTrash, FaPlus, FaSearch } from 'react-icons/fa';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { FaEdit, FaTrash, FaPlus, FaSearch, FaTimes, FaGripVertical } from 'react-icons/fa';
 import './Products.css';
 import { db, storage } from '../../firebase/config';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
@@ -29,6 +29,9 @@ const Products = () => {
   const [maxPrice, setMaxPrice] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [imageList, setImageList] = useState([]); // Array of URL strings for drag-drop
+  const dragItem = useRef(null);
+  const dragOverItem = useRef(null);
   const [formData, setFormData] = useState({
     product_name: '',
     category: '',
@@ -52,11 +55,14 @@ const Products = () => {
   });
 
   // Helper function to get first image from comma-separated string
+  // Helper to safely get the first image out of the comma-separated image list
   const getFirstImage = (imageField) => {
     if (!imageField) return null;
     const imagesArr = imageField.split(',').map(img => img.trim()).filter(Boolean);
     if (imagesArr.length > 0) {
-      return imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
+      const src = imagesArr[0];
+      if (src.startsWith('http') || src.startsWith('blob:')) return src;
+      return src.startsWith('/') ? src : `/${src}`;
     }
     return null;
   };
@@ -137,64 +143,84 @@ const Products = () => {
     }));
   };
 
+  // Sync imageList → formData.image whenever imageList changes
+  const syncImageListToForm = (list) => {
+    setImageList(list);
+    setFormData(prev => ({ ...prev, image: list.join(', ') }));
+  };
+
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
 
-    let fileToUpload = file;
+    setIsUploading(true);
+    setUploadProgress(10);
 
-    if (file.type.startsWith('image/')) {
-      setIsUploading(true);
+    const baseUrl = window.location.hostname === 'localhost'
+      ? 'https://orange-clam-521767.hostingersite.com'
+      : window.location.origin;
+
+    const newUrls = [];
+    for (let i = 0; i < files.length; i++) {
+      let fileToUpload = files[i];
+
+      if (files[i].type.startsWith('image/')) {
+        try {
+          const options = { maxSizeMB: 0.3, maxWidthOrHeight: 1024, useWebWorker: true };
+          fileToUpload = await imageCompression(files[i], options);
+        } catch (err) {
+          console.error('Compression error:', err);
+        }
+      }
+
+      const uploadData = new FormData();
+      uploadData.append('file', fileToUpload);
+
       try {
-        const options = {
-          maxSizeMB: 0.3, // Compressed map to ~300KB
-          maxWidthOrHeight: 1024,
-          useWebWorker: true
-        };
-        fileToUpload = await imageCompression(file, options);
+        const response = await fetch(`${baseUrl}/upload.php`, { method: 'POST', body: uploadData });
+        const data = await response.json();
+        if (data.success) {
+          newUrls.push(data.url);
+        } else {
+          throw new Error(data.message || 'Upload failed on server');
+        }
       } catch (error) {
-        console.error('Compression error:', error);
+        console.error('Upload failed', error);
+        setError('Upload failed: ' + error.message);
       }
-    } else {
-      setIsUploading(true);
+
+      setUploadProgress(Math.round(((i + 1) / files.length) * 90));
     }
-    
-    // Simulate upload progress
-    setUploadProgress(30);
 
-    const uploadData = new FormData();
-    uploadData.append('file', fileToUpload);
+    setUploadProgress(100);
+    setIsUploading(false);
+    setTimeout(() => setUploadProgress(0), 1000);
 
-    // Determine the base URL dynamically. If testing on localhost, use the live domain (or provide a fallback).
-    // Otherwise, use the current domain (works for both fika-india.com AND the Hostinger preview URL)
-    const baseUrl = window.location.hostname === 'localhost' ? 'https://orange-clam-521767.hostingersite.com' : window.location.origin;
-    
-    try {
-      const response = await fetch(`${baseUrl}/upload.php`, {
-        method: 'POST',
-        body: uploadData,
-      });
+    // Merge with existing list
+    const updated = [...imageList, ...newUrls];
+    syncImageListToForm(updated);
+    // Reset file input
+    e.target.value = '';
+  };
 
-      setUploadProgress(80);
-      const data = await response.json();
+  // Remove an image by index
+  const handleRemoveImage = (idx) => {
+    const updated = imageList.filter((_, i) => i !== idx);
+    syncImageListToForm(updated);
+  };
 
-      if (data.success) {
-        setUploadProgress(100);
-        setFormData(prev => ({
-          ...prev,
-          image: prev.image ? `${prev.image}, ${data.url}` : data.url
-        }));
-        setIsUploading(false);
-        setTimeout(() => setUploadProgress(0), 1000);
-      } else {
-        throw new Error(data.message || 'Upload failed on server');
-      }
-    } catch (error) {
-      console.error("Upload failed", error);
-      setError('Upload failed: ' + error.message);
-      setIsUploading(false);
-      setUploadProgress(0);
-    }
+  // Drag-and-drop handlers
+  const handleDragStart = (idx) => { dragItem.current = idx; };
+  const handleDragEnter = (idx) => { dragOverItem.current = idx; };
+  const handleDragEnd = () => {
+    if (dragItem.current === null || dragOverItem.current === null) return;
+    if (dragItem.current === dragOverItem.current) return;
+    const reordered = [...imageList];
+    const dragged = reordered.splice(dragItem.current, 1)[0];
+    reordered.splice(dragOverItem.current, 0, dragged);
+    dragItem.current = null;
+    dragOverItem.current = null;
+    syncImageListToForm(reordered);
   };
 
   const handleSubmit = async (e) => {
@@ -306,6 +332,10 @@ const Products = () => {
     console.log('Editing product:', product);
     console.log('Product discount value:', product.discount);
     setSelectedProduct(product);
+    const existingList = product.image
+      ? product.image.split(',').map(s => s.trim()).filter(Boolean)
+      : [];
+    setImageList(existingList);
     setFormData({
       product_name: product.product_name || '',
       category: product.category || '',
@@ -326,23 +356,6 @@ const Products = () => {
       featured: product.featured || false,
       sizes: Array.isArray(product.sizes) ? product.sizes.join(', ') : '',
       variantPrices: product.variantPrices ? Object.entries(product.variantPrices).map(([size, price]) => `${size}:${price}`).join(', ') : ''
-    });
-    console.log('Form data set to:', {
-      product_name: product.product_name || '',
-      category: product.category || '',
-      sub_category: product.sub_category || '',
-      product_code: product.product_code || '',
-      color: product.color || '',
-      product_description: product.product_description || '',
-      material: product.material || '',
-      product_details: product.product_details || '',
-      dimension: product.dimension || '',
-      care_instructions: product.care_instructions || '',
-      inventory: product.inventory || '',
-      mrp: product.mrp || '',
-      discount: product.discount || '',
-      image: product.image || '',
-      featured: product.featured || false
     });
     setShowModal(true);
   };
@@ -835,49 +848,64 @@ const Products = () => {
                   <input
                     type="file"
                     accept="image/*,video/*"
+                    multiple
                     onChange={handleImageUpload}
                     disabled={isUploading}
                     style={{ marginBottom: '10px' }}
                   />
                   {isUploading && (
-                    <div style={{ marginBottom: '10px', color: '#6a11cb', fontWeight: 'bold' }}>
-                      Uploading... {Math.round(uploadProgress)}%
+                    <div className="upload-progress-bar-wrap">
+                      <div className="upload-progress-bar" style={{ width: `${uploadProgress}%` }} />
+                      <span className="upload-progress-text">Uploading... {Math.round(uploadProgress)}%</span>
                     </div>
                   )}
-                  
-                  <label>Image URLs (Comma separated)</label>
-                  <input
-                    type="text"
-                    name="image"
-                    value={formData.image}
-                    onChange={handleInputChange}
-                    required
-                  />
-                  {formData.image && (
-                    <div className="media-preview">
-                      {getMediaItems(formData.image).map((media, idx) => (
-                        media.isVideo ? (
-                          <video
-                            key={idx}
-                            src={media.src}
-                            className="media-preview-item"
-                            muted
-                            autoPlay
-                            loop
-                            playsInline
-                          />
-                        ) : (
-                          <img
-                            key={idx}
-                            src={media.src}
-                            alt={`Preview ${idx + 1}`}
-                            className="media-preview-item"
-                            onError={(e) => e.target.style.display = 'none'}
-                          />
-                        )
-                      ))}
+
+                  {/* Hidden field — keeps URL string in sync for backend */}
+                  <input type="hidden" name="image" value={formData.image} />
+
+                  {/* Thumbnail grid with close & drag-drop */}
+                  {imageList.length > 0 && (
+                    <div className="img-grid-label">
+                      <FaGripVertical style={{ marginRight: 6, opacity: 0.5 }} />
+                      Drag to reorder · Click ✕ to remove
                     </div>
                   )}
+                  <div className="img-thumb-grid">
+                    {imageList.map((url, idx) => {
+                      const isVideo = /\.(mp4|webm|ogg|mov)$/i.test(url);
+                      return (
+                        <div
+                          key={idx}
+                          className="img-thumb-item"
+                          draggable
+                          onDragStart={() => handleDragStart(idx)}
+                          onDragEnter={() => handleDragEnter(idx)}
+                          onDragEnd={handleDragEnd}
+                          onDragOver={(e) => e.preventDefault()}
+                        >
+                          {isVideo ? (
+                            <video src={url} className="img-thumb-media" muted playsInline />
+                          ) : (
+                            <img
+                              src={url}
+                              alt={`img-${idx + 1}`}
+                              className="img-thumb-media"
+                              onError={(e) => e.target.style.opacity = '0.3'}
+                            />
+                          )}
+                          <button
+                            type="button"
+                            className="img-thumb-close"
+                            onClick={() => handleRemoveImage(idx)}
+                            title="Remove image"
+                          >
+                            <FaTimes />
+                          </button>
+                          <span className="img-thumb-num">{idx + 1}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
                 <div className="form-group">
                   <label>Featured Product</label>
@@ -921,6 +949,7 @@ const Products = () => {
                     onClick={() => {
                       setShowModal(false);
                       setSelectedProduct(null);
+                      setImageList([]);
                       setFormData({
                         product_name: '',
                         category: '',

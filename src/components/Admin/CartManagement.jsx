@@ -126,7 +126,7 @@ const CartManagement = () => {
                       <div key={`${cart.id}-${item.id}`} className="cart-item">
                         <div className="cart-item-image">
                           <img
-                            src={item.image ? '/' + item.image.split(',')[0].trim() : ''}
+                            src={item.image ? (item.image.split(',')[0].trim().startsWith('http') || item.image.split(',')[0].trim().startsWith('blob:') ? item.image.split(',')[0].trim() : '/' + item.image.split(',')[0].trim()) : ''}
                             alt={item.name || item.product_name || 'Product'}
                             onError={(e) => {
                               console.log('CartManagement: Image load error for item:', item.id);

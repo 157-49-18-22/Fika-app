@@ -565,3 +565,127 @@
 .bulk-form .cancel-btn:hover {
   background-color: #000000;
 }
+
+/* ── Image thumbnail grid (upload preview with drag-drop) ── */
+.img-grid-label {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: #888;
+  margin: 10px 0 6px;
+  user-select: none;
+}
+
+.img-thumb-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.img-thumb-item {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  overflow: visible;
+  border: 2px solid #e0e0e0;
+  cursor: grab;
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  background: #f5f5f5;
+  flex-shrink: 0;
+}
+
+.img-thumb-item:active {
+  cursor: grabbing;
+}
+
+.img-thumb-item:hover {
+  transform: scale(1.06);
+  box-shadow: 0 4px 14px rgba(108, 71, 255, 0.22);
+  border-color: #7c4dff;
+}
+
+.img-thumb-media {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 6px;
+  display: block;
+}
+
+/* Close (remove) button */
+.img-thumb-close {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #e53935;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  transition: background 0.2s, transform 0.15s;
+  padding: 0;
+}
+
+.img-thumb-close:hover {
+  background: #b71c1c;
+  transform: scale(1.2);
+}
+
+/* Position number badge */
+.img-thumb-num {
+  position: absolute;
+  bottom: 3px;
+  left: 3px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* Upload progress bar */
+.upload-progress-bar-wrap {
+  position: relative;
+  height: 22px;
+  background: #f0eaff;
+  border-radius: 11px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  border: 1px solid #d6c8ff;
+}
+
+.upload-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #7c4dff, #6a11cb);
+  border-radius: 11px;
+  transition: width 0.3s ease;
+}
+
+.upload-progress-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #4a148c;
+  pointer-events: none;
+}

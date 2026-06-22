@@ -289,7 +289,7 @@ const SavedCart = () => {
               <div key={`${cart.id}-${item.id}-${item.size || 'default'}`} className="saved-cart-item">
                 <div className="saved-cart-item-image">
                   <img 
-                    src={item.image ? '/' + item.image.split(',')[0].trim() : ''}
+                    src={item.image ? (item.image.split(',')[0].trim().startsWith('http') || item.image.split(',')[0].trim().startsWith('blob:') ? item.image.split(',')[0].trim() : '/' + item.image.split(',')[0].trim()) : ''}
                     alt={item.name || 'Product'}
                     onError={(e) => {
                       e.target.onerror = null;

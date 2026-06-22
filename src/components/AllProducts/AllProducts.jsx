@@ -761,7 +761,12 @@ const AllProducts = () => {
                   if (product.image) {
                     const imagesArr = product.image.split(',').map(img => img.trim()).filter(Boolean);
                     if (imagesArr.length > 0) {
-                      firstImage = imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
+                      const src = imagesArr[0];
+                      if (src.startsWith('http')) {
+                        firstImage = src;
+                      } else {
+                        firstImage = src.startsWith('/') ? src : `/${src}`;
+                      }
                     }
                   }
                   return (

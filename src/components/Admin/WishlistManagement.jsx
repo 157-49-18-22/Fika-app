@@ -50,7 +50,7 @@ const WishlistManagement = () => {
           <div style={{ display: "flex", flexWrap: "wrap", gap: 24 }}>
             {items.map((item, idx) => (
               <div key={item.id} style={{ minWidth: 240, maxWidth: 260, background: "#fafafa", borderRadius: 6, padding: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
-                <img src={item.image ? '/' + item.image.split(',')[0].trim() : ''} alt={item.productName} style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: 4, marginBottom: 12 }} />
+                <img src={item.image ? (item.image.split(',')[0].trim().startsWith('http') || item.image.split(',')[0].trim().startsWith('blob:') ? item.image.split(',')[0].trim() : '/' + item.image.split(',')[0].trim()) : ''} alt={item.productName} style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: 4, marginBottom: 12 }} />
                 <div style={{ fontWeight: 600, fontSize: 16 }}>{item.productName}</div>
                 <div style={{ color: "#888", fontSize: 14 }}>{item.category}</div>
                 <div style={{ color: "#222", fontWeight: 600, margin: "6px 0" }}>₹{item.price}</div>

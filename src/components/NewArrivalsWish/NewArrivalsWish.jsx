@@ -321,7 +321,9 @@ const NewArrivalsWish = () => {
     if (!imageField) return '/placeholder-image.webp';
     const imagesArr = imageField.split(',').map(img => img.trim()).filter(Boolean);
     if (imagesArr.length > 0) {
-      return imagesArr[0].startsWith('/') ? imagesArr[0] : `/${imagesArr[0]}`;
+      const src = imagesArr[0];
+      if (src.startsWith('http') || src.startsWith('blob:')) return src;
+      return src.startsWith('/') ? src : `/${src}`;
     }
     return '/placeholder-image.webp';
   };

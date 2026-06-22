@@ -255,7 +255,7 @@ function Navbar() {
                         }}
                       >
                         <img 
-                          src={product.image ? '/' + product.image.split(',')[0].trim() : ''} 
+                          src={product.image ? (product.image.split(',')[0].trim().startsWith('http') || product.image.split(',')[0].trim().startsWith('blob:') ? product.image.split(',')[0].trim() : '/' + product.image.split(',')[0].trim()) : ''} 
                           alt={product.name} 
                           className="search-result-image" 
                         />
@@ -343,7 +343,7 @@ function Navbar() {
                       }}
                     >
                       <img 
-                        src={product.image ? '/' + product.image.split(',')[0].trim() : ''} 
+                        src={product.image ? (product.image.split(',')[0].trim().startsWith('http') || product.image.split(',')[0].trim().startsWith('blob:') ? product.image.split(',')[0].trim() : '/' + product.image.split(',')[0].trim()) : ''} 
                         alt={product.name} 
                         className="search-result-image" 
                       />
