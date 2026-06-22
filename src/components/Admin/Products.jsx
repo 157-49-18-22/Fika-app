@@ -156,6 +156,7 @@ const Products = () => {
     setIsUploading(true);
     setUploadProgress(10);
 
+    // upload.php public/ folder mein hai → Hostinger pe deploy hogi automatically
     const baseUrl = 'https://fika-india.com';
 
     const newUrls = [];
@@ -194,10 +195,8 @@ const Products = () => {
     setIsUploading(false);
     setTimeout(() => setUploadProgress(0), 1000);
 
-    // Merge with existing list
     const updated = [...imageList, ...newUrls];
     syncImageListToForm(updated);
-    // Reset file input
     e.target.value = '';
   };
 
