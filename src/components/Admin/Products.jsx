@@ -156,8 +156,9 @@ const Products = () => {
     setIsUploading(true);
     setUploadProgress(10);
 
-    // upload.php public/ folder mein hai → Hostinger pe deploy hogi automatically
-    const baseUrl = 'https://fika-india.com';
+    // ✅ orange-clam Hostinger pe upload.php kaam kar raha hai
+    // CORS * set hai, fika-india.com se bhi kaam karega
+    const UPLOAD_URL = 'https://orange-clam-521767.hostingersite.com/upload.php';
 
     const newUrls = [];
     for (let i = 0; i < files.length; i++) {
@@ -176,7 +177,7 @@ const Products = () => {
       uploadData.append('file', fileToUpload);
 
       try {
-        const response = await fetch(`${baseUrl}/upload.php`, { method: 'POST', body: uploadData });
+        const response = await fetch(UPLOAD_URL, { method: 'POST', body: uploadData });
         const data = await response.json();
         if (data.success) {
           newUrls.push(data.url);
